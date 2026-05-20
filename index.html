@@ -74,18 +74,52 @@ body {
     <p class="subtitle">A collection of one-off HTML tools and experiments.</p>
   </div>
 
-  <!-- ARTIFAKTS:START -->
-  <div class="category">
-    <div class="category-title">Soccer</div>
-    <div class="artifacts-grid">
-      <a href="relics/Soccer/lineup-manager-v0.html" class="artifact-card">
-        <div class="artifact-name">Lineup Manager v0</div>
-      </a>
-    </div>
+  <div id="artifakts-root">
+    <div class="empty">Loading…</div>
   </div>
-  <!-- ARTIFAKTS:END -->
 
   <div class="footer">Built with Claude Code</div>
 </div>
+<script>
+(function () {
+  const root = document.getElementById('artifakts-root');
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+
+  fetch('toc.json', { cache: 'no-cache' })
+    .then((r) => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then((data) => {
+      const items = (data && data.artifacts) || [];
+      if (!items.length) {
+        root.innerHTML = '<div class="empty">No artifacts deployed yet.</div>';
+        return;
+      }
+      const byCat = new Map();
+      for (const a of items) {
+        if (!byCat.has(a.category)) byCat.set(a.category, []);
+        byCat.get(a.category).push(a);
+      }
+      root.innerHTML = [...byCat.entries()].map(([cat, arts]) => `
+        <div class="category">
+          <div class="category-title">${esc(cat)}</div>
+          <div class="artifacts-grid">
+            ${arts.map((a) => `
+              <a href="relics/${esc(a.file)}" class="artifact-card">
+                <div class="artifact-name">${esc(a.name)}</div>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    })
+    .catch((err) => {
+      root.innerHTML = '<div class="empty">Failed to load toc.json — ' + esc(err.message || err) + '</div>';
+    });
+})();
+</script>
 </body>
 </html>
