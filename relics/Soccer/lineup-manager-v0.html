@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U9 Boys Team 5 — Lineup Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f0f0f;
+  --surface: #1c1c1e;
+  --surface2: #2a2a2d;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.18);
+  --text: #f0ede8;
+  --text-muted: #888480;
+  --text-faint: #555250;
+  --radius: 8px;
+  --goalie-bg: #2a2060; --goalie-fg: #c4beff;
+  --cmid-bg: #0d2a45;  --cmid-fg: #7ec2f7;
+  --lf-bg: #1a2e0a;    --lf-fg: #92d44e;
+  --striker-bg: #2e1c04; --striker-fg: #f5b84a;
+  --rf-bg: #2e0d1e;    --rf-fg: #f093be;
+  --def-bg: #042e22;   --def-fg: #4dd6a8;
+  --bench-bg: #252420; --bench-fg: #9a9690;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 12px 48px; }
+.page { max-width: 480px; margin: 0 auto; }
+
+.header { margin-bottom: 16px; }
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.title { font-size: 20px; font-weight: 600; color: var(--text); }
+.subtitle { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+.action-bar { display: flex; gap: 8px; margin-bottom: 12px; }
+.action-btn {
+  flex: 1; padding: 8px 10px; font-size: 12px; font-weight: 500;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text-muted); cursor: pointer; text-align: center;
+  transition: all 0.15s;
+}
+.action-btn:hover { border-color: var(--border-strong); color: var(--text); }
+.action-btn.danger:hover { border-color: #c0392b; color: #e57373; }
+
+.save-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; padding: 7px 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); font-size: 11px;
+}
+.save-status { color: var(--text-faint); }
+.save-status.saved { color: #4dd6a8; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.tab {
+  flex: 1; padding: 9px 4px; text-align: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); font-size: 13px; font-weight: 500;
+  cursor: pointer; color: var(--text-muted); transition: all 0.15s;
+}
+.tab.active { background: var(--text); color: #111; border-color: var(--text); }
+.tab:hover:not(.active) { border-color: var(--border-strong); color: var(--text); }
+
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.field-row { display: grid; gap: 8px; }
+.row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.row-1 { grid-template-columns: 1fr; }
+.row-2 { grid-template-columns: 1fr 1fr; }
+
+.field-slot {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 8px 6px 10px;
+  min-height: 80px; display: flex; flex-direction: column; align-items: center;
+}
+.slot-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--text-faint);
+  margin-bottom: 8px; text-align: center; width: 100%;
+}
+.slot-body { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+.player-chip {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 5px; padding: 7px 10px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.1s, transform 0.1s;
+  user-select: none; border: none; outline: none; text-align: center; width: 100%; line-height: 1.2;
+}
+.player-chip:hover { opacity: 0.78; transform: scale(0.97); }
+.player-chip:active { transform: scale(0.93); }
+.player-chip.goalie  { background: var(--goalie-bg);  color: var(--goalie-fg); }
+.player-chip.cmid    { background: var(--cmid-bg);    color: var(--cmid-fg); }
+.player-chip.lf      { background: var(--lf-bg);      color: var(--lf-fg); }
+.player-chip.striker { background: var(--striker-bg); color: var(--striker-fg); }
+.player-chip.rf      { background: var(--rf-bg);      color: var(--rf-fg); }
+.player-chip.def     { background: var(--def-bg);     color: var(--def-fg); }
+.player-chip.bench   { background: var(--bench-bg);   color: var(--bench-fg); }
+
+.empty-slot { font-size: 12px; color: var(--text-faint); font-style: italic; }
+
+.bench-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 16px; }
+.bench-title { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+.bench-chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
+.bench-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 5px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+  cursor: pointer; user-select: none; border: none; outline: none;
+  background: var(--bench-bg); color: var(--bench-fg); transition: opacity 0.1s, transform 0.1s;
+}
+.bench-chip:hover { opacity: 0.78; transform: scale(0.97); }
+
+.pt-section { margin-bottom: 16px; }
+.pt-title { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.pt-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.pt-name { width: 80px; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+.pt-track { flex: 1; background: var(--surface2); border-radius: 3px; height: 16px; overflow: hidden; }
+.pt-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+.pt-val { width: 36px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text); text-align: right; flex-shrink: 0; }
+.pt-over { color: #f5b84a; }
+
+.note { font-size: 11px; color: var(--text-faint); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.6; }
+
+.panel-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 100;
+  align-items: flex-end; justify-content: center;
+}
+.panel-overlay.open { display: flex; }
+.panel {
+  background: #1a1a1d; border-radius: 14px 14px 0 0;
+  padding: 16px 16px 36px; width: 100%; max-width: 480px;
+  border-top: 1px solid var(--border-strong); max-height: 80vh; overflow-y: auto;
+}
+.panel-handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 14px; }
+.panel-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.panel-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+.roster-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px; }
+.roster-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 7px; background: var(--surface2);
+}
+.roster-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.roster-name.inactive { color: var(--text-faint); }
+
+.toggle { position: relative; width: 40px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--border-strong);
+  cursor: pointer; transition: background 0.2s;
+}
+.toggle-slider:before {
+  content: ''; position: absolute; width: 18px; height: 18px;
+  left: 2px; top: 2px; border-radius: 50%; background: var(--text-faint);
+  transition: transform 0.2s, background 0.2s;
+}
+.toggle input:checked + .toggle-slider { background: #1D9E75; border-color: #1D9E75; }
+.toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #fff; }
+
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65); z-index: 150;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #1e1e22; border-radius: 14px 14px 0 0;
+  padding: 16px 16px 36px; width: 100%; max-width: 480px;
+  border-top: 1px solid var(--border-strong);
+}
+.modal-handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 16px; }
+.modal-name { font-size: 16px; font-weight: 600; color: var(--text); }
+.modal-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; margin-bottom: 14px; }
+.modal-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.modal-opt {
+  padding: 11px 8px; border-radius: 6px; border: 2px solid transparent;
+  font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.12s;
+}
+.modal-opt.pos-goalie  { background: var(--goalie-bg);  color: var(--goalie-fg); }
+.modal-opt.pos-cmid    { background: var(--cmid-bg);    color: var(--cmid-fg); }
+.modal-opt.pos-lf      { background: var(--lf-bg);      color: var(--lf-fg); }
+.modal-opt.pos-striker { background: var(--striker-bg); color: var(--striker-fg); }
+.modal-opt.pos-rf      { background: var(--rf-bg);      color: var(--rf-fg); }
+.modal-opt.pos-def1    { background: var(--def-bg);     color: var(--def-fg); }
+.modal-opt.pos-def2    { background: var(--def-bg);     color: var(--def-fg); }
+.modal-opt.pos-bench   { background: var(--bench-bg);   color: var(--bench-fg); }
+.modal-opt.selected { border-color: rgba(255,255,255,0.6); }
+.modal-opt:hover { opacity: 0.85; }
+.modal-actions { display: flex; gap: 8px; }
+.btn {
+  flex: 1; padding: 11px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border-strong);
+  background: var(--surface2); color: var(--text); transition: opacity 0.12s;
+}
+.btn-primary { background: var(--text); color: #111; border-color: var(--text); }
+.btn-danger  { background: #7a1f1f; color: #ffaaaa; border-color: #a03030; }
+.btn:hover { opacity: 0.82; }
+
+.confirm-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 200;
+  align-items: center; justify-content: center; padding: 24px;
+}
+.confirm-overlay.open { display: flex; }
+.confirm-box {
+  background: #1e1e22; border-radius: 12px; padding: 20px 18px;
+  width: 100%; max-width: 300px; border: 1px solid var(--border-strong); text-align: center;
+}
+.confirm-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.confirm-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+.confirm-actions { display: flex; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">U9 Boys · Team 5</div>
+    <h1 class="title">Lineup Manager</h1>
+    <p class="subtitle">Tap any player to change position</p>
+  </div>
+
+  <div class="action-bar">
+    <div class="action-btn" onclick="openRoster()">👥 Manage roster</div>
+    <div class="action-btn danger" onclick="confirmReset()">↺ Reset lineup</div>
+  </div>
+
+  <div class="save-bar">
+    <span class="save-status" id="saveStatus">Loading...</span>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="field" id="field"></div>
+
+  <div class="bench-section">
+    <div class="bench-title">On the bench</div>
+    <div class="bench-chips" id="benchChips"></div>
+  </div>
+
+  <div class="pt-section">
+    <div class="pt-title">Playtime this game</div>
+    <div id="ptRows"></div>
+  </div>
+
+  <div class="note">Tap any player to reassign them to a different position</div>
+</div>
+
+<!-- Roster panel -->
+<div class="panel-overlay" id="rosterOverlay">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-title">Roster</div>
+    <div class="panel-sub">Toggle players on or off for this game. Players toggled off are removed from all quarters.</div>
+    <div class="roster-list" id="rosterList"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="closeRoster()">Done</button>
+  </div>
+</div>
+
+<!-- Position modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-name" id="modalName"></div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div class="modal-options" id="modalOptions"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmChange()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset confirm -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title">Reset lineup?</div>
+    <div class="confirm-sub">Restores all quarters to the default lineup. Roster toggles are not affected.</div>
+    <div class="confirm-actions">
+      <button class="btn" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" onclick="doReset()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'u9_team5_v2';
+
+const ALL_PLAYERS = [
+  { name:'Christian', active:true  },
+  { name:'Jayce',     active:true  },
+  { name:'Justin',    active:true  },
+  { name:'Cameron',   active:true  },
+  { name:'Kai',       active:true  },
+  { name:'Adrian',    active:true  },
+  { name:'Ricardo',   active:true  },
+  { name:'Jasper',    active:true  },
+  { name:'Micah',     active:true  },
+  { name:'Matteo',    active:true  },
+  { name:'Jacob',     active:false },
+];
+
+const POSITIONS = [
+  { key:'lf',      label:'Left Fwd',   css:'lf'      },
+  { key:'striker', label:'Striker',    css:'striker' },
+  { key:'rf',      label:'Right Fwd',  css:'rf'      },
+  { key:'cmid',    label:'Center Mid', css:'cmid'    },
+  { key:'def1',    label:'Defender 1', css:'def'     },
+  { key:'def2',    label:'Defender 2', css:'def'     },
+  { key:'goalie',  label:'Goalie',     css:'goalie'  },
+  { key:'bench',   label:'Bench',      css:'bench'   },
+];
+
+const DEFAULT_LINEUP = [
+  { goalie:'Christian', cmid:'Jayce',   lf:'Justin', striker:'Cameron', rf:'Adrian',  def1:'Ricardo', def2:'Matteo' },
+  { goalie:'Christian', cmid:'Cameron', lf:'Justin', striker:'Kai',     rf:'Adrian',  def1:'Jasper',  def2:'Matteo' },
+  { goalie:'Christian', cmid:'Jayce',   lf:'Justin', striker:'Adrian',  rf:'Cameron', def1:'Ricardo', def2:'Micah'  },
+  { goalie:'Christian', cmid:'Matteo',  lf:'Justin', striker:'Kai',     rf:'Cameron', def1:'Jasper',  def2:'Micah'  },
+];
+
+
+const FLEX_PLAYERS = ["Christian","Jayce","Justin"];
+
+const PT_COLORS = {
+  Christian:'#7F77DD', Jayce:'#378ADD', Justin:'#639922',
+  Cameron:'#D4537E',   Kai:'#f5a623',   Adrian:'#f5a623',
+  Ricardo:'#1D9E75',   Matteo:'#1D9E75', Micah:'#1D9E75',
+  Jasper:'#888780',    Jacob:'#888780',
+};
+
+function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+function defaultLineup() { return deepClone(DEFAULT_LINEUP); }
+
+let lineup = defaultLineup();
+let roster = deepClone(ALL_PLAYERS);
+let savedAt = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const p = JSON.parse(raw);
+    if (p.lineup && p.lineup.length === 4) lineup = p.lineup;
+    if (p.roster && p.roster.length) roster = p.roster;
+    savedAt = p.savedAt || null;
+    return true;
+  } catch(e) { return false; }
+}
+
+function saveState() {
+  try {
+    savedAt = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ lineup, roster, savedAt }));
+    updateSaveStatus();
+  } catch(e) {}
+}
+
+function updateSaveStatus() {
+  const el = document.getElementById('saveStatus');
+  if (savedAt) {
+    el.className = 'save-status saved';
+    const t = new Date(savedAt);
+    el.textContent = `Saved ${t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  } else {
+    el.className = 'save-status';
+    el.textContent = 'Not yet saved';
+  }
+}
+
+function activePlayers() { return roster.filter(r => r.active).map(r => r.name); }
+
+function getBench(q) {
+  const placed = new Set(Object.values(lineup[q]).filter(Boolean));
+  return activePlayers().filter(p => !placed.has(p));
+}
+
+function getPlayerPos(q, name) {
+  for (const [pos, player] of Object.entries(lineup[q])) {
+    if (player === name) return pos;
+  }
+  return 'bench';
+}
+
+function getPlaytime(name) {
+  let c = 0;
+  for (let q = 0; q < 4; q++) if (!getBench(q).includes(name)) c++;
+  return c;
+}
+
+let currentQ = 0;
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = ['Q1','Q2','Q3','Q4'].map((l,i) =>
+    `<div class="tab ${i===currentQ?'active':''}" onclick="switchQ(${i})">${l}</div>`
+  ).join('');
+}
+
+function slotHTML(posKey, label, player) {
+  let body;
+  if (player) {
+    const posObj = POSITIONS.find(p => p.key === posKey);
+    const css = posObj ? posObj.css : 'bench';
+    body = `<button class="player-chip ${css}" onclick="openModal('${player}',${currentQ})">${player}</button>`;
+  } else {
+    body = `<span class="empty-slot">—</span>`;
+  }
+  return `<div class="field-slot"><div class="slot-label">${label}</div><div class="slot-body">${body}</div></div>`;
+}
+
+function renderField() {
+  const q = lineup[currentQ];
+  document.getElementById('field').innerHTML =
+    `<div class="field-row row-3">
+      ${slotHTML('lf','Left Fwd',q.lf)}
+      ${slotHTML('striker','Striker',q.striker)}
+      ${slotHTML('rf','Right Fwd',q.rf)}
+    </div>
+    <div class="field-row row-1">
+      ${slotHTML('cmid','Center Mid',q.cmid)}
+    </div>
+    <div class="field-row row-2">
+      ${slotHTML('def1','Defender 1',q.def1)}
+      ${slotHTML('def2','Defender 2',q.def2)}
+    </div>
+    <div class="field-row row-1">
+      ${slotHTML('goalie','Goalie',q.goalie)}
+    </div>`;
+}
+
+function renderBench() {
+  const bench = getBench(currentQ);
+  document.getElementById('benchChips').innerHTML = bench.length
+    ? bench.map(p => `<button class="bench-chip" onclick="openModal('${p}',${currentQ})">${p}</button>`).join('')
+    : `<span class="empty-slot">Nobody on the bench</span>`;
+}
+
+function renderPlaytime() {
+  document.getElementById('ptRows').innerHTML = activePlayers().map(name => {
+    const pct = Math.round((getPlaytime(name) / 4) * 100);
+    const over = pct > 50 && !FLEX_PLAYERS.includes(name);
+    return `<div class="pt-row">
+      <span class="pt-name">${name}</span>
+      <div class="pt-track"><div class="pt-fill" style="width:${pct}%;background:${PT_COLORS[name]||'#888'};"></div></div>
+      <span class="pt-val ${over?'pt-over':''}">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+function render() { renderTabs(); renderField(); renderBench(); renderPlaytime(); }
+function switchQ(i) { currentQ = i; render(); }
+
+function openRoster() {
+  document.getElementById('rosterList').innerHTML = roster.map((r,i) => `
+    <div class="roster-row">
+      <span class="roster-name ${r.active?'':'inactive'}" id="rname_${i}">${r.name}</span>
+      <label class="toggle">
+        <input type="checkbox" ${r.active?'checked':''} onchange="togglePlayer(${i}, this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>`).join('');
+  document.getElementById('rosterOverlay').classList.add('open');
+}
+
+function togglePlayer(i, active) {
+  roster[i].active = active;
+  document.getElementById(`rname_${i}`).className = `roster-name ${active?'':'inactive'}`;
+  if (!active) {
+    const name = roster[i].name;
+    for (let q = 0; q < 4; q++)
+      for (const pos of Object.keys(lineup[q]))
+        if (lineup[q][pos] === name) lineup[q][pos] = null;
+  }
+  saveState();
+  render();
+}
+
+function closeRoster() { document.getElementById('rosterOverlay').classList.remove('open'); }
+
+let modalPlayer = null, modalPendingPos = null, modalQ = null;
+
+function openModal(playerName, q) {
+  modalPlayer = playerName; modalQ = q;
+  modalPendingPos = getPlayerPos(q, playerName);
+  document.getElementById('modalName').textContent = playerName;
+  document.getElementById('modalSub').textContent = `Quarter ${q+1} — select a position`;
+  document.getElementById('modalOptions').innerHTML = POSITIONS.map(pos =>
+    `<div class="modal-opt pos-${pos.key} ${modalPendingPos===pos.key?'selected':''}" onclick="selectPos('${pos.key}')">${pos.label}</div>`
+  ).join('');
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function selectPos(posKey) {
+  modalPendingPos = posKey;
+  document.querySelectorAll('.modal-opt').forEach(el => el.classList.remove('selected'));
+  document.querySelector(`.modal-opt.pos-${posKey}`).classList.add('selected');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  modalPlayer = null; modalPendingPos = null; modalQ = null;
+}
+
+function confirmChange() {
+  if (!modalPlayer || !modalPendingPos) return closeModal();
+  const q = modalQ;
+  if (modalPendingPos === 'bench') {
+    for (const pos of Object.keys(lineup[q]))
+      if (lineup[q][pos] === modalPlayer) lineup[q][pos] = null;
+  } else {
+    const occupant = lineup[q][modalPendingPos];
+    if (occupant && occupant !== modalPlayer)
+      for (const pos of Object.keys(lineup[q]))
+        if (lineup[q][pos] === occupant) lineup[q][pos] = null;
+    for (const pos of Object.keys(lineup[q]))
+      if (lineup[q][pos] === modalPlayer) lineup[q][pos] = null;
+    lineup[q][modalPendingPos] = modalPlayer;
+  }
+  closeModal(); saveState(); render();
+}
+
+function confirmReset() { document.getElementById('confirmOverlay').classList.add('open'); }
+function closeConfirm()  { document.getElementById('confirmOverlay').classList.remove('open'); }
+function doReset() {
+  lineup = defaultLineup();
+  roster.forEach(r => {
+    if (!r.active)
+      for (let q = 0; q < 4; q++)
+        for (const pos of Object.keys(lineup[q]))
+          if (lineup[q][pos] === r.name) lineup[q][pos] = null;
+  });
+  closeConfirm(); saveState(); render();
+}
+
+['rosterOverlay','modalOverlay','confirmOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target.id === id) {
+      if (id === 'rosterOverlay') closeRoster();
+      else if (id === 'modalOverlay') closeModal();
+      else closeConfirm();
+    }
+  });
+});
+
+loadState();
+updateSaveStatus();
+render();
+</script>
+</body>
+</html>
