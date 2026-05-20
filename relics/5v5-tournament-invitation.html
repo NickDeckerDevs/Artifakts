@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5v5 Summer Soccer Series — Summer 2026</title>
+  <style>
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px;
+      background: #f4f4f2;
+      color: #1a1a18;
+      line-height: 1.6;
+    }
+
+    a {
+      color: #185FA5;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* =============================================
+       PAGE LAYOUT
+    ============================================= */
+    .page {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 2rem 1rem 5rem;
+    }
+
+    .section-label {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888780;
+      margin-bottom: 0.75rem;
+    }
+    .section-label--note {
+      font-size: 16px;
+      font-weight: 400;
+      font-style: italic;
+      margin: 5px 0 10px;
+      padding-bottom: 10px;
+      color: #888780;
+      line-height: 1.2;
+    }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid #d3d1c7;
+      margin: 1.75rem 0;
+      display: none!important;
+    }
+
+    /* =============================================
+       CARD
+    ============================================= */
+    .card {
+      background: #ffffff;
+      border: 0.5px solid #d3d1c7;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1a1a18;
+      margin-bottom: 0.75rem;
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    .hero {
+      background: #0C447C;
+      border-radius: 12px;
+      padding: 2.5rem 2rem 2rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 20px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(29, 158, 117, 0.15);
+    }
+
+    /* --- Hero: Eyebrow --- */
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-season-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .hero-team-name {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+    }
+
+    /* --- Hero: Title row --- */
+    .hero-top {
+      display: flex;
+      gap: 1.25rem;
+      align-items: stretch;
+      margin-bottom: 1.5rem;
+      justify-content: space-between;
+    }
+
+    .hero-title-block {
+      flex: 0 0 60%;
+    }
+
+    .hero-invited-label {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .hero-title {
+      color: #ffffff;
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    /* --- Hero: Contact box --- */
+    .hero-contact-box {
+      flex: 0 0 calc(33% - 0.625rem);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.9;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-contact-box-heading {
+      color: #ffffff;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .hero-contact-box a {
+      color: #7dd3fc;
+    }
+
+    /* --- Hero: Note from Nicholas --- */
+    .hero-note {
+      padding-top: .25rem;
+      
+    }
+
+    .hero-note-label {
+      display: block;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .hero-note-body {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .hero-note-col {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .hero-note-col p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 18px;
+      line-height: 1.65;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-note-col p:last-child {
+      margin-bottom: 0;
+    }
+
+    .hero-note-highlight {
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    /* --- Hero: Note bullets --- */
+    .hero-note-bullets {
+      list-style: none;
+      padding: 15px;
+      margin: 0;
+    }
+
+    .hero-note-bullets li {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 18px;
+      line-height: 1.55;
+      padding: 4px 0 9px;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .hero-note-bullets .bullet-icon {
+      font-size: 17px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* =============================================
+       GOALS SECTION
+    ============================================= */
+    .goals-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .goals-list-item {
+      font-size: 18px;
+      color: #5f5e5a;
+      padding: 7px 0;
+      border-bottom: 0.5px solid #d3d1c7;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    .goals-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .goals-item-number {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #185FA5;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* =============================================
+       RESEARCH CALLOUTS
+    ============================================= */
+    .callout {
+      border-left: 3px solid #185FA5;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      background: #E6F1FB;
+    }
+    
+
+    .callout-title {
+      font-size: 16px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #0C447C;
+      margin-bottom: 0.35rem;
+    }
+
+    .callout-body {
+      font-size: 18px;
+      color: #185FA5;
+      line-height: 1.65;
+    }
+
+    .callout-green {
+      background: #EAF3DE;
+      border-left: none!important;
+      border-right: 3px solid #3B6D11;
+    }
+
+    .callout-green .callout-title {
+      color: #27500A;
+    }
+
+    .callout-green .callout-body {
+      color: #3B6D11;
+    }
+
+    /* =============================================
+       STATS ROW
+    ============================================= */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    .stat-item {
+      background: #f1efe8;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+    .stat-item > div {
+      flex-basis: 100%;
+      text-align: center;
+    } 
+
+    .stat-number {
+      font-size: 50px;
+      font-weight: 600;
+      color: #1a1a18;
+      line-height: 1;
+    }
+
+    .stat-unit {
+      font-size: 16px;
+      color: #185FA5;
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: #888780;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    /* =============================================
+       TOURNAMENT CARDS
+    ============================================= */
+    .tournament-card {
+      border: 0.5px solid #d3d1c7;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .tournament-card-featured {
+      border: 2px solid #185FA5;
+    }
+
+    .tournament-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem 0.75rem;
+      gap: 0.75rem;
+    }
+
+    .tournament-header-left {
+      flex: 1;
+    }
+
+    .tournament-date-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 3px;
+      width: 100%;
+    }
+
+    .tournament-date {
+      font-size: 18px;
+      font-weight: 500;
+      color: #185FA5;
+    }
+
+    .tournament-featured-badge {
+      background: #E6F1FB;
+      color: #0C447C;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 3px 15px;
+      border-radius: 15px;
+    }
+
+    .tournament-name {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1a1a18;
+      margin-bottom: 2px;
+    }
+
+    .tournament-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .tournament-location {
+      font-size: 17px;
+      color: #888780;
+    }
+
+    .tournament-drive {
+      font-size: 17px;
+      color: #888780;
+    }
+
+    .tournament-event-link {
+      font-size: 17px;
+      color: #185FA5;
+    }
+
+    .tournament-price-block {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .tournament-price-main {
+      font-size: 25px;
+      font-weight: 500;
+      color: #1a1a18;
+      line-height: 1;
+    }
+
+    .tournament-price-sub {
+      font-size: 16px;
+      color: #888780;
+      margin-top: 1px;
+    }
+
+    /* --- Tournament body (bullet list) --- */
+    .tournament-body {
+      border-top: 0.5px solid #d3d1c7;
+      padding: 0.75rem 1.25rem;
+    }
+
+    .tournament-detail-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .tournament-detail-item {
+      font-size: 18px;
+      color: #5f5e5a;
+      padding: 5px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.55;
+      border-bottom: 0.5px solid #d3d1c7;
+    }
+
+    .tournament-detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .tournament-detail-item .bullet-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .tournament-detail-strong {
+      font-weight: 500;
+      color: #1a1a18;
+    }
+
+    /* --- Tournament footer (pricing) --- */
+    .tournament-footer {
+      background: #f1efe8;
+      border-top: 0.5px solid #d3d1c7;
+      padding: 0.6rem 1.25rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tournament-footer-price {
+      font-size: 17px;
+      color: #5f5e5a;
+    }
+
+    .tournament-footer-price strong {
+      color: #1a1a18;
+      font-weight: 500;
+    }
+
+    .tournament-footer-note {
+      font-size: 16px;
+      color: #888780;
+    }
+
+    /* =============================================
+       INCLUDES LIST
+    ============================================= */
+    .includes-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .includes-item {
+      font-size: 18px;
+      color: #5f5e5a;
+      padding: 6px 0;
+      border-bottom: 0.5px solid #d3d1c7;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .includes-item:last-child {
+      border-bottom: none;
+    }
+
+    .includes-check-icon {
+      color: #3B6D11;
+      flex-shrink: 0;
+      font-size: 15px;
+      margin-top: 1px;
+    }
+
+    .includes-item-strong {
+      font-weight: 500;
+      color: #1a1a18;
+    }
+
+    /* =============================================
+       COACH SECTION
+    ============================================= */
+    .coach-header {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .coach-photo {
+      width: 32%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+      object-position: top;
+      flex-shrink: 0;
+      background: #f1efe8;
+    }
+
+    .coach-info {
+      flex: 1;
+    }
+
+    .coach-name {
+      font-size: 22px;
+      font-weight: 500;
+      color: #1a1a18;
+      margin-bottom: 2px;
+    }
+
+    .coach-subtitle {
+      font-size: 17px;
+      color: #888780;
+      margin-bottom: 10px;
+    }
+
+    .coach-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+
+    .badge-blue {
+      background: #E6F1FB;
+      color: #0C447C;
+    }
+
+    .badge-green {
+      background: #EAF3DE;
+      color: #27500A;
+    }
+
+    .badge-amber {
+      background: #FAEEDA;
+      color: #633806;
+    }
+
+    .coach-bio {
+      font-size: 18px;
+      color: #5f5e5a;
+      line-height: 1.65;
+      margin-bottom: 0.75rem;
+    }
+
+    .coach-highlights-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .coach-highlight-item {
+      font-size: 18px;
+      color: #5f5e5a;
+      padding: 5px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.55;
+      border-bottom: 0.5px solid #d3d1c7;
+    }
+
+    .coach-highlight-item:last-child {
+      border-bottom: none;
+    }
+
+    .coach-highlight-item .bullet-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .coach-closing {
+      font-size: 20px;
+      color: #353431;
+      line-height: 1.4;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .coach-resume-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 17px;
+      color: #185FA5;
+      margin-top: 0.5rem;
+    }
+
+    /* =============================================
+       CTA / FOOTER SECTION
+    ============================================= */
+    .cta-section {
+      background: #f1efe8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .cta-heading {
+      font-size: 23px;
+      font-weight: 500;
+      color: #1a1a18;
+      margin-bottom: 4px;
+    }
+
+    .cta-subheading {
+      font-size: 17px;
+      color: #888780;
+      margin-bottom: 1rem;
+    }
+
+    .cta-body {
+      font-size: 18px;
+      color: #5f5e5a;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+
+    .cta-contact-card {
+      background: #ffffff;
+      border: 0.5px solid #d3d1c7;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: inline-block;
+      text-align: left;
+    }
+
+    .cta-contact-card p {
+      font-size: 18px;
+      color: #5f5e5a;
+      margin: 0;
+      line-height: 1.8;
+    }
+
+    .cta-contact-card strong {
+      color: #1a1a18;
+      font-weight: 500;
+    }
+
+    .cta-contact-card a {
+      color: #185FA5;
+    }
+
+    .center {
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .center.wrap {
+      flex-wrap: wrap;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ==================== HERO ==================== -->
+  <div class="hero">
+
+    <!-- Eyebrow -->
+    
+
+    <!-- Title row + contact box -->
+    <div class="hero-top">
+      <div class="hero-meta">
+        <div class="hero-eyebrow">
+          <span class="hero-season-badge">⚽ Summer 2026</span>
+          <span class="hero-team-name">— Storm Warnings FC</span>
+        </div>
+        <div class="hero-title-block">
+          <p class="hero-invited-label">You are officially invited:</p>
+          <h1 class="hero-title">5v5 Summer Soccer Series</h1>
+        </div>
+      </div>
+      <div class="hero-contact-box">
+        <span class="hero-contact-box-heading">More Information:</span>
+        <span class="hero-name">Nicholas Decker</span>
+        <a href="tel:2398772428">239-877-2428</a>
+        <a href="mailto:nickdeckerdevs@gmail.com">nickdeckerdevs@gmail.com</a>
+      </div>
+    </div>
+
+    <!-- Note from Nicholas -->
+    
+
+  </div><!-- /hero -->
+  
+
+
+  <!-- ==================== GOALS ==================== -->
+  <p class="section-label">Our goals this summer</p>
+  <div class="card">
+    <p class="card-title">What we're building</p>
+    <ul class="goals-list">
+      <li class="goals-list-item">
+        <span class="goals-item-number">1</span>
+        <span>Stay sharp all summer — no "first week of practice" rust when your Fall Season starts</span>
+      </li>
+      <li class="goals-list-item">
+        <span class="goals-item-number">2</span>
+        <span>Build real team chemistry before the season counts — your kid gets to meet new friends and play alongside familiar ones, making that fall transition so much smoother</span>
+      </li>
+      <li class="goals-list-item">
+        <span class="goals-item-number">3</span>
+        <span>Develop skills in a format proven to build better 7v7 players — more touches, faster decisions, tighter technical habits</span>
+      </li>
+      <li class="goals-list-item">
+        <span class="goals-item-number">4</span>
+        <span>Learn from a former pro coach alongside a rec coach who's all in — every session is intentional, structured, and fun</span>
+      </li>
+      <li class="goals-list-item">
+        <span class="goals-item-number">5</span>
+        <span>Guaranteed minimum 4 games per tournament day, with extra cold water and shade throughout</span>
+      </li>
+    </ul>
+  </div>
+
+
+  <!-- ==================== RESEARCH ==================== -->
+  <p class="section-label">The research — why 5v5 builds better 7v7 players</p>
+
+  <div class="callout">
+    <p class="callout-title">More touches = faster development</p>
+    <p class="callout-body">
+      Small-sided game research consistently shows that 5v5 players average significantly more touches per minute than in 7v7 — with some studies showing nearly 3× the decision-making opportunities. 
+      <br>
+      <strong>More touches per session means faster technical development, full stop.</strong>
+  </div>
+<!--
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-label">7 v 7 kids average</div>
+      <div class="stat-number">37</div>
+      <div class="stat-unit">Touches</div>
+      
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">57</div>
+      <div class="stat-unit">Touches</div>
+      <div class="stat-label">avg. per player in 5v5</div>
+    </div>
+    
+    <div class="stat-item">
+      <div class="stat-number">260%</div>
+      <div class="stat-unit">more</div>
+      <div class="stat-label">decision-making opportunities</div>
+    </div>
+  </div>
+  -->
+
+  <div class="callout callout-green reverse">
+    <p class="callout-title">Skills that transfer directly to 7v7</p>
+    <p class="callout-body">5v5 forces constant 1v1 situations, short passing combinations, and quick positional decisions under pressure — exactly the foundation that makes kids effective in 7v7. Players who put in summer 5v5 reps adapt faster, play with more confidence, and hit the ground running in the fall.</p>
+  </div>
+
+  <hr class="divider">
+
+
+  <!-- ==================== TOURNAMENT SCHEDULE ==================== -->
+  <p class="section-label">Tournament schedule</p>
+  <p class="section-label--note">The idea is we build the foundation before the first tournament and continue the fun into the next tournaments, but no commitment is required past the first tournament.</p>
+
+  <!-- June 6 — Featured -->
+  <div class="tournament-card tournament-card-featured">
+    <div class="tournament-header">
+      <div class="tournament-header-flex tournament-date-row">
+          <span class="tournament-date">June 6, 2026</span>
+          <span class="tournament-featured-badge">Summer Kickoff</span>
+        
+      </div>
+      <div class="tournament-header-left">
+        
+        <div class="tournament-name">5v5 Under the Lights — Estero</div>
+        <div class="tournament-meta">
+          <span class="tournament-location">📍 Estero, FL</span>
+          <span class="tournament-drive">🚗 ~20 min from Cape Coral</span>
+          <a class="tournament-event-link" href="https://soccer.exposureevents.com/264434/5v5-estero-fl-under-the-lights" target="_blank">↗ Event info</a>
+        </div>
+      </div>
+      <div class="tournament-price-block">
+        <div class="tournament-price-main">$160</div>
+        <div class="tournament-price-sub">per player (7)</div>
+      </div>
+    </div>
+    <div class="tournament-body">
+      <ul class="tournament-detail-list">
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">3 team training sessions</span> with Coach Noah before tournament day</span></li>
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">Full-day coaching</span> by Coach Noah on tournament day</span></li>
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">Minimum 4 games</span> guaranteed on the day of tournament</span></li>
+        <!--
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span>Extra cold water &amp; shade provided throughout</span></li>
+        -->
+      </ul>
+    </div>
+    <div class="tournament-footer center wrap">
+      <span class="tournament-footer-price">7 players: <strong>$160/ea</strong></span>
+      <span class="tournament-footer-price">8 players: <strong>$140/ea</strong></span>
+      <span class="tournament-footer-price">9 players: <strong>$124/ea</strong></span>
+      <span class="tournament-footer-note">Includes Tournament Registration, and team jersey top to keep</span>
+    </div>
+  </div>
+
+  <!-- June 27 -->
+  <div class="tournament-card">
+    <div class="tournament-header">
+      <div class="tournament-header-flex tournament-date-row">
+        <span class="tournament-date">June 27, 2026</span>
+        <span class="tournament-featured-badge">Bring The Thunder</span>
+      </div>
+      <div class="tournament-header-left">
+        
+        <div class="tournament-name">5v5 Ave Maria</div>
+        <div class="tournament-meta">
+          <span class="tournament-location">📍 Ave Maria, FL</span>
+          <span class="tournament-drive">🚗 ~1 hr 10 min from Cape Coral</span>
+          <a class="tournament-event-link" href="https://soccer.exposureevents.com/267901/5v5-ave-maria-fl" target="_blank">↗ Event info</a>
+        </div>
+      </div>
+      <div class="tournament-price-block">
+        <div class="tournament-price-main">~$109</div>
+        <div class="tournament-price-sub">per player (7)</div>
+      </div>
+    </div>
+    <div class="tournament-body">
+      <ul class="tournament-detail-list">
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">1 team training session</span> with Coach Noah before tournament day</span></li>
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">Full-day coaching</span> by Coach Noah on tournament day</span></li>
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">Minimum 4 games</span> guaranteed on the day of tournament</span></li>
+        <!--
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span>Extra cold water &amp; shade provided throughout</span></li>
+        -->
+      </ul>
+    </div>
+    <div class="tournament-footer center wrap">
+      <span class="tournament-footer-price">7 players: <strong>~$109/ea</strong></span>
+      <span class="tournament-footer-price">8 players: <strong>~$95/ea</strong></span>
+      <span class="tournament-footer-price">9 players: <strong>~$84/ea</strong></span>
+      <span class="tournament-footer-note">Includes Tournament Registration</span>
+    </div>
+  </div>
+
+  <!-- July 25 -->
+  <div class="tournament-card">
+    <div class="tournament-header">
+      <div class="tournament-header-flex tournament-date-row">
+        <span class="tournament-date">July 25, 2026</span>
+        <span class="tournament-featured-badge">Final Whistle</span>
+      </div>
+      <div class="tournament-header-left">
+        <div class="tournament-name">5v5 Naples</div>
+        <div class="tournament-meta">
+          <span class="tournament-location">📍 Naples, FL</span>
+          <span class="tournament-drive">🚗 ~45 min from Cape Coral</span>
+          <a class="tournament-event-link" href="https://soccer.exposureevents.com/260610/5v5-naples-fl" target="_blank">↗ Event info</a>
+        </div>
+      </div>
+      <div class="tournament-price-block">
+        <div class="tournament-price-main">~$109</div>
+        <div class="tournament-price-sub">per player (7)</div>
+      </div>
+    </div>
+    <div class="tournament-body">
+      <ul class="tournament-detail-list">
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">1 team training session</span> with Coach Noah before tournament day</span></li>
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">Full-day coaching</span> by Coach Noah on tournament day</span></li>
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span><span class="tournament-detail-strong">Minimum 4 games</span> guaranteed on the day of tournament</span></li>
+        <!--
+        <li class="tournament-detail-item"><span class="bullet-icon">⚽</span><span>Extra cold water &amp; shade provided throughout</span></li>
+        -->
+      </ul>
+    </div>
+    <div class="tournament-footer center wrap">
+      <span class="tournament-footer-price">7 players: <strong>~$109/ea</strong></span>
+      <span class="tournament-footer-price">8 players: <strong>~$95/ea</strong></span>
+      <span class="tournament-footer-price">9 players: <strong>~$84/ea</strong></span>
+      <span class="tournament-footer-note">Includes Tournament Registration</span>
+    </div>
+  </div>
+
+
+  <!-- ==================== INCLUDES ==================== -->
+  <p class="section-label" style="margin-top:1.5rem;">What's included — June 6 full package</p>
+  <div class="card">
+    <ul class="includes-list">
+      <li class="includes-item"><span class="includes-check-icon">✅</span><span><span class="includes-item-strong">3 team training sessions</span> before the tournament — structured, pro-coached, building real team shape and chemistry</span></li>
+      <li class="includes-item"><span class="includes-check-icon">✅</span><span><span class="includes-item-strong">Full-day tournament coaching</span> by Coach Noah</span></li>
+      <li class="includes-item"><span class="includes-check-icon">✅</span><span><span class="includes-item-strong">Team jersey top</span> provided by Coach Noah — yours to keep</span></li>
+      <li class="includes-item"><span class="includes-check-icon">✅</span><span><span class="includes-item-strong">Minimum 4 guaranteed games</span> — your kid plays all day, not once and done</span></li>
+      <li class="includes-item"><span class="includes-check-icon">✅</span><span><span class="includes-item-strong">Extra cold water &amp; shade</span> provided throughout the day</span></li>
+      <li class="includes-item"><span class="includes-check-icon">✅</span><span><span class="includes-item-strong">Team registration fee</span> fully covered in your per-player cost</span></li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+
+  <!-- ==================== COACH ==================== -->
+  <p class="section-label">Your coach this summer</p>
+  <div class="card">
+    <div class="coach-header">
+      <img class="coach-photo" src="https://coach-noah.replit.app/images/noah-action-new.jpg" alt="Coach Noah Cicoria" onerror="this.style.background='#f1efe8';" />
+      <div class="coach-info">
+        <div class="coach-name">Coach Noah Cicoria</div>
+        <ul class="coach-highlights-list">
+          <li class="coach-highlight-item"><span class="bullet-icon">⚽</span><span>Played professionally with:<br>The <strong><a href="https://www.chattanoogaredwolves-sc.com/dalton/">Dalton Redwolves</a></strong> (USL-2)<br> <strong><a href="https://www.naplesunited.com/" target="_blank">Naples United NPSL</a></strong> (All-Conference XI)<br>The <strong><a href="https://gvsuns.com.au/" target="_blank">GV Suns</a></strong> in Australia</span></li>
+          <li class="coach-highlight-item"><span class="bullet-icon">⚽</span><span>2× SSAC League champion &amp; 3-year team captain at Dalton State College</span></li>
+          <li class="coach-highlight-item"><span class="bullet-icon">⚽</span><span>NAIA Honorable Mention All-American</span></li>
+          <li class="coach-highlight-item"><span class="bullet-icon">⚽</span><span>US Soccer D License (earned 2026)</span></li>
+        </ul>
+        
+        
+        <!--
+        <div class="coach-subtitle">Former Pro Player · Current Cyclone Coach</div>
+        <div class="coach-badge-row">
+          <span class="badge badge-blue">🎓 US Soccer D License</span>
+          <span class="badge badge-green">🏆 NAIA All-American</span>
+          <span class="badge badge-amber">👕 Pro: NPSL &amp; USL-2</span>
+        </div>
+        -->
+      </div>
+    </div>
+    <p class="coach-bio">Noah grew up right here in Cape Coral — an Ida Baker HS product who went on to play at the collegiate and professional level soccer. He's currently Bishop Verot HS's boys Head Coach and assistant coach for Naples United team in the NPSL, meaning he's actively coaching at the highest local levels available.</p>
+    
+    <p class="coach-closing">He knows what it takes to develop young players — and he brings that same professionalism and care to every training session and tournament day.</p>
+    <div class="center">
+      <a class="coach-resume-link" href="https://coach-noah.replit.app/" target="_blank">↗ View full coaching resume</a>
+    </div>
+  </div>
+
+
+  <!-- ==================== CTA ==================== -->
+  <div class="cta-section">
+    <div class="cta-heading">Looking for 7–9 players total</div>
+    <div class="cta-subheading">The more kids join, the lower the cost for everyone</div>
+    <p class="cta-body">We're starting with <strong>June 6 in Estero</strong> — if everyone enjoys it, June 27 and July 25 follow. No pressure to commit to all three. Looking for Cyclone-level players who want more soccer, more fun, and to show up in the fall ready to play their best.</p>
+    
+  </div>
+  <div class="hero">
+    <div class="hero-note">
+      <span class="hero-note-label">A note from Assistant Coach &amp; Team Coordinator Nicholas Decker:</span>
+      <div class="hero-note-body">
+        <div class="hero-note-col">
+          <p>My son loves soccer and wants to keep playing all summer — and I want the same for him. As a rec coach and soccer dad, I believe <span class="hero-note-highlight">the best thing for these kids is more playing time, more touches, and more time having fun with teammates.</span></p>
+          
+        </div>
+        <div class="hero-note-col">
+          <p>I'm pairing up with a <span class="hero-note-highlight">Former Pro Player</span> and <span class="hero-note-highlight">Current Cyclones Coach</span> to give our kids an experience that goes way beyond regular rec soccer — building skills that will directly benefit them when the Cyclones season starts.</p>
+        </div>
+      </div>
+      <div class="hero-note-body">
+        <div class="hero-note-col">
+          <ul class="hero-note-bullets">
+            <li><span class="bullet-icon">⚽</span><span>More playing time all summer long — staying sharp and avoiding that first-week rust</span></li>
+            <li><span class="bullet-icon">⚽</span><span>Meet new friends and play alongside familiar ones before fall even starts</span></li>
+            <li><span class="bullet-icon">⚽</span><span>Learn from a former pro in a fun, low-pressure environment</span></li>
+            <li><span class="bullet-icon">⚽</span><span>I'll handle all communications so Coach Noah stays focused on the players</span></li>
+          </ul>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
