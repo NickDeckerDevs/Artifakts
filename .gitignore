@@ -3,4 +3,5 @@ CLAUDE.md
 .support-files/
 .claude/
 .env
+deployArtifact-skill.config.json
 github-pages-skill.config.json
