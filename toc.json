@@ -14,6 +14,11 @@
       "name": "5v5 Tournament Invitation",
       "category": "Soccer",
       "file": "5v5-tournament-invitation.html"
+    },
+    {
+      "name": "Nerd Out Counter",
+      "category": "Fun",
+      "file": "nerd-out-counter.html"
     }
   ]
 }
