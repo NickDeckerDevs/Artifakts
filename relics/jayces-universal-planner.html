@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Orlando — Jayce's Ride Planner</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0d0d1a;
+      --surface:      #1a1a2e;
+      --surface-2:    #22223a;
+      --border:       #2e2e50;
+      --text:         #f0f0f0;
+      --text-muted:   #8888a8;
+
+      --can-ride:        #27ae60;
+      --can-ride-bg:     rgba(39,174,96,0.12);
+      --everyone:        #3498db;
+      --everyone-bg:     rgba(52,152,219,0.12);
+      --coming-soon:     #e67e22;
+      --coming-soon-bg:  rgba(230,126,34,0.12);
+
+      --fav:             #f5a623;
+      --fav-bg:          rgba(245,166,35,0.15);
+      --interested:      #3498db;
+      --interested-bg:   rgba(52,152,219,0.15);
+      --not-int:         #e74c3c;
+      --not-int-bg:      rgba(231,76,60,0.15);
+
+      --gold:            #f5a623;
+      --blue-link:       #5b9cf6;
+      --radius:          10px;
+      --gap:             14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 16px;
+      min-height: 100vh;
+      line-height: 1.4;
+    }
+
+    #app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+    }
+
+    /* ── Header ──────────────────────────────────────── */
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 24px 0 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .header-title h1 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      background: linear-gradient(120deg, #f5a623, #f0c060);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 3px;
+    }
+
+    #height-control {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    #height-control label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .height-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      transition: border-color 0.2s;
+    }
+
+    .height-input-wrap:focus-within {
+      border-color: var(--gold);
+    }
+
+    #height-input {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.8rem;
+      font-weight: 800;
+      width: 72px;
+      text-align: right;
+      outline: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .height-unit {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    /* ── Tabs ──────────────────────────────────────────── */
+    #tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 22px;
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.2px;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      border-color: var(--gold);
+      background: rgba(245,166,35,0.12);
+      color: var(--gold);
+    }
+
+    /* ── Filter Bars ──────────────────────────────────── */
+    #filter-bar,
+    #land-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    #land-filter-bar {
+      margin-bottom: 28px;
+    }
+
+    .filter-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-right: 2px;
+    }
+
+    .filter-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--blue-link);
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      border-color: var(--blue-link);
+      background: rgba(91,156,246,0.12);
+      color: var(--blue-link);
+    }
+
+    /* ── Main Categories ─────────────────────────────── */
+    .main-category {
+      margin-bottom: 36px;
+    }
+
+    .main-category-header {
+      font-size: 1.35rem;
+      font-weight: 800;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 4px solid transparent;
+    }
+
+    .main-category[data-category="can-ride"] .main-category-header {
+      background: var(--can-ride-bg);
+      border-left-color: var(--can-ride);
+      color: var(--can-ride);
+    }
+
+    .main-category[data-category="everyone"] .main-category-header {
+      background: var(--everyone-bg);
+      border-left-color: var(--everyone);
+      color: var(--everyone);
+    }
+
+    .main-category[data-category="coming-soon"] .main-category-header {
+      background: var(--coming-soon-bg);
+      border-left-color: var(--coming-soon);
+      color: var(--coming-soon);
+    }
+
+    .main-cat-count {
+      font-size: 0.9rem;
+      font-weight: 600;
+      opacity: 0.65;
+      margin-left: auto;
+    }
+
+    /* ── Sub Categories ──────────────────────────────── */
+    .sub-category {
+      margin-bottom: 22px;
+    }
+
+    .sub-category-header {
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      padding: 0 0 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    /* ── Ride Grid ───────────────────────────────────── */
+    .ride-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--gap);
+    }
+
+    /* ── Ride Card ───────────────────────────────────── */
+    .ride-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ride-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    }
+
+    .ride-card.pref-favorite      { border-color: rgba(245,166,35,0.45); }
+    .ride-card.pref-interested    { border-color: rgba(52,152,219,0.4); }
+    .ride-card.pref-not-interested { opacity: 0.6; }
+
+    .card-body {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ── Title Row ───────────────────────────────────── */
+    .card-title-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .height-badge {
+      flex-shrink: 0;
+      font-size: 22px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: white;
+      white-space: nowrap;
+      margin-top: 1px;
+      letter-spacing: 0.3px;
+      line-height: 1.2;
+    }
+
+    .badge-can-ride    { background: var(--can-ride); }
+    .badge-coming-soon { background: var(--coming-soon); }
+    .badge-no-req      { background: #4a4a6a; }
+
+    .ride-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .ridden-tag {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--can-ride);
+      color: white;
+      margin-top: 3px;
+      letter-spacing: 0.4px;
+    }
+
+    /* ── Card Title Meta ─────────────────────────────── */
+    .card-title-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .land-chip {
+      background: rgba(91,156,246,0.12);
+      border: 1px solid rgba(91,156,246,0.3);
+      border-radius: 20px;
+      padding: 4px 12px;
+      color: var(--blue-link);
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .official-link {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .official-link:hover {
+      color: var(--blue-link);
+      text-decoration: underline;
+    }
+
+    /* ── Preference Buttons ──────────────────────────── */
+    .pref-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pref-btn {
+      padding: 7px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .pref-btn:hover { filter: brightness(1.2); }
+
+    .pref-btn[data-pref="favorite"].active {
+      background: var(--fav-bg);
+      border-color: var(--fav);
+      color: var(--fav);
+    }
+
+    .pref-btn[data-pref="interested"].active {
+      background: var(--interested-bg);
+      border-color: var(--interested);
+      color: var(--interested);
+    }
+
+    .pref-btn[data-pref="not-interested"].active {
+      background: var(--not-int-bg);
+      border-color: var(--not-int);
+      color: var(--not-int);
+    }
+
+    /* ── Video Section ───────────────────────────────── */
+    .video-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-thumb-wrap {
+      position: relative;
+      cursor: pointer;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    .video-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.35);
+      font-size: 3.5rem;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+    }
+
+    .play-overlay:hover {
+      background: rgba(0,0,0,0.55);
+    }
+
+    .video-thumb-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-title-link {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .video-title-link:hover {
+      color: var(--blue-link);
+      text-decoration: underline;
+    }
+
+    /* ── Card Footer ─────────────────────────────────── */
+    .card-footer {
+      margin-top: auto;
+      padding-top: 4px;
+      border-top: 1px solid var(--border);
+    }
+
+    .rode-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.15s;
+      padding-top: 10px;
+    }
+
+    .rode-label:hover { color: var(--text); }
+    .rode-label.checked { color: var(--can-ride); font-weight: 600; }
+
+    .rode-check {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--can-ride);
+      flex-shrink: 0;
+    }
+
+    /* ── Empty state ─────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .header-title h1 { font-size: 1.5rem; }
+      #header { flex-direction: column; align-items: flex-start; }
+      #height-control { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header id="header">
+    <div class="header-title">
+      <h1>Universal Orlando</h1>
+      <p>Ride planner for Jayce</p>
+    </div>
+    <div id="height-control">
+      <label for="height-input">Jayce's Height</label>
+      <div class="height-input-wrap">
+        <input type="number" id="height-input" step="0.5" min="0" max="120">
+        <span class="height-unit">inches</span>
+      </div>
+    </div>
+  </header>
+
+  <nav id="tab-bar">
+    <button class="tab-btn" data-park="ioa">Islands of Adventure</button>
+    <button class="tab-btn" data-park="usf">Universal Studios Florida</button>
+  </nav>
+
+  <div id="filter-bar">
+    <span class="filter-label">Show:</span>
+    <button class="filter-btn" data-filter="all">All Attractions</button>
+    <button class="filter-btn" data-filter="ridden">Attractions I've Rode</button>
+    <button class="filter-btn" data-filter="not-ridden">Attractions I Haven't Rode</button>
+  </div>
+
+  <div id="land-filter-bar"></div>
+
+  <main id="park-view"></main>
+</div>
+
+<script>
+'use strict';
+
+// ============================================================
+// RIDE DATA
+// ============================================================
+const BASE_URL = 'https://www.universalorlando.com/web/en/us/things-to-do/rides-attractions/';
+
+const RIDES = [
+  // ── Islands of Adventure ──────────────────────────────
+  { id: 'hulk',              park: 'ioa', land: 'Marvel Super Hero Island',    name: 'The Incredible Hulk Coaster',                   heightRequirement: 54,   youtubeVideoId: '3lJ-hBUtuXA', officialUrl: BASE_URL + 'the-incredible-hulk-coaster' },
+  { id: 'doom',              park: 'ioa', land: 'Marvel Super Hero Island',    name: "Doctor Doom's Fearfall",                         heightRequirement: 52,   youtubeVideoId: 'tJr-xUR6WAc', officialUrl: BASE_URL + 'doctor-dooms-fearfall' },
+  { id: 'velocicoaster',     park: 'ioa', land: 'Jurassic World',              name: 'Jurassic World VelociCoaster',                   heightRequirement: 51,   youtubeVideoId: 'FJe42WzToFE', officialUrl: BASE_URL + 'jurassic-world-velocicoaster' },
+  { id: 'hagrids',           park: 'ioa', land: 'Wizarding World – Hogsmeade', name: "Hagrid's Magical Creatures Motorbike Adventure", heightRequirement: 48,   youtubeVideoId: 'TdGbsggU2dg', officialUrl: BASE_URL + 'hagrids-magical-creatures-motorbike-adventure' },
+  { id: 'forbidden-journey', park: 'ioa', land: 'Wizarding World – Hogsmeade', name: 'Harry Potter and the Forbidden Journey',         heightRequirement: 48,   youtubeVideoId: 'cChfp-OZLiM', officialUrl: BASE_URL + 'harry-potter-and-the-forbidden-journey' },
+  { id: 'ripsaw-falls',      park: 'ioa', land: 'Toon Lagoon',                name: "Dudley Do-Right's Ripsaw Falls",                 heightRequirement: 44,   youtubeVideoId: 'qB51zOgqgyo', officialUrl: BASE_URL + 'dudley-do-rights-ripsaw-falls' },
+  { id: 'jp-river',          park: 'ioa', land: 'Jurassic World',              name: 'Jurassic Park River Adventure',                  heightRequirement: 42,   youtubeVideoId: 'CHvejAdOGe8', officialUrl: BASE_URL + 'jurassic-park-river-adventure' },
+  { id: 'popeye',            park: 'ioa', land: 'Toon Lagoon',                name: "Popeye & Bluto's Bilge-Rat Barges",              heightRequirement: 42,   youtubeVideoId: 'SB8W1rgogFs', officialUrl: BASE_URL + 'popeye-and-blutos-bilge-rat-barges' },
+  { id: 'spiderman',         park: 'ioa', land: 'Marvel Super Hero Island',    name: 'The Amazing Adventures of Spider-Man',           heightRequirement: 40,   youtubeVideoId: 'emyHaVFZg_g', officialUrl: BASE_URL + 'the-amazing-adventures-of-spider-man' },
+  { id: 'skull-island',      park: 'ioa', land: 'Skull Island',               name: 'Skull Island: Reign of Kong',                    heightRequirement: 36,   youtubeVideoId: 'n_GZCxD1Jvw', officialUrl: BASE_URL + 'skull-island-reign-of-kong' },
+  { id: 'hippogriff',        park: 'ioa', land: 'Wizarding World – Hogsmeade', name: 'Flight of the Hippogriff',                      heightRequirement: 36,   youtubeVideoId: 'wrIc49L9jDs', officialUrl: BASE_URL + 'flight-of-the-hippogriff' },
+  { id: 'seuss-trolley',     park: 'ioa', land: 'Seuss Landing',              name: 'The High in the Sky Seuss Trolley Train Ride',   heightRequirement: 36,   youtubeVideoId: 'uDiUcbxLMSs', officialUrl: BASE_URL + 'the-high-in-the-sky-seuss-trolley-train-ride' },
+  { id: 'cat-in-the-hat',    park: 'ioa', land: 'Seuss Landing',              name: 'Cat in the Hat',                                 heightRequirement: 36,   youtubeVideoId: 'LZ3HGMhMkVE', officialUrl: BASE_URL + 'cat-in-the-hat' },
+  { id: 'pteranodon',        park: 'ioa', land: 'Jurassic World',              name: 'Pteranodon Flyers',                              heightRequirement: 36,   heightMax: 56,  youtubeVideoId: 'rpYJOEP9b6o', officialUrl: BASE_URL + 'pteranodon-flyers' },
+  { id: 'caro-seuss-el',     park: 'ioa', land: 'Seuss Landing',              name: 'Caro-Seuss-el',                                  heightRequirement: null, youtubeVideoId: '', officialUrl: BASE_URL + 'caro-seuss-el' },
+  { id: 'one-fish',          park: 'ioa', land: 'Seuss Landing',              name: 'One Fish, Two Fish, Red Fish, Blue Fish',        heightRequirement: null, youtubeVideoId: '', officialUrl: BASE_URL + 'one-fish-two-fish-red-fish-blue-fish' },
+  { id: 'storm-force',       park: 'ioa', land: 'Marvel Super Hero Island',    name: 'Storm Force Accelatron',                         heightRequirement: null, youtubeVideoId: '', officialUrl: BASE_URL + 'storm-force-accelatron' },
+  { id: 'hogwarts-ioa',      park: 'ioa', land: 'Wizarding World – Hogsmeade', name: 'Hogwarts Express (Hogsmeade Station)',           heightRequirement: null, youtubeVideoId: '2q8tHdEUi5A', officialUrl: BASE_URL + 'hogwarts-express' },
+
+  // ── Universal Studios Florida ──────────────────────────
+  { id: 'rip-ride',          park: 'usf', land: 'Production Central',         name: 'Hollywood Rip Ride Rockit',                      heightRequirement: 51,   youtubeVideoId: 'muJHWtAM9Ns', officialUrl: BASE_URL + 'hollywood-rip-ride-rockit' },
+  { id: 'mummy',             park: 'usf', land: 'New York',                   name: 'Revenge of the Mummy',                           heightRequirement: 48,   youtubeVideoId: 'WYI4ljAx4lk', officialUrl: BASE_URL + 'revenge-of-the-mummy' },
+  { id: 'gringotts',         park: 'usf', land: 'Wizarding World – Diagon Alley', name: 'Harry Potter and the Escape from Gringotts', heightRequirement: 42,   youtubeVideoId: 'N8FSuOjoy8w', officialUrl: BASE_URL + 'harry-potter-and-the-escape-from-gringotts' },
+  { id: 'mib',               park: 'usf', land: 'World Expo',                 name: 'MEN IN BLACK Alien Attack',                      heightRequirement: 42,   youtubeVideoId: 'T3Vjkravrug', officialUrl: BASE_URL + 'men-in-black-alien-attack' },
+  { id: 'transformers',      park: 'usf', land: 'Production Central',         name: 'TRANSFORMERS: The Ride 3D',                      heightRequirement: 40,   youtubeVideoId: 'Ce6xv1qusjs', officialUrl: BASE_URL + 'transformers-the-ride-3d' },
+  { id: 'simpsons',          park: 'usf', land: 'Springfield, USA',           name: 'The Simpsons Ride',                              heightRequirement: 40,   youtubeVideoId: 'l8hThid_BTI', officialUrl: BASE_URL + 'the-simpsons-ride' },
+  { id: 'jimmy-fallon',      park: 'usf', land: 'New York',                   name: 'Race Through New York Starring Jimmy Fallon',    heightRequirement: 40,   youtubeVideoId: 'zWR61Ks6Xcw', officialUrl: BASE_URL + 'race-through-new-york-starring-jimmy-fallon' },
+  { id: 'fast-furious',      park: 'usf', land: 'San Francisco',              name: 'Fast & Furious: Supercharged',                   heightRequirement: 40,   youtubeVideoId: 'f4Pq9rdxBjU', officialUrl: BASE_URL + 'fast-furious-supercharged' },
+  { id: 'despicable-me',     park: 'usf', land: 'Production Central',         name: 'Despicable Me Minion Mayhem',                    heightRequirement: 40,   youtubeVideoId: 'ABXowvl95rc', officialUrl: BASE_URL + 'despicable-me-minion-mayhem' },
+  { id: 'trolls',            park: 'usf', land: 'DreamWorks Land',            name: 'Trolls Trollercoaster',                          heightRequirement: 36,   youtubeVideoId: '', officialUrl: BASE_URL + 'trolls-trollercoaster' },
+  { id: 'et',                park: 'usf', land: 'DreamWorks Land',            name: 'E.T. Adventure',                                 heightRequirement: 34,   youtubeVideoId: 'z0jalOtgGV8', officialUrl: BASE_URL + 'et-adventure' },
+  { id: 'hogwarts-usf',      park: 'usf', land: 'Wizarding World – Diagon Alley', name: "Hogwarts Express (King's Cross Station)",    heightRequirement: null, youtubeVideoId: 'haTRn_lGom8', officialUrl: BASE_URL + 'hogwarts-express' },
+  { id: 'minion-blast',      park: 'usf', land: 'Production Central',         name: "Illumination's Villain-Con Minion Blast",        heightRequirement: null, youtubeVideoId: '', officialUrl: BASE_URL + 'illuminations-villain-con-minion-blast' },
+  { id: 'kang-kodos',        park: 'usf', land: 'Springfield, USA',           name: "Kang & Kodos' Twirl 'n' Hurl",                  heightRequirement: null, youtubeVideoId: '', officialUrl: BASE_URL + 'kang-and-kodos-twirl-n-hurl' },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  height: 50.5,
+  activeTab: 'ioa',
+  activeFilter: 'all',
+  activeLand: 'all',
+  expandedVideos: new Set(),
+  rides: {},
+};
+
+// ============================================================
+// LOCAL STORAGE
+// ============================================================
+function lsGet(key) {
+  try { return localStorage.getItem(key); } catch { return null; }
+}
+
+function lsSet(key, value) {
+  try { localStorage.setItem(key, value); } catch {}
+}
+
+function loadState() {
+  const h = parseFloat(lsGet('tp_height'));
+  state.height       = isNaN(h) ? 50.5 : h;
+  state.activeTab    = lsGet('tp_activeTab')    || 'ioa';
+  state.activeFilter = lsGet('tp_activeFilter') || 'all';
+  state.activeLand   = lsGet('tp_activeLand')   || 'all';
+
+  RIDES.forEach(ride => {
+    const raw = lsGet('tp_ride_' + ride.id);
+    try {
+      state.rides[ride.id] = raw ? JSON.parse(raw) : { preference: null, ridden: false };
+    } catch {
+      state.rides[ride.id] = { preference: null, ridden: false };
+    }
+  });
+}
+
+function saveRide(id) {
+  lsSet('tp_ride_' + id, JSON.stringify(state.rides[id]));
+}
+
+// ============================================================
+// CATEGORIZATION
+// ============================================================
+function getMainCategory(ride) {
+  if (ride.heightRequirement === null) return 'everyone';
+  if (ride.heightRequirement > state.height) return 'coming-soon';
+  if (ride.heightMax !== undefined && state.height > ride.heightMax) return 'coming-soon';
+  return 'can-ride';
+}
+
+function getSubCategory(id) {
+  const pref = (state.rides[id] || {}).preference;
+  if (pref === 'favorite')       return 'favorites';
+  if (pref === 'interested')     return 'interested';
+  if (pref === 'not-interested') return 'not-interested';
+  return 'uncategorized';
+}
+
+function buildDisplayGroups() {
+  const groups = {
+    'can-ride':    { favorites: [], interested: [], uncategorized: [], 'not-interested': [] },
+    'everyone':    { favorites: [], interested: [], uncategorized: [], 'not-interested': [] },
+    'coming-soon': { favorites: [], interested: [], uncategorized: [], 'not-interested': [] },
+  };
+
+  RIDES
+    .filter(r => r.park === state.activeTab)
+    .filter(r => state.activeLand === 'all' || r.land === state.activeLand)
+    .filter(r => {
+      if (state.activeFilter === 'all') return true;
+      const ridden = (state.rides[r.id] || {}).ridden === true;
+      return state.activeFilter === 'ridden' ? ridden : !ridden;
+    })
+    .forEach(ride => {
+      groups[getMainCategory(ride)][getSubCategory(ride.id)].push(ride);
+    });
+
+  const sortDesc = arr => arr.sort((a, b) => {
+    if (a.heightRequirement === null && b.heightRequirement === null) return 0;
+    if (a.heightRequirement === null) return 1;
+    if (b.heightRequirement === null) return -1;
+    return b.heightRequirement - a.heightRequirement;
+  });
+
+  ['can-ride', 'everyone', 'coming-soon'].forEach(main =>
+    ['favorites', 'interested', 'uncategorized', 'not-interested'].forEach(sub =>
+      sortDesc(groups[main][sub])
+    )
+  );
+
+  return groups;
+}
+
+// ============================================================
+// LAND FILTER
+// ============================================================
+function getLandsForCurrentPark() {
+  const seen = new Set();
+  const lands = [];
+  RIDES
+    .filter(r => r.park === state.activeTab)
+    .forEach(r => {
+      if (!seen.has(r.land)) {
+        seen.add(r.land);
+        lands.push(r.land);
+      }
+    });
+  return lands;
+}
+
+function renderLandFilter() {
+  const bar = document.getElementById('land-filter-bar');
+  const lands = getLandsForCurrentPark();
+  let html = '<span class="filter-label">Land:</span>';
+  html += `<button class="filter-btn${state.activeLand === 'all' ? ' active' : ''}" data-land="all">All Lands</button>`;
+  lands.forEach(land => {
+    const active = state.activeLand === land ? ' active' : '';
+    html += `<button class="filter-btn${active}" data-land="${esc(land)}">${esc(land)}</button>`;
+  });
+  bar.innerHTML = html;
+}
+
+// ============================================================
+// HTML BUILDERS
+// ============================================================
+const CAT_META = {
+  'can-ride':    { label: 'Jayce Can Ride' },
+  'everyone':    { label: 'Everyone Rides' },
+  'coming-soon': { label: 'Coming Soon' },
+};
+
+const SUB_META = {
+  'favorites':      'Favorites',
+  'interested':     'Interested',
+  'uncategorized':  'Uncategorized',
+  'not-interested': 'Not Interested',
+};
+
+function badgeClass(ride) {
+  if (ride.heightRequirement === null) return 'badge-no-req';
+  return getMainCategory(ride) === 'coming-soon' ? 'badge-coming-soon' : 'badge-can-ride';
+}
+
+function badgeLabel(ride) {
+  if (ride.heightRequirement === null) return 'Any';
+  if (ride.heightMax !== undefined)    return ride.heightRequirement + '″–' + ride.heightMax + '″';
+  return ride.heightRequirement + '″';
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function buildRideCard(ride) {
+  const rs       = state.rides[ride.id] || { preference: null, ridden: false };
+  const pref     = rs.preference;
+  const ridden   = rs.ridden === true;
+  const expanded = state.expandedVideos.has(ride.id);
+  const hasVideo = !!ride.youtubeVideoId;
+
+  const cardClass = [
+    'ride-card',
+    pref ? 'pref-' + pref : '',
+    ridden ? 'is-ridden' : '',
+  ].filter(Boolean).join(' ');
+
+  const riddenTag = ridden ? '<span class="ridden-tag">Rode It</span>' : '';
+
+  let videoSection = '';
+  if (hasVideo) {
+    const vid = esc(ride.youtubeVideoId);
+    const thumbWrap = expanded
+      ? `<div class="video-thumb-wrap"><iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>`
+      : `<div class="video-thumb-wrap">
+          <img src="https://img.youtube.com/vi/${vid}/hqdefault.jpg" class="video-thumb" alt="${esc(ride.name)} video thumbnail">
+          <button class="play-overlay" aria-label="Play video">&#9654;</button>
+        </div>`;
+    videoSection = `
+<div class="video-section">
+  ${thumbWrap}
+  <a href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener" class="video-title-link">${esc(ride.name)} — Watch on YouTube &#8599;</a>
+</div>`;
+  }
+
+  return `
+<article class="${cardClass}" data-ride-id="${esc(ride.id)}">
+  <div class="card-body">
+    <div class="card-title-row">
+      <span class="height-badge ${badgeClass(ride)}">${badgeLabel(ride)}</span>
+      <h4 class="ride-name">${esc(ride.name)}</h4>
+      ${riddenTag}
+    </div>
+    <div class="card-title-meta">
+      <span class="land-chip">${esc(ride.land)}</span>
+      <a href="${esc(ride.officialUrl)}" target="_blank" rel="noopener" class="official-link">Visit official page &#8599;</a>
+    </div>
+    <div class="pref-buttons">
+      <button class="pref-btn${pref === 'favorite' ? ' active' : ''}" data-pref="favorite">&#9733; Favorite</button>
+      <button class="pref-btn${pref === 'interested' ? ' active' : ''}" data-pref="interested">Interested</button>
+      <button class="pref-btn${pref === 'not-interested' ? ' active' : ''}" data-pref="not-interested">Not Interested</button>
+    </div>
+    ${videoSection}
+    <div class="card-footer">
+      <label class="rode-label${ridden ? ' checked' : ''}">
+        <input type="checkbox" class="rode-check"${ridden ? ' checked' : ''}>
+        Jayce Rode
+      </label>
+    </div>
+  </div>
+</article>`;
+}
+
+function buildParkView(groups) {
+  const CAT_ORDER = ['can-ride', 'everyone', 'coming-soon'];
+  const SUB_ORDER = ['favorites', 'interested', 'uncategorized', 'not-interested'];
+  let totalVisible = 0;
+  let html = '';
+
+  for (const catKey of CAT_ORDER) {
+    const subs = groups[catKey];
+    const catCount = SUB_ORDER.reduce((n, s) => n + subs[s].length, 0);
+    if (catCount === 0) continue;
+    totalVisible += catCount;
+
+    let subsHtml = '';
+    for (const subKey of SUB_ORDER) {
+      const rides = subs[subKey];
+      if (rides.length === 0) continue;
+      subsHtml += `
+<div class="sub-category" data-sub="${subKey}">
+  <h3 class="sub-category-header">${SUB_META[subKey]}</h3>
+  <div class="ride-grid">
+    ${rides.map(buildRideCard).join('')}
+  </div>
+</div>`;
+    }
+
+    html += `
+<section class="main-category" data-category="${catKey}">
+  <h2 class="main-category-header">
+    ${CAT_META[catKey].label}
+    <span class="main-cat-count">${catCount} attraction${catCount !== 1 ? 's' : ''}</span>
+  </h2>
+  ${subsHtml}
+</section>`;
+  }
+
+  if (totalVisible === 0) {
+    return `<div class="empty-state"><h3>No attractions match the current filter</h3><p>Try "All Attractions" or a different filter above.</p></div>`;
+  }
+
+  return html;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  document.getElementById('park-view').innerHTML = buildParkView(buildDisplayGroups());
+}
+
+// ============================================================
+// UI SYNC
+// ============================================================
+function syncTabUI() {
+  document.querySelectorAll('.tab-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.park === state.activeTab)
+  );
+}
+
+function syncFilterUI() {
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.filter === state.activeFilter)
+  );
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+function onHeightInput(e) {
+  const v = parseFloat(e.target.value);
+  if (!isNaN(v) && v >= 0) {
+    state.height = v;
+    lsSet('tp_height', String(v));
+    render();
+  }
+}
+
+function onTabClick(e) {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  state.activeTab  = btn.dataset.park;
+  state.activeLand = 'all';
+  lsSet('tp_activeTab',  state.activeTab);
+  lsSet('tp_activeLand', 'all');
+  syncTabUI();
+  renderLandFilter();
+  render();
+}
+
+function onFilterClick(e) {
+  const btn = e.target.closest('.filter-btn[data-filter]');
+  if (!btn) return;
+  state.activeFilter = btn.dataset.filter;
+  lsSet('tp_activeFilter', state.activeFilter);
+  syncFilterUI();
+  render();
+}
+
+function onLandFilterClick(e) {
+  const btn = e.target.closest('.filter-btn[data-land]');
+  if (!btn) return;
+  state.activeLand = btn.dataset.land;
+  lsSet('tp_activeLand', state.activeLand);
+  renderLandFilter();
+  render();
+}
+
+function onCardClick(e) {
+  const card = e.target.closest('[data-ride-id]');
+  if (!card) return;
+  const id = card.dataset.rideId;
+
+  const prefBtn = e.target.closest('.pref-btn');
+  if (prefBtn) {
+    const pref = prefBtn.dataset.pref;
+    state.rides[id].preference = state.rides[id].preference === pref ? null : pref;
+    saveRide(id);
+    render();
+    return;
+  }
+
+  const thumbWrap = e.target.closest('.video-thumb-wrap');
+  if (thumbWrap && !thumbWrap.querySelector('iframe')) {
+    const ride = RIDES.find(r => r.id === id);
+    if (ride && ride.youtubeVideoId) {
+      const vid = esc(ride.youtubeVideoId);
+      thumbWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+      state.expandedVideos.add(id);
+    }
+    return;
+  }
+}
+
+function onCardChange(e) {
+  const cb = e.target.closest('.rode-check');
+  if (!cb) return;
+  const card = e.target.closest('[data-ride-id]');
+  if (!card) return;
+  const id = card.dataset.rideId;
+  state.rides[id].ridden = cb.checked;
+  saveRide(id);
+  render();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  loadState();
+
+  document.getElementById('height-input').value = state.height;
+  syncTabUI();
+  syncFilterUI();
+  renderLandFilter();
+
+  document.getElementById('height-input').addEventListener('input', onHeightInput);
+  document.getElementById('tab-bar').addEventListener('click', onTabClick);
+  document.getElementById('filter-bar').addEventListener('click', onFilterClick);
+  document.getElementById('land-filter-bar').addEventListener('click', onLandFilterClick);
+  document.getElementById('park-view').addEventListener('click', onCardClick);
+  document.getElementById('park-view').addEventListener('change', onCardChange);
+
+  render();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
