@@ -1,6 +1,6 @@
 node_modules/
 CLAUDE.md
-.support-files/
+.support-files
 .claude/
 .env
 deployArtifact-skill.config.json
