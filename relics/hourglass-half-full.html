@@ -1,0 +1,1468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Countdowns</title>
+<style>
+  :root {
+    --bg-deep: #0f0a1e;
+    --fg: #f7f3ff;
+    --fg-dim: #c8c0e0;
+    --fg-faint: #8a82a8;
+    --panel: rgba(20, 14, 38, 0.55);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --btn-bg: rgba(255, 255, 255, 0.08);
+    --btn-bg-hover: rgba(255, 255, 255, 0.16);
+    --accent: #ff6b9d;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { background: var(--bg-deep); }
+  body {
+    color: var(--fg);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ---------- background blobs ---------- */
+  .bg {
+    position: fixed; inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: radial-gradient(ellipse at top, #1a1240 0%, #0f0a1e 60%);
+  }
+  .blob {
+    position: absolute;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.55;
+    will-change: transform;
+    mix-blend-mode: screen;
+  }
+  .blob.b1 { background: radial-gradient(circle, #ff3d8a 0%, transparent 65%); top: -20vmax; left: -15vmax; animation: drift1 32s ease-in-out infinite; }
+  .blob.b2 { background: radial-gradient(circle, #6c5dd3 0%, transparent 65%); top: -10vmax; right: -20vmax; animation: drift2 28s ease-in-out infinite; }
+  .blob.b3 { background: radial-gradient(circle, #00d4ff 0%, transparent 65%); bottom: -25vmax; left: 10vmax; animation: drift3 36s ease-in-out infinite; }
+  .blob.b4 { background: radial-gradient(circle, #ffb347 0%, transparent 65%); bottom: -15vmax; right: -10vmax; animation: drift4 30s ease-in-out infinite; }
+  .blob.b5 { background: radial-gradient(circle, #b347ff 0%, transparent 65%); top: 30vmax; left: 35vmax; animation: drift5 38s ease-in-out infinite; }
+  @keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(8vmax, 6vmax) scale(1.15);} }
+  @keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(-7vmax, 8vmax) scale(1.1);} }
+  @keyframes drift3 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(6vmax, -5vmax) scale(1.18);} }
+  @keyframes drift4 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(-8vmax, -7vmax) scale(1.12);} }
+  @keyframes drift5 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(5vmax, -8vmax) scale(0.9);} }
+  @media (prefers-reduced-motion: reduce) {
+    .blob { animation: none !important; }
+  }
+
+  /* ---------- header ---------- */
+  header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
+  }
+  .brand {
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ff6b9d, #ffb347, #00d4ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 2px 30px rgba(255, 107, 157, 0.3);
+  }
+  .empty-hint {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    color: var(--fg-dim);
+    font-size: 0.95rem;
+  }
+  .empty-hint[hidden] { display: none; }
+  .empty-hint .arrow-svg {
+    width: 80px; height: 36px;
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: hintBob 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @media (max-width: 721px) {
+    .arrow-svg {
+      display: none;
+    }
+  }
+
+  @keyframes hintBob {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(5px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .empty-hint .arrow-svg { animation: none; }
+  }
+  @media (max-width: 720px) {
+    header { grid-template-columns: auto auto; justify-content: space-between; }
+    .empty-hint { grid-column: 1 / -1; order: 2; }
+  }
+  .btn {
+    background: var(--btn-bg);
+    border: 1px solid var(--panel-border);
+    color: var(--fg);
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .btn:hover { background: var(--btn-bg-hover); }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary {
+    background: linear-gradient(135deg, #ff6b9d, #b347ff);
+    border: none;
+  }
+  .btn.primary:hover { filter: brightness(1.1); }
+  .btn.ghost { background: transparent; }
+  .btn.danger { color: #ff8a9a; }
+  .btn-icon {
+    width: 32px; height: 32px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--btn-bg); border: 1px solid var(--panel-border);
+    border-radius: 50%; color: var(--fg); cursor: pointer;
+  }
+  .btn-icon:hover { background: var(--btn-bg-hover); }
+
+  /* ---------- main ---------- */
+  main {
+    padding: 0 clamp(1rem, 4vw, 2.5rem) 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  #share-preview {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  #share-preview h3 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+  #share-preview p { margin: 0 0 1rem; color: var(--fg-dim); font-size: 0.9rem; }
+  #share-preview .share-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  #share-preview[hidden] { display: none; }
+
+  #timers {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ---------- timer card ---------- */
+  .timer {
+    --card-bg: #1a1a2e;
+    --card-border: rgba(255,255,255,0.13);
+    --card-face: #2a2148;
+    --number: #ffffff;
+    --accent: #ff6b9d;
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 1.25rem;
+    padding: 1.5rem 1.25rem 1.25rem;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    overflow: hidden;
+  }
+  .timer.builtin {
+    border: 1px solid rgba(255, 179, 209, 0.35);
+    box-shadow: 0 10px 50px rgba(255, 107, 157, 0.18);
+  }
+  .timer-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 0.75rem; margin-bottom: 1rem;
+  }
+  .timer-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.25;
+  }
+  .timer-meta {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--fg-faint);
+    letter-spacing: 0.02em;
+  }
+  .timer-menu { position: relative; flex-shrink: 0; }
+  .menu-popover {
+    position: absolute; top: 38px; right: 0;
+    background: #1a1230;
+    border: 1px solid var(--panel-border);
+    border-radius: 0.75rem;
+    padding: 0.4rem;
+    min-width: 180px;
+    z-index: 10;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    display: none;
+  }
+  .menu-popover.open { display: block; }
+  .menu-popover button {
+    display: block; width: 100%;
+    background: transparent; border: none;
+    color: var(--fg); text-align: left;
+    padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+    font-size: 0.9rem; cursor: pointer;
+  }
+  .menu-popover button:hover { background: var(--btn-bg); }
+  .menu-popover button.danger { color: #ff8a9a; }
+  .menu-popover hr { border: none; border-top: 1px solid var(--panel-border); margin: 0.25rem 0; }
+
+  /* ---------- flip clock ---------- */
+  .clock {
+    display: flex; align-items: flex-start; justify-content: center;
+    gap: 0.4rem;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    margin: 0.5rem 0 0.25rem;
+    font-size: clamp(1.6rem, 6.5vw, 3.4rem);
+    line-height: 1;
+  }
+  .seg { display: flex; flex-direction: column; align-items: center; }
+  .seg-label {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.65rem; letter-spacing: 0.18em;
+    color: var(--fg-faint); font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+  .digits { display: flex; gap: 4px; height: 1.18em; }
+
+  .flip {
+    position: relative;
+    display: inline-block;
+    width: 0.78em;
+    height: 1.18em;
+    line-height: 1;
+    perspective: 700px;
+  }
+  .flip .card {
+    position: absolute; inset: 0;
+    border-radius: 0.12em;
+    background: var(--card-face);
+    color: var(--number);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; line-height: 1;
+    box-shadow:
+      0 4px 14px rgba(0,0,0,0.35),
+      inset 0 0 0 1px var(--card-border),
+      inset 0 -0.06em 0 rgba(0,0,0,0.25);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+  }
+  .flip .card::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+  .flip .card.back { transform: rotateX(180deg); }
+  .flip.flipping .card.front { animation: flipDown 0.55s cubic-bezier(.4,.0,.2,1); }
+  .flip.flipping .card.back  { animation: flipUp 0.55s cubic-bezier(.4,.0,.2,1); }
+  @keyframes flipDown { from { transform: rotateX(0); } to { transform: rotateX(180deg); } }
+  @keyframes flipUp   { from { transform: rotateX(180deg); } to { transform: rotateX(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .flip.flipping .card.front,
+    .flip.flipping .card.back { animation: none !important; }
+  }
+
+  .sep {
+    height: 1.18em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: var(--accent);
+    font-weight: 800;
+    margin: 0 0.05em;
+    opacity: 0.85;
+  }
+
+  /* ---------- celebrating ---------- */
+  .timer.celebrating {
+    box-shadow:
+      0 10px 50px rgba(255, 107, 157, 0.35),
+      0 0 0 1px rgba(255, 209, 102, 0.4);
+    animation: pulseGlow 1.8s ease-in-out infinite;
+  }
+  .timer.celebrating .timer-title {
+    background: linear-gradient(135deg, #ffd166, #ff6b9d, #00d4ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  @keyframes pulseGlow {
+    0%,100% { box-shadow: 0 10px 50px rgba(255, 107, 157, 0.30), 0 0 0 1px rgba(255, 209, 102, 0.3); }
+    50%     { box-shadow: 0 10px 60px rgba(255, 107, 157, 0.55), 0 0 0 2px rgba(255, 209, 102, 0.55); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .timer.celebrating { animation: none !important; }
+  }
+
+  .countup-note {
+    text-align: center;
+    color: var(--fg-faint);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .confetti {
+    position: fixed;
+    width: 8px; height: 14px;
+    z-index: 1000;
+    pointer-events: none;
+    border-radius: 1px;
+    will-change: transform, opacity;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    margin-top: 4rem;
+    padding: 2rem clamp(1rem, 4vw, 2.5rem) 3rem;
+    color: var(--fg-dim);
+    font-size: 0.88rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.35), transparent);
+  }
+  footer .foot-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  footer h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--fg);
+  }
+  footer p, footer li { margin: 0.25rem 0; color: var(--fg-dim); }
+  footer ul { padding-left: 1.1rem; margin: 0.25rem 0; }
+  footer .foot-tag {
+    text-align: center; margin-top: 2rem; color: var(--fg-faint); font-size: 0.85rem;
+  }
+  footer a, footer button.link {
+    background: transparent; border: none; color: var(--accent); cursor: pointer;
+    padding: 0; font: inherit; text-decoration: underline; text-underline-offset: 3px;
+  }
+
+  /* ---------- modal ---------- */
+  dialog.modal {
+    background: #161029;
+    color: var(--fg);
+    border: 1px solid var(--panel-border);
+    border-radius: 1rem;
+    padding: 0;
+    max-width: min(560px, 100% - 2rem);
+    width: 100%;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+  }
+  dialog.modal::backdrop { background: rgba(8, 4, 20, 0.7); backdrop-filter: blur(6px); }
+  .modal-inner { padding: 1.5rem 1.25rem 1.25rem; }
+  .modal-inner h2 { margin: 0 0 1rem; font-size: 1.25rem; }
+  .modal-inner label { display: block; margin-bottom: 0.85rem; font-size: 0.9rem; color: var(--fg-dim); }
+  .modal-inner label span { display: block; margin-bottom: 0.3rem; }
+  .modal-inner input[type=text],
+  .modal-inner input[type=datetime-local],
+  .modal-inner select,
+  .modal-inner textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--panel-border);
+    border-radius: 0.5rem;
+    color: var(--fg);
+    padding: 0.55rem 0.7rem;
+    font: inherit;
+  }
+  .modal-inner input[type=text]:focus,
+  .modal-inner input[type=datetime-local]:focus,
+  .modal-inner select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .modal-inner .row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+  .modal-inner .row > * { flex: 1 1 200px; }
+  .modal-inner details { margin: 1rem 0 0.25rem; }
+  .modal-inner summary { cursor: pointer; color: var(--accent); font-weight: 600; padding: 0.4rem 0; }
+  .color-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.6rem; margin-top: 0.75rem; }
+  .color-item { background: rgba(255,255,255,0.04); border-radius: 0.5rem; padding: 0.5rem; }
+  .color-item label { font-size: 0.78rem; margin: 0 0 0.3rem; }
+  .color-item input[type=color] { width: 100%; height: 32px; border: none; background: transparent; padding: 0; cursor: pointer; }
+  .color-reset { background: transparent; border: none; color: var(--fg-faint); font-size: 0.72rem; cursor: pointer; text-decoration: underline; padding: 0; margin-top: 0.2rem; }
+  .modal-actions {
+    display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.25rem;
+    padding-top: 1rem; border-top: 1px solid var(--panel-border);
+  }
+  .form-error { color: #ff8a9a; font-size: 0.85rem; margin-top: 0.25rem; min-height: 1.2em; }
+
+  .deleted-list { display: grid; gap: 0.6rem; }
+  .deleted-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--panel-border);
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .deleted-row .info strong { font-size: 0.95rem; }
+  .deleted-row .info small { display: block; color: var(--fg-faint); font-size: 0.75rem; margin-top: 0.15rem; }
+  .deleted-actions { display: flex; gap: 0.4rem; }
+
+  /* ---------- toasts ---------- */
+  #toasts {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; gap: 0.5rem;
+    z-index: 2000;
+    pointer-events: none;
+  }
+  .toast {
+    background: #1a1230;
+    border: 1px solid var(--panel-border);
+    color: var(--fg);
+    border-radius: 999px;
+    padding: 0.6rem 1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    display: flex; align-items: center; gap: 0.75rem;
+    pointer-events: auto;
+    animation: toastIn 0.25s ease-out;
+    font-size: 0.9rem;
+  }
+  .toast button {
+    background: transparent; border: 1px solid var(--panel-border);
+    color: var(--accent); padding: 0.3rem 0.7rem;
+    border-radius: 999px; font: inherit; cursor: pointer;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- responsive tweaks ---------- */
+  @media (max-width: 480px) {
+    .clock { gap: 0.25rem; }
+    .timer { padding: 1.25rem 1rem 1rem; }
+    .brand { font-size: 1.25rem; }
+  }
+
+  body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: space-between;
+    min-height: 100vh;
+  }
+  body header,
+  body main,
+  body footer {
+    flex-basis: 100%;
+  }
+  body header {
+    max-height: 100px;
+  }
+  body main {
+    flex-grow: 1;
+  }
+  body footer {
+    max-height: 300px;
+    align-self: flex-end;
+  }
+  body .clock > .seg:first-of-type .flip:first-of-type[data-val="0"] {
+    display: none;
+  }
+  body footer .foot-grid {
+    display: flex;
+    justify-content: space-between;
+  }
+  body footer .foot-grid > div {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+  <div class="blob b5"></div>
+</div>
+
+<header>
+  <div class="brand">⏳ Hourglass Half Full</div>
+  <div class="empty-hint" id="header-hint" hidden>
+    <span>👋 Add your first timer</span>
+    <svg class="arrow-svg" viewBox="0 0 80 36" aria-hidden="true">
+      <path d="M4 30 Q 30 4, 64 10"></path>
+      <path d="M58 4 L 64 10 L 56 16"></path>
+    </svg>
+  </div>
+  <button class="btn primary" id="add-btn" aria-label="Add a new timer">+ Add timer</button>
+</header>
+
+<main>
+  <section id="share-preview" hidden>
+    <h3>Someone shared a timer with you</h3>
+    <p id="share-preview-meta"></p>
+    <div id="share-preview-mount"></div>
+    <div class="share-actions">
+      <button class="btn primary" id="share-accept">Add to my timers</button>
+      <button class="btn" id="share-dismiss">Dismiss</button>
+    </div>
+  </section>
+
+  <section id="timers" aria-live="polite"></section>
+</main>
+
+<footer>
+  <div class="foot-grid">
+    
+    <div style="display: none;">
+      <h4>Save it</h4>
+      <p><button class="link" id="bookmark-btn">Bookmark this page</button> — press <kbd>⌘D</kbd> / <kbd>Ctrl</kbd>+<kbd>D</kbd>.</p>
+      <p>Or <a href="#" id="copy-url">copy the link</a> to share.</p>
+    </div>
+    <div style="display: none;">
+      <h4>Add to home screen</h4>
+      <p><strong>iOS Safari:</strong> tap Share → "Add to Home Screen".</p>
+      <p><strong>Android Chrome:</strong> ⋮ menu → "Install app" / "Add to Home Screen".</p>
+      <p style="color:var(--fg-faint);font-size:0.78rem;">(A real install prompt is in the roadmap — see <code>todo.md</code>.)</p>
+    </div>
+    
+    <div>
+      <h4>Your timers</h4>
+      <p><button class="link" id="view-deleted">View deleted timers</button></p>
+      <p><button class="link" id="export-btn">Export</button> · <button class="link" id="import-btn">Import</button></p>
+    </div>
+  </div>
+  <p class="foot-tag"><span style="color:#ff6b9d">❤</span> Our intention creates our reality <span style="color:#ff6b9d">❤</span></p>
+</footer>
+
+<dialog class="modal" id="timer-modal">
+  <form method="dialog" class="modal-inner" id="timer-form" novalidate>
+    <h2 id="timer-form-title">Add a timer</h2>
+    <label>
+      <span>Name</span>
+      <input type="text" name="name" id="f-name" required maxlength="80" placeholder="Birthday, vacation, deadline…">
+    </label>
+    <div class="row">
+      <label>
+        <span>Date &amp; time</span>
+        <input type="datetime-local" name="local" id="f-local" required>
+      </label>
+      <label>
+        <span>Timezone</span>
+        <select name="tz" id="f-tz"></select>
+      </label>
+    </div>
+    <details id="advanced">
+      <summary>Advanced — customize colors</summary>
+      <div class="color-grid">
+        <div class="color-item"><label>Card background</label><input type="color" id="c-cardBg"><button type="button" class="color-reset" data-reset="cardBg">Reset</button></div>
+        <div class="color-item"><label>Card border</label><input type="color" id="c-cardBorder"><button type="button" class="color-reset" data-reset="cardBorder">Reset</button></div>
+        <div class="color-item"><label>Flip card face</label><input type="color" id="c-cardFace"><button type="button" class="color-reset" data-reset="cardFace">Reset</button></div>
+        <div class="color-item"><label>Number color</label><input type="color" id="c-number"><button type="button" class="color-reset" data-reset="number">Reset</button></div>
+        <div class="color-item"><label>Name / accent</label><input type="color" id="c-accent"><button type="button" class="color-reset" data-reset="accent">Reset</button></div>
+      </div>
+    </details>
+    <div class="form-error" id="form-error"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" id="cancel-btn">Cancel</button>
+      <button type="submit" class="btn primary" id="save-btn">Save timer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="deleted-modal">
+  <div class="modal-inner">
+    <h2>Deleted timers</h2>
+    <div class="deleted-list" id="deleted-list"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn" id="close-deleted">Done</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal" id="import-modal">
+  <form method="dialog" class="modal-inner">
+    <h2>Import timers</h2>
+    <p style="color:var(--fg-dim);font-size:0.88rem;margin-top:0;">Paste an exported JSON blob below. This <strong>replaces</strong> your current timers.</p>
+    <label><textarea id="import-text" rows="8" style="font-family:ui-monospace,Menlo,monospace;font-size:0.85rem;"></textarea></label>
+    <div class="form-error" id="import-error"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" id="import-cancel">Cancel</button>
+      <button type="submit" class="btn primary" id="import-confirm">Import</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ============================================================
+  //  Constants & state
+  // ============================================================
+  const STORAGE_KEY = 'countdown-timer:v1';
+  const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const DEFAULT_COLORS = {
+    cardBg: '#1a1a2e',
+    cardBorder: '#3a3460',
+    cardFace: '#2a2148',
+    number: '#ffffff',
+    accent: '#ff6b9d',
+  };
+
+  const BUILT_IN = {
+    id: 'builtin_oliver_carolina',
+    name: 'Oliver And Carolina Come Back Home',
+    // 2026-06-10 10:00 America/New_York → EDT (UTC-4) → 14:00 UTC
+    targetUtc: '2026-06-10T14:00:00.000Z',
+    originalTz: 'America/New_York',
+    originalLocal: '2026-06-10T10:00',
+    colors: {
+      cardBg: '#211538',
+      cardBorder: '#ffb3d144',
+      cardFace: '#3a2452',
+      number: '#fff5e6',
+      accent: '#ffb3d1',
+    },
+    builtIn: true,
+    createdAt: '2026-05-20T00:00:00.000Z',
+    deletedAt: null,
+  };
+
+  const CURATED_TZS = [
+    'UTC',
+    'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+    'America/Anchorage', 'Pacific/Honolulu',
+    'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Athens',
+    'Asia/Dubai', 'Asia/Kolkata', 'Asia/Bangkok', 'Asia/Shanghai',
+    'Asia/Tokyo', 'Australia/Sydney', 'Pacific/Auckland',
+  ];
+
+  // In-memory tracking — keep across renders
+  const celebrationFiredFor = new Set();
+  let editingId = null; // null = new, otherwise an existing timer id
+
+  // ============================================================
+  //  Storage
+  // ============================================================
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { version: 1, timers: [] };
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.timers)) return { version: 1, timers: [] };
+      return parsed;
+    } catch { return { version: 1, timers: [] }; }
+  }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function newId() { return 'tmr_' + Math.random().toString(36).slice(2, 10); }
+
+  function getActiveTimers() {
+    return [BUILT_IN, ...loadState().timers.filter(t => !t.deletedAt)];
+  }
+  function getDeletedTimers() {
+    return loadState().timers.filter(t => !!t.deletedAt);
+  }
+
+  // ============================================================
+  //  Timezone helpers
+  // ============================================================
+  function detectTz() {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+    catch { return 'UTC'; }
+  }
+
+  // Convert "what time YYYY-MM-DDTHH:MM looks like in tz" → UTC Date
+  function tzWallTimeToUtc(year, month, day, hour, minute, tz) {
+    // Treat the literal numbers as if they were UTC, then ask:
+    // "when interpreted in tz, what wall-clock does that UTC moment show?"
+    const asIfUtc = Date.UTC(year, month - 1, day, hour, minute, 0);
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+    });
+    const parts = dtf.formatToParts(new Date(asIfUtc)).reduce((o, p) => (o[p.type] = p.value, o), {});
+    const tzAsUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour === 24 ? 0 : +parts.hour, +parts.minute, +parts.second);
+    const offset = asIfUtc - tzAsUtc; // ms tz is "ahead" of UTC
+    return new Date(asIfUtc + offset);
+  }
+
+  function localInputToUtcIso(localStr, tz) {
+    // localStr: "2026-06-10T10:00"
+    const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(localStr);
+    if (!m) return null;
+    const d = tzWallTimeToUtc(+m[1], +m[2], +m[3], +m[4], +m[5], tz);
+    if (isNaN(d.getTime())) return null;
+    return d.toISOString();
+  }
+
+  function formatTargetInTz(targetUtcIso, tz) {
+    try {
+      return new Intl.DateTimeFormat(undefined, {
+        timeZone: tz,
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit',
+        timeZoneName: 'short',
+      }).format(new Date(targetUtcIso));
+    } catch {
+      return new Date(targetUtcIso).toString();
+    }
+  }
+
+  function fillTzSelect(selectEl, selectedTz) {
+    const userTz = detectTz();
+    const set = new Set([userTz, ...CURATED_TZS]);
+    const options = [...set];
+    selectEl.innerHTML = '';
+    options.forEach(tz => {
+      const opt = document.createElement('option');
+      opt.value = tz;
+      opt.textContent = tz === userTz ? `${tz}  (your local)` : tz;
+      if (tz === selectedTz) opt.selected = true;
+      selectEl.appendChild(opt);
+    });
+    if (selectedTz && !options.includes(selectedTz)) {
+      const opt = document.createElement('option');
+      opt.value = selectedTz;
+      opt.textContent = selectedTz;
+      opt.selected = true;
+      selectEl.appendChild(opt);
+    }
+  }
+
+  // ============================================================
+  //  Share encoding
+  // ============================================================
+  function b64urlEncode(s) {
+    return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(s) {
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    return decodeURIComponent(escape(atob(s)));
+  }
+  function shareUrlFor(timer) {
+    const payload = {
+      n: timer.name,
+      t: timer.targetUtc,
+      z: timer.originalTz,
+      l: timer.originalLocal,
+      c: timer.colors,
+    };
+    const enc = b64urlEncode(JSON.stringify(payload));
+    const u = new URL(location.href);
+    u.search = '';
+    u.searchParams.set('t', enc);
+    u.hash = '';
+    return u.toString();
+  }
+  function decodeShareParam(s) {
+    try {
+      const obj = JSON.parse(b64urlDecode(s));
+      if (!obj || typeof obj.n !== 'string' || typeof obj.t !== 'string' || typeof obj.z !== 'string') return null;
+      if (isNaN(new Date(obj.t).getTime())) return null;
+      return {
+        name: obj.n.slice(0, 120),
+        targetUtc: obj.t,
+        originalTz: obj.z,
+        originalLocal: obj.l || '',
+        colors: { ...DEFAULT_COLORS, ...(obj.c || {}) },
+      };
+    } catch { return null; }
+  }
+
+  // ============================================================
+  //  Flip clock
+  // ============================================================
+  function createFlipDigit(initial = '0') {
+    const wrap = document.createElement('div');
+    wrap.className = 'flip';
+    wrap.dataset.val = initial;
+    wrap.innerHTML = `
+      <div class="card front"><span>${initial}</span></div>
+      <div class="card back"><span>${initial}</span></div>
+    `;
+    return wrap;
+  }
+  function setFlipDigit(el, newVal) {
+    const cur = el.dataset.val;
+    const s = String(newVal);
+    if (cur === s) return;
+    el.dataset.val = s;
+    const front = el.querySelector('.card.front span');
+    const back  = el.querySelector('.card.back  span');
+    if (REDUCED_MOTION) {
+      front.textContent = s;
+      back.textContent = s;
+      return;
+    }
+    back.textContent = s;
+    el.classList.add('flipping');
+    setTimeout(() => {
+      front.textContent = s;
+      el.classList.remove('flipping');
+    }, 550);
+  }
+
+  // ============================================================
+  //  Confetti
+  // ============================================================
+  function fireConfetti(originEl) {
+    if (REDUCED_MOTION) return;
+    const colors = ['#ff6b9d','#ffd166','#06d6a0','#00d4ff','#b347ff','#ffb347'];
+    const r = originEl.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    for (let i = 0; i < 90; i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti';
+      p.style.left = cx + 'px';
+      p.style.top = cy + 'px';
+      p.style.background = colors[(Math.random() * colors.length) | 0];
+      document.body.appendChild(p);
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 4 + Math.random() * 9;
+      const vx0 = Math.cos(angle) * speed;
+      let vx = vx0;
+      let vy = Math.sin(angle) * speed - 6;
+      let x = 0, y = 0, rot = Math.random() * 360;
+      let frame = 0;
+      const total = 140;
+      function step() {
+        frame++;
+        x += vx;
+        y += vy;
+        vy += 0.28;
+        vx *= 0.995;
+        rot += 7 + Math.random() * 3;
+        p.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+        p.style.opacity = String(Math.max(0, 1 - frame / total));
+        if (frame < total) requestAnimationFrame(step);
+        else p.remove();
+      }
+      requestAnimationFrame(step);
+    }
+  }
+
+  // ============================================================
+  //  Render
+  // ============================================================
+  const timersEl = document.getElementById('timers');
+
+  function renderAll() {
+    timersEl.innerHTML = '';
+    const active = getActiveTimers();
+    // Sort: built-in first, then by soonest target
+    active.sort((a, b) => {
+      if (a.builtIn && !b.builtIn) return -1;
+      if (b.builtIn && !a.builtIn) return 1;
+      return new Date(a.targetUtc) - new Date(b.targetUtc);
+    });
+
+    // Empty-state for user timers (built-in is always present)
+    const userCount = active.filter(t => !t.builtIn).length;
+
+    active.forEach(t => timersEl.appendChild(renderTimerCard(t)));
+
+    const headerHint = document.getElementById('header-hint');
+    if (headerHint) headerHint.hidden = userCount > 0;
+
+    tickAll(); // initial sync
+  }
+
+  function renderTimerCard(t) {
+    const card = document.createElement('article');
+    card.className = 'timer' + (t.builtIn ? ' builtin' : '');
+    card.dataset.id = t.id;
+    const c = { ...DEFAULT_COLORS, ...(t.colors || {}) };
+    card.style.setProperty('--card-bg', c.cardBg);
+    card.style.setProperty('--card-border', c.cardBorder);
+    card.style.setProperty('--card-face', c.cardFace);
+    card.style.setProperty('--number', c.number);
+    card.style.setProperty('--accent', c.accent);
+
+    card.innerHTML = `
+      <div class="timer-head">
+        <div>
+          <h2 class="timer-title">${escapeHtml(t.name)}</h2>
+          <span class="timer-meta">${escapeHtml(formatTargetInTz(t.targetUtc, t.originalTz))}</span>
+        </div>
+        <div class="timer-menu">
+          <button class="btn-icon" aria-label="Timer options" data-action="menu-toggle">⋯</button>
+          <div class="menu-popover" role="menu"></div>
+        </div>
+      </div>
+      <div class="clock" aria-hidden="true">
+        ${segHtml('Days', 3)}
+        <span class="sep">:</span>
+        ${segHtml('Hours', 2)}
+        <span class="sep">:</span>
+        ${segHtml('Mins', 2)}
+        <span class="sep">:</span>
+        ${segHtml('Secs', 2)}
+      </div>
+      <div class="countup-note" hidden></div>
+    `;
+
+    // Insert real flip elements
+    card.querySelectorAll('.digits').forEach(d => {
+      const n = parseInt(d.dataset.count, 10);
+      for (let i = 0; i < n; i++) d.appendChild(createFlipDigit('0'));
+    });
+
+    // Menu
+    const menu = card.querySelector('.menu-popover');
+    const menuBtns = [];
+    if (!t.builtIn) menuBtns.push({ label: '✏ Edit', action: 'edit' });
+    menuBtns.push({ label: '🔗 Share', action: 'share' });
+    if (!t.builtIn) menuBtns.push({ label: '🎨 Customize colors', action: 'colors' });
+    if (!t.builtIn) {
+      menuBtns.push({ sep: true });
+      menuBtns.push({ label: '🗑 Delete', action: 'delete', danger: true });
+    }
+    menuBtns.forEach(m => {
+      if (m.sep) { const hr = document.createElement('hr'); menu.appendChild(hr); return; }
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = m.label;
+      b.dataset.action = m.action;
+      if (m.danger) b.className = 'danger';
+      menu.appendChild(b);
+    });
+
+    return card;
+  }
+
+  function segHtml(label, count) {
+    return `
+      <div class="seg">
+        <div class="digits" data-count="${count}"></div>
+        <span class="seg-label">${label}</span>
+      </div>`;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  // ============================================================
+  //  Tick — update digits each second
+  // ============================================================
+  function setDigits(digitsEl, num, pad) {
+    const s = String(num).padStart(pad, '0');
+    const children = digitsEl.children;
+    for (let i = 0; i < pad; i++) {
+      setFlipDigit(children[i], s[i]);
+    }
+  }
+
+  function tickAll() {
+    const now = Date.now();
+    let soonest = null;
+
+    document.querySelectorAll('.timer').forEach(card => {
+      const id = card.dataset.id;
+      const t = (id === BUILT_IN.id) ? BUILT_IN
+              : getActiveTimers().find(x => x.id === id);
+      if (!t) return;
+      const target = new Date(t.targetUtc).getTime();
+      const delta = target - now;
+      const absMs = Math.abs(delta);
+      const totalSecs = Math.floor(absMs / 1000);
+      const days  = Math.floor(totalSecs / 86400);
+      const hours = Math.floor((totalSecs % 86400) / 3600);
+      const mins  = Math.floor((totalSecs % 3600) / 60);
+      const secs  = totalSecs % 60;
+
+      const segs = card.querySelectorAll('.digits');
+      setDigits(segs[0], Math.min(days, 999), 3);
+      setDigits(segs[1], hours, 2);
+      setDigits(segs[2], mins, 2);
+      setDigits(segs[3], secs, 2);
+
+      const countup = card.querySelector('.countup-note');
+      if (delta <= 0) {
+        if (!card.classList.contains('celebrating')) {
+          card.classList.add('celebrating');
+        }
+        countup.hidden = false;
+        countup.textContent = 'Counting up · since ' + formatTargetInTz(t.targetUtc, t.originalTz);
+        if (!celebrationFiredFor.has(id)) {
+          celebrationFiredFor.add(id);
+          fireConfetti(card);
+        }
+        // For the soonest-title heuristic, only consider future timers
+      } else {
+        card.classList.remove('celebrating');
+        countup.hidden = true;
+        if (!soonest || target < soonest.target) {
+          soonest = { target, name: t.name, delta };
+        }
+      }
+    });
+
+    // Update tab title
+    if (soonest) {
+      const totalSecs = Math.floor(soonest.delta / 1000);
+      const d = Math.floor(totalSecs / 86400);
+      const h = Math.floor((totalSecs % 86400) / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      let label;
+      if (d > 0) label = `${d}d ${h}h`;
+      else if (h > 0) label = `${h}h ${m}m`;
+      else label = `${m}m`;
+      document.title = `${label} · ${soonest.name} — Countdowns`;
+    } else {
+      document.title = 'Countdowns';
+    }
+  }
+
+  // ============================================================
+  //  Modal — add / edit
+  // ============================================================
+  const timerModal = document.getElementById('timer-modal');
+  const timerForm  = document.getElementById('timer-form');
+  const formTitle  = document.getElementById('timer-form-title');
+  const fName      = document.getElementById('f-name');
+  const fLocal     = document.getElementById('f-local');
+  const fTz        = document.getElementById('f-tz');
+  const formError  = document.getElementById('form-error');
+  const advanced   = document.getElementById('advanced');
+  const colorInputs = {
+    cardBg: document.getElementById('c-cardBg'),
+    cardBorder: document.getElementById('c-cardBorder'),
+    cardFace: document.getElementById('c-cardFace'),
+    number: document.getElementById('c-number'),
+    accent: document.getElementById('c-accent'),
+  };
+
+  // Color inputs only accept 6-digit hex; strip alpha for input, but keep alpha-friendly default elsewhere.
+  function setColorInputs(colors) {
+    const c = { ...DEFAULT_COLORS, ...(colors || {}) };
+    for (const k of Object.keys(colorInputs)) {
+      // <input type=color> wants #RRGGBB. Strip any alpha.
+      colorInputs[k].value = (c[k] || DEFAULT_COLORS[k]).slice(0, 7);
+    }
+  }
+  function readColorInputs() {
+    const out = {};
+    for (const k of Object.keys(colorInputs)) out[k] = colorInputs[k].value;
+    return out;
+  }
+
+  document.querySelectorAll('.color-reset').forEach(b => {
+    b.addEventListener('click', () => {
+      const k = b.dataset.reset;
+      if (colorInputs[k]) colorInputs[k].value = DEFAULT_COLORS[k].slice(0, 7);
+    });
+  });
+
+  function openTimerModal(existing = null) {
+    editingId = existing ? existing.id : null;
+    formTitle.textContent = existing ? 'Edit timer' : 'Add a timer';
+    formError.textContent = '';
+    advanced.open = false;
+    fillTzSelect(fTz, existing ? existing.originalTz : detectTz());
+    if (existing) {
+      fName.value = existing.name;
+      fLocal.value = existing.originalLocal || '';
+      setColorInputs(existing.colors);
+    } else {
+      fName.value = '';
+      // Default to ~1 hour from now in user's tz
+      const d = new Date(Date.now() + 3600 * 1000);
+      const pad = (n) => String(n).padStart(2, '0');
+      fLocal.value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      setColorInputs(DEFAULT_COLORS);
+    }
+    timerModal.showModal();
+    setTimeout(() => fName.focus(), 50);
+  }
+
+  document.getElementById('cancel-btn').addEventListener('click', () => timerModal.close());
+  document.getElementById('add-btn').addEventListener('click', () => openTimerModal(null));
+
+  timerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    formError.textContent = '';
+    const name = fName.value.trim();
+    const local = fLocal.value;
+    const tz = fTz.value;
+    if (!name) { formError.textContent = 'Please give the timer a name.'; return; }
+    if (!local) { formError.textContent = 'Please pick a date and time.'; return; }
+    const targetUtc = localInputToUtcIso(local, tz);
+    if (!targetUtc) { formError.textContent = 'Could not parse the date / time.'; return; }
+    const colors = readColorInputs();
+    const state = loadState();
+    if (editingId) {
+      const idx = state.timers.findIndex(t => t.id === editingId);
+      if (idx >= 0) {
+        state.timers[idx] = {
+          ...state.timers[idx],
+          name, targetUtc, originalTz: tz, originalLocal: local, colors,
+        };
+        celebrationFiredFor.delete(editingId); // allow re-fire if newly past
+      }
+    } else {
+      state.timers.push({
+        id: newId(),
+        name, targetUtc, originalTz: tz, originalLocal: local, colors,
+        createdAt: new Date().toISOString(),
+        deletedAt: null,
+      });
+    }
+    saveState(state);
+    timerModal.close();
+    renderAll();
+    toast(editingId ? 'Timer updated.' : 'Timer added.');
+  });
+
+  // ============================================================
+  //  Menu actions (delegation)
+  // ============================================================
+  document.addEventListener('click', (e) => {
+    // Close any open menus when clicking elsewhere
+    const isMenuToggle = e.target.closest('[data-action="menu-toggle"]');
+    document.querySelectorAll('.menu-popover.open').forEach(m => {
+      if (!isMenuToggle || !m.parentElement.contains(e.target)) m.classList.remove('open');
+    });
+    if (isMenuToggle) {
+      const pop = isMenuToggle.parentElement.querySelector('.menu-popover');
+      pop.classList.toggle('open');
+      return;
+    }
+
+    const actionBtn = e.target.closest('.menu-popover button[data-action]');
+    if (!actionBtn) return;
+    const card = actionBtn.closest('.timer');
+    const id = card.dataset.id;
+    const action = actionBtn.dataset.action;
+    card.querySelector('.menu-popover').classList.remove('open');
+
+    if (id === BUILT_IN.id) {
+      if (action === 'share') return shareTimer(BUILT_IN);
+      return;
+    }
+    const t = loadState().timers.find(x => x.id === id);
+    if (!t) return;
+    if (action === 'edit')   return openTimerModal(t);
+    if (action === 'share')  return shareTimer(t);
+    if (action === 'colors') { openTimerModal(t); advanced.open = true; return; }
+    if (action === 'delete') return softDelete(id);
+  });
+
+  // ============================================================
+  //  Soft delete + undo
+  // ============================================================
+  function softDelete(id) {
+    const state = loadState();
+    const idx = state.timers.findIndex(t => t.id === id);
+    if (idx < 0) return;
+    state.timers[idx].deletedAt = new Date().toISOString();
+    saveState(state);
+    renderAll();
+    toast('Timer deleted.', () => {
+      const s = loadState();
+      const i = s.timers.findIndex(t => t.id === id);
+      if (i >= 0) { s.timers[i].deletedAt = null; saveState(s); renderAll(); }
+    }, 'Undo');
+  }
+  function restoreDeleted(id) {
+    const s = loadState();
+    const i = s.timers.findIndex(t => t.id === id);
+    if (i >= 0) { s.timers[i].deletedAt = null; saveState(s); renderAll(); renderDeletedList(); }
+  }
+  function hardDelete(id) {
+    const s = loadState();
+    s.timers = s.timers.filter(t => t.id !== id);
+    saveState(s);
+    renderDeletedList();
+  }
+
+  // ============================================================
+  //  Share
+  // ============================================================
+  async function shareTimer(t) {
+    const url = shareUrlFor(t);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Share link copied to clipboard.');
+    } catch {
+      // Fallback — show URL in a toast with a click-to-select
+      toast('Link: ' + url);
+    }
+    if (navigator.share) {
+      // Best effort; ignore rejection
+      navigator.share({ title: t.name, text: 'Counting down: ' + t.name, url }).catch(() => {});
+    }
+  }
+
+  // ============================================================
+  //  Share preview (?t=)
+  // ============================================================
+  const sharePreview = document.getElementById('share-preview');
+  const sharePreviewMeta = document.getElementById('share-preview-meta');
+  const sharePreviewMount = document.getElementById('share-preview-mount');
+  let pendingShared = null;
+
+  function handleShareParam() {
+    const u = new URL(location.href);
+    const enc = u.searchParams.get('t');
+    if (!enc) return;
+    const decoded = decodeShareParam(enc);
+    if (!decoded) {
+      cleanShareParam();
+      return;
+    }
+    pendingShared = decoded;
+    sharePreviewMeta.textContent = `${decoded.name} — ${formatTargetInTz(decoded.targetUtc, decoded.originalTz)}`;
+    sharePreviewMount.innerHTML = '';
+    const previewTimer = {
+      id: 'preview_' + Math.random().toString(36).slice(2, 8),
+      ...decoded,
+      builtIn: false,
+    };
+    const card = renderTimerCard(previewTimer);
+    // Hide the menu on preview
+    const menuWrap = card.querySelector('.timer-menu');
+    if (menuWrap) menuWrap.style.display = 'none';
+    sharePreviewMount.appendChild(card);
+    sharePreview.hidden = false;
+    // Make the preview card tick too — give it an id the tick loop can find
+    // (We re-render below; but for preview we need a dedicated tick)
+    schedulePreviewTick(card, decoded);
+  }
+  function cleanShareParam() {
+    const u = new URL(location.href);
+    u.searchParams.delete('t');
+    history.replaceState(null, '', u.toString());
+  }
+  function schedulePreviewTick(card, decoded) {
+    function step() {
+      if (!document.body.contains(card)) return;
+      const target = new Date(decoded.targetUtc).getTime();
+      const now = Date.now();
+      const delta = target - now;
+      const totalSecs = Math.floor(Math.abs(delta) / 1000);
+      const d = Math.floor(totalSecs / 86400);
+      const h = Math.floor((totalSecs % 86400) / 3600);
+      const m = Math.floor((totalSecs % 3600) / 60);
+      const s = totalSecs % 60;
+      const segs = card.querySelectorAll('.digits');
+      setDigits(segs[0], Math.min(d, 999), 3);
+      setDigits(segs[1], h, 2);
+      setDigits(segs[2], m, 2);
+      setDigits(segs[3], s, 2);
+    }
+    step();
+    const iv = setInterval(() => {
+      if (!document.body.contains(card)) { clearInterval(iv); return; }
+      step();
+    }, 1000);
+  }
+
+  document.getElementById('share-accept').addEventListener('click', () => {
+    if (!pendingShared) return;
+    const state = loadState();
+    state.timers.push({
+      id: newId(),
+      name: pendingShared.name,
+      targetUtc: pendingShared.targetUtc,
+      originalTz: pendingShared.originalTz,
+      originalLocal: pendingShared.originalLocal,
+      colors: { ...DEFAULT_COLORS, ...pendingShared.colors },
+      createdAt: new Date().toISOString(),
+      deletedAt: null,
+    });
+    saveState(state);
+    pendingShared = null;
+    sharePreview.hidden = true;
+    sharePreviewMount.innerHTML = '';
+    cleanShareParam();
+    renderAll();
+    toast('Added to your timers.');
+  });
+  document.getElementById('share-dismiss').addEventListener('click', () => {
+    pendingShared = null;
+    sharePreview.hidden = true;
+    sharePreviewMount.innerHTML = '';
+    cleanShareParam();
+  });
+
+  // ============================================================
+  //  Deleted timers modal
+  // ============================================================
+  const deletedModal = document.getElementById('deleted-modal');
+  const deletedList = document.getElementById('deleted-list');
+
+  function renderDeletedList() {
+    const items = getDeletedTimers();
+    deletedList.innerHTML = '';
+    if (!items.length) {
+      const empty = document.createElement('p');
+      empty.style.color = 'var(--fg-faint)';
+      empty.textContent = 'No deleted timers.';
+      deletedList.appendChild(empty);
+      return;
+    }
+    items.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'deleted-row';
+      row.innerHTML = `
+        <div class="info">
+          <strong>${escapeHtml(t.name)}</strong>
+          <small>${escapeHtml(formatTargetInTz(t.targetUtc, t.originalTz))}</small>
+        </div>
+        <div class="deleted-actions">
+          <button class="btn" data-restore="${t.id}">Restore</button>
+          <button class="btn danger" data-purge="${t.id}">Delete forever</button>
+        </div>
+      `;
+      deletedList.appendChild(row);
+    });
+  }
+  document.getElementById('view-deleted').addEventListener('click', () => {
+    renderDeletedList();
+    deletedModal.showModal();
+  });
+  document.getElementById('close-deleted').addEventListener('click', () => deletedModal.close());
+  deletedList.addEventListener('click', (e) => {
+    const r = e.target.closest('[data-restore]');
+    const p = e.target.closest('[data-purge]');
+    if (r) restoreDeleted(r.dataset.restore);
+    if (p) {
+      if (confirm('Delete this timer forever? This cannot be undone.')) hardDelete(p.dataset.purge);
+    }
+  });
+
+  // ============================================================
+  //  Export / Import
+  // ============================================================
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const blob = JSON.stringify(loadState(), null, 2);
+    const u = URL.createObjectURL(new Blob([blob], { type: 'application/json' }));
+    const a = document.createElement('a');
+    a.href = u;
+    a.download = 'countdowns-export.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 1000);
+    toast('Exported.');
+  });
+
+  const importModal = document.getElementById('import-modal');
+  const importText = document.getElementById('import-text');
+  const importError = document.getElementById('import-error');
+  document.getElementById('import-btn').addEventListener('click', () => {
+    importText.value = '';
+    importError.textContent = '';
+    importModal.showModal();
+  });
+  document.getElementById('import-cancel').addEventListener('click', () => importModal.close());
+  document.getElementById('import-confirm').addEventListener('click', (e) => {
+    e.preventDefault();
+    try {
+      const parsed = JSON.parse(importText.value);
+      if (!parsed || !Array.isArray(parsed.timers)) throw new Error('Invalid format');
+      // Light validation
+      parsed.timers.forEach(t => {
+        if (!t.id || !t.name || !t.targetUtc || !t.originalTz) throw new Error('Missing field');
+      });
+      saveState({ version: 1, timers: parsed.timers });
+      importModal.close();
+      renderAll();
+      toast('Imported.');
+    } catch (err) {
+      importError.textContent = 'Could not import: ' + err.message;
+    }
+  });
+
+  // ============================================================
+  //  Toasts
+  // ============================================================
+  const toastsEl = document.getElementById('toasts');
+  function toast(msg, undoFn = null, undoLabel = 'Undo') {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    const span = document.createElement('span');
+    span.textContent = msg;
+    t.appendChild(span);
+    let timer;
+    if (undoFn) {
+      const b = document.createElement('button');
+      b.textContent = undoLabel;
+      b.addEventListener('click', () => { clearTimeout(timer); undoFn(); t.remove(); });
+      t.appendChild(b);
+    }
+    toastsEl.appendChild(t);
+    timer = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; t.style.transition = 'all .25s'; setTimeout(() => t.remove(), 250); }, undoFn ? 6000 : 3000);
+  }
+
+  // ============================================================
+  //  Footer extras
+  // ============================================================
+  document.getElementById('copy-url').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      await navigator.clipboard.writeText(location.origin + location.pathname);
+      toast('Link copied.');
+    } catch {
+      toast('Could not copy automatically — use ⌘D / Ctrl+D to bookmark.');
+    }
+  });
+  document.getElementById('bookmark-btn').addEventListener('click', () => {
+    toast('Press ⌘D (Mac) or Ctrl+D (Win/Linux) to bookmark this page.');
+  });
+
+  // ============================================================
+  //  Keyboard
+  // ============================================================
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.menu-popover.open').forEach(m => m.classList.remove('open'));
+    }
+  });
+
+  // ============================================================
+  //  Init
+  // ============================================================
+  handleShareParam();
+  renderAll();
+  setInterval(tickAll, 1000);
+})();
+</script>
+</body>
+</html>

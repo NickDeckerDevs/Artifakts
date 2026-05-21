@@ -19,6 +19,11 @@
       "name": "Nerd Out Counter",
       "category": "Fun",
       "file": "nerd-out-counter.html"
+    },
+    {
+      "name": "Hourglass Half Full",
+      "category": "Fun",
+      "file": "hourglass-half-full.html"
     }
   ]
 }
