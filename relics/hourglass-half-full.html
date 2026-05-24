@@ -524,6 +524,13 @@
     text-align: center;
     line-height: 1.3;
   }
+  .preset-label {
+    font-size: 0.78rem;
+    color: var(--fg-faint);
+    margin: 0.75rem 0 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
 
   body footer .foot-grid {
     display: flex;
@@ -591,7 +598,6 @@
     <div>
       <h4>Your timers</h4>
       <p><button class="link" id="view-deleted">View deleted timers</button></p>
-      <p><button class="link" id="theme-btn">Change theme</button></p>
       <p><button class="link" id="export-btn">Export</button> · <button class="link" id="import-btn">Import</button></p>
     </div>
   </div>
@@ -617,6 +623,8 @@
     </div>
     <details id="advanced">
       <summary>Advanced — customize colors</summary>
+      <div class="preset-label">Presets</div>
+      <div class="theme-grid" id="color-presets"></div>
       <div class="color-grid">
         <div class="color-item"><label>Card background</label><input type="color" id="c-cardBg"><button type="button" class="color-reset" data-reset="cardBg">Reset</button></div>
         <div class="color-item"><label>Card border</label><input type="color" id="c-cardBorder"><button type="button" class="color-reset" data-reset="cardBorder">Reset</button></div>
@@ -639,16 +647,6 @@
     <div class="deleted-list" id="deleted-list"></div>
     <div class="modal-actions">
       <button type="button" class="btn" id="close-deleted">Done</button>
-    </div>
-  </div>
-</dialog>
-
-<dialog class="modal" id="theme-modal">
-  <div class="modal-inner">
-    <h2>Choose a theme</h2>
-    <div class="theme-grid" id="theme-grid"></div>
-    <div class="modal-actions">
-      <button type="button" class="btn" id="close-theme">Done</button>
     </div>
   </div>
 </dialog>
@@ -719,34 +717,20 @@
   let editingId = null; // null = new, otherwise an existing timer id
 
   // ============================================================
-  //  Themes
+  //  Color presets (for per-timer card styling)
   // ============================================================
-  const THEMES = [
-    { id: 'deep-space',     name: 'Deep Space',     swatch: '#0f0a1e', bg: '#0f0a1e', fg: '#f7f3ff', fgDim: '#c8c0e0', fgFaint: '#8a82a8', panel: 'rgba(20,14,38,0.55)',  panelBorder: 'rgba(255,255,255,0.08)',  accent: '#ff6b9d', btnBg: 'rgba(255,255,255,0.08)',   btnBgHover: 'rgba(255,255,255,0.16)' },
-    { id: 'midnight-ocean', name: 'Midnight Ocean', swatch: '#0a0f1e', bg: '#0a0f1e', fg: '#e0efff', fgDim: '#b0cce8', fgFaint: '#6a8faa', panel: 'rgba(10,18,40,0.55)',  panelBorder: 'rgba(0,212,255,0.12)',   accent: '#00d4ff', btnBg: 'rgba(0,212,255,0.08)',    btnBgHover: 'rgba(0,212,255,0.16)' },
-    { id: 'forest-dark',    name: 'Forest Dark',    swatch: '#0a1a0f', bg: '#0a1a0f', fg: '#e0ffe0', fgDim: '#a0d4a0', fgFaint: '#5a8a5a', panel: 'rgba(10,26,14,0.55)',  panelBorder: 'rgba(0,255,136,0.10)',   accent: '#00e87a', btnBg: 'rgba(0,255,136,0.08)',    btnBgHover: 'rgba(0,255,136,0.16)' },
-    { id: 'crimson-night',  name: 'Crimson Night',  swatch: '#1a0a0a', bg: '#1a0a0a', fg: '#ffe0e0', fgDim: '#d4a0a0', fgFaint: '#8a5a5a', panel: 'rgba(30,10,10,0.55)',  panelBorder: 'rgba(255,60,60,0.12)',   accent: '#ff4455', btnBg: 'rgba(255,60,60,0.08)',    btnBgHover: 'rgba(255,60,60,0.16)' },
-    { id: 'amber-fire',     name: 'Amber Fire',     swatch: '#1a0f00', bg: '#1a0f00', fg: '#fff3e0', fgDim: '#d4b890', fgFaint: '#8a7040', panel: 'rgba(26,16,0,0.55)',   panelBorder: 'rgba(255,179,71,0.12)',  accent: '#ffb347', btnBg: 'rgba(255,179,71,0.08)',   btnBgHover: 'rgba(255,179,71,0.16)' },
-    { id: 'neon-city',      name: 'Neon City',      swatch: '#050510', bg: '#050510', fg: '#f0f0ff', fgDim: '#b0b0d8', fgFaint: '#6060a0', panel: 'rgba(5,5,20,0.60)',    panelBorder: 'rgba(0,255,159,0.14)',   accent: '#00ff9f', btnBg: 'rgba(0,255,159,0.08)',    btnBgHover: 'rgba(0,255,159,0.16)' },
-    { id: 'lavender',       name: 'Lavender',       swatch: '#120d1f', bg: '#120d1f', fg: '#f5f0ff', fgDim: '#c8b8f0', fgFaint: '#8870b8', panel: 'rgba(18,12,30,0.55)',  panelBorder: 'rgba(192,132,252,0.12)', accent: '#c084fc', btnBg: 'rgba(192,132,252,0.08)',  btnBgHover: 'rgba(192,132,252,0.16)' },
-    { id: 'arctic',         name: 'Arctic',         swatch: '#0a1525', bg: '#0a1525', fg: '#e8f4ff', fgDim: '#a0c4e8', fgFaint: '#5080a8', panel: 'rgba(10,22,40,0.55)',  panelBorder: 'rgba(96,205,255,0.12)',  accent: '#60cdff', btnBg: 'rgba(96,205,255,0.08)',   btnBgHover: 'rgba(96,205,255,0.16)' },
-    { id: 'ember',          name: 'Ember',          swatch: '#1a0800', bg: '#1a0800', fg: '#fff0e8', fgDim: '#d4a888', fgFaint: '#8a5830', panel: 'rgba(26,10,0,0.55)',   panelBorder: 'rgba(255,106,0,0.12)',   accent: '#ff6a00', btnBg: 'rgba(255,106,0,0.08)',    btnBgHover: 'rgba(255,106,0,0.16)' },
-    { id: 'sakura',         name: 'Sakura',         swatch: '#1a0d14', bg: '#1a0d14', fg: '#ffe8f5', fgDim: '#d4a0c0', fgFaint: '#8a5070', panel: 'rgba(26,12,20,0.55)',  panelBorder: 'rgba(255,157,212,0.12)', accent: '#ff9dd4', btnBg: 'rgba(255,157,212,0.08)',  btnBgHover: 'rgba(255,157,212,0.16)' },
+  const COLOR_PRESETS = [
+    { name: 'Deep Space', swatch: '#1a1a2e', cardBg: '#1a1a2e', cardBorder: '#3a3460', cardFace: '#2a2148', number: '#ffffff', accent: '#ff6b9d' },
+    { name: 'Ocean',      swatch: '#0d1b2a', cardBg: '#0d1b2a', cardBorder: '#1a4a6a', cardFace: '#0a2a40', number: '#e0f4ff', accent: '#00d4ff' },
+    { name: 'Forest',     swatch: '#0d1f10', cardBg: '#0d1f10', cardBorder: '#1a4a20', cardFace: '#0a2a14', number: '#e0ffe8', accent: '#00e87a' },
+    { name: 'Crimson',    swatch: '#2a0a0a', cardBg: '#2a0a0a', cardBorder: '#5a1a1a', cardFace: '#3a0d0d', number: '#ffe0e0', accent: '#ff4455' },
+    { name: 'Amber',      swatch: '#2a1400', cardBg: '#2a1400', cardBorder: '#5a3000', cardFace: '#3a1a00', number: '#fff3e0', accent: '#ffb347' },
+    { name: 'Neon',       swatch: '#050510', cardBg: '#050510', cardBorder: '#0a2a1a', cardFace: '#030318', number: '#f0fff8', accent: '#00ff9f' },
+    { name: 'Lavender',   swatch: '#1a1030', cardBg: '#1a1030', cardBorder: '#3a2060', cardFace: '#241540', number: '#f5f0ff', accent: '#c084fc' },
+    { name: 'Arctic',     swatch: '#0a1a2a', cardBg: '#0a1a2a', cardBorder: '#1a3a5a', cardFace: '#0d2238', number: '#e8f4ff', accent: '#60cdff' },
+    { name: 'Ember',      swatch: '#2a0c00', cardBg: '#2a0c00', cardBorder: '#5a2000', cardFace: '#3a1000', number: '#fff0e8', accent: '#ff6a00' },
+    { name: 'Sakura',     swatch: '#2a1020', cardBg: '#2a1020', cardBorder: '#5a1840', cardFace: '#381428', number: '#ffe8f5', accent: '#ff9dd4' },
   ];
-
-  function applyTheme(themeId) {
-    const th = THEMES.find(t => t.id === themeId) || THEMES[0];
-    const r = document.documentElement.style;
-    r.setProperty('--bg-deep', th.bg);
-    r.setProperty('--fg', th.fg);
-    r.setProperty('--fg-dim', th.fgDim);
-    r.setProperty('--fg-faint', th.fgFaint);
-    r.setProperty('--panel', th.panel);
-    r.setProperty('--panel-border', th.panelBorder);
-    r.setProperty('--accent', th.accent);
-    r.setProperty('--btn-bg', th.btnBg);
-    r.setProperty('--btn-bg-hover', th.btnBgHover);
-  }
 
   // ============================================================
   //  Storage
@@ -754,14 +738,13 @@
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false, theme: 'deep-space' };
+      if (!raw) return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false };
       const parsed = JSON.parse(raw);
-      if (!parsed || !Array.isArray(parsed.timers)) return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false, theme: 'deep-space' };
+      if (!parsed || !Array.isArray(parsed.timers)) return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false };
       if (!parsed.hasOwnProperty('builtinDeletedAt')) parsed.builtinDeletedAt = null;
       if (!parsed.hasOwnProperty('builtinPermDeleted')) parsed.builtinPermDeleted = false;
-      if (!parsed.theme) parsed.theme = 'deep-space';
       return parsed;
-    } catch { return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false, theme: 'deep-space' }; }
+    } catch { return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false }; }
   }
   function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
   function newId() { return 'tmr_' + Math.random().toString(36).slice(2, 10); }
@@ -976,13 +959,10 @@
       return new Date(a.targetUtc) - new Date(b.targetUtc);
     });
 
-    // Empty-state for user timers (built-in is always present)
-    const userCount = active.filter(t => !t.builtIn).length;
-
     active.forEach(t => timersEl.appendChild(renderTimerCard(t)));
 
     const headerHint = document.getElementById('header-hint');
-    if (headerHint) headerHint.hidden = userCount > 0;
+    if (headerHint) headerHint.hidden = active.length > 0;
 
     tickAll(); // initial sync
   }
@@ -1172,6 +1152,22 @@
     });
   });
 
+  // Build color preset swatches (once)
+  const colorPresetsEl = document.getElementById('color-presets');
+  COLOR_PRESETS.forEach(preset => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'theme-swatch';
+    btn.title = preset.name;
+    btn.innerHTML = `<div class="swatch-dot" style="background:${preset.swatch}"></div><span class="swatch-name">${preset.name}</span>`;
+    btn.addEventListener('click', () => {
+      setColorInputs(preset);
+      colorPresetsEl.querySelectorAll('.theme-swatch').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    colorPresetsEl.appendChild(btn);
+  });
+
   function openTimerModal(existing = null) {
     editingId = existing ? existing.id : null;
     formTitle.textContent = existing ? 'Edit timer' : 'Add a timer';
@@ -1190,6 +1186,7 @@
       fLocal.value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
       setColorInputs(DEFAULT_COLORS);
     }
+    colorPresetsEl.querySelectorAll('.theme-swatch').forEach(b => b.classList.remove('active'));
     timerModal.showModal();
     setTimeout(() => fName.focus(), 50);
   }
@@ -1474,34 +1471,6 @@
   });
 
   // ============================================================
-  //  Theme picker
-  // ============================================================
-  const themeModal = document.getElementById('theme-modal');
-  const themeGrid  = document.getElementById('theme-grid');
-
-  function renderThemeGrid() {
-    const current = loadState().theme || 'deep-space';
-    themeGrid.innerHTML = '';
-    THEMES.forEach(th => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'theme-swatch' + (th.id === current ? ' active' : '');
-      btn.innerHTML = `<div class="swatch-dot" style="background:${th.swatch}"></div><span class="swatch-name">${th.name}</span>`;
-      btn.addEventListener('click', () => {
-        const s = loadState();
-        s.theme = th.id;
-        saveState(s);
-        applyTheme(th.id);
-        renderThemeGrid();
-      });
-      themeGrid.appendChild(btn);
-    });
-  }
-
-  document.getElementById('theme-btn').addEventListener('click', () => { renderThemeGrid(); themeModal.showModal(); });
-  document.getElementById('close-theme').addEventListener('click', () => themeModal.close());
-
-  // ============================================================
   //  Export / Import
   // ============================================================
   document.getElementById('export-btn').addEventListener('click', () => {
@@ -1593,7 +1562,6 @@
   // ============================================================
   //  Init
   // ============================================================
-  applyTheme(loadState().theme);
   handleShareParam();
   renderAll();
   setInterval(tickAll, 1000);
