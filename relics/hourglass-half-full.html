@@ -491,6 +491,40 @@
   body .clock > .seg:first-of-type .flip:first-of-type[data-val="0"] {
     display: none;
   }
+
+  /* ---------- theme picker ---------- */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .theme-swatch {
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 0.6rem 0.4rem;
+    cursor: pointer;
+    background: var(--btn-bg);
+    transition: border-color .15s, transform .1s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .theme-swatch:hover { transform: scale(1.04); }
+  .theme-swatch.active { border-color: var(--accent); }
+  .theme-swatch .swatch-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.18);
+  }
+  .theme-swatch .swatch-name {
+    font-size: 0.78rem;
+    color: var(--fg-dim);
+    text-align: center;
+    line-height: 1.3;
+  }
+
   body footer .foot-grid {
     display: flex;
     justify-content: space-between;
@@ -557,6 +591,7 @@
     <div>
       <h4>Your timers</h4>
       <p><button class="link" id="view-deleted">View deleted timers</button></p>
+      <p><button class="link" id="theme-btn">Change theme</button></p>
       <p><button class="link" id="export-btn">Export</button> · <button class="link" id="import-btn">Import</button></p>
     </div>
   </div>
@@ -604,6 +639,16 @@
     <div class="deleted-list" id="deleted-list"></div>
     <div class="modal-actions">
       <button type="button" class="btn" id="close-deleted">Done</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal" id="theme-modal">
+  <div class="modal-inner">
+    <h2>Choose a theme</h2>
+    <div class="theme-grid" id="theme-grid"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn" id="close-theme">Done</button>
     </div>
   </div>
 </dialog>
@@ -674,25 +719,65 @@
   let editingId = null; // null = new, otherwise an existing timer id
 
   // ============================================================
+  //  Themes
+  // ============================================================
+  const THEMES = [
+    { id: 'deep-space',     name: 'Deep Space',     swatch: '#0f0a1e', bg: '#0f0a1e', fg: '#f7f3ff', fgDim: '#c8c0e0', fgFaint: '#8a82a8', panel: 'rgba(20,14,38,0.55)',  panelBorder: 'rgba(255,255,255,0.08)',  accent: '#ff6b9d', btnBg: 'rgba(255,255,255,0.08)',   btnBgHover: 'rgba(255,255,255,0.16)' },
+    { id: 'midnight-ocean', name: 'Midnight Ocean', swatch: '#0a0f1e', bg: '#0a0f1e', fg: '#e0efff', fgDim: '#b0cce8', fgFaint: '#6a8faa', panel: 'rgba(10,18,40,0.55)',  panelBorder: 'rgba(0,212,255,0.12)',   accent: '#00d4ff', btnBg: 'rgba(0,212,255,0.08)',    btnBgHover: 'rgba(0,212,255,0.16)' },
+    { id: 'forest-dark',    name: 'Forest Dark',    swatch: '#0a1a0f', bg: '#0a1a0f', fg: '#e0ffe0', fgDim: '#a0d4a0', fgFaint: '#5a8a5a', panel: 'rgba(10,26,14,0.55)',  panelBorder: 'rgba(0,255,136,0.10)',   accent: '#00e87a', btnBg: 'rgba(0,255,136,0.08)',    btnBgHover: 'rgba(0,255,136,0.16)' },
+    { id: 'crimson-night',  name: 'Crimson Night',  swatch: '#1a0a0a', bg: '#1a0a0a', fg: '#ffe0e0', fgDim: '#d4a0a0', fgFaint: '#8a5a5a', panel: 'rgba(30,10,10,0.55)',  panelBorder: 'rgba(255,60,60,0.12)',   accent: '#ff4455', btnBg: 'rgba(255,60,60,0.08)',    btnBgHover: 'rgba(255,60,60,0.16)' },
+    { id: 'amber-fire',     name: 'Amber Fire',     swatch: '#1a0f00', bg: '#1a0f00', fg: '#fff3e0', fgDim: '#d4b890', fgFaint: '#8a7040', panel: 'rgba(26,16,0,0.55)',   panelBorder: 'rgba(255,179,71,0.12)',  accent: '#ffb347', btnBg: 'rgba(255,179,71,0.08)',   btnBgHover: 'rgba(255,179,71,0.16)' },
+    { id: 'neon-city',      name: 'Neon City',      swatch: '#050510', bg: '#050510', fg: '#f0f0ff', fgDim: '#b0b0d8', fgFaint: '#6060a0', panel: 'rgba(5,5,20,0.60)',    panelBorder: 'rgba(0,255,159,0.14)',   accent: '#00ff9f', btnBg: 'rgba(0,255,159,0.08)',    btnBgHover: 'rgba(0,255,159,0.16)' },
+    { id: 'lavender',       name: 'Lavender',       swatch: '#120d1f', bg: '#120d1f', fg: '#f5f0ff', fgDim: '#c8b8f0', fgFaint: '#8870b8', panel: 'rgba(18,12,30,0.55)',  panelBorder: 'rgba(192,132,252,0.12)', accent: '#c084fc', btnBg: 'rgba(192,132,252,0.08)',  btnBgHover: 'rgba(192,132,252,0.16)' },
+    { id: 'arctic',         name: 'Arctic',         swatch: '#0a1525', bg: '#0a1525', fg: '#e8f4ff', fgDim: '#a0c4e8', fgFaint: '#5080a8', panel: 'rgba(10,22,40,0.55)',  panelBorder: 'rgba(96,205,255,0.12)',  accent: '#60cdff', btnBg: 'rgba(96,205,255,0.08)',   btnBgHover: 'rgba(96,205,255,0.16)' },
+    { id: 'ember',          name: 'Ember',          swatch: '#1a0800', bg: '#1a0800', fg: '#fff0e8', fgDim: '#d4a888', fgFaint: '#8a5830', panel: 'rgba(26,10,0,0.55)',   panelBorder: 'rgba(255,106,0,0.12)',   accent: '#ff6a00', btnBg: 'rgba(255,106,0,0.08)',    btnBgHover: 'rgba(255,106,0,0.16)' },
+    { id: 'sakura',         name: 'Sakura',         swatch: '#1a0d14', bg: '#1a0d14', fg: '#ffe8f5', fgDim: '#d4a0c0', fgFaint: '#8a5070', panel: 'rgba(26,12,20,0.55)',  panelBorder: 'rgba(255,157,212,0.12)', accent: '#ff9dd4', btnBg: 'rgba(255,157,212,0.08)',  btnBgHover: 'rgba(255,157,212,0.16)' },
+  ];
+
+  function applyTheme(themeId) {
+    const th = THEMES.find(t => t.id === themeId) || THEMES[0];
+    const r = document.documentElement.style;
+    r.setProperty('--bg-deep', th.bg);
+    r.setProperty('--fg', th.fg);
+    r.setProperty('--fg-dim', th.fgDim);
+    r.setProperty('--fg-faint', th.fgFaint);
+    r.setProperty('--panel', th.panel);
+    r.setProperty('--panel-border', th.panelBorder);
+    r.setProperty('--accent', th.accent);
+    r.setProperty('--btn-bg', th.btnBg);
+    r.setProperty('--btn-bg-hover', th.btnBgHover);
+  }
+
+  // ============================================================
   //  Storage
   // ============================================================
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { version: 1, timers: [] };
+      if (!raw) return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false, theme: 'deep-space' };
       const parsed = JSON.parse(raw);
-      if (!parsed || !Array.isArray(parsed.timers)) return { version: 1, timers: [] };
+      if (!parsed || !Array.isArray(parsed.timers)) return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false, theme: 'deep-space' };
+      if (!parsed.hasOwnProperty('builtinDeletedAt')) parsed.builtinDeletedAt = null;
+      if (!parsed.hasOwnProperty('builtinPermDeleted')) parsed.builtinPermDeleted = false;
+      if (!parsed.theme) parsed.theme = 'deep-space';
       return parsed;
-    } catch { return { version: 1, timers: [] }; }
+    } catch { return { version: 1, timers: [], builtinDeletedAt: null, builtinPermDeleted: false, theme: 'deep-space' }; }
   }
   function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
   function newId() { return 'tmr_' + Math.random().toString(36).slice(2, 10); }
 
   function getActiveTimers() {
-    return [BUILT_IN, ...loadState().timers.filter(t => !t.deletedAt)];
+    const s = loadState();
+    const showBuiltin = !s.builtinPermDeleted && !s.builtinDeletedAt;
+    return [...(showBuiltin ? [BUILT_IN] : []), ...s.timers.filter(t => !t.deletedAt)];
   }
   function getDeletedTimers() {
-    return loadState().timers.filter(t => !!t.deletedAt);
+    const s = loadState();
+    const items = s.timers.filter(t => !!t.deletedAt);
+    if (s.builtinDeletedAt && !s.builtinPermDeleted) {
+      items.unshift({ ...BUILT_IN, deletedAt: s.builtinDeletedAt });
+    }
+    return items;
   }
 
   // ============================================================
@@ -948,10 +1033,8 @@
     if (!t.builtIn) menuBtns.push({ label: '✏ Edit', action: 'edit' });
     menuBtns.push({ label: '🔗 Share', action: 'share' });
     if (!t.builtIn) menuBtns.push({ label: '🎨 Customize colors', action: 'colors' });
-    if (!t.builtIn) {
-      menuBtns.push({ sep: true });
-      menuBtns.push({ label: '🗑 Delete', action: 'delete', danger: true });
-    }
+    menuBtns.push({ sep: true });
+    menuBtns.push({ label: '🗑 Delete', action: 'delete', danger: true });
     menuBtns.forEach(m => {
       if (m.sep) { const hr = document.createElement('hr'); menu.appendChild(hr); return; }
       const b = document.createElement('button');
@@ -1173,6 +1256,7 @@
 
     if (id === BUILT_IN.id) {
       if (action === 'share') return shareTimer(BUILT_IN);
+      if (action === 'delete') return softDelete(BUILT_IN.id);
       return;
     }
     const t = loadState().timers.find(x => x.id === id);
@@ -1188,6 +1272,17 @@
   // ============================================================
   function softDelete(id) {
     const state = loadState();
+    if (id === BUILT_IN.id) {
+      state.builtinDeletedAt = new Date().toISOString();
+      saveState(state);
+      renderAll();
+      toast('Timer deleted.', () => {
+        const s = loadState();
+        s.builtinDeletedAt = null;
+        saveState(s); renderAll();
+      }, 'Undo');
+      return;
+    }
     const idx = state.timers.findIndex(t => t.id === id);
     if (idx < 0) return;
     state.timers[idx].deletedAt = new Date().toISOString();
@@ -1201,11 +1296,22 @@
   }
   function restoreDeleted(id) {
     const s = loadState();
+    if (id === BUILT_IN.id) {
+      s.builtinDeletedAt = null;
+      saveState(s); renderAll(); renderDeletedList();
+      return;
+    }
     const i = s.timers.findIndex(t => t.id === id);
     if (i >= 0) { s.timers[i].deletedAt = null; saveState(s); renderAll(); renderDeletedList(); }
   }
   function hardDelete(id) {
     const s = loadState();
+    if (id === BUILT_IN.id) {
+      s.builtinDeletedAt = null;
+      s.builtinPermDeleted = true;
+      saveState(s); renderDeletedList();
+      return;
+    }
     s.timers = s.timers.filter(t => t.id !== id);
     saveState(s);
     renderDeletedList();
@@ -1368,6 +1474,34 @@
   });
 
   // ============================================================
+  //  Theme picker
+  // ============================================================
+  const themeModal = document.getElementById('theme-modal');
+  const themeGrid  = document.getElementById('theme-grid');
+
+  function renderThemeGrid() {
+    const current = loadState().theme || 'deep-space';
+    themeGrid.innerHTML = '';
+    THEMES.forEach(th => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'theme-swatch' + (th.id === current ? ' active' : '');
+      btn.innerHTML = `<div class="swatch-dot" style="background:${th.swatch}"></div><span class="swatch-name">${th.name}</span>`;
+      btn.addEventListener('click', () => {
+        const s = loadState();
+        s.theme = th.id;
+        saveState(s);
+        applyTheme(th.id);
+        renderThemeGrid();
+      });
+      themeGrid.appendChild(btn);
+    });
+  }
+
+  document.getElementById('theme-btn').addEventListener('click', () => { renderThemeGrid(); themeModal.showModal(); });
+  document.getElementById('close-theme').addEventListener('click', () => themeModal.close());
+
+  // ============================================================
   //  Export / Import
   // ============================================================
   document.getElementById('export-btn').addEventListener('click', () => {
@@ -1459,6 +1593,7 @@
   // ============================================================
   //  Init
   // ============================================================
+  applyTheme(loadState().theme);
   handleShareParam();
   renderAll();
   setInterval(tickAll, 1000);
