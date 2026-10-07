@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Feelings &amp; Energy Wheels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Young+Serif&display=swap">
+<style>
+/* Layout: the wheel is the map (left, sticky) and the panel is the reading surface (right).
+   The wheel only ever draws the current step and the next one. Phones stack the two. */
+:root {
+  --bg: #F3F4F1;
+  --surface: #FFFFFF;
+  --ink: #23272A;
+  --muted: #5E666A;
+  --faint: #959DA0;
+  --line: rgba(35, 39, 42, 0.12);
+  --accent: #3D6B69;
+  --focus: #2F6F8F;
+
+  /* wedge tones: hue + saturation come from each section, lightness from the ring */
+  --sat-k: 1;
+  --l-core: 70%;
+  --l-mid: 79%;
+  --l-out: 87%;
+  --l-on: 58%;
+  --l-chip: 91%;
+  --l-chip-on: 70%;
+  --wedge-ink: #25292B;
+  --wedge-line: #F3F4F1;
+  --hub: #E6E8E4;
+  --face-fill: #FFFDF8;
+
+  --f-display: "Young Serif", Georgia, "Times New Roman", serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15181A; --surface: #1E2224; --ink: #ECEDEA; --muted: #A2A9AB; --faint: #6D7578;
+    --line: rgba(236, 237, 234, 0.12); --accent: #8CC0BC; --focus: #8CC0E0;
+    --sat-k: 0.75; --l-core: 42%; --l-mid: 33%; --l-out: 26%; --l-on: 55%;
+    --l-chip: 22%; --l-chip-on: 40%;
+    --wedge-ink: #F1EFEA; --wedge-line: #15181A; --hub: #262A2D; --face-fill: #2A2E31;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15181A; --surface: #1E2224; --ink: #ECEDEA; --muted: #A2A9AB; --faint: #6D7578;
+  --line: rgba(236, 237, 234, 0.12); --accent: #8CC0BC; --focus: #8CC0E0;
+  --sat-k: 0.75; --l-core: 42%; --l-mid: 33%; --l-out: 26%; --l-on: 55%;
+  --l-chip: 22%; --l-chip-on: 40%;
+  --wedge-ink: #F1EFEA; --wedge-line: #15181A; --hub: #262A2D; --face-fill: #2A2E31;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 var(--f-body);
+  padding-inline: 16px;
+  padding-block: 20px 48px;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+
+.page { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+
+/* ---------- header ---------- */
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.top h1 {
+  font-family: var(--f-display); font-weight: 400;
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.1; margin: 0; text-wrap: balance;
+}
+.switch {
+  display: inline-flex; padding: 4px; gap: 4px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+}
+.switch button {
+  border: 0; background: transparent; cursor: pointer;
+  padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; color: var(--muted);
+}
+.switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* ---------- stage ---------- */
+.stage { display: grid; gap: 24px; align-items: start; }
+@media (min-width: 900px) {
+  .stage { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 32px; }
+  .wheel-col { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+}
+.wheel-col { width: 100%; max-width: 680px; margin: 0 auto; display: grid; gap: 6px; }
+@media (max-width: 899px) { .wheel-col { max-width: 460px; } }
+.wheel-wrap { position: relative; }
+.wheel-wrap svg { display: block; width: 100%; height: auto; border-radius: var(--radius); }
+.wheel-wrap .bg { fill: transparent; }
+body.focused .wheel-wrap .bg { cursor: zoom-out; }
+.wheel-back {
+  position: absolute; top: 8px; left: 8px; z-index: 1;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.wheel-back:hover { border-color: var(--faint); }
+
+/* the two halves of the feelings wheel, named above it; they pick the side and act as the first breadcrumb */
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+[hidden] { display: none !important; }
+.sides button {
+  border: 0; background: none; cursor: pointer; padding: 4px 2px;
+  font-family: var(--f-display); font-size: clamp(1.05rem, 2.2vw, 1.4rem); line-height: 1.2; color: var(--ink);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px;
+  text-decoration-color: var(--line); transition: color .2s ease, opacity .2s ease;
+}
+.sides button:first-child { text-align: left; }
+.sides button:last-child { text-align: right; }
+.sides button:hover { text-decoration-color: var(--ink); }
+.sides button[aria-pressed="true"] { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+.sides button.faded { color: var(--faint); }
+
+/* ---------- wheel segments ---------- */
+.seg { cursor: pointer; transition: opacity .35s ease .35s; }
+.seg path.wedge {
+  fill: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--tone));
+  stroke: var(--wedge-line); stroke-width: 2;
+  transition: fill .2s ease;
+}
+.ring-core { --tone: var(--l-core); }
+.ring-mid { --tone: var(--l-mid); }
+.ring-out { --tone: var(--l-out); }
+.seg:hover path.wedge { filter: brightness(1.06); }
+.seg.dim { opacity: 0.26; transition-delay: 0s; }
+.seg.hide { opacity: 0; pointer-events: none; transition: opacity .15s ease 0s; }
+.seg.hl, .seg.sel { --tone: var(--l-on); }
+.seg.hl text, .seg.sel text { font-weight: 700; }
+svg text.rad { transition: opacity .25s ease; }
+svg.turning text.rad { opacity: 0; transition-duration: .1s; }
+.seg text { fill: var(--wedge-ink); pointer-events: none; font-family: var(--f-body); font-weight: 500; }
+.seg .lbl-core { font-weight: 700; }
+.seg .lbl-center { font-weight: 700; }
+.seg .lbl-center-sub { font-weight: 400; font-style: italic; }
+.hub { fill: var(--hub); }
+@media (max-width: 899px) {
+  /* the middle ring is too thin to read at the "pick a side" step on a phone; the list carries those words */
+  .seg.m-hide { display: none; }
+}
+
+/* faces */
+.face circle.skin { fill: var(--face-fill); stroke: var(--wedge-ink); stroke-width: 0.09; }
+.face .ln { fill: none; stroke: var(--wedge-ink); stroke-width: 0.11; stroke-linecap: round; stroke-linejoin: round; }
+.face .fill { fill: var(--wedge-ink); }
+.face .blush { fill: var(--wedge-ink); opacity: 0.16; }
+.face .tear { fill: var(--focus); opacity: 0.8; }
+.mini-face { width: 1.6em; height: 1.6em; flex: none; overflow: visible; }
+
+/* ---------- panel ---------- */
+.panel {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 20px; display: grid; gap: 18px; min-width: 0;
+}
+@media (min-width: 900px) { .panel { padding: 26px 28px; } }
+
+.navrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 0.9rem; color: var(--muted); }
+.crumbs button {
+  border: 0; background: none; padding: 4px 6px; cursor: pointer; color: var(--accent);
+  font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px;
+}
+.crumbs .here { padding: 4px 6px; font-weight: 600; color: var(--ink); }
+.crumbs .sep { color: var(--faint); }
+.ghost {
+  border: 1px solid var(--line); background: transparent; border-radius: 999px;
+  padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--muted);
+}
+.ghost:hover { color: var(--ink); border-color: var(--faint); }
+
+.lede { margin: 0; font-size: 1.05rem; }
+.lede small { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+.eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+
+/* chips: tinted by their section */
+.chip {
+  --tone: var(--l-chip);
+  display: inline-flex; align-items: center; gap: 6px;
+  background: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--tone));
+  border: 1px solid hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) calc(var(--tone) - 12%));
+  border-radius: 999px; padding: 5px 12px; font-size: 0.92rem; line-height: 1.25;
+  cursor: pointer; transition: background .15s ease;
+}
+.chip:hover, .chip.hl, .chip[aria-expanded="true"] { --tone: var(--l-chip-on); }
+.chip[aria-expanded="true"] { font-weight: 700; }
+.chip.mid { font-weight: 600; }
+.chip.out { font-size: 0.85rem; padding: 4px 10px; }
+.chip.big { font-size: 1.02rem; padding: 7px 14px; }
+.chip .mini-face { width: 1.25em; height: 1.25em; margin-left: -4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* the meaning of a tapped word, shown inside the group it belongs to */
+.meaning {
+  border-left: 3px solid hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-on));
+  padding: 2px 0 2px 12px; display: grid; gap: 4px;
+}
+.meaning .m-word { font-weight: 700; }
+.meaning p { margin: 0; }
+.meaning .m-ex { color: var(--muted); font-style: italic; }
+
+/* section headers that act as drill-down buttons */
+.head-btn {
+  display: flex; align-items: center; gap: 10px; text-align: left; width: 100%;
+  border: 0; background: none; padding: 0; cursor: pointer;
+}
+.head-btn .txt { display: grid; gap: 1px; }
+.head-btn .name { font-family: var(--f-display); font-size: 1.25rem; line-height: 1.2; }
+.head-btn .sub { color: var(--muted); font-size: 0.85rem; font-style: italic; }
+.head-btn:hover .name { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.head-btn .go { margin-left: auto; color: var(--faint); font-size: 1.2rem; }
+.swatch { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 3px; margin-right: 8px; vertical-align: 1px;
+  background: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-core)); }
+
+/* step 1 – the two sides */
+.halves { display: grid; gap: 14px; }
+@media (min-width: 560px) { .halves { grid-template-columns: 1fr 1fr; } }
+.half { border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; align-content: start; }
+
+/* step 2 – the feelings on one side */
+.cores { display: grid; gap: 12px; }
+.core { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px;
+  border-left: 6px solid hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-core)); }
+.core .def { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
+/* step 3 – one feeling, every branch visible */
+.focus-head { display: grid; gap: 4px; }
+.focus-row { display: flex; align-items: center; gap: 12px; }
+.focus-row .mini-face { width: 2.6em; height: 2.6em; }
+.focus-head h2 { font-family: var(--f-display); font-weight: 400; font-size: 2rem; line-height: 1.1; margin: 0; }
+.focus-head .sub { color: var(--muted); font-style: italic; }
+.focus-head p { margin: 4px 0 0; max-width: 56ch; }
+.focus-head .ex { color: var(--muted); font-style: italic; margin: 0; }
+.groups { display: grid; gap: 12px; }
+@media (min-width: 520px) { .groups { grid-template-columns: 1fr 1fr; } }
+.gcard {
+  border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; align-content: start;
+  background: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-chip) / 0.35);
+}
+.gcard.wide { grid-column: 1 / -1; }
+
+/* tabs: one branch (or ring) at a time, as full cards */
+.tabs { display: flex; gap: 4px; padding: 4px; border-radius: 12px; overflow-x: auto;
+  background: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-chip)); }
+.tabs button { flex: 1 0 auto; border: 0; background: none; padding: 10px 14px; border-radius: 9px; font-weight: 600; cursor: pointer; color: var(--muted); }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.tabpanel { display: grid; gap: 10px; }
+.tcard { border-radius: 12px; padding: 14px 16px; display: grid; gap: 2px; align-content: start;
+  background: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-chip)); }
+.tcard.gen { background: hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-core)); color: var(--wedge-ink); }
+.tcard .w { font-weight: 700; font-size: 1.05rem; }
+.tcard p { margin: 0; }
+.tcard .x { font-style: italic; opacity: 0.8; font-size: 0.92rem; }
+.specrow { display: grid; gap: 10px; }
+@media (min-width: 560px) { .specrow { grid-template-columns: 1fr 1fr; } }
+
+.others { display: grid; gap: 8px; padding-top: 14px; border-top: 1px solid var(--line); }
+
+/* energy quadrants */
+.quads { display: grid; gap: 14px; }
+@media (min-width: 560px) { .quads { grid-template-columns: 1fr 1fr; } }
+.quad { border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 10px; align-content: start;
+  border-top: 6px solid hsl(var(--h) calc(var(--s) * var(--sat-k) * 1%) var(--l-core)); }
+.quad p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+.ring-title { display: flex; align-items: baseline; gap: 8px; }
+.ring-title span:last-child { font-size: 0.85rem; color: var(--muted); }
+
+.foot { color: var(--faint); font-size: 0.8rem; text-align: center; max-width: 70ch; margin: 8px auto 0; display: grid; gap: 4px; }
+.foot p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <h1 id="title">Feelings when…</h1>
+    <div class="switch" role="group" aria-label="Choose a wheel">
+      <button id="sw-feelings" data-wheel="feelings" aria-pressed="true">Feelings</button>
+      <button id="sw-energy" data-wheel="energy" aria-pressed="false">Energy</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="wheel-col">
+      <div class="sides" id="sides">
+        <button id="side-unmet" data-act="half" data-half="unmet" aria-pressed="false">your needs are not met</button>
+        <button id="side-met" data-act="half" data-half="met" aria-pressed="false">your needs are met</button>
+      </div>
+      <div class="wheel-wrap">
+        <button class="wheel-back" id="wheelBack" hidden>‹ Back</button>
+        <svg id="wheel" viewBox="0 0 1000 1000" role="img" aria-label="Interactive wheel"></svg>
+      </div>
+    </div>
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+
+  <footer class="foot">
+    <p id="credit"></p>
+    <p>If you're in crisis in the U.S., call or text 988 to reach the Suicide &amp; Crisis Lifeline.</p>
+  </footer>
+</div>
+
+<script>
+/* ================= data ================= */
+const MEANINGS = {"feelings":{"Proud":["Feeling good about who you are or something you did.","I worked hard on this, and I'm glad with how it turned out."],"Self-Confident":["Trusting your own abilities and judgment.","I know I can handle this."],"Poised":["Calm and composed, steady even with attention on you.","Everyone was watching, and I stayed steady."],"Self-Assured":["Sure of yourself without needing others to agree.","I don't need them to agree. I know what I think."],"Self-Esteem":["Seeing yourself as worthwhile.","I deserve good things too."],"Fulfilled":["Satisfied that something meaningful is part of your life.","This is what I wanted my life to have in it."],"Pleased":["Quietly happy with how something went.","That went better than I expected."],"Encouraged":["Lifted by support or progress, ready to keep going.","Hearing that made me want to keep trying."],"Brave":["Acting even though you feel afraid.","I was scared, and I said it anyway."],"Courageous":["Facing something hard because it matters to you.","It was hard, but it was the right thing to do."],"Powerful":["Feeling strong and able to make things happen.","I can change this."],"Empowered":["Having the confidence and means to act for yourself.","I get to decide what happens next."],"Effectual":["Seeing that your actions actually work.","What I did made a real difference."],"Joyful":["A bright, warm lift when something good happens.","Today just feels good. I keep smiling."],"Happy":["A light, good feeling.","I'm in a really good mood."],"Delighted":["Pleasantly thrilled by something.","This made my whole day."],"Glad / Pleased":["Content that something happened.","I'm glad we did that."],"Ecstatic":["Overflowing, intense happiness.","I can barely contain myself!"],"Elated":["Lifted high by great news or success.","I feel like I'm floating."],"Thrilled":["An exciting rush of happiness.","I can't believe this is happening!"],"Excited":["Eager anticipation for what's coming.","I can't wait for this."],"Enthusiastic":["Fully into something, with lots of energy for it.","Yes, let's do it. I'm all in."],"Passionate":["Strong love and drive for something.","This matters so much to me."],"Grateful":["Thankful for what you've received.","I'm so lucky to have this."],"Appreciation":["Recognizing the value of someone or something.","I really notice everything you do."],"Thankful":["Wanting to say thank you.","Thank you. That meant a lot."],"Intrigued":["Your attention is pulled in and you want to know more.","I can't stop thinking about this. I want to learn more."],"Engaged":["Involved and paying attention.","I'm really into this conversation."],"Absorbed":["So focused that everything else fades out.","I looked up and an hour had passed."],"Engrossed":["Completely caught up in something.","I couldn't put it down."],"Fascinated":["Strongly drawn to understand something.","How does that even work?"],"Interested":["Wanting to know or hear more.","Tell me more about that."],"Curious":["Wondering and wanting to explore.","I wonder what would happen if..."],"Entranced":["Held still by something captivating.","I couldn't look away."],"Captivated":["Your attention and feelings are captured.","I was hooked from the first minute."],"Mesmerized":["Almost hypnotized by something.","I just kept watching it."],"Energetic":["Full of lively, ready energy.","I'm ready to go!"],"Animated":["Lively and expressive.","I couldn't stop talking about it."],"Refreshed":["Renewed, like after a good rest.","I feel like myself again."],"Trusting":["Feeling safe enough to rely on someone or something.","I know they'll show up for me."],"Assured":["Confident that things will be okay.","I know this will work out."],"Positive":["Expecting good things.","I think this is going to go well."],"Relieved":["A worry has lifted.","Oh, thank goodness. I can breathe again."],"Hopeful":["Believing something good is possible.","Maybe things can get better."],"Optimistic":["Leaning toward the bright side.","Even if it's hard, I think we'll find a way."],"Expectant":["Looking forward to something you believe will happen.","I'm waiting for good news."],"Secure":["Safe and stable.","I know where I stand."],"Safe":["Protected from harm.","Nothing can hurt me here."],"Comforted":["Soothed after being upset.","That hug helped so much."],"Confident":["Sure about someone or something.","I trust this choice."],"Certain":["Having no doubt.","I'm sure about this."],"Convinced":["Persuaded that something is true.","You've changed my mind."],"Loving":["Warmth and care toward someone, wanting to be close.","I feel so much care for them right now."],"Affectionate":["Showing warm, gentle care.","I just want to give them a hug."],"Friendly":["Warm and open toward others.","It's so nice to see you!"],"Fondness":["A soft liking for someone or something.","I always smile when I think of them."],"Adoration":["Deep love and admiration.","I think the world of them."],"Admiration":["Respecting and looking up to someone.","I really look up to how they handle things."],"Reverence":["Deep respect, almost sacred.","I feel humbled to be part of this."],"Connected":["Feeling close and understood.","They really get me."],"Close":["Emotionally near someone.","We've gotten so much closer."],"Intimate":["Deep, personal closeness.","I can share anything with them."],"Caring":["Wanting good things for someone.","I want to make sure they're okay."],"Compassionate":["Feeling someone's pain and wanting to help.","That sounds so hard. How can I help?"],"Tenderness":["Gentle, soft love.","I just want to be gentle with them."],"Peaceful":["Settled and at ease, with nothing pushing against you.","Nothing needs to happen right now. I'm okay."],"Content":["Satisfied with how things are.","I have what I need."],"Satisfied":["Your needs feel met. It's enough.","That was just right."],"Comfortable":["At ease in your body or your surroundings.","I can just be myself here."],"Relaxed":["Loose and free of tension.","My shoulders finally dropped."],"Serene":["Deeply calm and clear.","Everything feels still and clear."],"Calm":["Free from agitation.","I'm okay. There's no rush."],"Tranquil":["Quiet and undisturbed.","It's so quiet and peaceful here."],"Quiet":["Stillness on the inside.","My mind is finally quiet."],"Centered":["Steady in yourself.","I know who I am right now."],"Harmonious":["In tune with yourself or others.","Everything fits together."],"Congruous":["What you feel, think, and do line up.","What I'm doing matches what I believe."],"Balanced":["Even and steady, not too much of anything.","Nothing is pulling me too far one way."],"Ashamed":["A painful sense that something is wrong with you, often after judging yourself.","I wish I could disappear after what I did."],"Humiliation":["Feeling lowered or exposed in front of others.","Everyone saw, and I wanted the floor to swallow me."],"Flustered":["Thrown off and unable to think clearly.","I got all mixed up and forgot what I was saying."],"Chagrined":["Annoyed at yourself after a mistake.","Ugh, I can't believe I did that."],"Embarrassed":["Uncomfortable about how others see you.","My face got so hot."],"Horrified":["Shocked and upset by something you did or saw.","Oh no. What did I do?"],"Mortified":["Deeply embarrassed.","I'm never going to live this down."],"Guilty":["Feeling you did something wrong.","I shouldn't have said that to them."],"Remorseful":["Sorry, and wanting to make it right.","I want to apologize and fix this."],"Regretful":["Wishing you had chosen differently.","If I could go back, I'd do it differently."],"Awkward":["Uneasy and unsure how to act.","I don't know what to do with myself right now."],"Uncomfortable":["Uneasy in a situation.","I want to get out of this conversation."],"Self-conscious":["Very aware of being watched or judged.","It feels like everyone is looking at me."],"Sad":["A heavy ache from losing something or someone that mattered.","I miss how things used to be."],"Unhappy":["Not feeling good.","I'm just not okay today."],"Disappointed":["Something didn't go the way you hoped.","I really thought it would be different."],"Discouraged":["Losing the will to keep trying.","What's the point of trying again?"],"Grief & Sorrow":["Deep sadness after a loss.","I miss them so much it hurts."],"Devastated":["Overwhelmed by a loss.","I don't know how to get through this."],"Heartbroken":["Deep pain from loss or rejection.","It feels like something broke inside me."],"Pain & Hurt":["Emotional wounds, often from how someone treated you.","That really hurt me."],"Despair":["Losing hope.","It feels like nothing is going to get better."],"Miserable":["Very unhappy and uncomfortable.","Everything feels awful right now."],"Depressed":["Low and heavy, with little interest or energy.","Nothing sounds good, and everything feels like effort."],"Fatigued / Tired":["Worn out in body or mind.","I'm exhausted all the way down."],"Hopeless":["Unable to see a way forward.","I can't see how this changes."],"Surprised":["Caught off guard by something you didn't expect.","Wait, what? I didn't see that coming."],"Overwhelmed":["Too much at once to handle.","There's too much and I can't keep up."],"Puzzled":["Unable to make sense of something.","That doesn't add up."],"Confused":["Unclear about what's happening or what to do.","I don't know what's going on."],"Startled":["Suddenly jolted.","You scared me!"],"Stressed":["Under pressure.","I have too much on my plate."],"Stunned":["So surprised you can't react.","I just stood there."],"Distracted":["Your attention keeps getting pulled away.","Sorry, what did you say?"],"Hesitant":["Holding back because you're unsure.","I'm not sure I should."],"Preoccupied":["Your mind is stuck on something else.","I can't stop thinking about tomorrow."],"Astonished":["Greatly surprised.","I can't believe it!"],"Amazed":["Surprised, with a sense of wonder.","Wow, how did that happen?"],"Shocked":["Surprised by something sudden or upsetting.","I can't believe they did that."],"Afraid":["Sensing danger or a threat, and wanting to protect yourself.","Something bad is going to happen and I can't stop it."],"Scared":["Feeling fear.","I don't want to do this."],"Terrified":["Extreme fear.","I'm so scared I can't move."],"Frightened":["Suddenly afraid.","That noise really frightened me."],"Vulnerable":["Open to being hurt.","If I tell them, they might reject me."],"Susceptible":["Easily affected by what happens around you.","Any little thing could knock me over right now."],"Helpless":["Unable to help yourself or change things.","There's nothing I can do."],"Anxious":["Nervous unease about what might happen.","What if it all goes wrong?"],"Worried":["Thoughts circling a possible problem.","I keep going over it in my head."],"Concerned":["Caring that something could go wrong.","I'm a little worried about how they're doing."],"Insecure":["Unsure of yourself or your place.","Do they even want me here?"],"Apprehensive":["Uneasy about what's coming.","I have a bad feeling about tomorrow."],"Suspicious":["Not trusting someone's intentions.","Something about this doesn't feel right."],"Disgusted":["A strong pulling away from something that feels wrong or offensive.","That's gross. I want nothing to do with it."],"Contempt":["Seeing someone as beneath you.","They're not even worth my time."],"Hateful":["Intense dislike.","I can't stand them."],"Scorn":["Open mockery or disrespect.","Ha. Like that would ever work."],"Repulsive":["Feeling pushed away by something.","Get that away from me."],"Nauseous":["Sick to your stomach.","Just thinking about it makes me feel sick."],"Sickened":["Disgusted by something that feels wrong.","What they did makes me sick."],"Apathetic":["Not caring.","Whatever. It doesn't matter."],"Bored":["Not interested or stimulated.","There's nothing to do."],"Uninterested":["Not drawn in.","I don't really care about that."],"Averse":["Strongly wanting to avoid something.","I don't want to go anywhere near it."],"Resistant":["Pushing back against something.","I don't want to do that."],"Reluctant":["Unwilling, dragging your feet.","I guess I'll do it, but I really don't want to."],"Angry":["Heat and energy that rise when something feels unfair or crosses a line.","That's not okay. They had no right."],"Mad":["Upset and angry.","I'm so mad right now."],"Furious":["Extremely angry.","I'm shaking, I'm so angry."],"Enraged":["Overcome with anger.","I can't even think straight."],"Envious":["Wanting what someone else has.","Why do they get that and I don't?"],"Animosity":["Strong hostility toward someone.","I just don't like them at all."],"Jealous":["Afraid of losing someone or something to another person.","I don't like how much time they spend together."],"Annoyed":["Mildly bothered.","Can you please stop that?"],"Irritated":["Bothered again and again until it builds up.","This keeps happening and it's getting to me."],"Resentful":["Lingering anger about being treated unfairly.","I'm still not over how they treated me."],"Frustrated":["Blocked from what you want or need.","Why won't this just work?"],"Upset":["Disturbed and unhappy.","I'm really upset about what happened."],"Aggravated":["Annoyance that keeps building.","Every little thing is making it worse."]},"energy":{"Buzzing":["A humming energy under the skin.","It's like there's static running through me."],"Jittery":["Shaky, twitchy restlessness.","I can't keep my leg still."],"Tense":["Muscles tight and braced.","My jaw and shoulders are clenched."],"Hyperalert":["Scanning for danger, always on watch.","I keep noticing every little sound."],"Electric":["A sharp, charged energy.","I feel like I could spark."],"Rushed":["Pushed to move fast.","I'm racing even when there's no reason to."],"Bouncing":["Can't settle, jumping from thing to thing.","I can't stay in one spot."],"Frantic":["Panicked, scrambling energy.","I'm trying to do everything at once."],"Trembly":["Shaking or quivering.","My hands won't stop shaking."],"On Edge":["Ready to jump or snap.","Any little thing could set me off."],"Wired":["Too charged to rest.","I'm exhausted, but I can't sleep."],"Vibrating":["Energy humming through your whole body.","My whole body is humming."],"Agitated":["Restless and irritable.","I can't sit still, and everything bugs me."],"Revved Up":["Running at high speed.","I'm going a hundred miles an hour."],"Overstimulated":["Too much input to handle.","The noise and lights are too much."],"Overly-excited":["Excitement past the point where it feels good.","I'm so hyped I can't calm down."],"Manic":["Racing, very high energy that's hard to slow down.","My thoughts are moving faster than I can keep up with."],"Alert":["Sharply awake and watchful.","I'm wide awake and watching everything."],"Grounded":["Connected to your body and the ground under you.","I can feel my feet on the floor."],"Calm":["Even and unhurried.","My breathing is slow and easy."],"Open":["Ready to take in people and what's happening.","I'm ready to listen."],"Centered":["Steady at your core.","I feel like myself."],"Steady":["Stable and not easily shaken.","I can handle what comes."],"Fluid":["Moving easily and flexibly.","I can go with the flow today."],"Clear-headed":["Thinking clearly.","I can see what I need to do."],"Attuned":["In sync with yourself or others.","I can tell what I need, and what they need."],"Balanced":["Not too high and not too low.","My energy feels about right."],"Settled":["At rest, with nothing stirring.","Everything in me has settled down."],"Spacious":["Room inside to breathe and feel.","I have room for whatever comes up."],"Softened":["Tension has melted away.","My body has let go."],"Present":["Here, in this moment.","I'm right here, right now."],"Quiet Energy":["Calm, but awake and available.","I'm calm, and I have energy if I need it."],"Expansive":["Big, open, and free.","I feel like I can take up space."],"Free":["Unburdened.","Nothing is holding me back."],"Resourced":["Having what you need inside to cope.","I have enough in the tank today."],"Light":["Unweighted and easy.","I feel lighter than I have in a while."],"Muted":["Feelings turned down low.","Everything feels quiet and far away."],"Flat":["Little feeling either way.","I don't feel much of anything."],"Shut down":["Pulled inward and unable to engage.","I can't talk right now."],"Sluggish":["Slow to move or think.","Everything takes so much effort."],"Drained":["Your energy is used up.","I have nothing left."],"Foggy":["Thoughts cloudy and slow.","I can't think clearly."],"Heavy":["Your body feels weighed down.","My arms and legs feel like lead."],"Underwater":["Everything feels muffled and slow.","It's like the world is far away and muffled."],"Dissociated":["Disconnected from your body or surroundings.","It feels like I'm watching myself from outside."],"Collapsed":["Your energy gives way completely.","I can't hold myself up."],"Zoned out":["Your mind has drifted off.","I've been staring at the wall for a while."],"Checked out":["Not mentally present.","I'm here, but I'm not really here."],"Frozen":["Stuck, unable to move or act.","I want to move, but I can't."],"Lethargic":["Very low energy and motivation.","Getting off the couch feels impossible."],"Spinning":["Thoughts or feelings whirling.","My head is spinning."],"Floaty":["Not quite in your body.","I feel like I'm drifting."],"Unsettled":["Uneasy and not at rest.","Something feels off, and I can't settle."],"Fizzy":["Bubbly, scattered energy.","I'm all bubbles and no direction."],"Scattered":["Attention all over the place.","I started five things and finished none."],"Wobbly":["Unsteady inside.","I feel like I could tip over at any moment."],"Foggy-headed":["Unclear and spaced out.","My head feels full of cotton."],"Dazed":["Stunned and slow to respond.","I'm just kind of blinking at everything."],"Diffused":["Energy spread too thin.","I'm everywhere and nowhere."],"Unanchored":["Nothing to hold on to.","I don't know where my feet are."]}};
+
+const FEELINGS = {
+  halves: [
+    { id: "met", name: "Your needs are met", a0: 0 },
+    { id: "unmet", name: "Your needs are not met", a0: 180 }
+  ],
+  // clockwise from the top: needs met down the right side, needs not met up the left side
+  cores: [
+    { name: "Proud", note: "self-acceptance", half: "met", h: 26, s: 50, mids: [
+      ["Self-Confident", ["Poised", "Self-Assured"]], ["Self-Esteem", ["Fulfilled", "Pleased"]],
+      ["Encouraged", ["Brave", "Courageous"]], ["Powerful", ["Empowered", "Effectual"]] ] },
+    { name: "Joyful", note: "gain", half: "met", h: 46, s: 58, mids: [
+      ["Happy", ["Delighted", "Glad / Pleased"]], ["Ecstatic", ["Elated", "Thrilled"]],
+      ["Excited", ["Enthusiastic", "Passionate"]], ["Grateful", ["Appreciation", "Thankful"]] ] },
+    { name: "Intrigued", note: "attentive", half: "met", h: 98, s: 34, mids: [
+      ["Engaged", ["Absorbed", "Engrossed"]], ["Fascinated", ["Interested", "Curious"]],
+      ["Entranced", ["Captivated", "Mesmerized"]], ["Energetic", ["Animated", "Refreshed"]] ] },
+    { name: "Trusting", note: "security", half: "met", h: 208, s: 42, mids: [
+      ["Assured", ["Positive", "Relieved"]], ["Hopeful", ["Optimistic", "Expectant"]],
+      ["Secure", ["Safe", "Comforted"]], ["Confident", ["Certain", "Convinced"]] ] },
+    { name: "Loving", note: "attraction", half: "met", h: 268, s: 32, mids: [
+      ["Affectionate", ["Friendly", "Fondness"]], ["Adoration", ["Admiration", "Reverence"]],
+      ["Connected", ["Close", "Intimate"]], ["Caring", ["Compassionate", "Tenderness"]] ] },
+    { name: "Peaceful", note: "acceptance", half: "met", h: 6, s: 44, mids: [
+      ["Content", ["Satisfied", "Comfortable"]], ["Relaxed", ["Serene", "Calm"]],
+      ["Tranquil", ["Quiet", "Centered"]], ["Harmonious", ["Congruous", "Balanced"]] ] },
+    { name: "Ashamed", note: "self-judgment", half: "unmet", h: 26, s: 50, mids: [
+      ["Humiliation", ["Flustered", "Chagrined"]], ["Embarrassed", ["Horrified", "Mortified"]],
+      ["Guilty", ["Remorseful", "Regretful"]], ["Awkward", ["Uncomfortable", "Self-conscious"]] ] },
+    { name: "Sad", note: "loss", half: "unmet", h: 46, s: 58, mids: [
+      ["Unhappy", ["Disappointed", "Discouraged"]], ["Grief & Sorrow", ["Devastated", "Heartbroken"]],
+      ["Pain & Hurt", ["Despair", "Miserable"]], ["Depressed", ["Fatigued / Tired", "Hopeless"]] ] },
+    { name: "Surprised", note: "caught off guard", half: "unmet", h: 98, s: 34, mids: [
+      ["Overwhelmed", ["Puzzled", "Confused"]], ["Startled", ["Stressed", "Stunned"]],
+      ["Distracted", ["Hesitant", "Preoccupied"]], ["Astonished", ["Amazed", "Shocked"]] ] },
+    { name: "Afraid", note: "threatened", half: "unmet", h: 208, s: 42, mids: [
+      ["Scared", ["Terrified", "Frightened"]], ["Vulnerable", ["Susceptible", "Helpless"]],
+      ["Anxious", ["Worried", "Concerned"]], ["Insecure", ["Apprehensive", "Suspicious"]] ] },
+    { name: "Disgusted", note: "repulsion", half: "unmet", h: 268, s: 32, mids: [
+      ["Contempt", ["Hateful", "Scorn"]], ["Repulsive", ["Nauseous", "Sickened"]],
+      ["Apathetic", ["Bored", "Uninterested"]], ["Averse", ["Resistant", "Reluctant"]] ] },
+    { name: "Angry", note: "judgment", half: "unmet", h: 6, s: 44, mids: [
+      ["Mad", ["Furious", "Enraged"]], ["Envious", ["Animosity", "Jealous"]],
+      ["Annoyed", ["Irritated", "Resentful"]], ["Frustrated", ["Upset", "Aggravated"]] ] }
+  ]
+};
+
+const ENERGY = {
+  // a0 = start angle on the wheel, clockwise from 12 o'clock
+  quads: [
+    { id: "hyper", name: "Hyper / Elevated Energy", lines: ["Hyper /", "Elevated"], state: "Sympathetic state", short: "Sympathetic",
+      desc: "Response to perceived danger, leading to the fight-or-flight response.", h: 200, s: 34, a0: 0,
+      inner: ["Buzzing", "Jittery", "Tense", "Hyperalert", "Electric", "Rushed", "Bouncing", "Frantic", "Trembly"],
+      outer: ["On Edge", "Wired", "Vibrating", "Agitated", "Revved Up", "Overstimulated", "Overly-excited", "Manic", "Alert"] },
+    { id: "regulated", name: "Regulated Energy", lines: ["Regulated"], state: "Ventral vagal state", short: "Ventral vagal",
+      desc: "Feelings of safety, social connection, and emotional regulation.", h: 318, s: 16, a0: 90,
+      inner: ["Grounded", "Calm", "Open", "Centered", "Steady", "Fluid", "Clear-headed", "Attuned", "Balanced"],
+      outer: ["Settled", "Spacious", "Softened", "Present", "Quiet Energy", "Expansive", "Free", "Resourced", "Light"] },
+    { id: "low", name: "Low / Heavy Energy", lines: ["Low /", "Heavy"], state: "Dorsal vagal state", short: "Dorsal vagal",
+      desc: "Mental and physical shutdown in response to extreme threat.", h: 34, s: 62, a0: 180,
+      inner: ["Muted", "Flat", "Shut down", "Sluggish", "Drained", "Foggy", "Heavy"],
+      outer: ["Underwater", "Dissociated", "Collapsed", "Zoned out", "Checked out", "Frozen", "Lethargic"] },
+    { id: "diffuse", name: "Diffuse / Unstable Energy", lines: ["Diffuse /", "Unstable"], state: "Mixed nervous system state", short: "Mixed NS",
+      desc: "Difficulty maintaining a stable and regulated level of energy.", h: 66, s: 34, a0: 270,
+      inner: ["Spinning", "Floaty", "Unsettled", "Fizzy", "Scattered"],
+      outer: ["Wobbly", "Foggy-headed", "Dazed", "Diffused", "Unanchored"] }
+  ],
+  gridOrder: ["diffuse", "hyper", "low", "regulated"]
+};
+
+/* wheel radii (viewBox units) */
+const RF = { hub: 64, core: 250, mid: 370, out: 492 };
+const RE = { c: 215, inner: 350, out: 492 };
+
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+FEELINGS.cores.forEach((c, i) => {
+  c.id = slug(c.name);
+  c.a0 = i * 30; c.a1 = c.a0 + 30;
+  c.mids = c.mids.map(([name, outs], j) => ({
+    id: c.id + ":" + slug(name), name,
+    a0: c.a0 + j * 7.5, a1: c.a0 + (j + 1) * 7.5,
+    outs: outs.map((o, k) => ({ id: c.id + ":" + slug(o), name: o, a0: c.a0 + j * 7.5 + k * 3.75, a1: c.a0 + j * 7.5 + (k + 1) * 3.75 }))
+  }));
+});
+const coreById = Object.fromEntries(FEELINGS.cores.map(c => [c.id, c]));
+const quadById = Object.fromEntries(ENERGY.quads.map(q => [q.id, q]));
+// id -> display name, for looking up meanings
+const NAME = {};
+FEELINGS.cores.forEach(c => { NAME[c.id] = c.name; c.mids.forEach(m => { NAME[m.id] = m.name; m.outs.forEach(o => NAME[o.id] = o.name); }); });
+ENERGY.quads.forEach(q => [...q.inner, ...q.outer].forEach(w => NAME[q.id + ":" + slug(w)] = w));
+const meaningOf = (id) => (state.wheel === "feelings" ? MEANINGS.feelings : MEANINGS.energy)[NAME[id]];
+
+/* ================= state ================= */
+const state = {
+  wheel: "feelings",
+  feelings: { half: null, core: null, detail: null, tab: null },
+  energy: { quad: null, detail: null, tab: "mid" }
+};
+
+/* ================= svg helpers ================= */
+const C = 500;
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const pt = (r, a) => { const t = a * Math.PI / 180; return [C + r * Math.sin(t), C - r * Math.cos(t)]; };
+const f = n => n.toFixed(1);
+function arc(r0, r1, a0, a1) {
+  const large = (a1 - a0) > 180 ? 1 : 0;
+  const [x1, y1] = pt(r1, a0), [x2, y2] = pt(r1, a1);
+  if (r0 <= 0) return `M${C} ${C} L${f(x1)} ${f(y1)} A${r1} ${r1} 0 ${large} 1 ${f(x2)} ${f(y2)} Z`;
+  const [x3, y3] = pt(r0, a1), [x4, y4] = pt(r0, a0);
+  return `M${f(x1)} ${f(y1)} A${r1} ${r1} 0 ${large} 1 ${f(x2)} ${f(y2)} L${f(x3)} ${f(y3)} A${r0} ${r0} 0 ${large} 0 ${f(x4)} ${f(y4)} Z`;
+}
+// Radial words are positioned by applyRotation() so they stay readable however the wheel is turned.
+function radialText(txt, r, a, size, cls) {
+  return `<text class="${cls} rad" data-r="${r}" data-a="${f(a)}" font-size="${size}" text-anchor="middle" dominant-baseline="central">${esc(txt)}</text>`;
+}
+function seg({ r0, r1, a0, a1, ring, h, s, attrs, label }) {
+  const data = Object.entries(attrs).map(([k, v]) => `data-${k}="${esc(v)}"`).join(" ");
+  return `<g class="seg ring-${ring}" style="--h:${h};--s:${s}" ${data}><path class="wedge" d="${arc(r0, r1, a0, a1)}"/>${label || ""}</g>`;
+}
+
+/* ================= faces ================= */
+// Simple line faces in a unit circle (-1..1, y down). One expression per core feeling.
+const EYE = (x, y = -0.18) => `<circle class="fill" cx="${x}" cy="${y}" r="0.1"/>`;
+const RING_EYE = (x, y = -0.16) => `<circle class="ln" cx="${x}" cy="${y}" r="0.15"/><circle class="fill" cx="${x}" cy="${y}" r="0.05"/>`;
+const SMILE_EYES = `<path class="ln" d="M-0.52 -0.12 Q-0.36 -0.34 -0.2 -0.12"/><path class="ln" d="M0.2 -0.12 Q0.36 -0.34 0.52 -0.12"/>`;
+const CLOSED_EYES = `<path class="ln" d="M-0.52 -0.18 Q-0.36 -0.02 -0.2 -0.18"/><path class="ln" d="M0.2 -0.18 Q0.36 -0.02 0.52 -0.18"/>`;
+const WORRY_BROWS = `<path class="ln" d="M-0.58 -0.36 L-0.18 -0.5"/><path class="ln" d="M0.18 -0.5 L0.58 -0.36"/>`;
+const heart = (x, y) => `<path class="fill" d="M${x} ${y + 0.13} C${x - 0.26} ${y - 0.02} ${x - 0.13} ${y - 0.24} ${x} ${y - 0.09} C${x + 0.13} ${y - 0.24} ${x + 0.26} ${y - 0.02} ${x} ${y + 0.13} Z"/>`;
+const FACES = {
+  proud: SMILE_EYES + `<path class="ln" d="M-0.4 0.24 Q0 0.52 0.4 0.24"/><path class="ln" d="M-0.55 -0.46 L-0.22 -0.5"/><path class="ln" d="M0.22 -0.5 L0.55 -0.46"/>`,
+  joyful: SMILE_EYES + `<path class="fill" d="M-0.46 0.14 Q0 0.78 0.46 0.14 Z"/>`,
+  intrigued: EYE(-0.34) + EYE(0.34) + `<path class="ln" d="M-0.55 -0.42 L-0.2 -0.4"/><path class="ln" d="M0.18 -0.5 Q0.36 -0.66 0.55 -0.5"/><path class="ln" d="M-0.18 0.36 Q0.06 0.28 0.28 0.3"/>`,
+  trusting: EYE(-0.34) + EYE(0.34) + `<path class="ln" d="M-0.36 0.26 Q0 0.48 0.36 0.26"/>`,
+  loving: heart(-0.34, -0.16) + heart(0.34, -0.16) + `<path class="ln" d="M-0.36 0.26 Q0 0.52 0.36 0.26"/>`,
+  peaceful: CLOSED_EYES + `<path class="ln" d="M-0.3 0.3 Q0 0.44 0.3 0.3"/>`,
+  ashamed: `<circle class="fill" cx="-0.32" cy="0" r="0.08"/><circle class="fill" cx="0.32" cy="0" r="0.08"/>` + WORRY_BROWS +
+    `<path class="ln" d="M-0.24 0.42 Q-0.12 0.34 0 0.42 Q0.12 0.5 0.24 0.42"/><circle class="blush" cx="-0.56" cy="0.2" r="0.16"/><circle class="blush" cx="0.56" cy="0.2" r="0.16"/>`,
+  sad: EYE(-0.34, -0.14) + EYE(0.34, -0.14) + WORRY_BROWS + `<path class="ln" d="M-0.34 0.46 Q0 0.2 0.34 0.46"/><path class="tear" d="M0.42 0.02 Q0.52 0.2 0.42 0.26 Q0.32 0.2 0.42 0.02 Z"/>`,
+  surprised: RING_EYE(-0.34) + RING_EYE(0.34) + `<path class="ln" d="M-0.55 -0.5 Q-0.36 -0.66 -0.18 -0.5"/><path class="ln" d="M0.18 -0.5 Q0.36 -0.66 0.55 -0.5"/><ellipse class="ln" cx="0" cy="0.38" rx="0.13" ry="0.17"/>`,
+  afraid: RING_EYE(-0.34) + RING_EYE(0.34) + WORRY_BROWS + `<path class="ln" d="M-0.36 0.4 L-0.22 0.32 L-0.07 0.4 L0.07 0.32 L0.22 0.4 L0.36 0.32"/>`,
+  disgusted: `<path class="ln" d="M-0.52 -0.16 L-0.2 -0.12"/><path class="ln" d="M0.2 -0.12 L0.52 -0.16"/><path class="ln" d="M-0.55 -0.36 L-0.2 -0.3"/><path class="ln" d="M0.2 -0.3 L0.55 -0.36"/>` +
+    `<path class="ln" d="M-0.36 0.38 Q-0.18 0.22 0 0.36 Q0.18 0.48 0.36 0.28"/>`,
+  angry: EYE(-0.32, -0.12) + EYE(0.32, -0.12) + `<path class="ln" d="M-0.58 -0.46 L-0.16 -0.28"/><path class="ln" d="M0.16 -0.28 L0.58 -0.46"/><path class="ln" d="M-0.32 0.42 Q0 0.26 0.32 0.42"/>`
+};
+const faceInner = id => `<circle class="skin" r="1"/>${FACES[id] || ""}`;
+const faceAt = (id, x, y, r) => `<g class="face upright" data-x="${f(x)}" data-y="${f(y)}" data-s="${r}">${faceInner(id)}</g>`;
+const miniFace = id => `<svg class="mini-face" viewBox="-1.12 -1.12 2.24 2.24" aria-hidden="true"><g class="face">${faceInner(id)}</g></svg>`;
+
+/* ================= wheel renderers ================= */
+function drawFeelings() {
+  let out = "";
+  FEELINGS.cores.forEach(c => {
+    const am = (c.a0 + c.a1) / 2;
+    const [fx, fy] = pt(RF.hub + 42, am);
+    out += seg({ r0: RF.hub, r1: RF.core, a0: c.a0, a1: c.a1, ring: "core", h: c.h, s: c.s,
+      attrs: { kind: "core", core: c.id, half: c.half },
+      label: radialText(c.name, (RF.hub + RF.core) / 2, am, 24, "lbl-core") });
+    c.mids.forEach(m => {
+      out += seg({ r0: RF.core, r1: RF.mid, a0: m.a0, a1: m.a1, ring: "mid", h: c.h, s: c.s,
+        attrs: { kind: "word", id: m.id, core: c.id, half: c.half },
+        label: radialText(m.name, (RF.core + RF.mid) / 2, (m.a0 + m.a1) / 2, 14.5, "lbl-small") });
+      m.outs.forEach(o => {
+        out += seg({ r0: RF.mid, r1: RF.out, a0: o.a0, a1: o.a1, ring: "out", h: c.h, s: c.s,
+          attrs: { kind: "word", id: o.id, core: c.id, half: c.half, parent: m.id },
+          label: radialText(o.name, (RF.mid + RF.out) / 2, (o.a0 + o.a1) / 2, 13.5, "lbl-small") });
+      });
+    });
+  });
+  out += `<circle class="hub" cx="${C}" cy="${C}" r="${RF.hub - 2}"/>`;
+  return out;
+}
+
+function drawEnergy() {
+  let out = "";
+  ENERGY.quads.forEach(q => {
+    const a1 = q.a0 + 90, am = q.a0 + 45;
+    const [lx, ly] = pt(118, am);
+    const n = q.lines.length;
+    let lbl = q.lines.map((ln, i) =>
+      `<text class="lbl-center" x="0" y="${f(-(n - 1) * 13 + i * 26 - 8)}" font-size="23" text-anchor="middle">${esc(ln)}</text>`).join("");
+    lbl += `<text class="lbl-center-sub" x="0" y="${f((n - 1) * 13 + 22)}" font-size="15" text-anchor="middle">${esc(q.short)}</text>`;
+    lbl = `<g class="upright" data-x="${f(lx)}" data-y="${f(ly)}" data-s="1">${lbl}</g>`;
+    out += seg({ r0: 0, r1: RE.c, a0: q.a0, a1, ring: "core", h: q.h, s: q.s, attrs: { kind: "quad", quad: q.id }, label: lbl });
+    const step1 = 90 / q.inner.length, step2 = 90 / q.outer.length;
+    q.inner.forEach((w, i) => {
+      const a = q.a0 + i * step1;
+      out += seg({ r0: RE.c, r1: RE.inner, a0: a, a1: a + step1, ring: "mid", h: q.h, s: q.s,
+        attrs: { kind: "word", id: q.id + ":" + slug(w), quad: q.id },
+        label: radialText(w, (RE.c + RE.inner) / 2, a + step1 / 2, 18, "lbl-small") });
+    });
+    q.outer.forEach((w, i) => {
+      const a = q.a0 + i * step2;
+      out += seg({ r0: RE.inner, r1: RE.out, a0: a, a1: a + step2, ring: "out", h: q.h, s: q.s,
+        attrs: { kind: "word", id: q.id + ":" + slug(w), quad: q.id },
+        label: radialText(w, (RE.inner + RE.out) / 2, a + step2 / 2, 18, "lbl-small") });
+    });
+  });
+  return out;
+}
+
+/* ================= panel renderers ================= */
+const tint = (h, s) => `style="--h:${h};--s:${s}"`;
+// a word you can tap to read its meaning; data-hl links it to its wedge
+function word(id, h, s, extra = "") {
+  const open = state[state.wheel].detail === id;
+  return `<button class="chip ${extra}" ${tint(h, s)} data-act="detail" data-id="${esc(id)}" data-hl="${esc(id)}" aria-expanded="${open}">${esc(NAME[id])}</button>`;
+}
+// the meaning box for whichever word in this group is open
+function meaningFor(ids, h, s) {
+  const open = state[state.wheel].detail;
+  if (!open || !ids.includes(open)) return "";
+  const m = meaningOf(open);
+  if (!m) return "";
+  return `<div class="meaning" ${tint(h, s)}><span class="m-word">${esc(NAME[open])}</span><p>${esc(m[0])}</p><p class="m-ex">“${esc(m[1])}”</p></div>`;
+}
+
+// a word with its meaning and example, already open
+function card(id, h, s, cls = "") {
+  const m = meaningOf(id) || ["", ""];
+  return `<div class="tcard ${cls}" ${tint(h, s)} data-hl="${esc(id)}"><span class="w">${esc(NAME[id])}</span><p>${esc(m[0])}</p><p class="x">“${esc(m[1])}”</p></div>`;
+}
+
+function navRow(crumbs) {
+  if (!crumbs.length) return "";
+  const parts = crumbs.map((c, i) => i === crumbs.length - 1
+    ? `<span class="here">${esc(c.label)}</span>`
+    : `<button data-act="${c.act}" ${c.data || ""}>${esc(c.label)}</button><span class="sep">›</span>`).join("");
+  return `<div class="navrow"><nav class="crumbs" aria-label="Where you are">${parts}</nav></div>`;
+}
+
+function panelFeelings() {
+  const st = state.feelings;
+  const crumbs = [];
+  if (st.half) crumbs.push({ label: FEELINGS.halves.find(h => h.id === st.half).name, act: "half", data: `data-half="${st.half}"` });
+  if (st.core) crumbs.push({ label: coreById[st.core].name });
+  let html = navRow(crumbs);
+
+  // step 1: which side
+  if (!st.half) {
+    html += `<div class="halves">` + ["unmet", "met"].map(id => {
+      const hf = FEELINGS.halves.find(h => h.id === id);
+      const cores = FEELINGS.cores.filter(c => c.half === id);
+      return `<section class="half" data-hl="half:${id}">
+        <button class="head-btn" data-act="half" data-half="${id}"><span class="txt"><span class="name">${esc(hf.name)}</span></span><span class="go">›</span></button>
+        <div class="chips">${cores.map(c => `<button class="chip mid" ${tint(c.h, c.s)} data-act="core" data-core="${c.id}" data-hl="core:${c.id}">${miniFace(c.id)}${esc(c.name)}</button>`).join("")}</div>
+      </section>`;
+    }).join("") + `</div>`;
+    return html;
+  }
+
+  // step 2: which feeling on this side
+  if (!st.core) {
+    const cores = FEELINGS.cores.filter(c => c.half === st.half);
+    html += `<div class="cores">` + cores.map(c => {
+      const ids = c.mids.map(m => m.id);
+      return `<section class="core" ${tint(c.h, c.s)} data-hl="core:${c.id}">
+        <button class="head-btn" data-act="core" data-core="${c.id}">${miniFace(c.id)}<span class="txt"><span class="name">${esc(c.name)}</span><span class="sub">${esc(c.note)}</span></span><span class="go">›</span></button>
+        <p class="def">${esc(MEANINGS.feelings[c.name][0])}</p>
+        <div class="chips">${ids.map(id => word(id, c.h, c.s, "mid")).join("")}</div>
+        ${meaningFor(ids, c.h, c.s)}
+      </section>`;
+    }).join("") + `</div>`;
+    return html;
+  }
+
+  // step 3: one feeling, every branch visible
+  const c = coreById[st.core];
+  const other = FEELINGS.halves.find(h => h.id !== c.half);
+  const cm = MEANINGS.feelings[c.name];
+  html += `<div class="focus-head">
+      <div class="focus-row">${miniFace(c.id)}<div><h2>${esc(c.name)}</h2><span class="sub">${esc(c.note)}</span></div></div>
+      <p>${esc(cm[0])}</p><p class="ex">“${esc(cm[1])}”</p>
+    </div>`;
+  const tab = c.mids.find(m => m.id === st.tab) || c.mids[0];
+  html += `<div class="tabs" role="tablist" ${tint(c.h, c.s)}>${c.mids.map(m =>
+    `<button role="tab" data-act="tab" data-tab="${m.id}" data-hl="branch:${m.id}" aria-selected="${m.id === tab.id}">${esc(m.name)}</button>`).join("")}</div>`;
+  html += `<div class="tabpanel" role="tabpanel">${card(tab.id, c.h, c.s, "gen")}
+    <div class="specrow">${tab.outs.map(o => card(o.id, c.h, c.s)).join("")}</div></div>`;
+  const sibs = FEELINGS.cores.filter(x => x.half === c.half && x.id !== c.id);
+  html += `<div class="others"><span class="eyebrow">Also when ${esc(FEELINGS.halves.find(h => h.id === c.half).name.toLowerCase())}</span>
+    <div class="chips">${sibs.map(x => `<button class="chip mid" ${tint(x.h, x.s)} data-act="core" data-core="${x.id}" data-hl="core:${x.id}">${miniFace(x.id)}${esc(x.name)}</button>`).join("")}</div>
+    <div><button class="ghost" data-act="half" data-half="${other.id}">Switch to ${esc(other.name.toLowerCase())}</button></div></div>`;
+  return html;
+}
+
+function panelEnergy() {
+  const st = state.energy;
+  const crumbs = [];
+  let html = navRow(crumbs);
+  const wid = (q, w) => q.id + ":" + slug(w);
+
+  if (!st.quad) {
+    html += `<div class="quads">` + ENERGY.gridOrder.map(id => {
+      const q = quadById[id];
+      return `<section class="quad" ${tint(q.h, q.s)} data-hl="quad:${q.id}">
+        <button class="head-btn" data-act="quad" data-quad="${q.id}"><span class="txt"><span class="name">${esc(q.name)}</span><span class="sub">${esc(q.state)}</span></span><span class="go">›</span></button>
+        <p>${esc(q.desc)}</p>
+      </section>`;
+    }).join("") + `</div>`;
+    return html;
+  }
+
+  const q = quadById[st.quad];
+  const inner = q.inner.map(w => wid(q, w)), outer = q.outer.map(w => wid(q, w));
+  html += `<div class="focus-head"><span class="eyebrow">${esc(q.state)}</span><h2><span class="swatch" ${tint(q.h, q.s)}></span>${esc(q.name)}</h2><p>${esc(q.desc)}</p></div>`;
+  const ring = st.tab === "out" ? "out" : "mid";
+  html += `<div class="tabs" role="tablist" ${tint(q.h, q.s)}>
+    <button role="tab" data-act="tab" data-tab="mid" data-hl="ring:${q.id}:mid" aria-selected="${ring === "mid"}">Inner ring</button>
+    <button role="tab" data-act="tab" data-tab="out" data-hl="ring:${q.id}:out" aria-selected="${ring === "out"}">Outer ring</button></div>`;
+  html += `<div class="tabpanel specrow" role="tabpanel">${(ring === "mid" ? inner : outer).map(id => card(id, q.h, q.s)).join("")}</div>`;
+  const others = ENERGY.gridOrder.filter(id => id !== q.id).map(id => quadById[id]);
+  html += `<div class="others"><span class="eyebrow">Other energy states</span>
+    <div class="chips">${others.map(x => `<button class="chip mid" ${tint(x.h, x.s)} data-act="quad" data-quad="${x.id}" data-hl="quad:${x.id}">${esc(x.name)}</button>`).join("")}</div></div>`;
+  return html;
+}
+
+/* ================= zoom + rotation ================= */
+// Frame a ring sector (r0..r1, a0..a1) as a square viewBox with some breathing room.
+function sectorBox(r0, r1, a0, a1, pad = 28) {
+  const xs = [], ys = [];
+  const stepA = Math.min(1, (a1 - a0) / 8);
+  for (let a = a0; a <= a1 + 0.001; a += stepA) {
+    for (const r of [r0, r1]) { const [x, y] = pt(r, a); xs.push(x); ys.push(y); }
+  }
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const size = Math.max(maxX - minX, maxY - minY) + pad * 2;
+  return [(minX + maxX) / 2 - size / 2, (minY + maxY) / 2 - size / 2, size];
+}
+const phone = window.matchMedia("(max-width: 899px)");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const norm180 = d => { d = ((d % 360) + 360) % 360; return d > 180 ? d - 360 : d; };
+
+// Turn the focused slice to face 3 o'clock so its words read left to right.
+function turnFor(a0, a1) {
+  return norm180(90 - (a0 + a1) / 2);
+}
+// target = [x, y, size, rotation]
+function target() {
+  if (state.wheel === "feelings") {
+    const st = state.feelings;
+    if (st.core) {
+      const c = coreById[st.core], t = turnFor(c.a0, c.a1);
+      return [...sectorBox(0, RF.out, c.a0 + t, c.a1 + t, 44), t];
+    }
+    if (st.half) { const a0 = st.half === "met" ? 0 : 180; return [...sectorBox(0, RF.core, a0, a0 + 180, 18), 0]; }
+    return [...sectorBox(0, RF.core, 0, 360, 10), 0];
+  }
+  if (state.energy.quad) {
+    const q = quadById[state.energy.quad], t = turnFor(q.a0, q.a0 + 90);
+    return [...sectorBox(0, RE.out, q.a0 + t, q.a0 + 90 + t, 40), t];
+  }
+  return [...sectorBox(0, RE.c, 0, 360, 10), 0];
+}
+
+let view = [0, 0, 1000, 0], anim = 0;
+let rotG = null, rads = [], uprights = [];
+function cacheWheel() {
+  rotG = svg.querySelector("#rot");
+  rads = [...svg.querySelectorAll("text.rad")].map(el => {
+    const r = +el.dataset.r, a = +el.dataset.a, [x, y] = pt(r, a);
+    return { el, a, x, y };
+  });
+  uprights = [...svg.querySelectorAll(".upright")].map(el => ({ el, x: +el.dataset.x, y: +el.dataset.y, s: +el.dataset.s }));
+}
+let restRot = 0; // the rotation the wheel is heading to; word orientation is fixed for it
+function applyRotation(t) {
+  rotG.setAttribute("transform", `rotate(${t.toFixed(2)} ${C} ${C})`);
+  rads.forEach(({ el, a, x, y }) => {
+    const e = ((a + restRot) % 360 + 360) % 360;
+    const want = e <= 180 ? e - 90 : e + 90; // read outward on the right, inward on the left
+    el.setAttribute("transform", `translate(${f(x)} ${f(y)}) rotate(${(want - restRot).toFixed(2)})`);
+  });
+  uprights.forEach(({ el, x, y, s }) => el.setAttribute("transform", `translate(${f(x)} ${f(y)}) rotate(${(-t).toFixed(2)}) scale(${s})`));
+}
+function setView(v) {
+  view = v;
+  svg.setAttribute("viewBox", `${v[0].toFixed(1)} ${v[1].toFixed(1)} ${v[2].toFixed(1)} ${v[2].toFixed(1)}`);
+  applyRotation(v[3]);
+}
+function zoomTo(goal, instant) {
+  cancelAnimationFrame(anim);
+  restRot = goal[3];
+  if (instant || reduceMotion.matches) { svg.classList.remove("turning"); return setView(goal); }
+  const from = view.slice(), t0 = performance.now(), dur = 600;
+  const dRot = norm180(goal[3] - from[3]);
+  // words step out while the wheel turns, then come back already readable
+  svg.classList.toggle("turning", Math.abs(dRot) > 0.5);
+  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const step = now => {
+    const t = Math.min(1, (now - t0) / dur), k = ease(t);
+    setView([0, 1, 2].map(i => from[i] + (goal[i] - from[i]) * k).concat(from[3] + dRot * k));
+    if (t < 1) anim = requestAnimationFrame(step); else { setView(goal); svg.classList.remove("turning"); }
+  };
+  anim = requestAnimationFrame(step);
+}
+
+/* ================= render + sync ================= */
+const svg = document.getElementById("wheel");
+const panel = document.getElementById("panel");
+const sides = document.getElementById("sides");
+const COPY = {
+  feelings: { title: "Feelings when…", aria: "Feelings wheel, split into feelings when your needs are not met (left) and met (right)",
+    credit: "Based on Nonviolent Communication by Marshall Rosenberg, Ph.D. Feelings wheel organized by Bret Stein." },
+  energy: { title: "Energy Wheel", aria: "Energy wheel: four nervous system states",
+    credit: "Word list adapted from the Energy Wheel worksheet. A reference for noticing your energy, not a diagnosis." }
+};
+
+function drawWheel() {
+  svg.innerHTML = `<rect class="bg" x="-1000" y="-1000" width="3000" height="3000"/><g id="rot">${state.wheel === "feelings" ? drawFeelings() : drawEnergy()}</g>`;
+  cacheWheel();
+  view = [0, 0, 1000, 0];
+  svg.setAttribute("aria-label", COPY[state.wheel].aria);
+  document.getElementById("title").textContent = COPY[state.wheel].title;
+  document.getElementById("credit").textContent = COPY[state.wheel].credit;
+  sides.hidden = state.wheel !== "feelings";
+  document.querySelectorAll(".switch button").forEach(b => b.setAttribute("aria-pressed", b.dataset.wheel === state.wheel));
+}
+
+// The wheel draws the current step and the next one, nothing further out.
+function syncWheel() {
+  const fe = state.wheel === "feelings";
+  const st = state[state.wheel];
+  svg.querySelectorAll(".seg").forEach(g => {
+    const d = g.dataset;
+    let dim = false, hide = false, mHide = false;
+    if (fe) {
+      const isMid = d.kind === "word" && !d.parent, isOut = d.kind === "word" && !!d.parent;
+      if (st.core) {
+        dim = d.core !== st.core;
+        hide = (isMid || isOut) && d.core !== st.core;
+      } else if (st.half) {
+        dim = d.half !== st.half;
+        hide = isMid || isOut;
+      } else {
+        hide = isMid || isOut;
+      }
+    } else {
+      dim = !!st.quad && d.quad !== st.quad;
+      hide = d.kind === "word" && d.quad !== st.quad;
+    }
+    g.classList.toggle("dim", dim);
+    g.classList.toggle("hide", hide);
+    g.classList.toggle("m-hide", mHide);
+    let sel = !!st.detail && d.id === st.detail;
+    if (fe && st.core && d.core === st.core && d.kind === "word") {
+      const tab = st.tab || coreById[st.core].mids[0].id;
+      sel = d.id === tab || d.parent === tab;
+    }
+    if (!fe && st.quad && d.quad === st.quad && d.kind === "word") sel = g.classList.contains("ring-" + (st.tab === "out" ? "out" : "mid"));
+    g.classList.toggle("sel", sel);
+  });
+  if (fe) {
+    document.querySelectorAll(".sides button").forEach(b => {
+      b.setAttribute("aria-pressed", b.dataset.half === st.half);
+      b.classList.toggle("faded", !!st.half && b.dataset.half !== st.half);
+    });
+  }
+}
+
+function isFocused() { return state.wheel === "feelings" ? !!state.feelings.half : !!state.energy.quad; }
+
+function render(scroll, instant, keepZoom) {
+  panel.innerHTML = state.wheel === "feelings" ? panelFeelings() : panelEnergy();
+  syncWheel();
+  if (!keepZoom) zoomTo(target(), instant);
+  document.getElementById("wheelBack").hidden = !isFocused();
+  if (scroll && phone.matches) {
+    // bring the wheel back into view so the zoom is visible
+    const top = document.querySelector(".stage").getBoundingClientRect().top + window.scrollY - 8;
+    if (window.scrollY > top) window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
+  }
+}
+
+/* ================= hover linking: panel ↔ wheel ================= */
+function segMatches(g, key) {
+  const d = g.dataset, [type, a, b] = key.split(":");
+  const rest = key.slice(key.indexOf(":") + 1);
+  switch (type) {
+    case "half": return d.half === a;
+    case "core": return d.core === a && d.kind === "core";
+    case "quad": return d.quad === a;
+    case "branch": return d.id === rest || d.parent === rest;
+    case "ring": return d.quad === a && g.classList.contains("ring-" + b);
+    default: return d.id === key; // a single word id
+  }
+}
+function highlight(key) {
+  svg.querySelectorAll(".seg").forEach(g => g.classList.toggle("hl", !!key && segMatches(g, key)));
+}
+const hoverable = window.matchMedia("(hover: hover)");
+panel.addEventListener("mouseover", e => {
+  if (!hoverable.matches) return;
+  const el = e.target.closest("[data-hl]");
+  highlight(el ? el.dataset.hl : null);
+});
+panel.addEventListener("mouseleave", () => highlight(null));
+sides.addEventListener("mouseover", e => { if (hoverable.matches) { const b = e.target.closest("[data-half]"); highlight(b ? "half:" + b.dataset.half : null); } });
+sides.addEventListener("mouseleave", () => highlight(null));
+
+/* ================= actions ================= */
+function setWheel(w) {
+  state.wheel = w;
+  drawWheel();
+  render(false, true);
+  try { history.replaceState(null, "", "#" + w); } catch (e) {}
+}
+function up() {
+  if (state.wheel === "feelings") {
+    const st = state.feelings;
+    st.detail = null;
+    if (st.core) st.core = null; else st.half = null;
+  } else { state.energy.quad = null; state.energy.detail = null; }
+  render(true);
+}
+function act(b) {
+  const fe = state.feelings, en = state.energy;
+  switch (b.dataset.act) {
+    case "root": fe.half = null; fe.core = null; fe.detail = null; en.quad = null; en.detail = null; break;
+    case "up": up(); return;
+    case "half":
+      if (b.closest(".sides") && fe.half === b.dataset.half && !fe.core) fe.half = null;
+      else fe.half = b.dataset.half;
+      fe.core = null; fe.detail = null; fe.tab = null; break;
+    case "core": fe.core = b.dataset.core; fe.half = coreById[fe.core].half; fe.detail = null; fe.tab = null; break;
+    case "quad": en.quad = b.dataset.quad; en.detail = null; en.tab = "mid"; break;
+    case "tab": state[state.wheel].tab = b.dataset.tab; render(false, false, true); return;
+    case "detail": {
+      const st = state[state.wheel];
+      st.detail = st.detail === b.dataset.id ? null : b.dataset.id;
+      highlight(null);
+      render(false, false, true);
+      return;
+    }
+  }
+  highlight(null);
+  render(true);
+}
+panel.addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (b) act(b); });
+sides.addEventListener("click", e => { const b = e.target.closest("[data-act]"); if (b) act(b); });
+
+svg.addEventListener("click", e => {
+  const g = e.target.closest(".seg");
+  if (!g) { if (isFocused()) up(); return; }
+  const d = g.dataset;
+  if (state.wheel === "feelings") {
+    const st = state.feelings;
+    const sameCore = st.core === d.core;
+    st.half = d.half; st.core = d.core; st.detail = null;
+    // a word on the wheel opens the tab for its branch
+    st.tab = d.kind === "word" ? (d.parent || d.id) : (sameCore ? st.tab : null);
+    if (sameCore && d.kind === "word") { render(false, false, true); return; }
+  } else {
+    const st = state.energy;
+    const same = st.quad === d.quad;
+    st.quad = d.quad;
+    st.detail = null;
+    if (d.kind === "word") st.tab = g.classList.contains("ring-out") ? "out" : "mid";
+    else if (!same) st.tab = "mid";
+    if (same && d.kind === "word") { render(false, false, true); return; }
+  }
+  highlight(null);
+  render(false);
+});
+
+document.getElementById("wheelBack").addEventListener("click", up);
+document.querySelectorAll(".switch button").forEach(b => b.addEventListener("click", () => setWheel(b.dataset.wheel)));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && isFocused()) up(); });
+phone.addEventListener("change", () => zoomTo(target(), true));
+
+/* ================= boot ================= */
+state.wheel = (location.hash || "").replace("#", "") === "energy" ? "energy" : "feelings";
+drawWheel();
+render(false, true);
+</script>
+
+</body>
+</html>
