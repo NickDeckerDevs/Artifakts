@@ -1,6 +1,11 @@
 {
   "artifacts": [
     {
+      "name": "Feelings & Energy Wheels",
+      "category": "Wellness",
+      "file": "feelings-energy-wheel/"
+    },
+    {
       "name": "Lineup Manager v0",
       "category": "Soccer",
       "file": "lineup-manager-v0.html"
