@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f0f0f">
+<title>U10 Boys Team 4 — Lineup Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one phone-width column — game picker, quarter tabs, field (attack at top, goal at bottom), bench, playtime.
+   Deliberately dark-only: it's read on a sunny sideline, same look as the U9 tool. */
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0f;
+  --surface: #1c1c1e;
+  --surface2: #2a2a2d;
+  --sheet: #1c1c20;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.18);
+  --text: #f0ede8;
+  --text-muted: #8f8b86;
+  --text-faint: #5e5b58;
+  --ok: #4dd6a8;
+  --warn: #f5b84a;
+  --warn-bg: #2a2008; --warn-border: #4a3a10;
+  --danger-bg: #7a1f1f; --danger-fg: #ffaaaa; --danger-border: #a03030;
+  --bar: #378ADD;
+  --gk-bg: #2a2060;   --gk-fg: #c4beff;
+  --mid-bg: #0d2a45;  --mid-fg: #7ec2f7;
+  --lf-bg: #1a2e0a;   --lf-fg: #92d44e;
+  --st-bg: #2e1c04;   --st-fg: #f5b84a;
+  --rf-bg: #2e0d1e;   --rf-fg: #f093be;
+  --def-bg: #042e22;  --def-fg: #4dd6a8;
+  --bench-bg: #252420; --bench-fg: #a09c96;
+  --radius: 8px;
+  --font: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --mono: 'DM Mono', ui-monospace, Menlo, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--text); padding: 20px 16px 48px; }
+button, select { font-family: inherit; }
+button:focus-visible, select:focus-visible, .tab:focus-visible, .opt:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
+.page { max-width: 480px; margin: 0 auto; }
+
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
+
+.game-select { width: 100%; padding: 11px 12px; margin-bottom: 10px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 500; border: 1px solid var(--border-strong); border-radius: var(--radius); }
+
+.action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.action-btn { padding: 10px 6px; font-size: 12px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); cursor: pointer; }
+.action-btn:active { border-color: var(--border-strong); color: var(--text); }
+.action-btn.primary { color: var(--text); border-color: var(--border-strong); }
+
+.save-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; padding: 7px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 11px; }
+.save-status { color: var(--text-faint); }
+.save-status.saved { color: var(--ok); }
+.save-status.local { color: var(--warn); }
+.active-count { color: var(--text-muted); }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
+.tab.active { background: var(--text); color: #111; border-color: var(--text); }
+.tab .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); margin-left: 4px; vertical-align: middle; }
+
+.warnings { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
+.warning { font-size: 12px; color: var(--warn); background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px; padding: 7px 10px; }
+
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.field-row { display: grid; gap: 8px; }
+.slot { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 6px 10px; min-height: 78px; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.slot-label { font-size: 9px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; text-align: center; }
+.slot-body { flex: 1; display: flex; align-items: center; width: 100%; }
+.chip { display: block; border-radius: 5px; padding: 8px 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; width: 100%; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip:active { transform: scale(0.95); }
+.empty { font-size: 12px; color: var(--text-faint); background: none; border: 1px dashed var(--border-strong); border-radius: 5px; padding: 8px; width: 100%; cursor: pointer; }
+
+.c-gk { background: var(--gk-bg); color: var(--gk-fg); }
+.c-mid { background: var(--mid-bg); color: var(--mid-fg); }
+.c-lf { background: var(--lf-bg); color: var(--lf-fg); }
+.c-st { background: var(--st-bg); color: var(--st-fg); }
+.c-rf { background: var(--rf-bg); color: var(--rf-fg); }
+.c-def { background: var(--def-bg); color: var(--def-fg); }
+.c-bench { background: var(--bench-bg); color: var(--bench-fg); }
+
+.section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 14px; }
+.section-title { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+.bench-chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
+.bench-chips .chip { width: auto; padding: 7px 14px; }
+.bench-empty { font-size: 12px; color: var(--text-faint); }
+
+.pt-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.pt-name { width: 84px; font-size: 12px; color: var(--text-muted); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pt-track { flex: 1; background: var(--surface2); border-radius: 3px; height: 16px; overflow: hidden; }
+.pt-fill { height: 100%; border-radius: 3px; background: var(--bar); transition: width 0.3s ease; }
+.pt-fill.under { background: var(--text-faint); }
+.pt-fill.over { background: var(--warn); }
+.pt-val { width: 32px; font-family: var(--mono); font-size: 11px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.pt-val.over { color: var(--warn); }
+.pt-val.under { color: var(--text-muted); }
+
+.note { font-size: 11px; color: var(--text-faint); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.6; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
+.overlay[hidden] { display: none; }
+.sheet { background: var(--sheet); border-radius: 14px 14px 0 0; padding: 16px 16px calc(28px + env(safe-area-inset-bottom, 0px)); width: 100%; max-width: 480px; border-top: 1px solid var(--border-strong); max-height: 84vh; overflow-y: auto; }
+.handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 14px; }
+.sheet-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.sheet-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+
+.roster-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 16px; }
+.roster-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 7px; background: var(--surface2); }
+.roster-name { font-size: 14px; font-weight: 500; }
+.roster-name.out { color: var(--text-faint); text-decoration: line-through; }
+.toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-slider { position: absolute; inset: 0; border-radius: 13px; background: var(--surface); border: 1px solid var(--border-strong); cursor: pointer; transition: background 0.2s; }
+.toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px; border-radius: 50%; background: var(--text-faint); transition: transform 0.2s; }
+.toggle input:checked + .toggle-slider { background: #1D9E75; border-color: #1D9E75; }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); background: #fff; }
+.toggle input:focus-visible + .toggle-slider { outline: 2px solid var(--bar); outline-offset: 2px; }
+
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.opt { padding: 11px 8px; border-radius: 6px; border: 2px solid transparent; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
+.opt.selected { border-color: rgba(255,255,255,0.7); }
+.opt small { display: block; font-size: 10px; font-weight: 500; opacity: 0.8; margin-top: 2px; }
+.opt small.avoid { color: var(--warn); opacity: 1; }
+.picks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.picks .chip { width: auto; padding: 9px 14px; }
+
+.btn-row { display: flex; gap: 8px; }
+.btn { flex: 1; padding: 12px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); }
+.btn.full { width: 100%; flex: none; }
+.btn-primary { background: var(--text); color: #111; border-color: var(--text); }
+.btn-danger { background: var(--danger-bg); color: var(--danger-fg); border-color: var(--danger-border); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .chip:active { transform: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="eyebrow">U10 Boys · Team 4 · CCSA Fall 2026</div>
+  <h1>Lineup Manager</h1>
+
+  <select class="game-select" id="gameSelect" aria-label="Game"></select>
+
+  <div class="action-bar">
+    <button class="action-btn" data-action="roster">👥 Who's here</button>
+    <button class="action-btn primary" data-action="autofill">✦ Fill open spots</button>
+    <button class="action-btn" data-action="copy">⧉ Copy last game</button>
+    <button class="action-btn" data-action="clear">↺ Clear game</button>
+  </div>
+
+  <div class="save-bar">
+    <span class="save-status" id="saveStatus">Loading…</span>
+    <span class="active-count" id="activeCount"></span>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="warnings" id="warnings"></div>
+  <div class="field" id="field"></div>
+
+  <div class="section">
+    <div class="section-title">On the bench</div>
+    <div class="bench-chips" id="bench"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Playtime this game · target 2 of 4</div>
+    <div id="playtime"></div>
+  </div>
+
+  <div class="note">Tap a player to move or swap them. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Each game is saved separately.</div>
+</div>
+
+<div class="overlay" id="overlay" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+
+<script>
+// ─────────────── team ───────────────
+const TEAM_ID = 'u10b-team4-fall2026';
+const PERIODS = ['Q1', 'Q2', 'Q3', 'Q4'];
+const TARGET = 2; // quarters per player
+const FORMATION = [['lf', 'striker', 'rf'], ['cmid'], ['def1', 'def2'], ['goalie']];
+const POS = {
+  lf:      { label: 'Left Fwd',   cls: 'c-lf',  tags: ['FWD'] },
+  striker: { label: 'Striker',    cls: 'c-st',  tags: ['FWD', 'ST'] },
+  rf:      { label: 'Right Fwd',  cls: 'c-rf',  tags: ['FWD'] },
+  cmid:    { label: 'Center Mid', cls: 'c-mid', tags: ['MID'] },
+  def1:    { label: 'Defender 1', cls: 'c-def', tags: ['DEF'] },
+  def2:    { label: 'Defender 2', cls: 'c-def', tags: ['DEF'] },
+  goalie:  { label: 'Goalie',     cls: 'c-gk',  tags: ['GK'] },
+};
+const KEYS = FORMATION.flat();
+// likes / avoid from the parent info form
+const PLAYERS = [
+  { name: 'Colt',      likes: ['DEF', 'MID'],        avoid: [] },
+  { name: 'Khair',     likes: ['DEF', 'MID', 'FWD'], avoid: ['GK'] },
+  { name: 'Alejandro', likes: [],                    avoid: [] },
+  { name: 'Jeremiah',  likes: ['DEF', 'MID'],        avoid: ['GK'] },
+  { name: 'Liam',      likes: ['DEF'],               avoid: ['GK', 'ST'] },
+  { name: 'Jaxon',     likes: ['DEF'],               avoid: ['GK'] },
+  { name: 'Abel',      likes: ['DEF'],               avoid: ['GK'] },
+  { name: 'Jayce',     likes: ['DEF', 'MID'],        avoid: [] },
+  { name: 'Ethan',     likes: [],                    avoid: [] },
+  { name: 'Casey',     likes: [],                    avoid: ['GK'] },
+  { name: 'Cameron',   likes: ['DEF', 'MID', 'FWD'], avoid: [] },
+  { name: 'EJ',        likes: ['DEF', 'MID', 'FWD'], avoid: ['GK'] },
+];
+const GAMES = [
+  ['2026-10-10','Sat','12:00 PM','Team 1','2A'], ['2026-10-15','Thu','7:30 PM','Team 3','2A'],
+  ['2026-10-17','Sat','10:30 AM','Team 2','2A'], ['2026-10-22','Thu','7:30 PM','Team 6','4A'],
+  ['2026-10-24','Sat','10:30 AM','Team 8','2A','Fall Festival'], ['2026-10-29','Thu','7:30 PM','Team 7','1C'],
+  ['2026-10-31','Sat','12:00 PM','Team 5','2B'], ['2026-11-05','Thu','7:30 PM','Team 1','4B'],
+  ['2026-11-07','Sat','12:00 PM','Team 3','2A'], ['2026-11-12','Thu','7:30 PM','Team 2','4A'],
+  ['2026-11-14','Sat','10:30 AM','Team 6','2A'], ['2026-11-19','Thu','7:30 PM','Team 8','4A'],
+  ['2026-11-21','Sat','12:00 PM','Team 7','2C'], ['2026-12-03','Thu','7:30 PM','Team 5','4C'],
+  ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','4B','Tournament'],
+  ['2026-12-12','Sat','10:30 AM','Team 2','2A','Tournament'], ['2026-12-13','Sun','TBD','TBD','TBD','Semis & finals'],
+].map(([id, day, time, opp, field, note]) => ({ id, day, time, opp, field, note }));
+
+// ─────────────── state ───────────────
+const LOCAL_KEY = `lineup:${TEAM_ID}`;
+const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k, null])));
+const freshGame = () => ({ lineup: emptyLineup(), out: [], savedAt: null });
+const clone = o => JSON.parse(JSON.stringify(o));
+
+let local = readLocal();            // { currentGame, games: {id: game} } — this phone's cache
+let currentId = local.currentGame || nextGameId();
+let g = normalize(local.games[currentId]);
+let q = 0;
+let db = null, unsub = null, cloud = 'pending'; // pending | on | off
+let writing = false, dirty = false;
+
+function readLocal() {
+  try { const s = JSON.parse(localStorage.getItem(LOCAL_KEY)); if (s && s.games) return s; } catch (e) {}
+  return { currentGame: null, games: {} };
+}
+function writeLocal() {
+  local.currentGame = currentId;
+  local.games[currentId] = g;
+  try { localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); } catch (e) {}
+}
+function normalize(x) {
+  const out = freshGame();
+  if (!x) return out;
+  if (Array.isArray(x.lineup) && x.lineup.length === PERIODS.length)
+    out.lineup = x.lineup.map(L => Object.fromEntries(KEYS.map(k => [k, typeof L[k] === 'string' ? L[k] : null])));
+  if (Array.isArray(x.out)) out.out = x.out.filter(n => typeof n === 'string');
+  out.savedAt = x.savedAt || null;
+  return out;
+}
+function nextGameId() {
+  const today = new Date().toLocaleDateString('en-CA');
+  return (GAMES.find(x => x.id >= today) || GAMES[GAMES.length - 1]).id;
+}
+
+function save() {
+  g.savedAt = new Date().toISOString();
+  writeLocal();
+  pushCloud();
+  render();
+}
+async function pushCloud() {
+  if (!db) return;
+  if (writing) { dirty = true; return; }
+  writing = true;
+  const id = currentId, body = clone(g);
+  try { await db.doc(`games/${id}`).set(body); cloud = 'on'; }
+  catch (e) { cloud = 'off'; }
+  writing = false;
+  renderStatus();
+  if (dirty) { dirty = false; pushCloud(); }
+}
+function subscribe() {
+  if (unsub) unsub();
+  if (!db) return;
+  const id = currentId;
+  unsub = db.doc(`games/${id}`).onSnapshot(snap => {
+    if (id !== currentId) return;
+    cloud = 'on';
+    if (snap.exists && !snap.metadata.hasPendingWrites) {
+      const remote = normalize(snap.data());
+      if (!g.savedAt || (remote.savedAt && remote.savedAt >= g.savedAt)) {
+        g = remote; writeLocal(); if (overlay.hidden) render(); else renderStatus();
+      }
+    } else if (!snap.exists && g.savedAt) {
+      pushCloud(); // this phone has a lineup the cloud doesn't yet
+    }
+    renderStatus();
+  }, () => { cloud = 'off'; renderStatus(); });
+}
+
+// ─────────────── helpers ───────────────
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const player = n => PLAYERS.find(p => p.name === n) || { name: n, likes: [], avoid: [] };
+const here = n => !g.out.includes(n);
+const present = () => PLAYERS.map(p => p.name).filter(here);
+const posOf = (qi, n) => KEYS.find(k => g.lineup[qi][k] === n) || 'bench';
+const bench = qi => present().filter(n => posOf(qi, n) === 'bench');
+const played = n => PERIODS.filter((_, i) => posOf(i, n) !== 'bench').length;
+const avoids = (n, k) => k !== 'bench' && POS[k].tags.some(t => player(n).avoid.includes(t));
+const likes = (n, k) => k !== 'bench' && POS[k].tags.some(t => player(n).likes.includes(t));
+const short = id => id.slice(5).replace('-', '/').replace(/^0/, '');
+
+function warningsFor(qi) {
+  const out = [], L = g.lineup[qi];
+  const open = KEYS.filter(k => !L[k]).length;
+  if (open && bench(qi).length) out.push(`${open} open spot${open > 1 ? 's' : ''}`);
+  for (const k of KEYS) if (L[k] && avoids(L[k], k)) out.push(`${L[k]} would rather not play ${POS[k].label}`);
+  return out;
+}
+
+// Fill empty spots only. Fewest quarters so far goes in first; avoids are skipped
+// unless nobody else is left; likes and "sat last quarter" break ties.
+function autofill() {
+  const order = PLAYERS.map(p => p.name);
+  for (let qi = 0; qi < PERIODS.length; qi++) {
+    const L = g.lineup[qi];
+    const open = KEYS.filter(k => !L[k]).sort((a, b) => (a === 'goalie' ? -1 : b === 'goalie' ? 1 : 0));
+    for (const k of open) {
+      const pool = bench(qi);
+      if (!pool.length) break;
+      const sat = n => qi > 0 && posOf(qi - 1, n) === 'bench' ? 0 : 1;
+      pool.sort((a, b) =>
+        (avoids(a, k) - avoids(b, k)) ||
+        (played(a) - played(b)) ||
+        (sat(a) - sat(b)) ||
+        (likes(b, k) - likes(a, k)) ||
+        ((order.indexOf(a) + qi * 3) % order.length - (order.indexOf(b) + qi * 3) % order.length));
+      L[k] = pool[0];
+    }
+  }
+  save();
+}
+
+// Move `n` to `k` in the current quarter; whoever held `k` takes n's old spot.
+function place(n, k) {
+  const L = g.lineup[q], from = posOf(q, n);
+  if (from === k) return;
+  const occupant = k === 'bench' ? null : L[k];
+  if (from !== 'bench') L[from] = occupant && occupant !== n ? occupant : null;
+  if (k !== 'bench') L[k] = n;
+  save();
+}
+
+// ─────────────── render ───────────────
+const $ = id => document.getElementById(id);
+function renderStatus() {
+  const el = $('saveStatus');
+  if (!g.savedAt) { el.className = 'save-status'; el.textContent = 'Not saved yet'; return; }
+  const t = new Date(g.savedAt).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  if (cloud === 'on') { el.className = 'save-status saved'; el.textContent = `Saved ${t}`; }
+  else if (cloud === 'off') { el.className = 'save-status saved'; el.textContent = `Saved on this phone · ${t}`; }
+  else { el.className = 'save-status saved'; el.textContent = `Saved ${t}`; }
+}
+function render() {
+  $('gameSelect').innerHTML = GAMES.map(x =>
+    `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}</option>`).join('');
+  renderStatus();
+  $('activeCount').textContent = `${present().length} here · 7 on field`;
+
+  $('tabs').innerHTML = PERIODS.map((l, i) =>
+    `<button class="tab ${i === q ? 'active' : ''}" role="tab" aria-selected="${i === q}" data-q="${i}">${l}${warningsFor(i).length ? '<span class="dot" aria-label="needs attention"></span>' : ''}</button>`).join('');
+  $('warnings').innerHTML = warningsFor(q).map(w => `<div class="warning">${esc(w)}</div>`).join('');
+
+  const L = g.lineup[q];
+  $('field').innerHTML = FORMATION.map(row =>
+    `<div class="field-row" style="grid-template-columns:repeat(${row.length},minmax(0,1fr))">${row.map(k =>
+      `<div class="slot"><div class="slot-label">${POS[k].label}</div><div class="slot-body">${
+        L[k] ? `<button class="chip ${POS[k].cls}" data-player="${esc(L[k])}">${esc(L[k])}</button>`
+             : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
+
+  const b = bench(q);
+  $('bench').innerHTML = b.length
+    ? b.map(n => `<button class="chip c-bench" data-player="${esc(n)}">${esc(n)}</button>`).join('')
+    : `<span class="bench-empty">Nobody on the bench</span>`;
+
+  $('playtime').innerHTML = present().map(n => {
+    const c = played(n), cls = c > TARGET ? 'over' : c < TARGET ? 'under' : '';
+    return `<div class="pt-row"><span class="pt-name">${esc(n)}</span><div class="pt-track"><div class="pt-fill ${cls}" style="width:${c / PERIODS.length * 100}%"></div></div><span class="pt-val ${cls}">${c}/${PERIODS.length}</span></div>`;
+  }).join('');
+}
+
+// ─────────────── sheets ───────────────
+const overlay = $('overlay'), sheet = $('sheet');
+let pending = null;
+function openSheet(html) { sheet.innerHTML = `<div class="handle"></div>${html}`; overlay.hidden = false; }
+function closeSheet() { overlay.hidden = true; pending = null; render(); }
+overlay.addEventListener('click', e => { if (e.target === overlay) closeSheet(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !overlay.hidden) closeSheet(); });
+
+function openPlayer(n) {
+  pending = { name: n, pos: posOf(q, n) };
+  const opts = [...KEYS, 'bench'].map(k => {
+    const label = k === 'bench' ? 'Bench' : POS[k].label;
+    const cls = k === 'bench' ? 'c-bench' : POS[k].cls;
+    const who = k !== 'bench' && g.lineup[q][k] && g.lineup[q][k] !== n ? g.lineup[q][k] : '';
+    const sub = avoids(n, k) ? `<small class="avoid">would rather not</small>` : who ? `<small>swap with ${esc(who)}</small>` : '';
+    return `<button class="opt ${cls} ${pending.pos === k ? 'selected' : ''}" data-pos="${k}">${label}${sub}</button>`;
+  }).join('');
+  openSheet(`<div class="sheet-title">${esc(n)}</div><div class="sheet-sub">${PERIODS[q]} — pick a spot. Played ${played(n)} of ${PERIODS.length} so far.</div>
+    <div class="options">${opts}</div>
+    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="confirm">Confirm</button></div>`);
+}
+function openSlot(k) {
+  const names = bench(q).sort((a, b) => avoids(a, k) - avoids(b, k) || played(a) - played(b));
+  openSheet(`<div class="sheet-title">${POS[k].label}</div><div class="sheet-sub">${PERIODS[q]} — who goes in? Fewest quarters played are listed first.</div>
+    <div class="picks">${names.length ? names.map(n =>
+      `<button class="chip ${avoids(n, k) ? 'c-bench' : POS[k].cls}" data-fill="${esc(n)}" data-slot="${k}">${esc(n)} · ${played(n)}${avoids(n, k) ? ' ⚠' : ''}</button>`).join('')
+      : '<span class="sheet-sub">The bench is empty. Tap a player on the field to move them instead.</span>'}</div>
+    <button class="btn full" data-action="cancel">Cancel</button>`);
+}
+function openRoster() {
+  openSheet(`<div class="sheet-title">Who's here</div><div class="sheet-sub">Turn off anyone missing this game. They come off every quarter of this game only.</div>
+    <div class="roster-list">${PLAYERS.map((p, i) => `<div class="roster-row"><label class="roster-name ${here(p.name) ? '' : 'out'}" for="r${i}">${esc(p.name)}</label>
+      <span class="toggle"><input type="checkbox" id="r${i}" data-roster="${esc(p.name)}" ${here(p.name) ? 'checked' : ''}><label class="toggle-slider" for="r${i}"></label></span></div>`).join('')}</div>
+    <button class="btn btn-primary full" data-action="cancel">Done</button>`);
+}
+async function previousSaved() {
+  const before = GAMES.map(x => x.id).filter(id => id < currentId).reverse();
+  for (const id of before) {
+    let x = local.games[id];
+    if (db) { try { const s = await db.doc(`games/${id}`).get(); if (s.exists) x = s.data(); } catch (e) {} }
+    if (x && x.savedAt && x.lineup) return { id, game: normalize(x) };
+  }
+  return null;
+}
+async function openCopy() {
+  openSheet(`<div class="sheet-title">Looking for the last saved game…</div>`);
+  const prev = await previousSaved();
+  if (!prev) return openSheet(`<div class="sheet-title">Nothing to copy yet</div><div class="sheet-sub">No earlier game has a saved lineup.</div><button class="btn full" data-action="cancel">OK</button>`);
+  pending = prev;
+  openSheet(`<div class="sheet-title">Copy the ${short(prev.id)} lineup?</div><div class="sheet-sub">Replaces all four quarters of this game. Anyone marked missing here is left off.</div>
+    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="do-copy">Copy</button></div>`);
+}
+
+// ─────────────── events ───────────────
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill]');
+  if (!t) return;
+  const d = t.dataset;
+  if (d.q !== undefined) { q = +d.q; return render(); }
+  if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return place(n, k); }
+  if (d.player) return openPlayer(d.player);
+  if (d.slot) return openSlot(d.slot);
+  if (d.pos) { pending.pos = d.pos; sheet.querySelectorAll('.opt').forEach(o => o.classList.toggle('selected', o === t)); return; }
+  switch (d.action) {
+    case 'roster': return openRoster();
+    case 'autofill': return autofill();
+    case 'copy': return openCopy();
+    case 'clear': return openSheet(`<div class="sheet-title">Clear this game?</div><div class="sheet-sub">Empties every spot in all four quarters of this game. Other games aren't touched.</div>
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-clear">Clear</button></div>`);
+    case 'cancel': return closeSheet();
+    case 'confirm': { const p = pending; overlay.hidden = true; pending = null; if (p) place(p.name, p.pos); return render(); }
+    case 'do-clear': g.lineup = emptyLineup(); overlay.hidden = true; return save();
+    case 'do-copy': {
+      const src = pending.game.lineup;
+      src.forEach(L => KEYS.forEach(k => { if (L[k] && !here(L[k])) L[k] = null; }));
+      g.lineup = src; overlay.hidden = true; pending = null; return save();
+    }
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'gameSelect') {
+    writeLocal();
+    currentId = e.target.value; g = normalize(local.games[currentId]); q = 0;
+    writeLocal(); subscribe(); return render();
+  }
+  const n = e.target.dataset.roster;
+  if (n === undefined) return;
+  g.out = e.target.checked ? g.out.filter(x => x !== n) : [...new Set([...g.out, n])];
+  e.target.closest('.roster-row').querySelector('.roster-name').classList.toggle('out', !e.target.checked);
+  if (!e.target.checked) g.lineup.forEach(L => KEYS.forEach(k => { if (L[k] === n) L[k] = null; }));
+  g.savedAt = new Date().toISOString(); writeLocal(); pushCloud();
+});
+
+render();
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch (e) { db = null; }
+  if (!db) { cloud = 'off'; return renderStatus(); }
+  subscribe();
+})();
+</script>
+</body>
+</html>
