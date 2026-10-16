@@ -125,6 +125,8 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .gk-meta { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 .gk-item.done .gk-meta { color: var(--gk-fg); opacity: 0.8; }
 .gk-hint { font-size: 11px; color: var(--text-faint); margin-top: 8px; line-height: 1.5; }
+.num { display: inline-block; min-width: 1.6em; font-family: var(--mono); font-size: 10px; font-weight: 500; opacity: 0.7; margin-right: 3px; text-align: right; }
+.chip .num, .gk-item .num { text-align: center; }
 .cap { display: inline-block; font-size: 9px; font-weight: 700; line-height: 1; padding: 2px 4px; border-radius: 3px; background: var(--warn); color: #111; vertical-align: 1px; }
 .score-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
 .team { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
@@ -298,6 +300,9 @@ const CAPTAINS = {
 const GOALIE_LOG = {
   '2026-10-15': ['Cameron', 'Jayce', 'Casey', 'Jayce'],
 };
+// Jersey numbers (from the Spond thread). Nobody has #1.
+const NUM = { Jaxon: 2, Casey: 3, EJ: 4, Colt: 5, Abel: 6, Jayce: 7, Liam: 8, Ethan: 9, Cameron: 10, Khair: 11, Jeremiah: 12, Alejandro: 13 };
+const numTag = n => NUM[n] ? `<span class="num">${NUM[n]}</span>` : '';
 // Alphabetical by last name, for ties in the goalie rotation.
 const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador', Jeremiah: 'Castro', Liam: 'Clark', Jaxon: 'Cossairt',
   Abel: 'Dailey', EJ: 'Daley', Jayce: 'Decker', Ethan: 'Gonzalez', Casey: 'Minervini', Cameron: 'Richardson' };
@@ -521,7 +526,7 @@ function openGoalChoice() {
 function openOurGoal() {
   const onField = KEYS.map(k => g.lineup[q][k]).filter(Boolean);
   openSheet(`<div class="sheet-title">Our goal · ${PERIODS[q]}</div><div class="sheet-sub">Who scored? These are the players on the field in ${PERIODS[q]}.</div>
-    <div class="picks">${onField.map(n => `<button class="chip c-lf" data-scorer="${esc(n)}">${esc(n)}</button>`).join('')}
+    <div class="picks">${onField.map(n => `<button class="chip c-lf" data-scorer="${esc(n)}">${numTag(n)}${esc(n)}</button>`).join('')}
       <button class="chip c-bench" data-scorer="">Not sure</button></div>
     <button class="btn full" data-action="cancel">Cancel</button>`);
 }
@@ -563,7 +568,7 @@ function gameSummary() {
   if (g.events.length) {
     lines.push('Goals:');
     [...g.events].sort((a, b) => a.q - b.q).forEach(e =>
-      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? 'Team 4' + (e.scorer ? ' (' + e.scorer + ')' : '') : x.opp}`));
+      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? 'Team 4' + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') : x.opp}`));
   }
   if (g.out.length) lines.push(`Missing: ${g.out.join(', ')}`);
   lines.push('');
@@ -629,7 +634,7 @@ function render() {
   const gkChip = (n, role) => {
     const qi = gkQuarterNow(n);
     const status = role === 'off' ? `${PERIODS[qi]} · not on plan` : qi >= 0 ? PERIODS[qi] : 'needs a quarter';
-    return `<button class="gk-item ${role === 'off' ? 'off' : qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${role === 'off' ? '⚠ ' : ''}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} before</span></button>`;
+    return `<button class="gk-item ${role === 'off' ? 'off' : qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${role === 'off' ? '⚠ ' : ''}${numTag(n)}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} before</span></button>`;
   };
   const allSet = !offs.length && plan.order.length === PERIODS.length && plan.order.every(n => gkQuarterNow(n) >= 0) && g.lineup.every(L => L.goalie);
   if (allSet && !gkOpen) {
@@ -646,17 +651,17 @@ function render() {
   $('field').innerHTML = FORMATION.map(row =>
     `<div class="field-row" style="grid-template-columns:repeat(${row.length},minmax(0,1fr))">${row.map(k =>
       `<div class="slot"><div class="slot-label">${POS[k].label}</div><div class="slot-body">${
-        L[k] ? `<button class="chip ${POS[k].cls}${k === 'goalie' && offPlan(L[k]) ? ' off-plan' : ''}" data-player="${esc(L[k])}">${k === 'goalie' && offPlan(L[k]) ? '⚠ ' : ''}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
+        L[k] ? `<button class="chip ${POS[k].cls}${k === 'goalie' && offPlan(L[k]) ? ' off-plan' : ''}" data-player="${esc(L[k])}">${k === 'goalie' && offPlan(L[k]) ? '⚠ ' : ''}${numTag(L[k])}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
              : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
 
   const b = bench(q);
   $('bench').innerHTML = b.length
-    ? b.map(n => `<button class="chip c-bench" data-player="${esc(n)}">${esc(n)}</button>`).join('')
+    ? b.map(n => `<button class="chip c-bench" data-player="${esc(n)}">${numTag(n)}${esc(n)}</button>`).join('')
     : `<span class="bench-empty">Nobody on the bench</span>`;
 
   $('playtime').innerHTML = present().map(n => {
     const c = played(n), cls = c > TARGET ? 'over' : c < TARGET ? 'under' : '';
-    return `<div class="pt-row"><span class="pt-name">${esc(n)}</span><div class="pt-track"><div class="pt-fill ${cls}" style="width:${c / PERIODS.length * 100}%"></div></div><span class="pt-val ${cls}">${c}/${PERIODS.length}</span></div>`;
+    return `<div class="pt-row"><span class="pt-name">${numTag(n)}${esc(n)}</span><div class="pt-track"><div class="pt-fill ${cls}" style="width:${c / PERIODS.length * 100}%"></div></div><span class="pt-val ${cls}">${c}/${PERIODS.length}</span></div>`;
   }).join('');
 }
 
@@ -696,7 +701,7 @@ function openSlot(k) {
 }
 function openRoster() {
   openSheet(`<div class="sheet-title">Manage active players</div><div class="sheet-sub">Turn off anyone missing this game. They come off every quarter of this game only, and the goalie rotation moves to the next kid in line.</div>
-    <div class="roster-list">${PLAYERS.map((p, i) => `<div class="roster-row"><label class="roster-name ${here(p.name) ? '' : 'out'}" for="r${i}">${esc(p.name)}</label>
+    <div class="roster-list">${PLAYERS.map((p, i) => `<div class="roster-row"><label class="roster-name ${here(p.name) ? '' : 'out'}" for="r${i}">${numTag(p.name)}${esc(p.name)}</label>
       <span class="toggle"><input type="checkbox" id="r${i}" data-roster="${esc(p.name)}" ${here(p.name) ? 'checked' : ''}><label class="toggle-slider" for="r${i}"></label></span></div>`).join('')}</div>
     <button class="btn btn-primary full" data-action="cancel">Done</button>`);
 }
