@@ -42,16 +42,33 @@ button, select { font-family: inherit; }
 button:focus-visible, select:focus-visible, .tab:focus-visible, .opt:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
 .page { max-width: 480px; margin: 0 auto; }
 
+/* sticky game header */
+.topbar { position: sticky; top: 0; z-index: 50; margin: -20px -16px 14px; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+  background: rgba(15,15,15,0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+.topbar-inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
+.start-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 22px; border: none; background: var(--text); color: #111; font-size: 13px; font-weight: 600; cursor: pointer; }
+.start-btn .icon { font-size: 12px; }
+.gtime { display: inline-flex; flex-direction: column; align-items: flex-start; background: none; border: none; padding: 0; cursor: pointer; color: var(--t-color, var(--text)); }
+.gtime .big { font-family: var(--mono); font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
+.gtime .cap-label { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; margin-top: 3px; }
+.gtime.t-mid { --t-color: #f5d76e; }
+.gtime.t-late { --t-color: #ff7a6b; }
+.score-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; }
+.score-chip .nums { font-family: var(--mono); font-size: 22px; font-variant-numeric: tabular-nums; }
+.score-chip .opp { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+
 .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
 .game-select { width: 100%; padding: 11px 12px; margin-bottom: 10px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 500; border: 1px solid var(--border-strong); border-radius: var(--radius); }
 
-.action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.action-bar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
 .action-btn { padding: 10px 6px; font-size: 12px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); cursor: pointer; }
 .action-btn:active { border-color: var(--border-strong); color: var(--text); }
 .action-btn.primary { color: var(--text); border-color: var(--border-strong); }
-.action-btn.share { grid-column: 1 / -1; }
+.bottom-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.bottom-actions .action-btn { padding: 13px; font-size: 13px; }
 
 .save-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; padding: 7px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 11px; }
 .save-status { color: var(--text-faint); }
@@ -117,24 +134,25 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .score-dash { font-family: var(--mono); font-size: 24px; color: var(--text-faint); }
 .goal-btn { padding: 8px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); }
 .goal-btn.us { background: #12351f; border-color: #1f5c35; color: #8be3a8; }
-.clock-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-.clock { font-family: var(--mono); font-size: 30px; font-variant-numeric: tabular-nums; background: none; border: none; color: var(--text); padding: 0; cursor: pointer; }
-.clock.low { color: var(--warn); }
-.clock.done { color: #ff8a8a; animation: blink 1s steps(2) infinite; }
-@keyframes blink { 50% { opacity: 0.35; } }
-.clock-q { font-size: 12px; color: var(--text-muted); margin-right: auto; }
-.clock-btn { padding: 9px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); }
-.clock-btn.go { background: var(--text); color: #111; border-color: var(--text); }
 .log-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 .log-row:last-child { border-bottom: none; }
-.log-when { font-family: var(--mono); font-size: 11px; color: var(--text-muted); width: 74px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.log-when { font-family: var(--mono); font-size: 11px; color: var(--text-muted); width: 80px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .log-what { flex: 1; min-width: 0; }
 .log-what.against { color: var(--text-muted); }
 .log-x { background: none; border: none; color: var(--text-faint); font-size: 16px; cursor: pointer; padding: 2px 6px; }
 .log-empty { font-size: 12px; color: var(--text-faint); }
-.stepper { display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 16px; }
-.stepper .val { font-family: var(--mono); font-size: 28px; min-width: 90px; text-align: center; }
-@media (prefers-reduced-motion: reduce) { .clock.done { animation: none; } }
+.score-big { background: none; border: none; color: var(--text); cursor: pointer; padding: 0; }
+.timer-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.link-btn { background: none; border: none; color: var(--text-faint); font-size: 12px; cursor: pointer; padding: 6px; }
+.goal-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.goal-choice .goal-btn { padding: 18px 10px; font-size: 15px; }
+.gk-item.off { border: 1px solid #ff7a6b; background: #3a1414; color: #ffb3a8; }
+.gk-item.off .gk-meta { color: #ffb3a8; }
+.gk-summary { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: none; border: none; color: var(--text); padding: 0; cursor: pointer; text-align: left; }
+.gk-summary .ok { color: var(--ok); font-weight: 600; font-size: 12px; white-space: nowrap; }
+.gk-summary .list { font-size: 12px; color: var(--text-muted); min-width: 0; }
+.chip.off-plan { outline: 2px solid #ff7a6b; outline-offset: 2px; }
+.warning.bad { color: #ffb3a8; background: #2e1010; border-color: #6a2020; }
 .note { font-size: 11px; color: var(--text-faint); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.6; }
 
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
@@ -174,6 +192,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 </style>
 </head>
 <body>
+<header class="topbar"><div class="topbar-inner" id="topbar"></div></header>
 <div class="page">
   <div class="eyebrow">U10 Boys · Team 4 · CCSA Fall 2026</div>
   <h1>Lineup Manager</h1>
@@ -181,11 +200,9 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
   <select class="game-select" id="gameSelect" aria-label="Game"></select>
 
   <div class="action-bar">
-    <button class="action-btn" data-action="roster">👥 Who's here</button>
-    <button class="action-btn primary" data-action="autofill">✦ Fill open spots</button>
+    <button class="action-btn" data-action="roster" aria-label="Manage active players" title="Manage active players">👥 MAP</button>
     <button class="action-btn" data-action="copy">⧉ Copy last game</button>
     <button class="action-btn" data-action="clear">↺ Clear game</button>
-    <button class="action-btn primary share" data-action="share">📤 Share game</button>
   </div>
 
   <div class="save-bar">
@@ -215,7 +232,12 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
     <div id="log"></div>
   </div>
 
-  <div class="note">Tap a player to move or swap them. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Each game is saved separately.</div>
+  <div class="note">Tap a player to move or swap them. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
+
+  <div class="bottom-actions">
+    <button class="action-btn primary" data-action="autofill">✦ Fill open spots</button>
+    <button class="action-btn primary" data-action="share">📤 Share game</button>
+  </div>
 </div>
 
 <div class="overlay" id="overlay" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
@@ -283,15 +305,14 @@ const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador
 // ─────────────── state ───────────────
 const LOCAL_KEY = `lineup:${TEAM_ID}`;
 const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k, null])));
-const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], clock: { q: 0, elapsed: 0, startedAt: null }, savedAt: null });
+const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], timer: { startedAt: null }, savedAt: null });
 const clone = o => JSON.parse(JSON.stringify(o));
 
 let local = readLocal();            // { currentGame, games: {id: game} } — this phone's cache
 let currentId = local.currentGame || nextGameId();
 let g = normalize(local.games[currentId]);
 let q = 0;
-let db = null, unsub = null, cloud = 'pending'; // pending | on | off
-let writing = false, dirty = false;
+let gkOpen = false;
 
 function readLocal() {
   try { const s = JSON.parse(localStorage.getItem(LOCAL_KEY)); if (s && s.games) return s; } catch (e) {}
@@ -309,7 +330,7 @@ function normalize(x) {
     out.lineup = x.lineup.map(L => Object.fromEntries(KEYS.map(k => [k, typeof L[k] === 'string' ? L[k] : null])));
   if (Array.isArray(x.out)) out.out = x.out.filter(n => typeof n === 'string');
   if (Array.isArray(x.events)) out.events = x.events.filter(e => e && (e.side === 'us' || e.side === 'them'));
-  if (x.clock && typeof x.clock.elapsed === 'number') out.clock = { q: x.clock.q | 0, elapsed: x.clock.elapsed, startedAt: x.clock.startedAt || null };
+  if (x.timer && typeof x.timer.startedAt === 'number') out.timer = { startedAt: x.timer.startedAt };
   out.savedAt = x.savedAt || null;
   return out;
 }
@@ -321,39 +342,8 @@ function nextGameId() {
 function save() {
   g.savedAt = new Date().toISOString();
   writeLocal();
-  pushCloud();
   render();
 }
-async function pushCloud() {
-  if (!db) return;
-  if (writing) { dirty = true; return; }
-  writing = true;
-  const id = currentId, body = clone(g);
-  try { await db.doc(`games/${id}`).set(body); cloud = 'on'; }
-  catch (e) { cloud = 'off'; }
-  writing = false;
-  renderStatus();
-  if (dirty) { dirty = false; pushCloud(); }
-}
-function subscribe() {
-  if (unsub) unsub();
-  if (!db) return;
-  const id = currentId;
-  unsub = db.doc(`games/${id}`).onSnapshot(snap => {
-    if (id !== currentId) return;
-    cloud = 'on';
-    if (snap.exists && !snap.metadata.hasPendingWrites) {
-      const remote = normalize(snap.data());
-      if (!g.savedAt || (remote.savedAt && remote.savedAt >= g.savedAt)) {
-        g = remote; writeLocal(); if (overlay.hidden) render(); else renderStatus();
-      }
-    } else if (!snap.exists && g.savedAt) {
-      pushCloud(); // this phone has a lineup the cloud doesn't yet
-    }
-    renderStatus();
-  }, () => { cloud = 'off'; renderStatus(); });
-}
-
 // ─────────────── helpers ───────────────
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const player = n => PLAYERS.find(p => p.name === n) || { name: n, likes: [], avoid: [] };
@@ -398,11 +388,11 @@ function goaliePlan() {
   const pool = present().filter(n => !caps.includes(n)).sort((a, b) =>
     (gkSeason(a) - gkSeason(b)) || (captainSoon(a) - captainSoon(b)) || (gkLast(a) - gkLast(b)) ||
     LAST[a].localeCompare(LAST[b]));
-  const inGoal = g.lineup.map(L => L.goalie).filter(Boolean);
-  const extra = [...new Set(inGoal.filter(n => !caps.includes(n)))]; // someone you put in goal yourself counts as one of the "up next"
-  const upNext = [...extra, ...pool.filter(n => !extra.includes(n))].slice(0, Math.max(PERIODS.length - caps.length, extra.length));
-  return { caps, upNext };
+  const upNext = pool.slice(0, Math.max(0, PERIODS.length - caps.length));
+  const order = [caps[0], upNext[0], caps[1], upNext[1], upNext[2], upNext[3]].filter(Boolean); // quarter order
+  return { caps, upNext, order, set: new Set(order) };
 }
+const offPlan = n => !!n && !goaliePlan().set.has(n);
 
 function warningsFor(qi) {
   const out = [], L = g.lineup[qi];
@@ -410,6 +400,7 @@ function warningsFor(qi) {
   if (open && bench(qi).length) out.push(`${open} open spot${open > 1 ? 's' : ''}`);
   for (const k of KEYS) if (L[k] && avoids(L[k], k)) out.push(`${L[k]} would rather not play ${POS[k].label}`);
   if (L.goalie && g.lineup.filter(x => x.goalie === L.goalie).length > 1) out.push(`${L.goalie} is in goal more than one quarter this game`);
+  if (offPlan(L.goalie)) out.push({ bad: true, text: `${L.goalie} is in goal but isn't on this game's goalie plan (override)` });
   return out;
 }
 
@@ -418,9 +409,7 @@ function warningsFor(qi) {
 function autofill() {
   const order = PLAYERS.map(p => p.name);
   // Goalies first: captain, up next, captain, up next — one quarter each.
-  const { caps, upNext } = goaliePlan();
-  const gkOrder = [caps[0], upNext[0], caps[1], upNext[1], upNext[2], upNext[3]].filter(Boolean);
-  const queue = gkOrder.filter(n => gkQuarterNow(n) === -1);
+  const queue = goaliePlan().order.filter(n => gkQuarterNow(n) === -1);
   for (let qi = 0; qi < PERIODS.length && queue.length; qi++) {
     const L = g.lineup[qi];
     if (L.goalie) continue;
@@ -431,10 +420,9 @@ function autofill() {
   }
   for (let qi = 0; qi < PERIODS.length; qi++) {
     const L = g.lineup[qi];
-    const open = KEYS.filter(k => !L[k]);
+    const open = KEYS.filter(k => !L[k] && k !== 'goalie'); // goal is only ever filled from the goalie plan
     for (const k of open) {
-      // a second goalie quarter is never auto-picked
-      const pool = bench(qi).filter(n => k !== 'goalie' || gkQuarterNow(n) === -1);
+      const pool = bench(qi);
       if (!pool.length) break;
       const sat = n => qi > 0 && posOf(qi - 1, n) === 'bench' ? 0 : 1;
       pool.sort((a, b) =>
@@ -449,6 +437,26 @@ function autofill() {
   save();
 }
 
+// Who would be in goal after moving n to k (n's old spot is taken by whoever held k).
+function goalieAfter(n, k) {
+  const L = g.lineup[q], from = posOf(q, n);
+  if (k === 'goalie') return n;
+  if (from === 'goalie') return k === 'bench' ? null : L[k];
+  return L.goalie;
+}
+// Same as place(), but stops to confirm when the move puts someone off the goalie plan in goal.
+function tryPlace(n, k) {
+  const gk = goalieAfter(n, k);
+  if (gk && gk !== g.lineup[q].goalie && offPlan(gk)) {
+    const plan = goaliePlan();
+    pending = { override: { n, k } };
+    return openSheet(`<div class="sheet-title">Override the goalie plan?</div>
+      <div class="sheet-sub"><b>${esc(gk)}</b> isn't on this game's goalie plan. Planned goalies: ${plan.order.map(esc).join(', ') || 'none'}.<br>
+      If you do this, ${esc(gk)} gets the goalie quarter in the season count and the rotation adjusts for the next game. The quarter will be flagged.</div>
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-override">Put ${esc(gk)} in goal</button></div>`);
+  }
+  place(n, k);
+}
 // Move `n` to `k` in the current quarter; whoever held `k` takes n's old spot.
 function place(n, k) {
   const L = g.lineup[q], from = posOf(q, n);
@@ -459,14 +467,12 @@ function place(n, k) {
   save();
 }
 
-// ─────────────── score & clock ───────────────
-const periodSecs = () => (local.periodMin || 12) * 60;
-const clockElapsed = () => g.clock.elapsed + (g.clock.startedAt ? (Date.now() - g.clock.startedAt) / 1000 : 0);
-const clockLeft = () => Math.max(0, periodSecs() - clockElapsed());
-const mmss = s => { s = Math.ceil(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+// ─────────────── score & game timer ───────────────
+const QTR_SECS = 15 * 60, MAX_SECS = 99 * 60 + 59;
+const mmss = s => { s = Math.floor(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 const scoreOf = (x = g) => ({ us: x.events.filter(e => e.side === 'us').length, them: x.events.filter(e => e.side === 'them').length });
-const clockStamp = () => (g.clock.startedAt || g.clock.elapsed) && g.clock.q === q ? mmss(clockElapsed()) : null; // time played in the quarter
-let wakeLock = null, ticker = null, buzzed = false;
+const gameSecs = () => g.timer.startedAt ? Math.min(MAX_SECS, Math.max(0, (Date.now() - g.timer.startedAt) / 1000)) : 0;
+let wakeLock = null;
 
 async function keepAwake(on) {
   try {
@@ -474,80 +480,72 @@ async function keepAwake(on) {
     if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
   } catch (e) { wakeLock = null; }
 }
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && g.clock.startedAt) keepAwake(true); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && g.timer.startedAt) keepAwake(true); });
 
-function clockStart() {
-  if (g.clock.q !== q) g.clock = { q, elapsed: 0, startedAt: null };
-  if (clockLeft() <= 0) return;
-  g.clock.startedAt = Date.now(); buzzed = false; keepAwake(true); save();
+function timerStart() { g.timer = { startedAt: Date.now() }; keepAwake(true); save(); }
+function timerReset() { g.timer = { startedAt: null }; keepAwake(false); save(); }
+// White for the first half of each 15-minute quarter, yellow from 7:30, red from 10:00.
+function timerView() {
+  const t = gameSecs(), qs = t % QTR_SECS, qn = Math.floor(t / QTR_SECS) + 1;
+  const tone = qs >= 600 ? 't-late' : qs >= 450 ? 't-mid' : '';
+  return local.timerMode === 'qtr'
+    ? { tone, big: mmss(qs), label: `Q${qn} · tap for game` }
+    : { tone, big: mmss(t), label: `Game · tap for Q${qn}` };
 }
-function clockPause() {
-  g.clock.elapsed = clockElapsed(); g.clock.startedAt = null; keepAwake(false); save();
-}
-function clockReset() { g.clock = { q, elapsed: 0, startedAt: null }; buzzed = false; keepAwake(false); save(); }
-function nextQuarter() {
-  if (q < PERIODS.length - 1) q++;
-  g.clock = { q, elapsed: 0, startedAt: null }; buzzed = false; keepAwake(false); save();
+function timerHTML() {
+  if (!g.timer.startedAt) return `<button class="start-btn" data-action="timer-start" aria-label="Start game timer"><span class="icon">▶</span>Start</button>`;
+  const v = timerView();
+  return `<button class="gtime ${v.tone}" data-action="timer-mode" aria-label="Game timer, tap to switch view"><span class="big">${v.big}</span><span class="cap-label">${v.label}</span></button>`;
 }
 function tick() {
-  const el = document.getElementById('clock');
-  if (!el) return;
-  const onThisQ = g.clock.q === q;
-  const left = onThisQ ? clockLeft() : periodSecs();
-  el.textContent = mmss(left);
-  el.className = 'clock' + (onThisQ && left <= 0 ? ' done' : onThisQ && g.clock.startedAt && left <= 60 ? ' low' : '');
-  if (onThisQ && g.clock.startedAt && left <= 0 && !buzzed) {
-    buzzed = true;
-    g.clock.elapsed = periodSecs(); g.clock.startedAt = null; keepAwake(false);
-    try { navigator.vibrate && navigator.vibrate([400, 200, 400, 200, 400]); } catch (e) {}
-    save();
-  }
+  if (!g.timer.startedAt) return;
+  const v = timerView();
+  document.querySelectorAll('.gtime').forEach(el => {
+    el.className = `gtime ${v.tone}`;
+    el.querySelector('.big').textContent = v.big;
+    el.querySelector('.cap-label').textContent = v.label;
+  });
 }
 
 function addGoal(side, scorer) {
-  g.events.push({ side, q, clock: clockStamp(), scorer: scorer || null, at: new Date().toISOString() });
+  g.events.push({ side, q, clock: g.timer.startedAt ? mmss(gameSecs()) : null, scorer: scorer || null, at: new Date().toISOString() });
   save();
+  flash(side === 'us' ? `Goal${scorer ? ' — ' + scorer : ''}!` : 'Goal against added');
+}
+function openGoalChoice() {
+  const sc = scoreOf(), x = GAMES.find(v => v.id === currentId);
+  openSheet(`<div class="sheet-title">Score ${sc.us}–${sc.them} · ${PERIODS[q]}</div><div class="sheet-sub">Who scored?</div>
+    <div class="goal-choice"><button class="goal-btn us" data-action="goal-us">⚽ Our goal</button><button class="goal-btn" data-action="goal-them">${esc(x ? x.opp : 'Their')} goal</button></div>
+    <button class="btn full" data-action="cancel">Cancel</button>`);
 }
 function openOurGoal() {
   const onField = KEYS.map(k => g.lineup[q][k]).filter(Boolean);
-  openSheet(`<div class="sheet-title">Our goal · ${PERIODS[q]}</div><div class="sheet-sub">Who scored? Players on the field this quarter are listed.</div>
+  openSheet(`<div class="sheet-title">Our goal · ${PERIODS[q]}</div><div class="sheet-sub">Who scored? These are the players on the field in ${PERIODS[q]}.</div>
     <div class="picks">${onField.map(n => `<button class="chip c-lf" data-scorer="${esc(n)}">${esc(n)}</button>`).join('')}
       <button class="chip c-bench" data-scorer="">Not sure</button></div>
     <button class="btn full" data-action="cancel">Cancel</button>`);
 }
-function openClockLength() {
-  if (g.clock.startedAt) return;
-  pending = { min: local.periodMin || 12 };
-  openSheet(`<div class="sheet-title">Quarter length</div><div class="sheet-sub">Used for every game on this phone.</div>
-    <div class="stepper"><button class="btn" data-action="min-down" aria-label="One minute less">−</button><span class="val" id="minVal">${pending.min}:00</span><button class="btn" data-action="min-up" aria-label="One minute more">+</button></div>
-    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="min-save">Save</button></div>`);
+function renderTop() {
+  const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
+  $('topbar').innerHTML = `${timerHTML()}
+    <button class="score-chip" data-action="goal-choice" aria-label="Score ${sc.us} to ${sc.them}, tap to add a goal"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}</span></button>`;
 }
 function renderScore() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
-  const onThisQ = g.clock.q === q, running = onThisQ && !!g.clock.startedAt, left = onThisQ ? clockLeft() : periodSecs();
-  const ended = onThisQ && left <= 0;
   $('scoreboard').innerHTML = `
     <div class="score-row">
       <div class="team"><span class="team-name">Team 4</span><button class="goal-btn us" data-action="goal-us">+ Our goal</button></div>
-      <div><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></div>
+      <button class="score-big" data-action="goal-choice" aria-label="Add a goal"><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></button>
       <div class="team them"><span class="team-name">${esc(x ? x.opp : 'Them')}</span><button class="goal-btn" data-action="goal-them">+ Their goal</button></div>
     </div>
-    <div class="clock-row">
-      <button class="clock" id="clock" data-action="clock-len" aria-label="Clock, tap to set quarter length">${mmss(left)}</button>
-      <span class="clock-q">${PERIODS[q]}${ended ? ' · over' : ''}</span>
-      ${ended ? `${q < PERIODS.length - 1 ? `<button class="clock-btn go" data-action="clock-next">Next quarter →</button>` : ''}`
-        : running ? `<button class="clock-btn" data-action="clock-pause">Pause</button>`
-        : `<button class="clock-btn go" data-action="clock-start">${onThisQ && g.clock.elapsed ? 'Resume' : 'Start'}</button>`}
-      ${onThisQ && (g.clock.elapsed || running) ? `<button class="clock-btn" data-action="clock-reset" aria-label="Reset clock">↺</button>` : ''}
-    </div>`;
-  tick();
+    <div class="timer-row">${timerHTML()}${g.timer.startedAt ? `<button class="link-btn" data-action="timer-reset">Reset timer</button>` : `<span class="link-btn" style="cursor:default">15-min quarters</span>`}</div>`;
 }
 function renderLog() {
-  const ev = g.events.map((e, i) => ({ ...e, i })).sort((a, b) => (a.q - b.q) || String(a.clock || '').localeCompare(String(b.clock || ''), undefined, { numeric: true }));
+  const ev = g.events.map((e, i) => ({ ...e, i })).sort((a, b) => (a.q - b.q) || String(a.at).localeCompare(String(b.at)));
   $('log').innerHTML = ev.length ? ev.map(e => `<div class="log-row"><span class="log-when">${PERIODS[e.q]}${e.clock ? ' · ' + e.clock : ''}</span>
     <span class="log-what ${e.side === 'them' ? 'against' : ''}">${e.side === 'us' ? `⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}` : `Goal against`}</span>
     <button class="log-x" data-undo="${e.i}" aria-label="Remove">×</button></div>`).join('')
-    : `<span class="log-empty">No goals yet. Use the buttons at the top.</span>`;
+    : `<span class="log-empty">No goals yet. Tap the score to add one.</span>`;
 }
 
 // ─────────────── share ───────────────
@@ -606,9 +604,7 @@ function renderStatus() {
   const el = $('saveStatus');
   if (!g.savedAt) { el.className = 'save-status'; el.textContent = 'Not saved yet'; return; }
   const t = new Date(g.savedAt).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-  if (cloud === 'on') { el.className = 'save-status saved'; el.textContent = `Saved ${t}`; }
-  else if (cloud === 'off') { el.className = 'save-status saved'; el.textContent = `Saved on this phone · ${t}`; }
-  else { el.className = 'save-status saved'; el.textContent = `Saved ${t}`; }
+  el.className = 'save-status saved'; el.textContent = `Saved on this phone · ${t}`;
 }
 function finalLabel(id) {
   const x = id === currentId ? g : local.games[id];
@@ -618,6 +614,7 @@ function finalLabel(id) {
 function render() {
   $('gameSelect').innerHTML = GAMES.map(x =>
     `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
+  renderTop();
   renderScore();
   renderLog();
   renderStatus();
@@ -625,26 +622,31 @@ function render() {
 
   $('tabs').innerHTML = PERIODS.map((l, i) =>
     `<button class="tab ${i === q ? 'active' : ''}" role="tab" aria-selected="${i === q}" data-q="${i}">${l}${warningsFor(i).length ? '<span class="dot" aria-label="needs attention"></span>' : ''}</button>`).join('');
-  $('warnings').innerHTML = warningsFor(q).map(w => `<div class="warning">${esc(w)}</div>`).join('');
+  $('warnings').innerHTML = warningsFor(q).map(w => typeof w === 'string' ? `<div class="warning">${esc(w)}</div>` : `<div class="warning bad">⚠ ${esc(w.text)}</div>`).join('');
 
-  const { caps, upNext } = goaliePlan();
-  const allCaps = captains();
+  const plan = goaliePlan(), allCaps = captains();
+  const offs = [...new Set(g.lineup.map(L => L.goalie).filter(offPlan))];
   const gkChip = (n, role) => {
     const qi = gkQuarterNow(n);
-    const status = qi >= 0 ? PERIODS[qi] : 'needs a quarter';
-    return `<button class="gk-item ${qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} before</span></button>`;
+    const status = role === 'off' ? `${PERIODS[qi]} · not on plan` : qi >= 0 ? PERIODS[qi] : 'needs a quarter';
+    return `<button class="gk-item ${role === 'off' ? 'off' : qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${role === 'off' ? '⚠ ' : ''}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} before</span></button>`;
   };
-  $('goalies').innerHTML =
-    `<div class="section-title">Goalies this game</div>` +
-    `<div class="gk-sub">${allCaps.length ? `Captains: ${allCaps.map(esc).join(' &amp; ')}${allCaps.some(n => !here(n)) ? ' (one is out)' : ''}` : 'No captains set for this game'}</div>` +
-    `<div class="gk-grid">${caps.map(n => gkChip(n, 'cap')).join('')}${upNext.map(n => gkChip(n, 'next')).join('')}</div>` +
-    `<div class="gk-hint">Tap a name to put them in goal for ${PERIODS[q]}. “Before” = goalie quarters in earlier games.</div>`;
+  const allSet = !offs.length && plan.order.length === PERIODS.length && plan.order.every(n => gkQuarterNow(n) >= 0) && g.lineup.every(L => L.goalie);
+  if (allSet && !gkOpen) {
+    $('goalies').innerHTML = `<button class="gk-summary" data-action="gk-toggle" aria-expanded="false"><span class="list">${PERIODS.map((p, i) => `${p} ${esc(g.lineup[i].goalie)}${isCaptain(g.lineup[i].goalie) ? ' <span class="cap">C</span>' : ''}`).join(' · ')}</span><span class="ok">✓ Goalies set</span></button>`;
+  } else {
+    $('goalies').innerHTML =
+      `<div class="section-title" ${allSet ? 'data-action="gk-toggle" style="cursor:pointer"' : ''}>Goalies this game${allSet ? ' · tap to hide' : ''}</div>` +
+      `<div class="gk-sub">${allCaps.length ? `Captains: ${allCaps.map(esc).join(' &amp; ')}${allCaps.some(n => !here(n)) ? ' (one is out)' : ''}` : 'No captains set for this game'}</div>` +
+      `<div class="gk-grid">${plan.caps.map(n => gkChip(n, 'cap')).join('')}${plan.upNext.map(n => gkChip(n, 'next')).join('')}${offs.map(n => gkChip(n, 'off')).join('')}</div>` +
+      `<div class="gk-hint">Tap a name to put them in goal for ${PERIODS[q]}. “Before” = goalie quarters in earlier games.</div>`;
+  }
 
   const L = g.lineup[q];
   $('field').innerHTML = FORMATION.map(row =>
     `<div class="field-row" style="grid-template-columns:repeat(${row.length},minmax(0,1fr))">${row.map(k =>
       `<div class="slot"><div class="slot-label">${POS[k].label}</div><div class="slot-body">${
-        L[k] ? `<button class="chip ${POS[k].cls}" data-player="${esc(L[k])}">${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
+        L[k] ? `<button class="chip ${POS[k].cls}${k === 'goalie' && offPlan(L[k]) ? ' off-plan' : ''}" data-player="${esc(L[k])}">${k === 'goalie' && offPlan(L[k]) ? '⚠ ' : ''}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
              : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
 
   const b = bench(q);
@@ -680,7 +682,12 @@ function openPlayer(n) {
     <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="confirm">Confirm</button></div>`);
 }
 function openSlot(k) {
-  const names = bench(q).sort((a, b) => avoids(a, k) - avoids(b, k) || played(a) - played(b));
+  const names = bench(q).sort((a, b) => (k === 'goalie' ? offPlan(a) - offPlan(b) : 0) || avoids(a, k) - avoids(b, k) || played(a) - played(b));
+  if (k === 'goalie') {
+    return openSheet(`<div class="sheet-title">Goalie · ${PERIODS[q]}</div><div class="sheet-sub">Planned goalies first. Picking anyone else needs an override.</div>
+      <div class="picks">${names.map(n => `<button class="chip ${offPlan(n) ? 'c-bench' : 'c-gk'}" data-fill="${esc(n)}" data-slot="goalie">${esc(n)}${offPlan(n) ? ' · not on plan' : gkQuarterNow(n) >= 0 ? ' · has ' + PERIODS[gkQuarterNow(n)] : ' · planned'}</button>`).join('') || '<span class="sheet-sub">The bench is empty.</span>'}</div>
+      <button class="btn full" data-action="cancel">Cancel</button>`);
+  }
   openSheet(`<div class="sheet-title">${POS[k].label}</div><div class="sheet-sub">${PERIODS[q]} — who goes in? Fewest quarters played are listed first.</div>
     <div class="picks">${names.length ? names.map(n =>
       `<button class="chip ${avoids(n, k) ? 'c-bench' : POS[k].cls}" data-fill="${esc(n)}" data-slot="${k}">${esc(n)} · ${played(n)}${avoids(n, k) ? ' ⚠' : ''}</button>`).join('')
@@ -688,7 +695,7 @@ function openSlot(k) {
     <button class="btn full" data-action="cancel">Cancel</button>`);
 }
 function openRoster() {
-  openSheet(`<div class="sheet-title">Who's here</div><div class="sheet-sub">Turn off anyone missing this game. They come off every quarter of this game only.</div>
+  openSheet(`<div class="sheet-title">Manage active players</div><div class="sheet-sub">Turn off anyone missing this game. They come off every quarter of this game only, and the goalie rotation moves to the next kid in line.</div>
     <div class="roster-list">${PLAYERS.map((p, i) => `<div class="roster-row"><label class="roster-name ${here(p.name) ? '' : 'out'}" for="r${i}">${esc(p.name)}</label>
       <span class="toggle"><input type="checkbox" id="r${i}" data-roster="${esc(p.name)}" ${here(p.name) ? 'checked' : ''}><label class="toggle-slider" for="r${i}"></label></span></div>`).join('')}</div>
     <button class="btn btn-primary full" data-action="cancel">Done</button>`);
@@ -697,7 +704,6 @@ async function previousSaved() {
   const before = GAMES.map(x => x.id).filter(id => id < currentId).reverse();
   for (const id of before) {
     let x = local.games[id];
-    if (db) { try { const s = await db.doc(`games/${id}`).get(); if (s.exists) x = s.data(); } catch (e) {} }
     if (x && x.savedAt && x.lineup) return { id, game: normalize(x) };
   }
   return null;
@@ -717,8 +723,8 @@ document.addEventListener('click', e => {
   if (!t) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
-  if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return place(n, k); }
-  if (d.gk) return place(d.gk, 'goalie');
+  if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return tryPlace(n, k); }
+  if (d.gk) return tryPlace(d.gk, 'goalie');
   if (d.scorer !== undefined) { overlay.hidden = true; pending = null; return addGoal('us', d.scorer); }
   if (d.undo !== undefined) {
     const ev = g.events[+d.undo]; if (!ev) return;
@@ -737,17 +743,18 @@ document.addEventListener('click', e => {
       <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-clear">Clear</button></div>`);
     case 'cancel': return closeSheet();
     case 'share': return shareGame();
+    case 'goal-choice': return openGoalChoice();
     case 'goal-us': return openOurGoal();
-    case 'goal-them': return addGoal('them');
+    case 'goal-them': overlay.hidden = true; pending = null; return addGoal('them');
+    case 'timer-start': return timerStart();
+    case 'timer-mode': local.timerMode = local.timerMode === 'qtr' ? 'game' : 'qtr'; writeLocal(); return render();
+    case 'timer-reset': return openSheet(`<div class="sheet-title">Reset the game timer?</div><div class="sheet-sub">The timer goes back to the Start button. Goals already logged keep their times.</div>
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-timer-reset">Reset</button></div>`);
+    case 'do-timer-reset': overlay.hidden = true; return timerReset();
+    case 'gk-toggle': gkOpen = !gkOpen; return render();
+    case 'do-override': { const o = pending && pending.override; overlay.hidden = true; pending = null; if (o) place(o.n, o.k); return; }
     case 'do-undo': { const i = pending && pending.undo; overlay.hidden = true; pending = null; if (i !== undefined) { g.events.splice(i, 1); save(); } return; }
-    case 'clock-start': return clockStart();
-    case 'clock-pause': return clockPause();
-    case 'clock-reset': return clockReset();
-    case 'clock-next': return nextQuarter();
-    case 'clock-len': return openClockLength();
-    case 'min-down': case 'min-up': pending.min = Math.min(30, Math.max(1, pending.min + (d.action === 'min-up' ? 1 : -1))); $('minVal').textContent = pending.min + ':00'; return;
-    case 'min-save': local.periodMin = pending.min; overlay.hidden = true; pending = null; writeLocal(); return render();
-    case 'confirm': { const p = pending; overlay.hidden = true; pending = null; if (p) place(p.name, p.pos); return render(); }
+    case 'confirm': { const p = pending; overlay.hidden = true; pending = null; if (p) tryPlace(p.name, p.pos); return render(); }
     case 'do-clear': g.lineup = emptyLineup(); overlay.hidden = true; return save();
     case 'do-copy': {
       const src = pending.game.lineup;
@@ -759,25 +766,20 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   if (e.target.id === 'gameSelect') {
     writeLocal();
-    currentId = e.target.value; g = normalize(local.games[currentId]); q = 0;
-    writeLocal(); subscribe(); return render();
+    currentId = e.target.value; g = normalize(local.games[currentId]); q = 0; gkOpen = false; keepAwake(!!g.timer.startedAt);
+    writeLocal(); return render();
   }
   const n = e.target.dataset.roster;
   if (n === undefined) return;
   g.out = e.target.checked ? g.out.filter(x => x !== n) : [...new Set([...g.out, n])];
   e.target.closest('.roster-row').querySelector('.roster-name').classList.toggle('out', !e.target.checked);
   if (!e.target.checked) g.lineup.forEach(L => KEYS.forEach(k => { if (L[k] === n) L[k] = null; }));
-  g.savedAt = new Date().toISOString(); writeLocal(); pushCloud();
+  g.savedAt = new Date().toISOString(); writeLocal();
 });
 
 render();
-ticker = setInterval(tick, 250);
-if (g.clock.startedAt) keepAwake(true);
-(async () => {
-  try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch (e) { db = null; }
-  if (!db) { cloud = 'off'; return renderStatus(); }
-  subscribe();
-})();
+setInterval(tick, 250);
+if (g.timer.startedAt) keepAwake(true);
 </script>
 </body>
 </html>
