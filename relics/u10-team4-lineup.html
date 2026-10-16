@@ -75,6 +75,9 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .save-status.saved { color: var(--ok); }
 .save-status.local { color: var(--warn); }
 .active-count { color: var(--text-muted); }
+.sheet-status { font-size: 11px; color: var(--text-faint); margin: -6px 0 12px; padding: 0 2px; }
+.sheet-status.ok { color: var(--ok); }
+.sheet-status.bad { color: var(--warn); }
 
 .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
 .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
@@ -211,6 +214,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
     <span class="save-status" id="saveStatus">Loading…</span>
     <span class="active-count" id="activeCount"></span>
   </div>
+  <div class="sheet-status" id="sheetStatus">Checking the Captains &amp; Goalies sheet…</div>
 
   <div class="section scoreboard" id="scoreboard"></div>
 
@@ -300,6 +304,12 @@ const CAPTAINS = {
 const GOALIE_LOG = {
   '2026-10-15': ['Cameron', 'Jayce', 'Casey', 'Jayce'],
 };
+// ── Google Sheet sync ──
+// "Team 4 Captains & Goalies", published to the web as CSV. The sheet is the master for captains,
+// logged goalie quarters and jersey numbers; the lists in this file are the fallback when it can't be reached.
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJFoF_YW-3ObI6bLTV3I_b2GDfKGVEh0X3rSKFtFsACTXwzZEYvBkC0_Jl6T0B_yTsZKD4emTsKD1G/pub?gid=698790171&single=true&output=csv';
+let sheetState = { status: 'loading', at: null };
+
 // Jersey numbers (from the Spond thread). Nobody has #1.
 const NUM = { Jaxon: 2, Casey: 3, EJ: 4, Colt: 5, Abel: 6, Jayce: 7, Liam: 8, Ethan: 9, Cameron: 10, Khair: 11, Jeremiah: 12, Alejandro: 13 };
 const numTag = n => NUM[n] ? `<span class="num">${NUM[n]}</span>` : '';
@@ -603,6 +613,71 @@ function flash(msg) {
   document.body.appendChild(el); setTimeout(() => el.remove(), 2200);
 }
 
+// ─────────────── sheet sync ───────────────
+function parseCSV(text) {
+  const rows = []; let row = [], cell = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else cell += c;
+    } else if (c === '"') inQ = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+function toISO(v) {
+  v = (v || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  return m ? `${m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}` : null;
+}
+const KNOWN = new Set(PLAYERS.map(p => p.name));
+const cleanName = v => { v = (v || '').trim().replace(/[’']/g, ''); return KNOWN.has(v) ? v : null; };
+// Columns: A Date · D Captain 1 · E Captain 2 · G–J Q1–Q4 goalie · M Player · P Jersey #
+function applySheet(rows) {
+  const head = rows[0] || [];
+  if (String(head[0]).trim() !== 'Date' || String(head[3]).trim() !== 'Captain 1') throw new Error('unexpected columns');
+  for (const r of rows.slice(1)) {
+    const id = toISO(r[0]);
+    if (id) {
+      CAPTAINS[id] = [cleanName(r[3]), cleanName(r[4])].filter(Boolean);
+      const gk = [r[6], r[7], r[8], r[9]].map(cleanName);
+      if (gk.some(Boolean)) GOALIE_LOG[id] = gk; else delete GOALIE_LOG[id];
+    }
+    const n = cleanName(r[12]), num = parseInt(r[15], 10);
+    if (n && num) NUM[n] = num;
+  }
+}
+async function syncSheet() {
+  if (local.sheet && local.sheet.rows) { try { applySheet(local.sheet.rows); sheetState = { status: 'cached', at: local.sheet.at }; } catch (e) {} }
+  render();
+  try {
+    const res = await fetch(SHEET_CSV, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = parseCSV(await res.text());
+    applySheet(rows);
+    local.sheet = { rows, at: new Date().toISOString() };
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); } catch (e) {}
+    sheetState = { status: 'ok', at: local.sheet.at };
+  } catch (e) {
+    sheetState = { status: local.sheet ? 'cached' : 'failed', at: local.sheet ? local.sheet.at : null, error: String(e.message || e) };
+  }
+  render();
+}
+function renderSheetStatus() {
+  const el = $('sheetStatus'); if (!el) return;
+  const t = sheetState.at ? new Date(sheetState.at).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+  if (sheetState.status === 'ok') { el.className = 'sheet-status ok'; el.textContent = `✓ Captains & goalies sheet synced · ${t}`; }
+  else if (sheetState.status === 'cached') { el.className = 'sheet-status bad'; el.textContent = `Couldn't reach the sheet · using the copy from ${t}`; }
+  else if (sheetState.status === 'failed') { el.className = 'sheet-status bad'; el.textContent = `Couldn't reach the sheet (${sheetState.error || 'error'}) · using the built-in lists`; }
+  else { el.className = 'sheet-status'; el.textContent = 'Checking the Captains & Goalies sheet…'; }
+}
+
 // ─────────────── render ───────────────
 const $ = id => document.getElementById(id);
 function renderStatus() {
@@ -620,6 +695,7 @@ function render() {
   $('gameSelect').innerHTML = GAMES.map(x =>
     `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
   renderTop();
+  renderSheetStatus();
   renderScore();
   renderLog();
   renderStatus();
@@ -783,6 +859,7 @@ document.addEventListener('change', e => {
 });
 
 render();
+syncSheet();
 setInterval(tick, 250);
 if (g.timer.startedAt) keepAwake(true);
 </script>
