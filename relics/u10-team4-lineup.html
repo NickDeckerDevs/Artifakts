@@ -151,6 +151,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .link-btn { background: none; border: none; color: var(--text-faint); font-size: 12px; cursor: pointer; padding: 6px; }
 .goal-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 .goal-choice .goal-btn { padding: 18px 10px; font-size: 15px; }
+.gk-item.alt { border: 1px dashed var(--border-strong); color: var(--text-muted); }
 .gk-item.off { border: 1px solid #ff7a6b; background: #3a1414; color: #ffb3a8; }
 .gk-item.off .gk-meta { color: #ffb3a8; }
 .gk-summary { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: none; border: none; color: var(--text); padding: 0; cursor: pointer; text-align: left; }
@@ -288,7 +289,7 @@ const GAMES = [
   ['2026-11-14','Sat','10:30 AM','Team 6','2A'], ['2026-11-19','Thu','7:30 PM','Team 8','4A'],
   ['2026-11-21','Sat','12:00 PM','Team 7','2C'], ['2026-12-03','Thu','7:30 PM','Team 5','4C'],
   ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','4B','Tournament'],
-  ['2026-12-12','Sat','10:30 AM','Team 2','2A','Tournament'], ['2026-12-13','Sun','TBD','TBD','TBD','Semis & finals'],
+  ['2026-12-12','Sat','10:30 AM','Team 2','2A','Tournament'], ['2026-12-13','Sun','TBD','TBD','TBD','Semifinal'], ['2026-12-13-2','Sun','TBD','TBD','TBD','Final'],
 ].map(([id, day, time, opp, field, note]) => ({ id, day, time, opp, field, note }));
 
 // Captains: two per game, each plays one goalie quarter. Master copy: "Team 4 Captains & Goalies" sheet.
@@ -320,7 +321,7 @@ const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador
 // ─────────────── state ───────────────
 const LOCAL_KEY = `lineup:${TEAM_ID}`;
 const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k, null])));
-const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], timer: { startedAt: null }, savedAt: null });
+const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], timer: { startedAt: null }, gkPicks: null, savedAt: null });
 const clone = o => JSON.parse(JSON.stringify(o));
 
 let local = readLocal();            // { currentGame, games: {id: game} } — this phone's cache
@@ -346,6 +347,7 @@ function normalize(x) {
   if (Array.isArray(x.out)) out.out = x.out.filter(n => typeof n === 'string');
   if (Array.isArray(x.events)) out.events = x.events.filter(e => e && (e.side === 'us' || e.side === 'them'));
   if (x.timer && typeof x.timer.startedAt === 'number') out.timer = { startedAt: x.timer.startedAt };
+  if (Array.isArray(x.gkPicks)) out.gkPicks = x.gkPicks.filter(n => typeof n === 'string');
   out.savedAt = x.savedAt || null;
   return out;
 }
@@ -370,7 +372,7 @@ const played = n => PERIODS.filter((_, i) => posOf(i, n) !== 'bench').length;
 // Goalie is a team rotation, so a "rather not play goalie" answer doesn't warn.
 const avoids = (n, k) => k !== 'bench' && k !== 'goalie' && POS[k].tags.some(t => player(n).avoid.includes(t));
 const likes = (n, k) => k !== 'bench' && POS[k].tags.some(t => player(n).likes.includes(t));
-const short = id => id.slice(5).replace('-', '/').replace(/^0/, '');
+const short = id => id.slice(5, 10).replace('-', '/').replace(/^0/, '');
 
 // ── captains & goalie rotation ──
 const captains = (id = currentId) => CAPTAINS[id] || [];
@@ -396,16 +398,33 @@ function captainSoon(n) { // captain in one of the next two games
   const i = GAMES.findIndex(x => x.id === currentId);
   return GAMES.slice(i + 1, i + 3).some(x => captains(x.id).includes(n));
 }
-// Who keeps goal this game: present captains, then non-captains with the fewest goalie quarters,
-// longest since their last turn, captains-coming-up pushed back, then last name A–Z.
+const GK_OVERRIDE = {}; // from the sheet's "Goalie override" column: { gameId: [names] }
+// Who keeps goal this game: present captains, then up-next kids. The rotation ranks everyone else by
+// fewest goalie quarters, longest since their last turn, captains-coming-up pushed back, then last name A–Z.
+// Your picks for this game (tapping an alternate) win, then the sheet's override, then the rotation.
 function goaliePlan() {
   const caps = captains().filter(here);
-  const pool = present().filter(n => !caps.includes(n)).sort((a, b) =>
+  const ranking = present().filter(n => !caps.includes(n)).sort((a, b) =>
     (gkSeason(a) - gkSeason(b)) || (captainSoon(a) - captainSoon(b)) || (gkLast(a) - gkLast(b)) ||
     LAST[a].localeCompare(LAST[b]));
-  const upNext = pool.slice(0, Math.max(0, PERIODS.length - caps.length));
+  const need = Math.max(0, PERIODS.length - caps.length);
+  const base = (g.gkPicks || GK_OVERRIDE[currentId] || []).filter(n => here(n) && !caps.includes(n));
+  const upNext = [...new Set([...base, ...ranking])].slice(0, need);
+  const alternates = ranking.filter(n => !upNext.includes(n)).slice(0, 2);
   const order = [caps[0], upNext[0], caps[1], upNext[1], upNext[2], upNext[3]].filter(Boolean); // quarter order
-  return { caps, upNext, order, set: new Set(order) };
+  return { caps, upNext, alternates, order, set: new Set(order) };
+}
+// Swap alternate `a` in for planned goalie `b`. If b already has a goalie quarter, a takes it and b moves to a's spot.
+function swapGoalie(a, b) {
+  const plan = goaliePlan();
+  g.gkPicks = plan.upNext.map(n => n === b ? a : n);
+  const qi = gkQuarterNow(b);
+  if (qi >= 0) {
+    const L = g.lineup[qi], from = KEYS.find(k => L[k] === a);
+    L.goalie = a;
+    if (from) L[from] = b;
+  }
+  save();
 }
 const offPlan = n => !!n && !goaliePlan().set.has(n);
 
@@ -638,13 +657,18 @@ function toISO(v) {
 }
 const KNOWN = new Set(PLAYERS.map(p => p.name));
 const cleanName = v => { v = (v || '').trim().replace(/[’']/g, ''); return KNOWN.has(v) ? v : null; };
-// Columns: A Date · D Captain 1 · E Captain 2 · G–J Q1–Q4 goalie · M Player · P Jersey #
+// Columns: A Date · D Captain 1 · E Captain 2 · F Goalie override · G–J Q1–Q4 goalie · M Player · P Jersey #
 function applySheet(rows) {
   const head = rows[0] || [];
   if (String(head[0]).trim() !== 'Date' || String(head[3]).trim() !== 'Captain 1') throw new Error('unexpected columns');
+  const seen = {};
+  for (const k in GK_OVERRIDE) delete GK_OVERRIDE[k];
   for (const r of rows.slice(1)) {
-    const id = toISO(r[0]);
+    const date = toISO(r[0]);
+    const id = date ? (seen[date] = (seen[date] || 0) + 1) > 1 ? `${date}-${seen[date]}` : date : null; // 2nd game on a date = "-2"
     if (id) {
+      const ov = String(r[5] || '').split(/[,&/]| and /).map(cleanName).filter(Boolean);
+      if (ov.length) GK_OVERRIDE[id] = ov;
       CAPTAINS[id] = [cleanName(r[3]), cleanName(r[4])].filter(Boolean);
       const gk = [r[6], r[7], r[8], r[9]].map(cleanName);
       if (gk.some(Boolean)) GOALIE_LOG[id] = gk; else delete GOALIE_LOG[id];
@@ -710,7 +734,8 @@ function render() {
   const gkChip = (n, role) => {
     const qi = gkQuarterNow(n);
     const status = role === 'off' ? `${PERIODS[qi]} · not on plan` : qi >= 0 ? PERIODS[qi] : 'needs a quarter';
-    return `<button class="gk-item ${role === 'off' ? 'off' : qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${role === 'off' ? '⚠ ' : ''}${numTag(n)}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} before</span></button>`;
+    if (role === 'alt') return `<button class="gk-item alt" data-gkalt="${esc(n)}"><span class="gk-name">${numTag(n)}${esc(n)}</span><span class="gk-meta">alternate · ${gkSeason(n)} total</span></button>`;
+    return `<button class="gk-item ${role === 'off' ? 'off' : qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${role === 'off' ? '⚠ ' : ''}${numTag(n)}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} total</span></button>`;
   };
   const allSet = !offs.length && plan.order.length === PERIODS.length && plan.order.every(n => gkQuarterNow(n) >= 0) && g.lineup.every(L => L.goalie);
   if (allSet && !gkOpen) {
@@ -720,7 +745,8 @@ function render() {
       `<div class="section-title" ${allSet ? 'data-action="gk-toggle" style="cursor:pointer"' : ''}>Goalies this game${allSet ? ' · tap to hide' : ''}</div>` +
       `<div class="gk-sub">${allCaps.length ? `Captains: ${allCaps.map(esc).join(' &amp; ')}${allCaps.some(n => !here(n)) ? ' (one is out)' : ''}` : 'No captains set for this game'}</div>` +
       `<div class="gk-grid">${plan.caps.map(n => gkChip(n, 'cap')).join('')}${plan.upNext.map(n => gkChip(n, 'next')).join('')}${offs.map(n => gkChip(n, 'off')).join('')}</div>` +
-      `<div class="gk-hint">Tap a name to put them in goal for ${PERIODS[q]}. “Before” = goalie quarters in earlier games.</div>`;
+      (plan.alternates.length ? `<div class="gk-sub" style="margin:10px 0 6px">Next in line, if someone can't go</div><div class="gk-grid">${plan.alternates.map(n => gkChip(n, 'alt')).join('')}</div>` : '') +
+      `<div class="gk-hint">Tap a goalie to put them in goal for ${PERIODS[q]}. Tap an alternate to swap them in. “Total” = goalie quarters in earlier games.${g.gkPicks || GK_OVERRIDE[currentId] ? ' <button class="link-btn" data-action="gk-reset" style="padding:0;font-size:11px;text-decoration:underline">Back to the rotation</button>' : ''}</div>`;
   }
 
   const L = g.lineup[q];
@@ -800,12 +826,20 @@ async function openCopy() {
 
 // ─────────────── events ───────────────
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-scorer],[data-undo]');
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo]');
   if (!t) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
   if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return tryPlace(n, k); }
   if (d.gk) return tryPlace(d.gk, 'goalie');
+  if (d.gkalt) {
+    const plan = goaliePlan(), a = d.gkalt;
+    pending = { alt: a };
+    return openSheet(`<div class="sheet-title">Swap in ${esc(a)}</div><div class="sheet-sub">${esc(a)} has ${gkSeason(a)} goalie quarter${gkSeason(a) === 1 ? '' : 's'} so far. Who does ${esc(a)} replace? Captains stay in.</div>
+      <div class="picks">${plan.upNext.map(n => `<button class="chip c-gk" data-swapfor="${esc(n)}">${numTag(n)}${esc(n)}${gkQuarterNow(n) >= 0 ? ' · ' + PERIODS[gkQuarterNow(n)] : ''}</button>`).join('')}</div>
+      <button class="btn full" data-action="cancel">Cancel</button>`);
+  }
+  if (d.swapfor) { const a = pending && pending.alt; overlay.hidden = true; pending = null; if (a) swapGoalie(a, d.swapfor); return; }
   if (d.scorer !== undefined) { overlay.hidden = true; pending = null; return addGoal('us', d.scorer); }
   if (d.undo !== undefined) {
     const ev = g.events[+d.undo]; if (!ev) return;
@@ -833,6 +867,7 @@ document.addEventListener('click', e => {
       <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-timer-reset">Reset</button></div>`);
     case 'do-timer-reset': overlay.hidden = true; return timerReset();
     case 'gk-toggle': gkOpen = !gkOpen; return render();
+    case 'gk-reset': g.gkPicks = null; return save();
     case 'do-override': { const o = pending && pending.override; overlay.hidden = true; pending = null; if (o) place(o.n, o.k); return; }
     case 'do-undo': { const i = pending && pending.undo; overlay.hidden = true; pending = null; if (i !== undefined) { g.events.splice(i, 1); save(); } return; }
     case 'confirm': { const p = pending; overlay.hidden = true; pending = null; if (p) tryPlace(p.name, p.pos); return render(); }
