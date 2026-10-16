@@ -99,6 +99,15 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .pt-val.over { color: var(--warn); }
 .pt-val.under { color: var(--text-muted); }
 
+.gk-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.gk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.gk-item { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; border-radius: 6px; border: 1px dashed var(--gk-fg); background: none; color: var(--text); cursor: pointer; text-align: left; min-width: 0; }
+.gk-item.done { border-style: solid; border-color: transparent; background: var(--gk-bg); color: var(--gk-fg); }
+.gk-name { font-size: 13px; font-weight: 600; }
+.gk-meta { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.gk-item.done .gk-meta { color: var(--gk-fg); opacity: 0.8; }
+.gk-hint { font-size: 11px; color: var(--text-faint); margin-top: 8px; line-height: 1.5; }
+.cap { display: inline-block; font-size: 9px; font-weight: 700; line-height: 1; padding: 2px 4px; border-radius: 3px; background: var(--warn); color: #111; vertical-align: 1px; }
 .note { font-size: 11px; color: var(--text-faint); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.6; }
 
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
@@ -158,6 +167,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
   <div class="tabs" id="tabs" role="tablist"></div>
   <div class="warnings" id="warnings"></div>
+  <div class="section" id="goalies"></div>
   <div class="field" id="field"></div>
 
   <div class="section">
@@ -217,6 +227,23 @@ const GAMES = [
   ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','4B','Tournament'],
   ['2026-12-12','Sat','10:30 AM','Team 2','2A','Tournament'], ['2026-12-13','Sun','TBD','TBD','TBD','Semis & finals'],
 ].map(([id, day, time, opp, field, note]) => ({ id, day, time, opp, field, note }));
+
+// Captains: two per game, each plays one goalie quarter. Master copy: "Team 4 Captains & Goalies" sheet.
+const CAPTAINS = {
+  '2026-10-15': ['Cameron', 'Jayce'],  '2026-10-17': ['Cameron', 'Jayce'],
+  '2026-10-22': ['Colt', 'Khair'],     '2026-10-24': ['Colt', 'Khair'],
+  '2026-10-29': ['Alejandro', 'Jeremiah'], '2026-10-31': ['Alejandro', 'Jeremiah'],
+  '2026-11-05': ['Liam', 'Jaxon'],     '2026-11-07': ['Liam', 'Jaxon'],
+  '2026-11-12': ['Abel', 'EJ'],        '2026-11-14': ['Abel', 'EJ'],
+  '2026-11-19': ['Ethan', 'Casey'],    '2026-11-21': ['Ethan', 'Casey'],
+};
+// Goalie quarters from games played before this page tracked them (Q1–Q4; null = not recorded).
+const GOALIE_LOG = {
+  '2026-10-15': ['Cameron', 'Jayce', 'Casey', null],
+};
+// Alphabetical by last name, for ties in the goalie rotation.
+const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador', Jeremiah: 'Castro', Liam: 'Clark', Jaxon: 'Cossairt',
+  Abel: 'Dailey', EJ: 'Daley', Jayce: 'Decker', Ethan: 'Gonzalez', Casey: 'Minervini', Cameron: 'Richardson' };
 
 // ─────────────── state ───────────────
 const LOCAL_KEY = `lineup:${TEAM_ID}`;
@@ -298,15 +325,54 @@ const present = () => PLAYERS.map(p => p.name).filter(here);
 const posOf = (qi, n) => KEYS.find(k => g.lineup[qi][k] === n) || 'bench';
 const bench = qi => present().filter(n => posOf(qi, n) === 'bench');
 const played = n => PERIODS.filter((_, i) => posOf(i, n) !== 'bench').length;
-const avoids = (n, k) => k !== 'bench' && POS[k].tags.some(t => player(n).avoid.includes(t));
+// Goalie is a team rotation, so a "rather not play goalie" answer doesn't warn.
+const avoids = (n, k) => k !== 'bench' && k !== 'goalie' && POS[k].tags.some(t => player(n).avoid.includes(t));
 const likes = (n, k) => k !== 'bench' && POS[k].tags.some(t => player(n).likes.includes(t));
 const short = id => id.slice(5).replace('-', '/').replace(/^0/, '');
+
+// ── captains & goalie rotation ──
+const captains = (id = currentId) => CAPTAINS[id] || [];
+const isCaptain = n => captains().includes(n);
+const goaliesIn = id => {
+  if (id === currentId) return g.lineup.map(L => L.goalie);
+  if (GOALIE_LOG[id]) return GOALIE_LOG[id];
+  const x = local.games[id];
+  return x && x.lineup ? x.lineup.map(L => L && L.goalie) : [];
+};
+const gkQuarterNow = n => g.lineup.findIndex(L => L.goalie === n); // -1 if not in goal this game
+function gkSeason(n) { // goalie quarters in earlier games
+  let c = 0;
+  for (const x of GAMES) { if (x.id >= currentId) break; c += goaliesIn(x.id).filter(v => v === n).length; }
+  return c;
+}
+function gkLast(n) { // index of the last earlier game they kept goal, -1 if never
+  let last = -1;
+  GAMES.forEach((x, i) => { if (x.id < currentId && goaliesIn(x.id).includes(n)) last = i; });
+  return last;
+}
+function captainSoon(n) { // captain in one of the next two games
+  const i = GAMES.findIndex(x => x.id === currentId);
+  return GAMES.slice(i + 1, i + 3).some(x => captains(x.id).includes(n));
+}
+// Who keeps goal this game: present captains, then non-captains with the fewest goalie quarters,
+// longest since their last turn, captains-coming-up pushed back, then last name A–Z.
+function goaliePlan() {
+  const caps = captains().filter(here);
+  const pool = present().filter(n => !caps.includes(n)).sort((a, b) =>
+    (gkSeason(a) - gkSeason(b)) || (captainSoon(a) - captainSoon(b)) || (gkLast(a) - gkLast(b)) ||
+    LAST[a].localeCompare(LAST[b]));
+  const inGoal = g.lineup.map(L => L.goalie).filter(Boolean);
+  const extra = inGoal.filter(n => !caps.includes(n)); // someone you put in goal yourself counts as one of the "up next"
+  const upNext = [...extra, ...pool.filter(n => !extra.includes(n))].slice(0, Math.max(PERIODS.length - caps.length, extra.length));
+  return { caps, upNext };
+}
 
 function warningsFor(qi) {
   const out = [], L = g.lineup[qi];
   const open = KEYS.filter(k => !L[k]).length;
   if (open && bench(qi).length) out.push(`${open} open spot${open > 1 ? 's' : ''}`);
   for (const k of KEYS) if (L[k] && avoids(L[k], k)) out.push(`${L[k]} would rather not play ${POS[k].label}`);
+  if (L.goalie && g.lineup.filter(x => x.goalie === L.goalie).length > 1) out.push(`${L.goalie} is in goal more than one quarter this game`);
   return out;
 }
 
@@ -314,11 +380,24 @@ function warningsFor(qi) {
 // unless nobody else is left; likes and "sat last quarter" break ties.
 function autofill() {
   const order = PLAYERS.map(p => p.name);
+  // Goalies first: captain, up next, captain, up next — one quarter each.
+  const { caps, upNext } = goaliePlan();
+  const gkOrder = [caps[0], upNext[0], caps[1], upNext[1], upNext[2], upNext[3]].filter(Boolean);
+  const queue = gkOrder.filter(n => gkQuarterNow(n) === -1);
+  for (let qi = 0; qi < PERIODS.length && queue.length; qi++) {
+    const L = g.lineup[qi];
+    if (L.goalie) continue;
+    const n = queue.shift();
+    const from = posOf(qi, n);
+    if (from !== 'bench') L[from] = null;
+    L.goalie = n;
+  }
   for (let qi = 0; qi < PERIODS.length; qi++) {
     const L = g.lineup[qi];
-    const open = KEYS.filter(k => !L[k]).sort((a, b) => (a === 'goalie' ? -1 : b === 'goalie' ? 1 : 0));
+    const open = KEYS.filter(k => !L[k]);
     for (const k of open) {
-      const pool = bench(qi);
+      // a second goalie quarter is never auto-picked
+      const pool = bench(qi).filter(n => k !== 'goalie' || gkQuarterNow(n) === -1);
       if (!pool.length) break;
       const sat = n => qi > 0 && posOf(qi - 1, n) === 'bench' ? 0 : 1;
       pool.sort((a, b) =>
@@ -363,11 +442,24 @@ function render() {
     `<button class="tab ${i === q ? 'active' : ''}" role="tab" aria-selected="${i === q}" data-q="${i}">${l}${warningsFor(i).length ? '<span class="dot" aria-label="needs attention"></span>' : ''}</button>`).join('');
   $('warnings').innerHTML = warningsFor(q).map(w => `<div class="warning">${esc(w)}</div>`).join('');
 
+  const { caps, upNext } = goaliePlan();
+  const allCaps = captains();
+  const gkChip = (n, role) => {
+    const qi = gkQuarterNow(n);
+    const status = qi >= 0 ? PERIODS[qi] : 'needs a quarter';
+    return `<button class="gk-item ${qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} before</span></button>`;
+  };
+  $('goalies').innerHTML =
+    `<div class="section-title">Goalies this game</div>` +
+    `<div class="gk-sub">${allCaps.length ? `Captains: ${allCaps.map(esc).join(' &amp; ')}${allCaps.some(n => !here(n)) ? ' (one is out)' : ''}` : 'No captains set for this game'}</div>` +
+    `<div class="gk-grid">${caps.map(n => gkChip(n, 'cap')).join('')}${upNext.map(n => gkChip(n, 'next')).join('')}</div>` +
+    `<div class="gk-hint">Tap a name to put them in goal for ${PERIODS[q]}. “Before” = goalie quarters in earlier games.</div>`;
+
   const L = g.lineup[q];
   $('field').innerHTML = FORMATION.map(row =>
     `<div class="field-row" style="grid-template-columns:repeat(${row.length},minmax(0,1fr))">${row.map(k =>
       `<div class="slot"><div class="slot-label">${POS[k].label}</div><div class="slot-body">${
-        L[k] ? `<button class="chip ${POS[k].cls}" data-player="${esc(L[k])}">${esc(L[k])}</button>`
+        L[k] ? `<button class="chip ${POS[k].cls}" data-player="${esc(L[k])}">${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
              : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
 
   const b = bench(q);
@@ -441,6 +533,7 @@ document.addEventListener('click', e => {
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
   if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return place(n, k); }
+  if (d.gk) return place(d.gk, 'goalie');
   if (d.player) return openPlayer(d.player);
   if (d.slot) return openSlot(d.slot);
   if (d.pos) { pending.pos = d.pos; sheet.querySelectorAll('.opt').forEach(o => o.classList.toggle('selected', o === t)); return; }
