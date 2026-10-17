@@ -124,7 +124,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .pt-fill { height: 100%; border-radius: 3px; background: var(--bar); transition: width 0.3s ease; }
 .pt-fill.under { background: var(--text-faint); }
 .pt-fill.over { background: var(--warn); }
-.pt-val { width: 32px; font-family: var(--mono); font-size: 11px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.pt-val { width: 42px; font-family: var(--mono); font-size: 11px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .pt-val.over { color: var(--warn); }
 .pt-val.under { color: var(--text-muted); }
 
@@ -224,6 +224,56 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .btn-primary { background: var(--text); color: #111; border-color: var(--text); }
 .btn-danger { background: var(--danger-bg); color: var(--danger-fg); border-color: var(--danger-border); }
 
+/* quarter clock, subs, goal flow */
+button { touch-action: manipulation; }
+.start-btn.final { background: var(--surface2); color: var(--text-muted); }
+.tab.live { border-color: var(--ok); }
+.tab.live.active { background: var(--ok); border-color: var(--ok); }
+.tab .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); margin-left: 4px; vertical-align: middle; }
+.tab.live.active .live-dot { background: #111; }
+.qtimes { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.sheet-head .sheet-title { margin: 0; padding-top: 4px; }
+.x-btn { flex: 0 0 36px; height: 36px; border-radius: 18px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 16px; cursor: pointer; }
+.radio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.radio { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface2); font-size: 13px; font-weight: 600; cursor: pointer; }
+.radio input { accent-color: var(--ok); width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
+.radio.on { border-color: var(--ok); }
+.radio.off { opacity: 0.45; cursor: default; }
+.radio small { display: block; font-size: 10px; font-weight: 500; color: var(--text-muted); }
+.pf { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; padding: 10px 8px; border-radius: 10px; background: #12301a; border: 1px solid #1f4a2a; }
+.pf-row { display: flex; gap: 6px; justify-content: center; }
+.pf-row.spread { justify-content: space-between; }
+.pf-btn { flex: 0 0 calc((100% - 12px) / 3); min-width: 0; padding: 8px 4px; border-radius: 7px; border: 2px solid transparent; font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; line-height: 1.2; }
+.pf-btn small { display: block; font-size: 10px; font-weight: 500; opacity: 0.8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-btn .nm { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-btn.sel { border-color: #fff; }
+.pf-btn.cur { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45); }
+.pf-btn:disabled { opacity: 0.35; cursor: default; }
+.pf-bench { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding-top: 6px; border-top: 1px solid #1f4a2a; }
+.pf-bench .pf-btn { flex: 0 0 auto; padding: 8px 14px; }
+.sheet-hint { font-size: 11px; color: var(--text-faint); margin: -4px 0 12px; line-height: 1.5; }
+.subs-strip { margin: -2px 0 12px; display: flex; flex-direction: column; gap: 4px; }
+.sub-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); padding: 6px 10px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); }
+.sub-row .when { font-family: var(--mono); font-size: 11px; flex-shrink: 0; }
+.sub-row .what { flex: 1; min-width: 0; }
+.sub-row .log-x { padding: 0 4px; }
+.slot-in { display: block; font-size: 9px; color: var(--ok); margin-top: -6px; margin-bottom: 4px; letter-spacing: 0.04em; }
+.spot-canvas { width: 100%; height: auto; display: block; border-radius: 8px; touch-action: none; image-rendering: pixelated; margin-bottom: 12px; cursor: crosshair; }
+.goal-summary { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.goal-summary small { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 3px; }
+.big-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.big-opt { padding: 14px 8px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
+.big-opt small { display: block; font-size: 11px; font-weight: 500; color: var(--ok); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.big-opt.done { border-color: var(--ok); }
+.tag-group { margin-bottom: 12px; }
+.tag-group .section-title { margin-bottom: 6px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; }
+.pill.on { background: var(--ok); border-color: var(--ok); color: #111; font-weight: 600; }
+.log-what.tap { background: none; border: none; color: inherit; text-align: left; padding: 0; font: inherit; cursor: pointer; }
+.log-detail { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .chip:active { transform: none; } }
 </style>
 </head>
@@ -255,6 +305,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
   <div class="warnings coach-only" id="warnings"></div>
   <div class="section coach-only" id="goalies"></div>
   <div class="field" id="field"></div>
+  <div class="subs-strip" id="subs"></div>
 
   <div class="section">
     <div class="section-title">On the bench</div>
@@ -276,7 +327,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
     <div id="notes"></div>
   </div>
 
-  <div class="note coach-only">Tap a player to move or swap them. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
+  <div class="note coach-only">Game day: tap ▶ Start Q1 at the whistle, and Start Q2 (etc.) when the next quarter kicks off — it records the real time even if you never look at the clock. Tap any player for “Sub now” (logged at that moment, counts part-quarters) or “Sub at start of quarter” (changes the starters). Tap a spot, then tap it again to confirm. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
 
   <div class="bottom-actions">
     <button class="action-btn primary coach-only" data-action="autofill">✦ Fill open spots</button>
@@ -412,7 +463,11 @@ const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador
 // ─────────────── state ───────────────
 const LOCAL_KEY = `lineup:${TEAM_ID}`;
 const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k, null])));
-const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], timer: { startedAt: null }, gkPicks: null, formation: '231', notes: [], savedAt: null });
+// clock: the real time each quarter was started/ended (ms). subs: mid-quarter changes — each one is the
+// full field lineup from that moment on, so lineup[q] always stays the quarter's starting lineup.
+const freshClock = () => ({ starts: PERIODS.map(() => null), ends: PERIODS.map(() => null) });
+const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], clock: freshClock(), subs: [], gkPicks: null, formation: '231', notes: [], savedAt: null });
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const clone = o => JSON.parse(JSON.stringify(o));
 
 let local = readLocal();            // { currentGame, games: {id: game} } — this phone's cache
@@ -437,12 +492,17 @@ function normalize(x) {
     out.lineup = x.lineup.map(L => Object.fromEntries(KEYS.map(k => [k, typeof L[k] === 'string' ? L[k] : null])));
   if (Array.isArray(x.out)) out.out = x.out.filter(n => typeof n === 'string');
   if (Array.isArray(x.events)) out.events = x.events.filter(e => e && (e.side === 'us' || e.side === 'them'));
-  if (x.timer && typeof x.timer.startedAt === 'number') out.timer = { startedAt: x.timer.startedAt };
+  if (x.clock && Array.isArray(x.clock.starts)) {
+    const num = v => typeof v === 'number' ? v : null;
+    out.clock = { starts: PERIODS.map((_, i) => num(x.clock.starts[i])), ends: PERIODS.map((_, i) => num((x.clock.ends || [])[i])) };
+  }
+  if (Array.isArray(x.subs)) out.subs = x.subs.filter(s => s && s.q >= 0 && s.q < PERIODS.length && typeof s.at === 'number' && s.lineup)
+    .map(s => ({ id: s.id || uid(), q: s.q, at: s.at, lineup: Object.fromEntries(KEYS.map(k => [k, typeof s.lineup[k] === 'string' ? s.lineup[k] : null])) }));
   if (Array.isArray(x.gkPicks)) out.gkPicks = x.gkPicks.filter(n => typeof n === 'string');
   if (x.formation === '312' || x.formation === '231') out.formation = x.formation;
   if (Array.isArray(x.notes)) out.notes = x.notes.filter(n => n && typeof n.text === 'string');
   if (x.ownEvents) out.ownEvents = true;
-  if (x.ownTimer) out.ownTimer = true;
+  if (x.ownClock) out.ownClock = true;
   out.savedAt = x.savedAt || null;
   return out;
 }
@@ -463,8 +523,8 @@ function save() {
 //   ⬇ Load from sheet — replaces this phone's lineup with the sheet's (asks first if they differ).
 // View-only devices just show the sheet's copy.
 let remoteCopy = undefined; // undefined = not checked yet, null = sheet has nothing for this game
-const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, timer: g.timer, formation: g.formation, notes: g.notes, savedAt: g.savedAt });
-const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events, a.formation || '231', a.notes || []]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events, b.formation || '231', b.notes || []]);
+const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, clock: g.clock, subs: g.subs, formation: g.formation, notes: g.notes, savedAt: g.savedAt });
+const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events, a.formation || '231', a.notes || [], a.subs || [], a.clock || null]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events, b.formation || '231', b.notes || [], b.subs || [], b.clock || null]);
 const fmtT = iso => iso ? new Date(iso).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
 const post = body => fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.json());
 
@@ -481,7 +541,7 @@ async function pullGame() {
     if (!isCoach() && remoteCopy) {
       const mine = g; g = normalize(clone(remoteCopy));
       if (mine.ownEvents) { g.events = mine.events; g.ownEvents = true; }
-      if (mine.ownTimer) { g.timer = mine.timer; g.ownTimer = true; }
+      if (mine.ownClock) { g.clock = mine.clock; g.ownClock = true; }
       g.notes = mine.notes || [];   // a viewer's notes are their own, never the coach's
       writeLocal();
       if (overlay.hidden && composer.hidden) render();
@@ -557,6 +617,52 @@ const played = n => PERIODS.filter((_, i) => posOf(i, n) !== 'bench').length;
 const avoids = (n, k) => k !== 'bench' && k !== 'goalie' && POS[k].tags.some(t => player(n).avoid.includes(t));
 const likes = (n, k) => k !== 'bench' && POS[k].tags.some(t => player(n).likes.includes(t));
 const short = id => id.slice(5, 10).replace('-', '/').replace(/^0/, '');
+
+// ── quarter clock ──
+// A quarter is "live" from Start until End. Starting the next quarter is also how the game moves on
+// when nobody watches the timer — the real tap time is recorded either way.
+const liveQ = () => { for (let i = PERIODS.length - 1; i >= 0; i--) if (g.clock.starts[i] && !g.clock.ends[i]) return i; return -1; };
+const nextQ = () => g.clock.starts.findIndex(v => !v);
+const qSecs = qi => g.clock.starts[qi] ? Math.max(0, ((g.clock.ends[qi] || Date.now()) - g.clock.starts[qi]) / 1000) : 0;
+const clockAt = (qi, t) => g.clock.starts[qi] ? mmss(Math.max(0, (t - g.clock.starts[qi]) / 1000)) : null;
+const hhmm = t => new Date(t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+// The quarter that goals/subs "now" belong to: the live one, otherwise the tab you're on.
+const activeQ = () => { const l = liveQ(); return l >= 0 ? l : q; };
+
+// ── lineup over time ──
+const subsIn = qi => g.subs.filter(s => s.q === qi).sort((a, b) => a.at - b.at);
+const nowLineup = qi => { const s = subsIn(qi); return s.length ? s[s.length - 1].lineup : g.lineup[qi]; };
+const keyIn = (L, n) => KEYS.find(k => L[k] === n) || 'bench';
+const benchNow = qi => present().filter(n => keyIn(nowLineup(qi), n) === 'bench');
+// Each lineup state in a quarter with its share of the quarter (by real time when the clock ran,
+// otherwise split evenly). Quarters not played yet count their planned lineup in full.
+function quarterStates(qi) {
+  const states = [{ t: null, L: g.lineup[qi] }, ...subsIn(qi).map(s => ({ t: s.at, L: s.lineup }))];
+  const t0 = g.clock.starts[qi];
+  const t1 = t0 ? (g.clock.ends[qi] || Math.max(Date.now(), t0 + QTR_SECS * 1000)) : null;
+  if (!t0 || !(t1 > t0)) return states.map(s => ({ ...s, w: 1 / states.length }));
+  return states.map((s, i) => {
+    const a = i === 0 ? t0 : Math.min(t1, Math.max(t0, s.t));
+    const b = i + 1 < states.length ? Math.min(t1, Math.max(t0, states[i + 1].t)) : t1;
+    return { ...s, w: Math.max(0, b - a) / (t1 - t0) };
+  });
+}
+const playedIn = (qi, n) => quarterStates(qi).reduce((sum, s) => sum + (keyIn(s.L, n) !== 'bench' ? s.w : 0), 0);
+const playedActual = n => PERIODS.reduce((sum, _, i) => sum + playedIn(i, n), 0);
+const fmtQ = x => { const r = Math.round(x * 10) / 10; return Number.isInteger(r) ? String(r) : r.toFixed(1); };
+const playedThisQ = qi => present().filter(n => quarterStates(qi).some(s => keyIn(s.L, n) !== 'bench'));
+// What changed in a sub, for the strip under the field: "Liam in for Jaxon (ST)".
+function describeSub(s) {
+  const list = subsIn(s.q), i = list.findIndex(x => x.id === s.id);
+  const prev = i > 0 ? list[i - 1].lineup : g.lineup[s.q];
+  const parts = [];
+  for (const k of layoutKeys()) {
+    if (prev[k] === s.lineup[k]) continue;
+    const a = s.lineup[k], b = prev[k];
+    parts.push(a && b ? `${a} in for ${b} (${POS[k].label})` : a ? `${a} into ${POS[k].label}` : `${b} off (${POS[k].label})`);
+  }
+  return parts.join(' · ') || 'No change';
+}
 
 // ── captains & goalie rotation ──
 const captains = (id = currentId) => CAPTAINS[id] || [];
@@ -689,7 +795,6 @@ function place(n, k) {
 const QTR_SECS = 15 * 60, MAX_SECS = 99 * 60 + 59;
 const mmss = s => { s = Math.floor(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 const scoreOf = (x = g) => ({ us: x.events.filter(e => e.side === 'us').length, them: x.events.filter(e => e.side === 'them').length });
-const gameSecs = () => g.timer.startedAt ? Math.min(MAX_SECS, Math.max(0, (Date.now() - g.timer.startedAt) / 1000)) : 0;
 let wakeLock = null;
 
 async function keepAwake(on) {
@@ -698,25 +803,34 @@ async function keepAwake(on) {
     if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
   } catch (e) { wakeLock = null; }
 }
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && g.timer.startedAt) keepAwake(true); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && liveQ() >= 0) keepAwake(true); });
 
-function timerStart() { if (isViewer()) g.ownTimer = true; g.timer = { startedAt: Date.now() }; keepAwake(true); save(); }
-function timerReset() { if (isViewer()) g.ownTimer = true; g.timer = { startedAt: null }; keepAwake(false); save(); }
-// White for the first half of each 15-minute quarter, yellow from 7:30, red from 10:00.
+const touchClock = () => { if (isViewer()) g.ownClock = true; };
+function startQuarter(qi) {
+  touchClock();
+  const t = Date.now(), l = liveQ();
+  if (l >= 0 && l !== qi) g.clock.ends[l] = t;            // starting the next quarter ends the live one
+  g.clock.starts[qi] = t; g.clock.ends[qi] = null;
+  q = qi; keepAwake(true); save();
+  flash(`${PERIODS[qi]} started · ${hhmm(t)}`);
+}
+function endQuarter(qi) { touchClock(); g.clock.ends[qi] = Date.now(); keepAwake(false); save(); flash(`${PERIODS[qi]} ended`); }
+// White for the first half of the 15-minute quarter, yellow from 7:30, red from 10:00.
 function timerView() {
-  const t = gameSecs(), qs = t % QTR_SECS, qn = Math.floor(t / QTR_SECS) + 1;
-  const tone = qs >= 600 ? 't-late' : qs >= 450 ? 't-mid' : '';
-  return local.timerMode === 'qtr'
-    ? { tone, big: mmss(qs), label: `Q${qn} · tap for game` }
-    : { tone, big: mmss(t), label: `Game · tap for Q${qn}` };
+  const l = liveQ(), s = Math.min(MAX_SECS, qSecs(l));
+  return { tone: s >= 600 ? 't-late' : s >= 450 ? 't-mid' : '', big: mmss(s), label: `${PERIODS[l]} · tap for clock` };
 }
 function timerHTML() {
-  if (!g.timer.startedAt) return `<button class="start-btn" data-action="timer-start" aria-label="Start game timer"><span class="icon">▶</span>Start</button>`;
-  const v = timerView();
-  return `<button class="gtime ${v.tone}" data-action="timer-mode" aria-label="Game timer, tap to switch view"><span class="big">${v.big}</span><span class="cap-label">${v.label}</span></button>`;
+  if (liveQ() >= 0) {
+    const v = timerView();
+    return `<button class="gtime ${v.tone}" data-action="clock" aria-label="Quarter clock, tap for options"><span class="big">${v.big}</span><span class="cap-label">${v.label}</span></button>`;
+  }
+  const n = nextQ();
+  if (n >= 0) return `<button class="start-btn" data-action="q-start" aria-label="Start ${PERIODS[n]}"><span class="icon">▶</span>Start ${PERIODS[n]}</button>`;
+  return `<button class="start-btn final" data-action="clock">Final</button>`;
 }
 function tick() {
-  if (!g.timer.startedAt) return;
+  if (liveQ() < 0) return;
   const v = timerView();
   document.querySelectorAll('.gtime').forEach(el => {
     el.className = `gtime ${v.tone}`;
@@ -724,25 +838,130 @@ function tick() {
     el.querySelector('.cap-label').textContent = v.label;
   });
 }
+const sheetHead = (title, sub) => `<div class="sheet-head"><div class="sheet-title">${title}</div><button class="x-btn" data-action="cancel" aria-label="Close">✕</button></div>${sub ? `<div class="sheet-sub">${sub}</div>` : ''}`;
+function openClock() {
+  const l = liveQ(), n = nextQ();
+  const times = PERIODS.map((p, i) => g.clock.starts[i]
+    ? `${p}: ${hhmm(g.clock.starts[i])}${g.clock.ends[i] ? '–' + hhmm(g.clock.ends[i]) + ` (${mmss(qSecs(i))})` : ' · running'}` : `${p}: not started`).join('<br>');
+  let btns = '';
+  if (l >= 0) {
+    btns += l + 1 < PERIODS.length ? `<button class="btn btn-primary full" data-action="q-next">⏭ End ${PERIODS[l]} &amp; start ${PERIODS[l + 1]} now</button>` : '';
+    btns += `<button class="btn full" data-action="q-end">⏸ End ${PERIODS[l]}${l === PERIODS.length - 1 ? ' (final whistle)' : ' (break)'}</button>`;
+    btns += `<button class="btn full" data-action="q-restart">↺ Restart ${PERIODS[l]} clock from now</button>`;
+    btns += `<button class="btn btn-danger full" data-action="q-unstart">Undo: ${PERIODS[l]} didn't start</button>`;
+  } else {
+    if (n >= 0) btns += `<button class="btn btn-primary full" data-action="q-start">▶ Start ${PERIODS[n]} now</button>`;
+    const lastEnded = g.clock.ends.map((v, i) => v ? i : -1).filter(i => i >= 0).pop();
+    if (lastEnded !== undefined) btns += `<button class="btn full" data-action="q-reopen">Reopen ${PERIODS[lastEnded]} (ended by mistake)</button>`;
+  }
+  openSheet(`${sheetHead(l >= 0 ? `${PERIODS[l]} · ${mmss(qSecs(l))}` : 'Game clock', 'Real start and end times for each quarter.')}
+    <div class="qtimes" style="margin-bottom:14px">${times}</div><div style="display:flex;flex-direction:column;gap:8px">${btns}</div>`);
+}
 
+// A goal is saved the moment the scorer is picked; location, assist and shot details are added after.
 function addGoal(side, scorer) {
   if (isViewer()) g.ownEvents = true;
-  g.events.push({ side, q, clock: g.timer.startedAt ? mmss(gameSecs()) : null, scorer: scorer || null, at: new Date().toISOString() });
+  const gq = activeQ(), t = Date.now();
+  g.events.push({ side, q: gq, clock: liveQ() === gq ? clockAt(gq, t) : null, scorer: scorer || null, at: new Date(t).toISOString() });
   save();
-  flash(side === 'us' ? `Goal${scorer ? ' — ' + scorer : ''}!` : 'Goal against added');
+  if (side === 'us') { pending = { goal: g.events.length - 1 }; return openGoalSpot(); }
+  flash('Goal against added');
 }
+const goalLabel = e => `${PERIODS[e.q]}${e.clock ? ' · ' + e.clock : ''}`;
 function openGoalChoice() {
-  const sc = scoreOf(), x = GAMES.find(v => v.id === currentId);
-  openSheet(`<div class="sheet-title">Score ${sc.us}–${sc.them} · ${PERIODS[q]}</div><div class="sheet-sub">Who scored?</div>
-    <div class="goal-choice"><button class="goal-btn us" data-action="goal-us">⚽ Our goal</button><button class="goal-btn" data-action="goal-them">${esc(x ? x.opp : 'Their')} goal</button></div>
-    <button class="btn full" data-action="cancel">Cancel</button>`);
+  const sc = scoreOf(), x = GAMES.find(v => v.id === currentId), gq = activeQ();
+  openSheet(`${sheetHead(`Score ${sc.us}–${sc.them} · ${PERIODS[gq]}`)}
+    <div class="goal-choice" style="margin-top:12px"><button class="goal-btn us" data-action="goal-us">⚽ Our goal</button><button class="goal-btn" data-action="goal-them">${esc(x ? x.opp : 'Their')} goal</button></div>`);
+}
+// Players laid out like the formation. opts: { L, data: attr name, exclude: [names], extra: [names] (shown under the field) }
+function pickField(o) {
+  const btn = n => `<button class="pf-btn ${POS[keyIn(o.L, n)] ? POS[keyIn(o.L, n)].cls : 'c-bench'}" ${o.data}="${esc(n)}"><span class="nm">${numTag(n)}${esc(n)}</span><small>${keyIn(o.L, n) === 'bench' ? 'came off' : POS[keyIn(o.L, n)].label}</small></button>`;
+  const rows = formation().rows.map(r => `<div class="pf-row${r.spread ? ' spread' : ''}">${r.keys.map(k => {
+    const n = o.L[k];
+    return n && !(o.exclude || []).includes(n) ? btn(n) : `<button class="pf-btn c-bench" disabled><span class="nm">—</span><small>${POS[k].label}</small></button>`;
+  }).join('')}</div>`).join('');
+  const extra = (o.extra || []).filter(n => !(o.exclude || []).includes(n));
+  return `<div class="pf">${rows}${extra.length ? `<div class="pf-bench">${extra.map(btn).join('')}</div>` : ''}</div>`;
 }
 function openOurGoal() {
-  const onField = KEYS.map(k => g.lineup[q][k]).filter(Boolean);
-  openSheet(`<div class="sheet-title">Our goal · ${PERIODS[q]}</div><div class="sheet-sub">Who scored? These are the players on the field in ${PERIODS[q]}.</div>
-    <div class="picks">${onField.map(n => `<button class="chip c-lf" data-scorer="${esc(n)}">${numTag(n)}${esc(n)}</button>`).join('')}
-      <button class="chip c-bench" data-scorer="">Not sure</button></div>
-    <button class="btn full" data-action="cancel">Cancel</button>`);
+  const gq = activeQ(), L = nowLineup(gq);
+  const cameOff = playedThisQ(gq).filter(n => keyIn(L, n) === 'bench');
+  openSheet(`${sheetHead(`Our goal · ${PERIODS[gq]}${liveQ() === gq ? ' · ' + clockAt(gq, Date.now()) : ''}`, 'Who scored?')}
+    ${pickField({ L, data: 'data-scorer', extra: cameOff })}
+    <button class="btn full" data-scorer="">Not sure who</button>`);
+}
+
+// ── where it was scored from: the attacking half, pixel style like the tactics board ──
+const HP = 6, HFW = 64, HFH = 49, HOY = 3;   // px per art pixel, half-field size in art pixels, room for the goal
+function drawHalf(cv, spot) {
+  cv.width = HFW * HP; cv.height = (HFH + HOY) * HP;
+  const x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
+  const px = (ax, ay, w, h, c) => { x.fillStyle = c; x.fillRect(ax * HP, (ay + HOY) * HP, w * HP, h * HP); };
+  x.fillStyle = '#0f2a14'; x.fillRect(0, 0, cv.width, cv.height);
+  for (let r = 0; r < 7; r++) px(0, r * 8, HFW, Math.min(8, HFH - r * 8), r % 2 ? '#2a7230' : '#2f7d32');
+  const L = '#f2f2ea';
+  px(0, 0, HFW, 1, L); px(0, 0, 1, HFH, L); px(HFW - 1, 0, 1, HFH, L); px(0, 48, HFW, 1, L);
+  const box = (w, h) => { const x0 = (HFW - w) / 2; px(x0, 0, 1, h, L); px(x0 + w - 1, 0, 1, h, L); px(x0, h - 1, w, 1, L); };
+  box(36, 16); box(18, 6); px(31, 11, 2, 2, L);
+  for (let i = 18; i < 46; i++) for (let j = 38; j < 48; j++) if (Math.abs(Math.hypot(i + 0.5 - 32, j + 0.5 - 48.5) - 8.5) < 0.55) px(i, j, 1, 1, L);
+  px(26, -2, 12, 2, '#ffffff');
+  if (spot) {   // ball: white with a black outline
+    const cx = Math.round(spot.x * HFW), cy = Math.round(spot.y * 96);
+    for (let i = -4; i <= 3; i++) for (let j = -4; j <= 3; j++) {
+      const d = Math.hypot(i + 0.5, j + 0.5);
+      if (d <= 3.3) px(cx + i, cy + j, 1, 1, d > 2.3 ? '#000000' : '#ffffff');
+    }
+  }
+}
+function openGoalSpot() {
+  const e = g.events[pending.goal]; if (!e) return closeSheet();
+  pending.spot = e.spot ? { ...e.spot } : { x: 0.5, y: 0.14 };
+  openSheet(`${sheetHead(`⚽ ${esc(e.scorer || 'Our goal')} · ${goalLabel(e)}`, 'Where was it scored from? Tap or drag the ball.')}
+    <canvas class="spot-canvas" id="spotCanvas" aria-label="Attacking half of the field. Tap where the shot was taken."></canvas>
+    <div class="btn-row"><button class="btn" data-action="goal-more">Skip</button><button class="btn btn-primary" data-action="goal-spot-ok">Confirm</button></div>`);
+  const cv = $('spotCanvas');
+  drawHalf(cv, pending.spot);
+  const move = ev => {
+    const r = cv.getBoundingClientRect();
+    const ax = (ev.clientX - r.left) / r.width * HFW, ay = (ev.clientY - r.top) / r.height * (HFH + HOY) - HOY;
+    pending.spot = { x: Math.min(62, Math.max(2, ax)) / HFW, y: Math.min(47, Math.max(1, ay)) / 96 };
+    drawHalf(cv, pending.spot);
+  };
+  let down = false;
+  cv.addEventListener('pointerdown', ev => { down = true; try { cv.setPointerCapture(ev.pointerId); } catch (_) {} move(ev); });
+  cv.addEventListener('pointermove', ev => { if (down) move(ev); });
+  cv.addEventListener('pointerup', () => { down = false; });
+  cv.addEventListener('pointercancel', () => { down = false; });
+}
+const SHOT_TAGS = [
+  ['How it started', ['Open play', 'Counter attack', 'Penalty', 'Free kick', 'From corner', 'From throw-in', 'From goal kick', 'Rebound', 'Scramble']],
+  ['The shot', ['Right foot', 'Left foot', 'Header', 'Volley', 'Half-volley', 'Chip', 'One-on-one', 'Long shot', 'Dribbled the keeper', 'Deflected']],
+  ['Where it went', ['Top bin', 'High', 'Mid', 'Low', 'Near post', 'Far post', 'Through the legs', 'Off the post/bar']],
+];
+function openGoalMore() {
+  const e = g.events[pending.goal]; if (!e) return closeSheet();
+  const tags = e.shot || [];
+  openSheet(`${sheetHead(`⚽ ${esc(e.scorer || 'Our goal')} · ${goalLabel(e)}`)}
+    <div class="goal-summary"><small>${e.spot ? 'Location saved · <button class="link-btn" data-action="goal-spot" style="padding:0;font-size:12px;text-decoration:underline">change</button>' : '<button class="link-btn" data-action="goal-spot" style="padding:0;font-size:12px;text-decoration:underline">Add where it was scored from</button>'}</small></div>
+    <div class="big-opts">
+      <button class="big-opt ${e.assist ? 'done' : ''}" data-action="goal-assist">Register Assist${e.assist ? `<small>✓ ${esc(e.assist)}</small>` : ''}</button>
+      <button class="big-opt ${tags.length ? 'done' : ''}" data-action="goal-shot">Register Shot${tags.length ? `<small>✓ ${esc(tags.join(', '))}</small>` : ''}</button>
+    </div>
+    <button class="btn btn-primary full" data-action="cancel">Save</button>`);
+}
+function openGoalAssist() {
+  const e = g.events[pending.goal]; if (!e) return closeSheet();
+  const L = nowLineup(e.q), cameOff = playedThisQ(e.q).filter(n => keyIn(L, n) === 'bench');
+  openSheet(`${sheetHead(`Assist · ${esc(e.scorer || 'Our goal')}`, 'Who set it up?')}
+    ${pickField({ L, data: 'data-assist', exclude: [e.scorer], extra: cameOff })}
+    <div class="btn-row"><button class="btn" data-assist="">No assist</button><button class="btn" data-action="goal-more">Back</button></div>`);
+}
+function openGoalShot() {
+  const e = g.events[pending.goal]; if (!e) return closeSheet();
+  const on = new Set(e.shot || []);
+  openSheet(`${sheetHead(`Shot · ${esc(e.scorer || 'Our goal')}`, 'Pick everything that fits.')}
+    ${SHOT_TAGS.map(([title, list]) => `<div class="tag-group"><div class="section-title">${title}</div><div class="pills">${list.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-tag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div></div>`).join('')}
+    <button class="btn btn-primary full" data-action="goal-more">Done</button>`);
 }
 function renderTop() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
@@ -758,12 +977,16 @@ function renderScore() {
       <button class="score-big" data-action="goal-choice" aria-label="Add a goal"><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></button>
       <div class="team them"><span class="team-name">${esc(x ? x.opp : 'Them')}</span><button class="goal-btn" data-action="goal-them">+ Their goal</button></div>
     </div>
-    <div class="timer-row">${timerHTML()}${g.timer.startedAt ? `<button class="link-btn" data-action="timer-reset">Reset timer</button>` : `<span class="link-btn" style="cursor:default">15-min quarters</span>`}</div>`;
+    <div class="timer-row">${timerHTML()}<span class="qtimes" style="text-align:right">${
+      g.clock.starts.some(Boolean) ? PERIODS.map((p, i) => g.clock.starts[i] ? `${p} ${hhmm(g.clock.starts[i])}` : '').filter(Boolean).join(' · ') + ` <button class="link-btn" data-action="clock" style="padding:0 0 0 4px;text-decoration:underline">clock</button>`
+      : 'Tap Start when the whistle blows'}</span></div>`;
 }
 function renderLog() {
   const ev = g.events.map((e, i) => ({ ...e, i })).sort((a, b) => (a.q - b.q) || String(a.at).localeCompare(String(b.at)));
   $('log').innerHTML = ev.length ? ev.map(e => `<div class="log-row"><span class="log-when">${PERIODS[e.q]}${e.clock ? ' · ' + e.clock : ''}</span>
-    <span class="log-what ${e.side === 'them' ? 'against' : ''}">${e.side === 'us' ? `⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}` : `Goal against`}</span>
+    ${e.side === 'us'
+      ? `<button class="log-what tap" data-editgoal="${e.i}">⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}${e.assist ? ` <span style="color:var(--text-muted)">(assist ${esc(e.assist)})</span>` : ''}${(e.shot || []).length ? `<span class="log-detail">${esc(e.shot.join(' · '))}</span>` : ''}</button>`
+      : `<span class="log-what against">Goal against</span>`}
     <button class="log-x" data-undo="${e.i}" aria-label="Remove">×</button></div>`).join('')
     : `<span class="log-empty">No goals yet. Tap the score to add one.</span>`;
 }
@@ -783,7 +1006,11 @@ function gameSummary() {
   if (g.events.length) {
     lines.push('Goals:');
     [...g.events].sort((a, b) => a.q - b.q).forEach(e =>
-      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? teamName() + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') : x.opp}`));
+      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? teamName() + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') + (e.assist ? `, assist ${e.assist}` : '') + ((e.shot || []).length ? ` [${e.shot.join(', ')}]` : '') : x.opp}`));
+  }
+  if (g.subs.length) {
+    lines.push('Subs:');
+    g.subs.slice().sort((a, b) => a.at - b.at).forEach(s => lines.push(`  ${PERIODS[s.q]} ${clockAt(s.q, s.at) || hhmm(s.at)} — ${describeSub(s)}`));
   }
   if (g.out.length) lines.push(`Missing: ${g.out.join(', ')}`);
   lines.push('');
@@ -792,15 +1019,16 @@ function gameSummary() {
     const L = g.lineup[i];
     lines.push(`  ${p}: ${KEYS.map(k => `${POS[k].label} ${L[k] || '—'}`).join(', ')} | Bench: ${bench(i).join(', ') || 'none'}`);
   });
-  lines.push(`Quarters played: ${present().map(n => `${n} ${played(n)}`).join(', ')}`);
+  lines.push(`Quarters played: ${present().map(n => `${n} ${fmtQ(playedActual(n))}`).join(', ')}`);
   lines.push('');
   lines.push('DATA ' + JSON.stringify({ team: TEAM_ID, game: currentId, opp: x.opp, captains: caps, out: g.out,
-    goalies: g.lineup.map(L => L.goalie), lineup: g.lineup, events: g.events.map(({ side, q, clock, scorer }) => ({ side, q, clock, scorer })) }));
+    goalies: g.lineup.map(L => L.goalie), lineup: g.lineup, subs: g.subs, clock: g.clock,
+    events: g.events.map(({ side, q, clock, scorer, assist, shot, spot }) => ({ side, q, clock, scorer, assist, shot, spot })) }));
   return lines.join('\n');
 }
 function resultNote() {
   const sc = scoreOf(), res = sc.us > sc.them ? 'Won' : sc.us < sc.them ? 'Lost' : 'Tied';
-  const goals = g.events.filter(e => e.side === 'us').map(e => `${e.scorer || '?'} (${PERIODS[e.q]})`);
+  const goals = g.events.filter(e => e.side === 'us').map(e => `${e.scorer || '?'} (${PERIODS[e.q]}${e.assist ? ', assist ' + e.assist : ''})`);
   return `${res} ${sc.us}-${sc.them}.${goals.length ? ' Goals: ' + goals.join(', ') + '.' : ''}${g.out.length ? ' Out: ' + g.out.join(', ') : ''}`.trim();
 }
 async function sendResults() {
@@ -836,9 +1064,11 @@ async function shareGame() {
   }
 }
 function flash(msg) {
+  document.querySelectorAll('.flash-toast').forEach(x => x.remove());
   const el = document.createElement('div');
+  el.className = 'flash-toast';
   el.textContent = msg;
-  el.style.cssText = 'position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:#111;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:200';
+  el.style.cssText = 'position:fixed;left:50%;top:calc(72px + env(safe-area-inset-top,0px));transform:translateX(-50%);max-width:calc(100% - 32px);background:var(--text);color:#111;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 6px 20px rgba(0,0,0,0.5);pointer-events:none';
   document.body.appendChild(el); setTimeout(() => el.remove(), 2200);
 }
 
@@ -1011,8 +1241,9 @@ function render() {
   renderStatus();
   $('activeCount').textContent = `${present().length} here · 7 on field`;
 
+  const live = liveQ();
   $('tabs').innerHTML = PERIODS.map((l, i) =>
-    `<button class="tab ${i === q ? 'active' : ''}" role="tab" aria-selected="${i === q}" data-q="${i}">${l}${warningsFor(i).length ? '<span class="dot" aria-label="needs attention"></span>' : ''}</button>`).join('');
+    `<button class="tab ${i === q ? 'active' : ''} ${i === live ? 'live' : ''}" role="tab" aria-selected="${i === q}" data-q="${i}">${l}${i === live ? '<span class="live-dot" aria-label="playing now"></span>' : g.clock.ends[i] ? ' ✓' : warningsFor(i).length ? '<span class="dot" aria-label="needs attention"></span>' : ''}</button>`).join('');
   $('warnings').innerHTML = warningsFor(q).map(w => typeof w === 'string' ? `<div class="warning">${esc(w)}</div>` : `<div class="warning bad">⚠ ${esc(w.text)}</div>`).join('');
 
   const plan = goaliePlan(), allCaps = captains();
@@ -1035,21 +1266,30 @@ function render() {
       `<div class="gk-hint">Tap a goalie to put them in goal for ${PERIODS[q]}. Tap an alternate to swap them in. “Total” = goalie quarters in earlier games.${g.gkPicks || GK_OVERRIDE[currentId] ? ' <button class="link-btn" data-action="gk-reset" style="padding:0;font-size:11px;text-decoration:underline">Back to the rotation</button>' : ''}</div>`;
   }
 
-  const L = g.lineup[q];
+  // The field shows who is on right now (after any subs); lineup[q] stays the quarter's starters.
+  const L = nowLineup(q), qSubs = subsIn(q);
+  const cameIn = {};
+  qSubs.forEach((s, i) => { const prev = i ? qSubs[i - 1].lineup : g.lineup[q]; KEYS.forEach(k => { if (s.lineup[k] !== prev[k]) cameIn[k] = clockAt(q, s.at) || hhmm(s.at); }); });
   $('field').innerHTML = formation().rows.map(r => [r.keys, r.spread]).map(([row, spread]) =>
     `<div class="field-row${spread ? ' spread' : ''}">${row.map(k =>
-      `<div class="slot"><div class="slot-label">${POS[k].label}</div><div class="slot-body">${
+      `<div class="slot"><div class="slot-label">${POS[k].label}</div>${cameIn[k] && L[k] ? `<span class="slot-in">in ${esc(cameIn[k])}</span>` : ''}<div class="slot-body">${
         L[k] ? `<button class="chip ${POS[k].cls}${k === 'goalie' && offPlan(L[k]) ? ' off-plan' : ''}" data-player="${esc(L[k])}">${k === 'goalie' && offPlan(L[k]) ? '⚠ ' : ''}${numTag(L[k])}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
              : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
 
-  const b = bench(q);
+  $('subs').innerHTML = qSubs.length
+    ? `<div class="sub-row" style="background:none;border:none;padding:0 2px"><span class="what">Started ${PERIODS[q]}: ${layoutKeys().filter(k => g.lineup[q][k]).map(k => esc(g.lineup[q][k])).join(', ')}</span></div>` +
+      qSubs.map(s => `<div class="sub-row"><span class="when">${esc(clockAt(q, s.at) || hhmm(s.at))}</span><span class="what">⇄ ${esc(describeSub(s))}</span>${isViewer() ? '' : `<button class="log-x" data-delsub="${esc(s.id)}" aria-label="Remove this sub">×</button>`}</div>`).join('')
+    : '';
+
+  const b = benchNow(q);
   $('bench').innerHTML = b.length
     ? b.map(n => `<button class="chip c-bench" data-player="${esc(n)}">${numTag(n)}${esc(n)}</button>`).join('')
     : `<span class="bench-empty">Nobody on the bench</span>`;
 
+  // Part-quarters count: subbed off halfway through = 0.5 (by the real clock when it ran).
   $('playtime').innerHTML = present().map(n => {
-    const c = played(n), cls = c > TARGET ? 'over' : c < TARGET ? 'under' : '';
-    return `<div class="pt-row"><span class="pt-name">${numTag(n)}${esc(n)}</span><div class="pt-track"><div class="pt-fill ${cls}" style="width:${c / PERIODS.length * 100}%"></div></div><span class="pt-val ${cls}">${c}/${PERIODS.length}</span></div>`;
+    const c = playedActual(n), cls = c > TARGET + 0.05 ? 'over' : c < TARGET - 0.05 ? 'under' : '';
+    return `<div class="pt-row"><span class="pt-name">${numTag(n)}${esc(n)}</span><div class="pt-track"><div class="pt-fill ${cls}" style="width:${c / PERIODS.length * 100}%"></div></div><span class="pt-val ${cls}">${fmtQ(c)}/${PERIODS.length}</span></div>`;
   }).join('');
 }
 
@@ -1064,20 +1304,66 @@ document.addEventListener('keydown', e => {
   if (e.target && e.target.id === 'noteText') { if (e.key === 'Enter') { e.preventDefault(); saveNote(); } if (e.key === 'Escape') { composer.hidden = true; noteDraft = null; } }
 });
 
+// Tap any player (bench or field). "Sub now" records a mid-quarter change at this moment;
+// "Start of quarter" changes who starts the quarter. Tap a spot to pick it, tap it again to confirm.
+const canSubNow = qi => liveQ() === qi;
 function openPlayer(n) {
-  pending = { name: n, pos: posOf(q, n) };
-  const opts = [...layoutKeys(), 'bench'].map(k => {
-    const label = k === 'bench' ? 'Bench' : POS[k].label;
-    const cls = k === 'bench' ? 'c-bench' : POS[k].cls;
-    const who = k !== 'bench' && g.lineup[q][k] && g.lineup[q][k] !== n ? g.lineup[q][k] : '';
-    const sub = avoids(n, k) ? `<small class="avoid">would rather not</small>` : who ? `<small>swap with ${esc(who)}</small>` : '';
-    return `<button class="opt ${cls} ${pending.pos === k ? 'selected' : ''}" data-pos="${k}">${label}${sub}</button>`;
-  }).join('');
-  openSheet(`<div class="sheet-title">${esc(n)}</div><div class="sheet-sub">${PERIODS[q]} — pick a spot. Played ${played(n)} of ${PERIODS.length} so far.</div>
-    <div class="options">${opts}</div>
-    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="confirm">Confirm</button></div>`);
+  pending = { move: true, name: n, mode: canSubNow(q) ? 'now' : 'start', pos: null };
+  renderMoveSheet();
+}
+function renderMoveSheet() {
+  const p = pending, n = p.name, now = p.mode === 'now';
+  const L = now ? nowLineup(q) : g.lineup[q], from = keyIn(L, n);
+  const spot = k => {
+    const who = L[k] && L[k] !== n ? L[k] : '';
+    const sub = from === k ? 'here now' : avoids(n, k) ? '<span style="color:var(--warn)">would rather not</span>' : who ? `${from === 'bench' ? 'for' : 'swap'} ${esc(who)}` : 'open';
+    return `<button class="pf-btn ${POS[k].cls} ${p.pos === k ? 'sel' : ''} ${from === k ? 'cur' : ''}" data-movepos="${k}"><span class="nm">${POS[k].label}</span><small>${sub}</small></button>`;
+  };
+  const rows = formation().rows.map(r => `<div class="pf-row${r.spread ? ' spread' : ''}">${r.keys.map(spot).join('')}</div>`).join('');
+  const benchBtn = from !== 'bench' ? `<div class="pf-bench"><button class="pf-btn c-bench ${p.pos === 'bench' ? 'sel' : ''}" data-movepos="bench"><span class="nm">Bench</span><small>take off</small></button></div>` : '';
+  const live = canSubNow(q), t = Date.now();
+  const startNote = !now && subsIn(q).length ? `<div class="sheet-hint">${PERIODS[q]} already has subs. This changes who <b>started</b> ${PERIODS[q]}; the field shows who's on now.</div>` : '';
+  sheet.innerHTML = `<div class="handle"></div>${sheetHead(`${numTag(n)}${esc(n)}`, `${from === 'bench' ? 'On the bench' : POS[from].label} · played ${fmtQ(playedActual(n))} of ${PERIODS.length}`)}
+    <div class="radio-row" role="radiogroup" aria-label="When">
+      <label class="radio ${!now ? 'on' : ''}"><input type="radio" name="submode" value="start" ${!now ? 'checked' : ''}><span>Sub at start of ${PERIODS[q]}<small>changes the starters</small></span></label>
+      <label class="radio ${now ? 'on' : ''} ${live ? '' : 'off'}"><input type="radio" name="submode" value="now" ${now ? 'checked' : ''} ${live ? '' : 'disabled'}><span>Sub now<small>${live ? `${PERIODS[q]} · ${clockAt(q, t)}` : `start ${PERIODS[q]} first`}</small></span></label>
+    </div>
+    ${startNote}
+    <div class="pf">${rows}${benchBtn}</div>
+    <div class="sheet-hint">Tap a spot, then Confirm — or tap the same spot twice.</div>
+    <button class="btn btn-primary full" data-action="move-confirm" ${p.pos ? '' : 'disabled'}>Confirm</button>`;
+  overlay.hidden = false;
+}
+function applyMove() {
+  const p = pending; overlay.hidden = true; pending = null;
+  if (!p || !p.pos) return render();
+  if (p.mode === 'now') return subNow(q, p.name, p.pos);
+  tryPlace(p.name, p.pos);
+}
+// Mid-quarter change: copy who's on now, apply the move, and save that as the lineup from this moment.
+function movedLineup(L, n, k) {
+  const out = clone(L), from = keyIn(out, n);
+  if (from === k) return null;
+  const occ = k === 'bench' ? null : out[k];
+  if (from !== 'bench') out[from] = occ && occ !== n ? occ : null;
+  if (k !== 'bench') out[k] = n;
+  return out;
+}
+function subNow(qi, n, k) {
+  const L = movedLineup(nowLineup(qi), n, k);
+  if (!L) return render();
+  const t = Date.now(), s = { id: uid(), q: qi, at: t, lineup: L };
+  g.subs.push(s);
+  save();
+  flash(`${describeSub(s)} · ${clockAt(qi, t) || ''}`);
 }
 function openSlot(k) {
+  if (canSubNow(q)) {   // during a live quarter, filling an empty spot is a sub at this moment
+    const names = benchNow(q).sort((a, b) => avoids(a, k) - avoids(b, k) || playedActual(a) - playedActual(b));
+    pending = { slotNow: k };
+    return openSheet(`${sheetHead(`${POS[k].label} · sub now`, `${PERIODS[q]} · ${clockAt(q, Date.now())} — who goes in?`)}
+      <div class="picks">${names.map(n => `<button class="chip ${avoids(n, k) ? 'c-bench' : POS[k].cls}" data-fillnow="${esc(n)}">${esc(n)} · ${fmtQ(playedActual(n))}</button>`).join('') || '<span class="sheet-sub">The bench is empty.</span>'}</div>`);
+  }
   const names = bench(q).sort((a, b) => (k === 'goalie' ? offPlan(a) - offPlan(b) : 0) || avoids(a, k) - avoids(b, k) || played(a) - played(b));
   if (k === 'goalie') {
     return openSheet(`<div class="sheet-title">Goalie · ${PERIODS[q]}</div><div class="sheet-sub">Planned goalies first. Picking anyone else needs an override.</div>
@@ -1121,15 +1407,47 @@ async function openCopy() {
 
 // ─────────────── events ───────────────
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick]');
-  if (!t) return;
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-editgoal],[data-delsub],[data-fillnow]');
+  if (!t || t.disabled) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
-  // Viewers can follow along (game, quarter, goals, timer, notes); every lineup tap is simply ignored.
-  const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'timer-start', 'timer-mode', 'timer-reset', 'do-timer-reset',
-    'goal-choice', 'goal-us', 'goal-them', 'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save',
-    'coach-code', 'coach-save', 'coach-off'];
-  if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && d.scorer === undefined && d.undo === undefined && d.delnote === undefined && d.idpick === undefined) return;
+  // Viewers can follow along (game, quarter, goals, clock, notes); every lineup tap is simply ignored.
+  const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen',
+    'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-shot',
+    'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off'];
+  const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal'];
+  if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
+  // ── goal details ──
+  if (d.assist !== undefined) {
+    const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
+    if (isViewer()) g.ownEvents = true;
+    ev.assist = d.assist || null; save(); return openGoalMore();
+  }
+  if (d.tag !== undefined) {
+    const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
+    if (isViewer()) g.ownEvents = true;
+    const set = new Set(ev.shot || []);
+    set.has(d.tag) ? set.delete(d.tag) : set.add(d.tag);
+    ev.shot = SHOT_TAGS.flatMap(([, list]) => list).filter(x => set.has(x));
+    t.classList.toggle('on', set.has(d.tag)); t.setAttribute('aria-pressed', set.has(d.tag));
+    g.savedAt = new Date().toISOString(); writeLocal(); return;
+  }
+  if (d.editgoal !== undefined) { pending = { goal: +d.editgoal }; return openGoalMore(); }
+  // ── subs ──
+  if (d.movepos) {
+    if (pending && pending.move) {
+      if (pending.pos === d.movepos) return applyMove();     // second tap on the same spot = confirm
+      pending.pos = d.movepos; return renderMoveSheet();
+    }
+    return;
+  }
+  if (d.fillnow) { const k = pending && pending.slotNow; overlay.hidden = true; pending = null; if (k) subNow(q, d.fillnow, k); return; }
+  if (d.delsub) {
+    const s = g.subs.find(x => x.id === d.delsub); if (!s) return;
+    pending = { delsub: s.id };
+    return openSheet(`${sheetHead('Remove this sub?', `${PERIODS[s.q]} ${esc(clockAt(s.q, s.at) || hhmm(s.at))} — ${esc(describeSub(s))}`)}
+      <button class="btn btn-danger full" data-action="do-delsub">Remove</button>`);
+  }
   if (d.formation) { g.formation = d.formation; return save(); }
   if (d.idpick !== undefined) { pending.idPlayer = pending.idPlayer === d.idpick ? '' : d.idpick; sheet.querySelectorAll('[data-idpick]').forEach(b => b.classList.toggle('picked', b.dataset.idpick === pending.idPlayer)); return; }
   if (d.delnote !== undefined) { pending = { delnote: d.delnote }; return openSheet(`<div class="sheet-title">Delete this note?</div><div class="btn-row"><button class="btn" data-action="cancel">Keep</button><button class="btn btn-danger" data-action="do-delnote">Delete</button></div>`); }
@@ -1179,17 +1497,30 @@ document.addEventListener('click', e => {
     case 'goal-choice': return openGoalChoice();
     case 'goal-us': return openOurGoal();
     case 'goal-them': overlay.hidden = true; pending = null; return addGoal('them');
-    case 'timer-start': return timerStart();
-    case 'timer-mode': local.timerMode = local.timerMode === 'qtr' ? 'game' : 'qtr'; writeLocal(); return render();
-    case 'timer-reset': return openSheet(`<div class="sheet-title">Reset the game timer?</div><div class="sheet-sub">The timer goes back to the Start button. Goals already logged keep their times.</div>
-      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-timer-reset">Reset</button></div>`);
-    case 'do-timer-reset': overlay.hidden = true; return timerReset();
+    case 'goal-spot': return pending && pending.goal !== undefined ? openGoalSpot() : closeSheet();
+    case 'goal-spot-ok': {
+      const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
+      if (isViewer()) g.ownEvents = true;
+      ev.spot = { x: Math.round(pending.spot.x * 1000) / 1000, y: Math.round(pending.spot.y * 1000) / 1000 }; save(); return openGoalMore();
+    }
+    case 'goal-more': return pending && pending.goal !== undefined ? openGoalMore() : closeSheet();
+    case 'goal-assist': return openGoalAssist();
+    case 'goal-shot': return openGoalShot();
+    case 'move-confirm': return applyMove();
+    case 'do-delsub': { const id = pending && pending.delsub; overlay.hidden = true; pending = null; g.subs = g.subs.filter(s => s.id !== id); return save(); }
+    case 'clock': return openClock();
+    case 'q-start': { overlay.hidden = true; pending = null; const n = nextQ(); if (n >= 0) startQuarter(n); return; }
+    case 'q-next': { overlay.hidden = true; const l = liveQ(); if (l >= 0 && l + 1 < PERIODS.length) startQuarter(l + 1); return; }
+    case 'q-end': { overlay.hidden = true; const l = liveQ(); if (l >= 0) endQuarter(l); return; }
+    case 'q-restart': { overlay.hidden = true; const l = liveQ(); if (l >= 0) { touchClock(); g.clock.starts[l] = Date.now(); save(); flash(`${PERIODS[l]} clock restarted`); } return; }
+    case 'q-unstart': { overlay.hidden = true; const l = liveQ(); if (l >= 0) { touchClock(); g.clock.starts[l] = null; g.clock.ends[l] = null; keepAwake(false); save(); } return; }
+    case 'q-reopen': { overlay.hidden = true; const i = g.clock.ends.map((v, k) => v ? k : -1).filter(k => k >= 0).pop(); if (i !== undefined && liveQ() < 0) { touchClock(); g.clock.ends[i] = null; q = i; keepAwake(true); save(); } return; }
     case 'gk-toggle': gkOpen = !gkOpen; return render();
     case 'gk-reset': g.gkPicks = null; return save();
     case 'do-override': { const o = pending && pending.override; overlay.hidden = true; pending = null; if (o) place(o.n, o.k); return; }
     case 'do-undo': { const i = pending && pending.undo; overlay.hidden = true; pending = null; if (i !== undefined) { g.events.splice(i, 1); save(); } return; }
     case 'confirm': { const p = pending; overlay.hidden = true; pending = null; if (p) tryPlace(p.name, p.pos); return render(); }
-    case 'do-clear': g.lineup = emptyLineup(); overlay.hidden = true; return save();
+    case 'do-clear': g.lineup = emptyLineup(); g.subs = []; overlay.hidden = true; return save();
     case 'do-copy': {
       const src = pending.game.lineup;
       src.forEach(L => KEYS.forEach(k => { if (L[k] && !here(L[k])) L[k] = null; }));
@@ -1200,9 +1531,10 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => {
   if (e.target.id === 'gameSelect') {
     writeLocal();
-    currentId = e.target.value; g = normalize(local.games[currentId]); q = 0; gkOpen = false; keepAwake(!!g.timer.startedAt);
+    currentId = e.target.value; g = normalize(local.games[currentId]); q = Math.max(0, liveQ()); gkOpen = false; keepAwake(liveQ() >= 0);
     writeLocal(); render(); return pullGame();
   }
+  if (e.target.name === 'submode' && pending && pending.move) { pending.mode = e.target.value; pending.pos = null; return renderMoveSheet(); }
   const n = e.target.dataset.roster;
   if (n === undefined) return;
   if (!canEdit()) { e.target.checked = !e.target.checked; return; }
@@ -1219,7 +1551,7 @@ pullGame();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullGame(); });
 setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pullGame(); }, 60000);
 setInterval(tick, 250);
-if (g.timer.startedAt) keepAwake(true);
+if (liveQ() >= 0) { q = liveQ(); render(); keepAwake(true); }
 </script>
 </body>
 </html>
