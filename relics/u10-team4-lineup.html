@@ -274,11 +274,20 @@ button { touch-action: manipulation; }
 .log-what.tap { background: none; border: none; color: inherit; text-align: left; padding: 0; font: inherit; cursor: pointer; }
 .log-detail { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
+/* test mode */
+.test-banner { max-width: 480px; margin: 0 auto 8px; padding: 5px 10px; border-radius: 6px; background: #f5d76e; color: #111; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-align: center; }
+.test-banner[hidden], .test-tools[hidden] { display: none; }
+.test-tools { margin-top: 18px; padding: 12px; border-radius: var(--radius); background: #f5d76e; color: #111; display: flex; flex-direction: column; gap: 8px; }
+.test-sub { font-size: 12px; line-height: 1.45; }
+.test-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.test-tools .btn:not(.btn-danger) { background: #fff8dc; color: #111; border-color: rgba(0,0,0,0.2); }
+.test-exit { font-size: 12px; color: #111; text-align: center; text-decoration: underline; padding: 4px; }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .chip:active { transform: none; } }
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner" id="topbar"></div>
+<header class="topbar"><div class="test-banner" id="testBanner" hidden>🧪 TEST MODE · not a real game · nothing is sent</div><div class="topbar-inner" id="topbar"></div>
   <div class="note-bar" id="composer" hidden>
     <button class="nb-btn nb-x" data-action="note-cancel" aria-label="Cancel note">✕</button>
     <span class="nb-when" id="composerTitle"></span>
@@ -343,6 +352,16 @@ button { touch-action: manipulation; }
     <div class="sheet-status" id="syncStatus"></div>
   </div>
   <div class="viewer-info" id="viewerInfo"></div>
+  <div class="test-tools" id="testTools" hidden>
+    <div class="section-title" style="color:#111">🧪 Test mode</div>
+    <div class="test-sub">Saved only on this phone, separate from real games. Nothing is sent to the sheets.</div>
+    <div class="test-btns">
+      <button class="btn" data-action="test-view" id="testViewBtn">View as parent</button>
+      <button class="btn" data-action="test-ff">⏩ +5 min on the clock</button>
+    </div>
+    <button class="btn btn-danger full" data-action="test-reset">Reset all test data</button>
+    <a class="test-exit" id="testExit" href="#">Leave test mode</a>
+  </div>
 </div>
 
 
@@ -352,6 +371,9 @@ button { touch-action: manipulation; }
 <script>
 // ─────────────── team ───────────────
 const TEAM_ID = 'u10b-team4-fall2026';
+// Test mode: …/u10-team4-lineup.html?test — its own storage on this device, never sends anything to the
+// sheets, full coach controls, and a "Reset all test data" button. Real games are never read or touched.
+const TEST = new URLSearchParams(location.search).has('test');
 const PERIODS = ['Q1', 'Q2', 'Q3', 'Q4'];
 const TARGET = 2; // quarters per player
 const FORMATION = [['lf', 'striker', 'rf'], ['cmid'], ['def1', 'def2'], ['goalie']];
@@ -438,7 +460,7 @@ let sheetState = { status: 'loading', at: null };
 
 // Lineup sync: an Apps Script web app on the same sheet stores each game's lineup in a "Lineups" tab.
 // Anyone can read; saving needs the coach code. Empty SYNC_URL = sync off, everyone edits on their own phone.
-const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwjmRIGNnJgvOPjXpnPR3f5pDC6sm6ctchkVfhKvLbtNaEaFJyRwV_q_xx4v2p3NWyDdg/exec';
+const SYNC_URL = TEST ? '' : 'https://script.google.com/macros/s/AKfycbwjmRIGNnJgvOPjXpnPR3f5pDC6sm6ctchkVfhKvLbtNaEaFJyRwV_q_xx4v2p3NWyDdg/exec';
 const COACH_KEY = 'lineup:coach';
 // Coach link: …/u10-team4-lineup.html#coach=CODE saves the code on this device and removes it from the address bar.
 // #coach=off forgets it.
@@ -461,7 +483,7 @@ const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador
   Abel: 'Dailey', EJ: 'Daley', Jayce: 'Decker', Ethan: 'Gonzalez', Casey: 'Minervini', Cameron: 'Richardson' };
 
 // ─────────────── state ───────────────
-const LOCAL_KEY = `lineup:${TEAM_ID}`;
+const LOCAL_KEY = `lineup:${TEAM_ID}${TEST ? ':test' : ''}`;
 const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k, null])));
 // clock: the real time each quarter was started/ended (ms). subs: mid-quarter changes — each one is the
 // full field lineup from that moment on, so lineup[q] always stays the quarter's starting lineup.
@@ -1145,9 +1167,10 @@ function renderSheetStatus() {
 }
 
 // ─────────────── notes ───────────────
-const ID_KEY = 'lineup:viewer';
+const ID_KEY = TEST ? 'lineup:viewer:test' : 'lineup:viewer';
 const viewerId = () => { try { return JSON.parse(localStorage.getItem(ID_KEY)) || null; } catch (e) { return null; } };
-const isViewer = () => !canEdit();
+// In test mode you can flip between coach and parent view to try both.
+const isViewer = () => TEST ? !!local.testViewer : !canEdit();
 const composer = document.getElementById('composer');
 let noteDraft = null;
 function openNote() {
@@ -1228,7 +1251,13 @@ function render() {
     `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
   applyFormation();
   $('teamTitle').textContent = teamName();
-  document.title = `${teamName()} — U10 Team 4 Lineups`;
+  document.title = `${TEST ? 'TEST · ' : ''}${teamName()} — U10 Team 4 Lineups`;
+  if (TEST) {
+    $('testBanner').hidden = false; $('testTools').hidden = false;
+    $('testBanner').textContent = `🧪 TEST MODE · ${isViewer() ? 'parent view' : 'coach view'} · nothing is sent`;
+    $('testViewBtn').textContent = isViewer() ? 'View as coach' : 'View as parent';
+    $('testExit').href = location.pathname;
+  }
   document.body.classList.toggle('viewer', isViewer());
   renderTop();
   renderFieldTools();
@@ -1414,7 +1443,8 @@ document.addEventListener('click', e => {
   // Viewers can follow along (game, quarter, goals, clock, notes); every lineup tap is simply ignored.
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen',
     'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-shot',
-    'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off'];
+    'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
+    'test-view', 'test-ff', 'test-reset', 'do-test-reset'];
   const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal'];
   if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
   // ── goal details ──
@@ -1507,6 +1537,16 @@ document.addEventListener('click', e => {
     case 'goal-assist': return openGoalAssist();
     case 'goal-shot': return openGoalShot();
     case 'move-confirm': return applyMove();
+    case 'test-view': if (!TEST) return; local.testViewer = !local.testViewer; writeLocal(); flash(isViewer() ? 'Parent view' : 'Coach view'); return render();
+    case 'test-ff': {   // pretend 5 more minutes have gone by in the running quarter
+      if (!TEST) return;
+      const l = liveQ(); if (l < 0) return flash('Start a quarter first');
+      g.clock.starts[l] -= 5 * 60 * 1000; g.subs.filter(s => s.q === l).forEach(s => { s.at -= 5 * 60 * 1000; });
+      save(); return flash(`${PERIODS[l]} clock now ${mmss(qSecs(l))}`);
+    }
+    case 'test-reset': if (!TEST) return; return openSheet(`${sheetHead('Reset all test data?', 'Wipes every test game, note and setting on this phone. Real games are not touched.')}
+      <button class="btn btn-danger full" data-action="do-test-reset">Reset everything</button>`);
+    case 'do-test-reset': if (!TEST) return; try { localStorage.removeItem(LOCAL_KEY); localStorage.removeItem(ID_KEY); } catch (e) {} location.reload(); return;
     case 'do-delsub': { const id = pending && pending.delsub; overlay.hidden = true; pending = null; g.subs = g.subs.filter(s => s.id !== id); return save(); }
     case 'clock': return openClock();
     case 'q-start': { overlay.hidden = true; pending = null; const n = nextQ(); if (n >= 0) startQuarter(n); return; }
