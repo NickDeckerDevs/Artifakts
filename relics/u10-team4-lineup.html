@@ -95,11 +95,12 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .warning { font-size: 12px; color: var(--warn); background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px; padding: 7px 10px; }
 
 .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-.field-row { display: grid; gap: 8px; }
-.slot { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 6px 10px; min-height: 78px; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.field-row { display: flex; gap: 8px; justify-content: center; }
+.field-row.spread { justify-content: space-between; }
+.slot { flex: 0 0 calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 6px 10px; min-height: 78px; display: flex; flex-direction: column; align-items: center; min-width: 0; }
 .slot-label { font-size: 9px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; text-align: center; }
 .slot-body { flex: 1; display: flex; align-items: center; width: 100%; }
-.chip { display: block; border-radius: 5px; padding: 8px 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; width: 100%; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip { display: block; border-radius: 5px; padding: 8px 4px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; width: 100%; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chip:active { transform: scale(0.95); }
 .empty { font-size: 12px; color: var(--text-faint); background: none; border: 1px dashed var(--border-strong); border-radius: 5px; padding: 8px; width: 100%; cursor: pointer; }
 
@@ -166,6 +167,26 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .gk-summary .list { font-size: 12px; color: var(--text-muted); min-width: 0; }
 .chip.off-plan { outline: 2px solid #ff7a6b; outline-offset: 2px; }
 .warning.bad { color: #ffb3a8; background: #2e1010; border-color: #6a2020; }
+.viewer .coach-only { display: none !important; }
+.field-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: 7px; overflow: hidden; }
+.seg button { background: none; border: none; color: var(--text-muted); font: 600 12px var(--mono); padding: 8px 12px; cursor: pointer; }
+.seg button.on { background: var(--text); color: #111; }
+.form-label { font: 600 12px var(--mono); color: var(--text-muted); }
+.note-btn { padding: 9px 14px; border-radius: 20px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; }
+.bottom-status { margin-top: 16px; }
+.viewer-info { font-size: 11px; color: var(--text-faint); margin-top: 14px; text-align: center; }
+.viewer-info .link-btn { font-size: 11px; text-decoration: underline; padding: 0 4px; }
+.composer { position: fixed; inset: 0; z-index: 300; background: var(--bg); display: flex; flex-direction: column; gap: 12px; padding: calc(14px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px)); }
+.composer[hidden] { display: none; }
+.composer-head { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; }
+.composer textarea { flex: 1; width: 100%; resize: none; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px; font: 17px/1.45 var(--font); }
+.note-row { padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
+.note-row:last-child { border-bottom: none; }
+.note-when { font-family: var(--mono); font-size: 11px; color: var(--text-muted); width: 88px; flex-shrink: 0; padding-top: 2px; }
+.note-text { flex: 1; min-width: 0; font-size: 13px; line-height: 1.45; white-space: pre-wrap; word-wrap: break-word; }
+.id-input { width: 100%; padding: 12px; font-size: 16px; background: var(--surface2); color: var(--text); border: 1px solid var(--border-strong); border-radius: 7px; margin-bottom: 12px; }
+.chip.picked { outline: 2px solid var(--text); outline-offset: 1px; }
 .note { font-size: 11px; color: var(--text-faint); padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.6; }
 
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
@@ -212,24 +233,18 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
   <select class="game-select" id="gameSelect" aria-label="Game"></select>
 
-  <div class="action-bar">
+  <div class="action-bar coach-only">
     <button class="action-btn" data-action="roster" aria-label="Manage active players" title="Manage active players">👥 MAP</button>
     <button class="action-btn" data-action="copy">⧉ Copy last game</button>
     <button class="action-btn" data-action="clear">↺ Clear game</button>
   </div>
 
-  <div class="save-bar">
-    <span class="save-status" id="saveStatus">Loading…</span>
-    <span class="active-count" id="activeCount"></span>
-  </div>
-  <div class="sheet-status" id="sheetStatus">Checking the Captains &amp; Goalies sheet…</div>
-  <div class="sheet-status" id="syncStatus"></div>
-
   <div class="section scoreboard" id="scoreboard"></div>
 
   <div class="tabs" id="tabs" role="tablist"></div>
-  <div class="warnings" id="warnings"></div>
-  <div class="section" id="goalies"></div>
+  <div class="field-tools" id="fieldTools"></div>
+  <div class="warnings coach-only" id="warnings"></div>
+  <div class="section coach-only" id="goalies"></div>
   <div class="field" id="field"></div>
 
   <div class="section">
@@ -247,12 +262,33 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
     <div id="log"></div>
   </div>
 
-  <div class="note">Tap a player to move or swap them. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
+  <div class="section">
+    <div class="section-title">Notes</div>
+    <div id="notes"></div>
+  </div>
+
+  <div class="note coach-only">Tap a player to move or swap them. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
 
   <div class="bottom-actions">
-    <button class="action-btn primary" data-action="autofill">✦ Fill open spots</button>
+    <button class="action-btn primary coach-only" data-action="autofill">✦ Fill open spots</button>
     <button class="action-btn primary" data-action="share">📤 Share game</button>
   </div>
+
+  <div class="bottom-status coach-only">
+    <div class="save-bar">
+      <span class="save-status" id="saveStatus">Loading…</span>
+      <span class="active-count" id="activeCount"></span>
+    </div>
+    <div class="sheet-status" id="sheetStatus">Checking the Captains &amp; Goalies sheet…</div>
+    <div class="sheet-status" id="syncStatus"></div>
+  </div>
+  <div class="viewer-info" id="viewerInfo"></div>
+</div>
+
+<div class="composer" id="composer" hidden>
+  <div class="composer-head"><span id="composerTitle">Note</span><button class="link-btn" data-action="note-cancel">Cancel</button></div>
+  <textarea id="noteText" placeholder="Type or tap the mic on your keyboard to talk…"></textarea>
+  <button class="btn btn-primary full" data-action="note-save">Save note</button>
 </div>
 
 <div class="overlay" id="overlay" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
@@ -272,7 +308,24 @@ const POS = {
   def2:    { label: 'Defender 2', cls: 'c-def', tags: ['DEF'] },
   goalie:  { label: 'Goalie',     cls: 'c-gk',  tags: ['GK'] },
 };
-const KEYS = FORMATION.flat();
+const KEYS = FORMATION.flat(); // storage keys; what each key means depends on the formation
+// Each formation relabels the same 7 storage keys, so saved lineups keep working when you switch.
+const FORMATIONS = {
+  '231': { name: '2-3-1', rows: [
+      { keys: ['striker'] }, { keys: ['lf', 'cmid', 'rf'] }, { keys: ['def1', 'def2'] }, { keys: ['goalie'] }],
+    pos: { striker: ['Striker', 'c-st', ['FWD', 'ST']], lf: ['Left Mid', 'c-lf', ['MID']], cmid: ['Center Mid', 'c-mid', ['MID']],
+      rf: ['Right Mid', 'c-rf', ['MID']], def1: ['Left Back', 'c-def', ['DEF']], def2: ['Right Back', 'c-def', ['DEF']] } },
+  '312': { name: '3-1-2', rows: [
+      { keys: ['lf', 'rf'], spread: true }, { keys: ['cmid'] }, { keys: ['def1', 'striker', 'def2'] }, { keys: ['goalie'] }],
+    pos: { lf: ['Left Fwd', 'c-lf', ['FWD']], rf: ['Right Fwd', 'c-rf', ['FWD']], cmid: ['Center Mid', 'c-mid', ['MID']],
+      def1: ['Left Back', 'c-def', ['DEF']], striker: ['Center Back', 'c-def', ['DEF']], def2: ['Right Back', 'c-def', ['DEF']] } },
+};
+const formation = () => FORMATIONS[g && FORMATIONS[g.formation] ? g.formation : '231'];
+function applyFormation() {
+  const f = formation();
+  for (const [k, [label, cls, tags]] of Object.entries(f.pos)) POS[k] = { label, cls, tags };
+}
+const layoutKeys = () => formation().rows.flatMap(r => r.keys);
 // likes / avoid from the parent info form
 const PLAYERS = [
   { name: 'Colt',      likes: ['DEF', 'MID'],        avoid: [] },
@@ -346,7 +399,7 @@ const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador
 // ─────────────── state ───────────────
 const LOCAL_KEY = `lineup:${TEAM_ID}`;
 const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k, null])));
-const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], timer: { startedAt: null }, gkPicks: null, savedAt: null });
+const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], timer: { startedAt: null }, gkPicks: null, formation: '231', notes: [], savedAt: null });
 const clone = o => JSON.parse(JSON.stringify(o));
 
 let local = readLocal();            // { currentGame, games: {id: game} } — this phone's cache
@@ -373,6 +426,10 @@ function normalize(x) {
   if (Array.isArray(x.events)) out.events = x.events.filter(e => e && (e.side === 'us' || e.side === 'them'));
   if (x.timer && typeof x.timer.startedAt === 'number') out.timer = { startedAt: x.timer.startedAt };
   if (Array.isArray(x.gkPicks)) out.gkPicks = x.gkPicks.filter(n => typeof n === 'string');
+  if (x.formation === '312' || x.formation === '231') out.formation = x.formation;
+  if (Array.isArray(x.notes)) out.notes = x.notes.filter(n => n && typeof n.text === 'string');
+  if (x.ownEvents) out.ownEvents = true;
+  if (x.ownTimer) out.ownTimer = true;
   out.savedAt = x.savedAt || null;
   return out;
 }
@@ -393,8 +450,8 @@ function save() {
 //   ⬇ Load from sheet — replaces this phone's lineup with the sheet's (asks first if they differ).
 // View-only devices just show the sheet's copy.
 let remoteCopy = undefined; // undefined = not checked yet, null = sheet has nothing for this game
-const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, timer: g.timer, savedAt: g.savedAt });
-const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events]);
+const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, timer: g.timer, formation: g.formation, notes: g.notes, savedAt: g.savedAt });
+const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events, a.formation || '231', a.notes || []]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events, b.formation || '231', b.notes || []]);
 const fmtT = iso => iso ? new Date(iso).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
 const post = body => fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.json());
 
@@ -408,7 +465,15 @@ async function pullGame() {
     if (!out.ok) throw new Error(out.error || 'error');
     remoteCopy = out.data ? normalize(out.data) : null;
     syncState = { status: 'ok', at: out.updatedAt || null, error: null };
-    if (!isCoach() && remoteCopy) { g = remoteCopy; if (overlay.hidden) render(); }
+    if (!isCoach() && remoteCopy) {
+      const mine = g; g = normalize(clone(remoteCopy));
+      if (mine.ownEvents) { g.events = mine.events; g.ownEvents = true; }
+      if (mine.ownTimer) { g.timer = mine.timer; g.ownTimer = true; }
+      g.notes = mine.notes || [];   // a viewer's notes are their own, never the coach's
+      writeLocal();
+      if (overlay.hidden && composer.hidden) render();
+      sendParentNotes();
+    }
   } catch (e) {
     syncState = { status: 'error', at: null, error: String(e.message || e) };
   }
@@ -622,8 +687,8 @@ async function keepAwake(on) {
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && g.timer.startedAt) keepAwake(true); });
 
-function timerStart() { g.timer = { startedAt: Date.now() }; keepAwake(true); save(); }
-function timerReset() { g.timer = { startedAt: null }; keepAwake(false); save(); }
+function timerStart() { if (isViewer()) g.ownTimer = true; g.timer = { startedAt: Date.now() }; keepAwake(true); save(); }
+function timerReset() { if (isViewer()) g.ownTimer = true; g.timer = { startedAt: null }; keepAwake(false); save(); }
 // White for the first half of each 15-minute quarter, yellow from 7:30, red from 10:00.
 function timerView() {
   const t = gameSecs(), qs = t % QTR_SECS, qn = Math.floor(t / QTR_SECS) + 1;
@@ -648,6 +713,7 @@ function tick() {
 }
 
 function addGoal(side, scorer) {
+  if (isViewer()) g.ownEvents = true;
   g.events.push({ side, q, clock: g.timer.startedAt ? mmss(gameSecs()) : null, scorer: scorer || null, at: new Date().toISOString() });
   save();
   flash(side === 'us' ? `Goal${scorer ? ' — ' + scorer : ''}!` : 'Goal against added');
@@ -668,6 +734,7 @@ function openOurGoal() {
 function renderTop() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
   $('topbar').innerHTML = `${timerHTML()}
+    <button class="note-btn" data-action="note" aria-label="Add a note">✎ Note</button>
     <button class="score-chip" data-action="goal-choice" aria-label="Score ${sc.us} to ${sc.them}, tap to add a goal"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}</span></button>`;
 }
 function renderScore() {
@@ -832,6 +899,72 @@ function renderSheetStatus() {
   else { el.className = 'sheet-status'; el.textContent = 'Checking the Captains & Goalies sheet…'; }
 }
 
+// ─────────────── notes ───────────────
+const ID_KEY = 'lineup:viewer';
+const viewerId = () => { try { return JSON.parse(localStorage.getItem(ID_KEY)) || null; } catch (e) { return null; } };
+const isViewer = () => !canEdit();
+const composer = document.getElementById('composer');
+let noteDraft = null;
+function openNote() {
+  // Synchronous focus inside the tap so the phone keyboard (and its mic) opens right away.
+  noteDraft = { q, at: new Date().toISOString() };
+  $('composerTitle').textContent = `Note · ${PERIODS[q]} · ${new Date(noteDraft.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+  const ta = $('noteText'); ta.value = '';
+  composer.hidden = false; ta.focus();
+}
+function saveNote() {
+  const text = ($('noteText').value || '').trim();
+  composer.hidden = true;
+  if (!text || !noteDraft) { noteDraft = null; return; }
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const who = isViewer() ? viewerId() : null;
+  g.notes = [...(g.notes || []), { id, q: PERIODS[noteDraft.q], at: noteDraft.at, text, by: who ? who.name : 'Coach', player: who ? who.player || '' : '' }];
+  noteDraft = null;
+  if (isViewer()) { writeLocal(); render(); sendParentNotes(); flash('Note saved'); }
+  else { save(); flash('Note saved on this phone'); }
+}
+// Viewer notes go straight to the Parent Notes sheet; unsent ones retry on the next load.
+async function sendParentNotes() {
+  if (!SYNC_URL || !isViewer()) return;
+  const unsent = (g.notes || []).filter(n => !n.sent);
+  for (const n of unsent) {
+    try {
+      const out = await post({ action: 'parentNote', game: currentId, q: n.q, at: n.at, name: n.by, player: n.player, text: n.text });
+      if (out.ok) { n.sent = true; writeLocal(); }
+    } catch (e) { break; }
+  }
+  renderNotes();
+}
+function renderNotes() {
+  const list = (g.notes || []).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  $('notes').innerHTML = list.length ? list.map(n => `<div class="note-row"><span class="note-when">${esc(n.q)} · ${new Date(n.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>
+    <span class="note-text">${esc(n.text)}${isViewer() && !n.sent ? ' <span style="color:var(--text-faint)">(not sent yet)</span>' : ''}</span>
+    <button class="log-x" data-delnote="${esc(n.id)}" aria-label="Delete note">×</button></div>`).join('')
+    : `<span class="log-empty">No notes yet. Tap ✎ Note to add one for ${PERIODS[q]}.</span>`;
+}
+function openIdentity() {
+  const cur = viewerId() || {};
+  pending = { idPlayer: cur.player || '' };
+  openSheet(`<div class="sheet-title">Who's watching?</div><div class="sheet-sub">Pick your player (optional) and type your name. Notes you add are sent to Coach Nick with your name.</div>
+    <div class="picks">${PLAYERS.map(p => `<button class="chip c-bench${pending.idPlayer === p.name ? ' picked' : ''}" data-idpick="${esc(p.name)}">${numTag(p.name)}${esc(p.name)}</button>`).join('')}</div>
+    <input class="id-input" id="idName" type="text" autocomplete="name" placeholder="Your name" value="${esc(cur.name || '')}">
+    <button class="btn btn-primary full" data-action="id-save">Save</button>`);
+}
+function renderViewerInfo() {
+  const el = $('viewerInfo');
+  const who = viewerId();
+  el.innerHTML = isViewer()
+    ? `${who ? `Watching as ${esc(who.name)}${who.player ? ' · ' + esc(who.player) : ''}` : 'Watching'} <button class="link-btn" data-action="identity">change</button> · <button class="link-btn" data-action="coach-code">coach sign-in</button>`
+    : '';
+}
+function renderFieldTools() {
+  const f = g.formation === '312' ? '312' : '231';
+  $('fieldTools').innerHTML = (isViewer()
+    ? `<span class="form-label">${FORMATIONS[f].name}</span>`
+    : `<span class="seg" role="group" aria-label="Formation">${Object.entries(FORMATIONS).map(([k, v]) => `<button class="${k === f ? 'on' : ''}" data-formation="${k}">${v.name}</button>`).join('')}</span>`)
+    + `<button class="note-btn" data-action="note">✎ Note</button>`;
+}
+
 // ─────────────── render ───────────────
 const $ = id => document.getElementById(id);
 function renderStatus() {
@@ -848,7 +981,12 @@ function finalLabel(id) {
 function render() {
   $('gameSelect').innerHTML = GAMES.map(x =>
     `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
+  applyFormation();
+  document.body.classList.toggle('viewer', isViewer());
   renderTop();
+  renderFieldTools();
+  renderNotes();
+  renderViewerInfo();
   renderSheetStatus();
   renderSyncStatus();
   renderScore();
@@ -881,8 +1019,8 @@ function render() {
   }
 
   const L = g.lineup[q];
-  $('field').innerHTML = FORMATION.map(row =>
-    `<div class="field-row" style="grid-template-columns:repeat(${row.length},minmax(0,1fr))">${row.map(k =>
+  $('field').innerHTML = formation().rows.map(r => [r.keys, r.spread]).map(([row, spread]) =>
+    `<div class="field-row${spread ? ' spread' : ''}">${row.map(k =>
       `<div class="slot"><div class="slot-label">${POS[k].label}</div><div class="slot-body">${
         L[k] ? `<button class="chip ${POS[k].cls}${k === 'goalie' && offPlan(L[k]) ? ' off-plan' : ''}" data-player="${esc(L[k])}">${k === 'goalie' && offPlan(L[k]) ? '⚠ ' : ''}${numTag(L[k])}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
              : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
@@ -908,7 +1046,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && !overlay.h
 
 function openPlayer(n) {
   pending = { name: n, pos: posOf(q, n) };
-  const opts = [...KEYS, 'bench'].map(k => {
+  const opts = [...layoutKeys(), 'bench'].map(k => {
     const label = k === 'bench' ? 'Bench' : POS[k].label;
     const cls = k === 'bench' ? 'c-bench' : POS[k].cls;
     const who = k !== 'bench' && g.lineup[q][k] && g.lineup[q][k] !== n ? g.lineup[q][k] : '';
@@ -963,12 +1101,18 @@ async function openCopy() {
 
 // ─────────────── events ───────────────
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo]');
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick]');
   if (!t) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
-  const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'timer-mode', 'roster', 'coach-code', 'coach-save', 'coach-off'];
-  if (!canEdit() && !(d.action && VIEW_OK.includes(d.action))) { flash('View only. Coach Nick sets the lineup.'); return; }
+  // Viewers can follow along (game, quarter, goals, timer, notes); every lineup tap is simply ignored.
+  const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'timer-start', 'timer-mode', 'timer-reset', 'do-timer-reset',
+    'goal-choice', 'goal-us', 'goal-them', 'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save',
+    'coach-code', 'coach-save', 'coach-off'];
+  if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && d.scorer === undefined && d.undo === undefined && d.delnote === undefined && d.idpick === undefined) return;
+  if (d.formation) { g.formation = d.formation; return save(); }
+  if (d.idpick !== undefined) { pending.idPlayer = pending.idPlayer === d.idpick ? '' : d.idpick; sheet.querySelectorAll('[data-idpick]').forEach(b => b.classList.toggle('picked', b.dataset.idpick === pending.idPlayer)); return; }
+  if (d.delnote !== undefined) { pending = { delnote: d.delnote }; return openSheet(`<div class="sheet-title">Delete this note?</div><div class="btn-row"><button class="btn" data-action="cancel">Keep</button><button class="btn btn-danger" data-action="do-delnote">Delete</button></div>`); }
   if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return tryPlace(n, k); }
   if (d.gk) return tryPlace(d.gk, 'goalie');
   if (d.gkalt) {
@@ -996,6 +1140,12 @@ document.addEventListener('click', e => {
     case 'clear': return openSheet(`<div class="sheet-title">Clear this game?</div><div class="sheet-sub">Empties every spot in all four quarters of this game. Other games aren't touched.</div>
       <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-clear">Clear</button></div>`);
     case 'cancel': return closeSheet();
+    case 'note': return openNote();
+    case 'note-save': return saveNote();
+    case 'note-cancel': composer.hidden = true; noteDraft = null; return;
+    case 'do-delnote': { const id = pending && pending.delnote; overlay.hidden = true; pending = null; g.notes = (g.notes || []).filter(n => n.id !== id); if (isViewer()) { writeLocal(); return render(); } return save(); }
+    case 'identity': return openIdentity();
+    case 'id-save': { const name = ($('idName').value || '').trim(); if (!name) { $('idName').focus(); return; } try { localStorage.setItem(ID_KEY, JSON.stringify({ name, player: pending.idPlayer || '' })); } catch (e) {} overlay.hidden = true; pending = null; return render(); }
     case 'share': return openShareChoice();
     case 'share-text': overlay.hidden = true; return shareGame();
     case 'share-results': return sendResults();
@@ -1035,7 +1185,7 @@ document.addEventListener('change', e => {
   }
   const n = e.target.dataset.roster;
   if (n === undefined) return;
-  if (!canEdit()) { e.target.checked = !e.target.checked; flash('View only. Coach Nick sets the lineup.'); return; }
+  if (!canEdit()) { e.target.checked = !e.target.checked; return; }
   g.out = e.target.checked ? g.out.filter(x => x !== n) : [...new Set([...g.out, n])];
   e.target.closest('.roster-row').querySelector('.roster-name').classList.toggle('out', !e.target.checked);
   if (!e.target.checked) g.lineup.forEach(L => KEYS.forEach(k => { if (L[k] === n) L[k] = null; }));
@@ -1043,6 +1193,7 @@ document.addEventListener('change', e => {
 });
 
 render();
+if (isViewer() && !viewerId()) openIdentity();
 syncSheet();
 pullGame();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullGame(); });
