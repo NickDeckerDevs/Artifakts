@@ -78,6 +78,8 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .sheet-status { font-size: 11px; color: var(--text-faint); margin: -6px 0 12px; padding: 0 2px; }
 .sheet-status.ok { color: var(--ok); }
 .sheet-status.bad { color: var(--warn); }
+.sheet-status.view { color: var(--mid-fg); }
+.coach-input { width: 100%; padding: 12px; font: 16px var(--mono); background: var(--surface2); color: var(--text); border: 1px solid var(--border-strong); border-radius: 7px; margin-bottom: 12px; }
 
 .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
 .tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
@@ -216,6 +218,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
     <span class="active-count" id="activeCount"></span>
   </div>
   <div class="sheet-status" id="sheetStatus">Checking the Captains &amp; Goalies sheet…</div>
+  <div class="sheet-status" id="syncStatus"></div>
 
   <div class="section scoreboard" id="scoreboard"></div>
 
@@ -311,6 +314,23 @@ const GOALIE_LOG = {
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJFoF_YW-3ObI6bLTV3I_b2GDfKGVEh0X3rSKFtFsACTXwzZEYvBkC0_Jl6T0B_yTsZKD4emTsKD1G/pub?gid=698790171&single=true&output=csv';
 let sheetState = { status: 'loading', at: null };
 
+// Lineup sync: an Apps Script web app on the same sheet stores each game's lineup in a "Lineups" tab.
+// Anyone can read; saving needs the coach code. Empty SYNC_URL = sync off, everyone edits on their own phone.
+const SYNC_URL = '';
+const COACH_KEY = 'lineup:coach';
+// Coach link: …/u10-team4-lineup.html#coach=CODE saves the code on this device and removes it from the address bar.
+// #coach=off forgets it.
+(function readCoachLink() {
+  const m = location.hash.match(/^#coach=([\w-]+)$/);
+  if (!m) return;
+  try { if (m[1] === 'off') localStorage.removeItem(COACH_KEY); else localStorage.setItem(COACH_KEY, m[1]); } catch (e) {}
+  history.replaceState(null, '', location.pathname + location.search);
+})();
+const coachCode = () => { try { return localStorage.getItem(COACH_KEY) || ''; } catch (e) { return ''; } };
+const isCoach = () => !!coachCode();
+const canEdit = () => !SYNC_URL || isCoach();
+let syncState = { status: SYNC_URL ? 'loading' : 'off', at: null, error: null };
+
 // Jersey numbers (from the Spond thread). Nobody has #1.
 const NUM = { Jaxon: 2, Casey: 3, EJ: 4, Colt: 5, Abel: 6, Jayce: 7, Liam: 8, Ethan: 9, Cameron: 10, Khair: 11, Jeremiah: 12, Alejandro: 13 };
 const numTag = n => NUM[n] ? `<span class="num">${NUM[n]}</span>` : '';
@@ -359,7 +379,73 @@ function nextGameId() {
 function save() {
   g.savedAt = new Date().toISOString();
   writeLocal();
+  pushSoon();
   render();
+}
+
+// ─────────────── lineup sync ───────────────
+let pushTimer = null, pushing = false, pushAgain = false;
+const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, timer: g.timer, savedAt: g.savedAt });
+function pushSoon() {
+  if (!SYNC_URL || !isCoach()) return;
+  syncState = { ...syncState, status: 'pending' }; 
+  clearTimeout(pushTimer); pushTimer = setTimeout(pushNow, 1200);
+}
+async function pushNow() {
+  if (pushing) { pushAgain = true; return; }
+  pushing = true;
+  const game = currentId, data = syncBody();
+  try {
+    const res = await fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ code: coachCode(), action: 'save', game, data }) });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || 'save failed');
+    syncState = { status: 'saved', at: out.updatedAt, error: null };
+  } catch (e) {
+    syncState = { status: 'error', at: syncState.at, error: String(e.message || e) };
+    clearTimeout(pushTimer); pushTimer = setTimeout(pushNow, 15000); // retry
+  }
+  pushing = false;
+  renderSyncStatus();
+  if (pushAgain) { pushAgain = false; pushNow(); }
+}
+// Pull this game's lineup. Viewers always take the coach's copy; a coach takes it only when it's newer
+// (set it on the laptop, see it on the phone), and pushes when the phone has the newer one.
+async function pullGame() {
+  if (!SYNC_URL) return;
+  const game = currentId;
+  try {
+    const res = await fetch(`${SYNC_URL}?action=get&game=${encodeURIComponent(game)}`, { cache: 'no-store' });
+    const out = await res.json();
+    if (game !== currentId || !out.ok) return;
+    const remote = out.data ? normalize(out.data) : null;
+    if (remote && (!isCoach() || !g.savedAt || (remote.savedAt && remote.savedAt > g.savedAt))) {
+      g = remote; writeLocal();
+      if (overlay.hidden) render();
+    } else if (isCoach() && g.savedAt && (!remote || g.savedAt > (remote.savedAt || ''))) {
+      pushSoon();
+    }
+    syncState = { status: remote ? (isCoach() ? 'saved' : 'view') : (isCoach() ? 'saved' : 'empty'), at: out.updatedAt || null, error: null };
+  } catch (e) {
+    syncState = { status: 'error', at: syncState.at, error: String(e.message || e) };
+  }
+  renderSyncStatus();
+}
+function renderSyncStatus() {
+  const el = document.getElementById('syncStatus'); if (!el) return;
+  const t = syncState.at ? new Date(syncState.at).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+  const set = (cls, txt) => { el.className = 'sheet-status ' + cls; el.textContent = txt; };
+  if (!SYNC_URL) return set('', isCoach() ? 'Coach mode on · lineup sync not set up yet' : '');
+  if (!isCoach()) {
+    if (syncState.status === 'view') return set('view', `👀 View only · Coach Nick's lineup, updated ${t}`);
+    if (syncState.status === 'empty') return set('view', '👀 View only · Coach Nick hasn\'t set this lineup yet');
+    if (syncState.status === 'error') return set('bad', `👀 View only · couldn't load the latest lineup (${syncState.error})`);
+    return set('view', '👀 View only · loading the lineup…');
+  }
+  if (syncState.status === 'pending') return set('', 'Coach mode · saving lineup to the sheet…');
+  if (syncState.status === 'saved') return set('ok', `✓ Coach mode · lineup saved to the sheet${t ? ' · ' + t : ''}`);
+  if (syncState.status === 'error') return set('bad', `Coach mode · couldn't save to the sheet (${syncState.error}) · will retry`);
+  return set('', 'Coach mode · checking the sheet…');
 }
 // ─────────────── helpers ───────────────
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -612,6 +698,30 @@ function gameSummary() {
     goalies: g.lineup.map(L => L.goalie), lineup: g.lineup, events: g.events.map(({ side, q, clock, scorer }) => ({ side, q, clock, scorer })) }));
   return lines.join('\n');
 }
+function resultNote() {
+  const sc = scoreOf(), res = sc.us > sc.them ? 'Won' : sc.us < sc.them ? 'Lost' : 'Tied';
+  const goals = g.events.filter(e => e.side === 'us').map(e => `${e.scorer || '?'} (${PERIODS[e.q]})`);
+  return `${res} ${sc.us}-${sc.them}.${goals.length ? ' Goals: ' + goals.join(', ') + '.' : ''}${g.out.length ? ' Out: ' + g.out.join(', ') : ''}`.trim();
+}
+async function sendResults() {
+  openSheet(`<div class="sheet-title">Updating the results sheet…</div>`);
+  try {
+    const res = await fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ code: coachCode(), action: 'result', game: currentId, goalies: g.lineup.map(L => L.goalie || ''), note: resultNote() }) });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || 'failed');
+    openSheet(`<div class="sheet-title">✓ Results sheet updated</div><div class="sheet-sub">Goalies: ${g.lineup.map((L, i) => PERIODS[i] + ' ' + esc(L.goalie || '—')).join(', ')}<br>Note: ${esc(resultNote())}</div>
+      <button class="btn btn-primary full" data-action="cancel">Done</button>`);
+  } catch (e) {
+    openSheet(`<div class="sheet-title">Couldn't update the sheet</div><div class="sheet-sub">${esc(String(e.message || e))}. Check your signal and try again, or share the game as text instead.</div>
+      <div class="btn-row"><button class="btn" data-action="share-text">Share as text</button><button class="btn btn-primary" data-action="share-results">Try again</button></div>`);
+  }
+}
+function openShareChoice() {
+  if (!(SYNC_URL && isCoach())) return shareGame();
+  openSheet(`<div class="sheet-title">Share game</div><div class="sheet-sub">Update the results sheet writes this game's four goalies and the score line into the Captains &amp; Goalies sheet.</div>
+    <div class="btn-row" style="flex-direction:column"><button class="btn btn-primary" data-action="share-results">📊 Update results sheet</button><button class="btn" data-action="share-text">📤 Share as text</button><button class="btn" data-action="cancel">Cancel</button></div>`);
+}
 async function shareGame() {
   const text = gameSummary();
   if (navigator.share) {
@@ -720,6 +830,7 @@ function render() {
     `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
   renderTop();
   renderSheetStatus();
+  renderSyncStatus();
   renderScore();
   renderLog();
   renderStatus();
@@ -805,7 +916,13 @@ function openRoster() {
   openSheet(`<div class="sheet-title">Manage active players</div><div class="sheet-sub">Turn off anyone missing this game. They come off every quarter of this game only, and the goalie rotation moves to the next kid in line.</div>
     <div class="roster-list">${PLAYERS.map((p, i) => `<div class="roster-row"><label class="roster-name ${here(p.name) ? '' : 'out'}" for="r${i}">${numTag(p.name)}${esc(p.name)}</label>
       <span class="toggle"><input type="checkbox" id="r${i}" data-roster="${esc(p.name)}" ${here(p.name) ? 'checked' : ''}><label class="toggle-slider" for="r${i}"></label></span></div>`).join('')}</div>
-    <button class="btn btn-primary full" data-action="cancel">Done</button>`);
+    <button class="btn btn-primary full" data-action="cancel">Done</button>
+    <button class="link-btn" data-action="coach-code" style="display:block;margin:12px auto 0">${isCoach() ? 'Coach mode is on · change' : 'Enter coach code'}</button>`);
+}
+function openCoachCode() {
+  openSheet(`<div class="sheet-title">Coach code</div><div class="sheet-sub">${isCoach() ? 'Coach mode is on for this device.' : 'Coach mode lets this device save lineups and results to the sheet.'}</div>
+    <input class="coach-input" id="coachInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="coach code" value="">
+    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button>${isCoach() ? '<button class="btn btn-danger" data-action="coach-off">Turn off</button>' : ''}<button class="btn btn-primary" data-action="coach-save">Save</button></div>`);
 }
 async function previousSaved() {
   const before = GAMES.map(x => x.id).filter(id => id < currentId).reverse();
@@ -830,6 +947,8 @@ document.addEventListener('click', e => {
   if (!t) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
+  const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'timer-mode', 'roster', 'coach-code', 'coach-save', 'coach-off'];
+  if (!canEdit() && !(d.action && VIEW_OK.includes(d.action))) { flash('View only. Coach Nick sets the lineup.'); return; }
   if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return tryPlace(n, k); }
   if (d.gk) return tryPlace(d.gk, 'goalie');
   if (d.gkalt) {
@@ -857,7 +976,12 @@ document.addEventListener('click', e => {
     case 'clear': return openSheet(`<div class="sheet-title">Clear this game?</div><div class="sheet-sub">Empties every spot in all four quarters of this game. Other games aren't touched.</div>
       <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-clear">Clear</button></div>`);
     case 'cancel': return closeSheet();
-    case 'share': return shareGame();
+    case 'share': return openShareChoice();
+    case 'share-text': overlay.hidden = true; return shareGame();
+    case 'share-results': return sendResults();
+    case 'coach-code': return openCoachCode();
+    case 'coach-save': { const v = ($('coachInput').value || '').trim(); if (!v) return; try { localStorage.setItem(COACH_KEY, v); } catch (e) {} overlay.hidden = true; flash('Coach mode on'); render(); return pullGame(); }
+    case 'coach-off': try { localStorage.removeItem(COACH_KEY); } catch (e) {} overlay.hidden = true; flash('Coach mode off'); render(); return pullGame();
     case 'goal-choice': return openGoalChoice();
     case 'goal-us': return openOurGoal();
     case 'goal-them': overlay.hidden = true; pending = null; return addGoal('them');
@@ -883,18 +1007,22 @@ document.addEventListener('change', e => {
   if (e.target.id === 'gameSelect') {
     writeLocal();
     currentId = e.target.value; g = normalize(local.games[currentId]); q = 0; gkOpen = false; keepAwake(!!g.timer.startedAt);
-    writeLocal(); return render();
+    writeLocal(); render(); return pullGame();
   }
   const n = e.target.dataset.roster;
   if (n === undefined) return;
+  if (!canEdit()) { e.target.checked = !e.target.checked; flash('View only. Coach Nick sets the lineup.'); return; }
   g.out = e.target.checked ? g.out.filter(x => x !== n) : [...new Set([...g.out, n])];
   e.target.closest('.roster-row').querySelector('.roster-name').classList.toggle('out', !e.target.checked);
   if (!e.target.checked) g.lineup.forEach(L => KEYS.forEach(k => { if (L[k] === n) L[k] = null; }));
-  g.savedAt = new Date().toISOString(); writeLocal();
+  g.savedAt = new Date().toISOString(); writeLocal(); pushSoon();
 });
 
 render();
 syncSheet();
+pullGame();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullGame(); });
+setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pullGame(); }, 60000);
 setInterval(tick, 250);
 if (g.timer.startedAt) keepAwake(true);
 </script>
