@@ -237,8 +237,8 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
   </div>
 </header>
 <div class="page">
-  <div class="eyebrow">U10 Boys · Team 4 · CCSA Fall 2026</div>
-  <h1>Lineup Manager</h1>
+  <div class="eyebrow">U10 Boys · Team 4 · CCSA Fall 2026 · Lineups</div>
+  <h1 id="teamTitle">Team 4</h1>
 
   <select class="game-select" id="gameSelect" aria-label="Game"></select>
 
@@ -367,6 +367,14 @@ const CAPTAINS = {
   '2026-11-12': ['Abel', 'Casey'],     '2026-11-14': ['Abel', 'Casey'],
   '2026-11-19': ['Ethan', 'EJ'],       '2026-11-21': ['Ethan', 'EJ'],
 };
+// Team name the captains voted for, per game (sheet column L is the master). A game with no vote
+// yet keeps the most recent earlier name; before any vote it's just "Team 4".
+const TEAM_NAMES = { '2026-10-17': 'Purple Real Madrid' };
+function teamName(id = currentId) {
+  let name = '';
+  for (const x of GAMES) { if (TEAM_NAMES[x.id]) name = TEAM_NAMES[x.id]; if (x.id === id) break; }
+  return name || 'Team 4';
+}
 // Goalie quarters from games played before this page tracked them (Q1–Q4; null = not recorded).
 const GOALIE_LOG = {
   '2026-10-15': ['Cameron', 'Jayce', 'Casey', 'Jayce'],
@@ -746,7 +754,7 @@ function renderScore() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
   $('scoreboard').innerHTML = `
     <div class="score-row">
-      <div class="team"><span class="team-name">Team 4</span><button class="goal-btn us" data-action="goal-us">+ Our goal</button></div>
+      <div class="team"><span class="team-name">${esc(teamName())}</span><button class="goal-btn us" data-action="goal-us">+ Our goal</button></div>
       <button class="score-big" data-action="goal-choice" aria-label="Add a goal"><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></button>
       <div class="team them"><span class="team-name">${esc(x ? x.opp : 'Them')}</span><button class="goal-btn" data-action="goal-them">+ Their goal</button></div>
     </div>
@@ -767,7 +775,7 @@ function gameSummary() {
   const sc = scoreOf(), caps = captains();
   const res = sc.us > sc.them ? 'Won' : sc.us < sc.them ? 'Lost' : 'Tied';
   const lines = [];
-  lines.push(`Team 4 vs ${x.opp} — ${x.day} ${short(x.id)} ${x.time}, Field ${x.field}`);
+  lines.push(`${teamName()} vs ${x.opp} — ${x.day} ${short(x.id)} ${x.time}, Field ${x.field}`);
   lines.push(g.events.length ? `${res} ${sc.us}–${sc.them}` : `Score: ${sc.us}–${sc.them}`);
   if (caps.length) lines.push(`Captains: ${caps.join(' & ')}`);
   lines.push(`Goalies: ${PERIODS.map((p, i) => `${p} ${g.lineup[i].goalie || '—'}`).join(', ')}`);
@@ -775,7 +783,7 @@ function gameSummary() {
   if (g.events.length) {
     lines.push('Goals:');
     [...g.events].sort((a, b) => a.q - b.q).forEach(e =>
-      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? 'Team 4' + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') : x.opp}`));
+      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? teamName() + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') : x.opp}`));
   }
   if (g.out.length) lines.push(`Missing: ${g.out.join(', ')}`);
   lines.push('');
@@ -859,7 +867,7 @@ function toISO(v) {
 }
 const KNOWN = new Set(PLAYERS.map(p => p.name));
 const cleanName = v => { v = (v || '').trim().replace(/[’']/g, ''); return KNOWN.has(v) ? v : null; };
-// Columns: A Date · D Captain 1 · E Captain 2 · F Goalie override · G–J Q1–Q4 goalie · M Player · P Jersey #
+// Columns: A Date · D Captain 1 · E Captain 2 · F Goalie override · G–J Q1–Q4 goalie · L Team name · M Player · P Jersey #
 function applySheet(rows) {
   const head = rows[0] || [];
   if (String(head[0]).trim() !== 'Date' || String(head[3]).trim() !== 'Captain 1') throw new Error('unexpected columns');
@@ -874,6 +882,8 @@ function applySheet(rows) {
       CAPTAINS[id] = [cleanName(r[3]), cleanName(r[4])].filter(Boolean);
       const gk = [r[6], r[7], r[8], r[9]].map(cleanName);
       if (gk.some(Boolean)) GOALIE_LOG[id] = gk; else delete GOALIE_LOG[id];
+      const tn = String(r[11] || '').trim().slice(0, 40);
+      if (tn) TEAM_NAMES[id] = tn; else delete TEAM_NAMES[id];
     }
     const n = cleanName(r[12]), num = parseInt(r[15], 10);
     if (n && num) NUM[n] = num;
@@ -987,6 +997,8 @@ function render() {
   $('gameSelect').innerHTML = GAMES.map(x =>
     `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
   applyFormation();
+  $('teamTitle').textContent = teamName();
+  document.title = `${teamName()} — U10 Team 4 Lineups`;
   document.body.classList.toggle('viewer', isViewer());
   renderTop();
   renderFieldTools();
