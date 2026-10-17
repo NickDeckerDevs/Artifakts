@@ -79,6 +79,11 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .sheet-status.ok { color: var(--ok); }
 .sheet-status.bad { color: var(--warn); }
 .sheet-status.view { color: var(--mid-fg); }
+.sync-box { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; margin: 0 0 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); }
+.sync-box .ok { color: var(--ok); } .sync-box .bad { color: var(--warn); }
+.sync-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sync-btn { padding: 10px 6px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); }
+.sync-btn:disabled { opacity: 0.4; cursor: default; }
 .coach-input { width: 100%; padding: 12px; font: 16px var(--mono); background: var(--surface2); color: var(--text); border: 1px solid var(--border-strong); border-radius: 7px; margin-bottom: 12px; }
 
 .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
@@ -379,92 +384,88 @@ function nextGameId() {
 function save() {
   g.savedAt = new Date().toISOString();
   writeLocal();
-  pushSoon();
   render();
 }
 
 // ─────────────── lineup sync ───────────────
-let pushTimer = null, pushing = false, pushAgain = false;
+// Coach devices: NOTHING happens automatically. The page only reads the sheet's copy to compare it.
+//   ⬆ Save to sheet  — sends this phone's lineup (asks first if the sheet has a different one).
+//   ⬇ Load from sheet — replaces this phone's lineup with the sheet's (asks first if they differ).
+// View-only devices just show the sheet's copy.
+let remoteCopy = undefined; // undefined = not checked yet, null = sheet has nothing for this game
 const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, timer: g.timer, savedAt: g.savedAt });
-function pushSoon() {
-  if (!SYNC_URL || !isCoach()) return;
-  syncState = { ...syncState, status: 'pending' }; 
-  clearTimeout(pushTimer); pushTimer = setTimeout(pushNow, 1200);
-}
-async function pushNow() {
-  if (pushing) { pushAgain = true; return; }
-  pushing = true;
-  const game = currentId, data = syncBody();
-  try {
-    const res = await fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ code: coachCode(), action: 'save', game, data }) });
-    const out = await res.json();
-    if (!out.ok) throw new Error(out.error || 'save failed');
-    syncState = { status: 'saved', at: out.updatedAt, error: null };
-  } catch (e) {
-    syncState = { status: 'error', at: syncState.at, error: String(e.message || e) };
-    clearTimeout(pushTimer); pushTimer = setTimeout(pushNow, 15000); // retry
-  }
-  pushing = false;
-  renderSyncStatus();
-  if (pushAgain) { pushAgain = false; pushNow(); }
-}
-// Pull this game's lineup from the sheet.
-// Viewers always show the sheet's copy. A coach device NEVER has its lineup replaced automatically:
-// if this device has nothing for the game it loads the sheet's copy; if it already has a lineup it keeps it
-// and only offers "Load the sheet's version" when the sheet's copy is newer. Nothing is sent on load —
-// only your own edits on a coach device are saved to the sheet.
-let remoteNewer = null;
+const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events]);
+const fmtT = iso => iso ? new Date(iso).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+const post = body => fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.json());
+
 async function pullGame() {
   if (!SYNC_URL) return;
   const game = currentId;
-  remoteNewer = null;
+  remoteCopy = undefined; syncState = { status: 'checking', at: null, error: null }; renderSyncStatus();
   try {
-    const res = await fetch(`${SYNC_URL}?action=get&game=${encodeURIComponent(game)}`, { cache: 'no-store' });
-    const out = await res.json();
-    if (game !== currentId || !out.ok) return;
-    const remote = out.data ? normalize(out.data) : null;
-    if (!isCoach()) {
-      if (remote) { g = remote; if (overlay.hidden) render(); }
-      syncState = { status: remote ? 'view' : 'empty', at: out.updatedAt || null, error: null };
-    } else if (!remote) {
-      syncState = { status: 'none', at: null, error: null };
-    } else if (!g.savedAt) {
-      g = remote; writeLocal(); if (overlay.hidden) render();
-      syncState = { status: 'loaded', at: out.updatedAt, error: null };
-    } else {
-      if (remote.savedAt && remote.savedAt > g.savedAt) remoteNewer = remote;
-      syncState = { status: 'kept', at: out.updatedAt, error: null };
-    }
+    const out = await (await fetch(`${SYNC_URL}?action=get&game=${encodeURIComponent(game)}`, { cache: 'no-store' })).json();
+    if (game !== currentId) return;
+    if (!out.ok) throw new Error(out.error || 'error');
+    remoteCopy = out.data ? normalize(out.data) : null;
+    syncState = { status: 'ok', at: out.updatedAt || null, error: null };
+    if (!isCoach() && remoteCopy) { g = remoteCopy; if (overlay.hidden) render(); }
   } catch (e) {
-    syncState = { status: 'error', at: syncState.at, error: String(e.message || e) };
+    syncState = { status: 'error', at: null, error: String(e.message || e) };
   }
   renderSyncStatus();
 }
+async function saveToSheet(confirmed) {
+  if (!isCoach()) return;
+  if (!confirmed && remoteCopy && !sameLineup(remoteCopy, g)) {
+    return openSheet(`<div class="sheet-title">Replace the sheet's lineup?</div><div class="sheet-sub">The sheet has a different lineup for this game (saved ${fmtT(remoteCopy.savedAt)}). Saving replaces it with this phone's lineup. Anyone viewing will see yours.</div>
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="sync-save-yes">Replace the sheet's</button></div>`);
+  }
+  overlay.hidden = true;
+  if (!g.savedAt) { g.savedAt = new Date().toISOString(); writeLocal(); }
+  syncState = { status: 'saving', at: null, error: null }; renderSyncStatus();
+  try {
+    const out = await post({ code: coachCode(), action: 'save', game: currentId, data: syncBody() });
+    if (!out.ok) throw new Error(out.error || 'save failed');
+    remoteCopy = normalize(clone(syncBody()));
+    syncState = { status: 'ok', at: out.updatedAt, error: null };
+    flash('Saved to the sheet');
+  } catch (e) {
+    syncState = { status: 'error', at: null, error: String(e.message || e) };
+    flash("Couldn't save to the sheet");
+  }
+  renderSyncStatus();
+}
+function loadFromSheet(confirmed) {
+  if (!remoteCopy) return flash('Nothing saved in the sheet for this game');
+  if (!confirmed && g.savedAt && !sameLineup(remoteCopy, g)) {
+    return openSheet(`<div class="sheet-title">Replace this phone's lineup?</div><div class="sheet-sub">This phone's lineup for this game will be replaced by the sheet's version (saved ${fmtT(remoteCopy.savedAt)}). This can't be undone.</div>
+      <div class="btn-row"><button class="btn" data-action="cancel">Keep mine</button><button class="btn btn-danger" data-action="sync-load-yes">Replace mine</button></div>`);
+  }
+  overlay.hidden = true;
+  g = normalize(clone(remoteCopy)); writeLocal(); render(); flash('Loaded from the sheet');
+}
 function renderSyncStatus() {
   const el = document.getElementById('syncStatus'); if (!el) return;
-  const t = syncState.at ? new Date(syncState.at).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
-  const set = (cls, txt) => { el.className = 'sheet-status ' + cls; el.textContent = txt; };
-  if (!SYNC_URL) return set('', isCoach() ? 'Coach mode on · lineup sync not set up yet' : '');
+  if (!SYNC_URL) { el.className = 'sheet-status'; el.textContent = ''; return; }
   if (!isCoach()) {
-    if (syncState.status === 'view') return set('view', `👀 View only · Coach Nick's lineup, updated ${t}`);
-    if (syncState.status === 'empty') return set('view', '👀 View only · Coach Nick hasn\'t set this lineup yet');
-    if (syncState.status === 'error') return set('bad', `👀 View only · couldn't load the latest lineup (${syncState.error})`);
-    return set('view', '👀 View only · loading the lineup…');
-  }
-  if (syncState.status === 'pending') return set('', 'Coach mode · saving your change to the sheet…');
-  if (syncState.status === 'saved') return set('ok', `✓ Coach mode · your lineup is saved to the sheet · ${t}`);
-  if (syncState.status === 'none') return set('', 'Coach mode · this game isn\'t in the sheet yet. Your next change saves it.');
-  if (syncState.status === 'loaded') return set('ok', `✓ Coach mode · loaded this game from the sheet (saved ${t})`);
-  if (syncState.status === 'kept') {
-    el.className = 'sheet-status';
-    el.innerHTML = remoteNewer
-      ? `Coach mode · showing this phone's lineup. The sheet has a newer one from another device (${esc(t)}). <button class="link-btn" data-action="load-remote" style="padding:0;font-size:11px;text-decoration:underline">Load the sheet's version</button>`
-      : `Coach mode · showing this phone's lineup. Your next change saves it to the sheet.`;
+    el.className = 'sheet-status ' + (syncState.status === 'error' ? 'bad' : 'view');
+    el.textContent = syncState.status === 'error' ? `👀 View only · couldn't load the lineup (${syncState.error})`
+      : syncState.status === 'checking' ? '👀 View only · loading the lineup…'
+      : remoteCopy ? `👀 View only · Coach Nick's lineup, saved ${fmtT(remoteCopy.savedAt || syncState.at)}` : "👀 View only · Coach Nick hasn't shared this lineup yet";
     return;
   }
-  if (syncState.status === 'error') return set('bad', `Coach mode · couldn't reach the sheet (${syncState.error}). Your lineup is saved on this phone.`);
-  return set('', 'Coach mode · checking the sheet…');
+  let msg, cls = '';
+  if (syncState.status === 'checking') msg = 'Checking the sheet…';
+  else if (syncState.status === 'saving') msg = 'Saving to the sheet…';
+  else if (syncState.status === 'error') { msg = `Couldn't reach the sheet (${esc(syncState.error)}). Your lineup is safe on this phone.`; cls = 'bad'; }
+  else if (remoteCopy === null) msg = g.savedAt ? 'Not in the sheet yet. Tap Save to share it.' : 'Nothing set for this game yet.';
+  else if (remoteCopy && sameLineup(remoteCopy, g)) { msg = `✓ Phone and sheet match · saved ${fmtT(remoteCopy.savedAt)}`; cls = 'ok'; }
+  else if (remoteCopy) { msg = `⚠ Phone and sheet are different · phone ${fmtT(g.savedAt) || 'empty'} · sheet ${fmtT(remoteCopy.savedAt)}`; cls = 'bad'; }
+  else msg = '';
+  el.className = 'sheet-status sync-box';
+  el.innerHTML = `<span class="${cls}">Coach mode · ${msg}</span><span class="sync-btns">
+    <button class="sync-btn" data-action="sync-save">⬆ Save to sheet</button>
+    <button class="sync-btn" data-action="sync-load" ${remoteCopy ? '' : 'disabled'}>⬇ Load from sheet</button></span>`;
 }
 // ─────────────── helpers ───────────────
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -966,7 +967,7 @@ document.addEventListener('click', e => {
   if (!t) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
-  const VIEW_OK = ['load-remote', 'do-load-remote', 'cancel', 'share', 'share-text', 'gk-toggle', 'timer-mode', 'roster', 'coach-code', 'coach-save', 'coach-off'];
+  const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'timer-mode', 'roster', 'coach-code', 'coach-save', 'coach-off'];
   if (!canEdit() && !(d.action && VIEW_OK.includes(d.action))) { flash('View only. Coach Nick sets the lineup.'); return; }
   if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return tryPlace(n, k); }
   if (d.gk) return tryPlace(d.gk, 'goalie');
@@ -999,13 +1000,10 @@ document.addEventListener('click', e => {
     case 'share-text': overlay.hidden = true; return shareGame();
     case 'share-results': return sendResults();
     case 'coach-code': return openCoachCode();
-    case 'load-remote': {
-      if (!remoteNewer) return;
-      pending = { remote: remoteNewer };
-      return openSheet(`<div class="sheet-title">Replace this phone's lineup?</div><div class="sheet-sub">The lineup on this phone for this game will be replaced by the version saved from another device. This can't be undone.</div>
-        <div class="btn-row"><button class="btn" data-action="cancel">Keep mine</button><button class="btn btn-danger" data-action="do-load-remote">Replace</button></div>`);
-    }
-    case 'do-load-remote': { const r = pending && pending.remote; overlay.hidden = true; pending = null; if (r) { g = r; remoteNewer = null; writeLocal(); syncState = { ...syncState, status: 'loaded' }; render(); } return; }
+    case 'sync-save': return saveToSheet(false);
+    case 'sync-save-yes': return saveToSheet(true);
+    case 'sync-load': return loadFromSheet(false);
+    case 'sync-load-yes': return loadFromSheet(true);
     case 'coach-save': { const v = ($('coachInput').value || '').trim(); if (!v) return; try { localStorage.setItem(COACH_KEY, v); } catch (e) {} overlay.hidden = true; flash('Coach mode on'); render(); return pullGame(); }
     case 'coach-off': try { localStorage.removeItem(COACH_KEY); } catch (e) {} overlay.hidden = true; flash('Coach mode off'); render(); return pullGame();
     case 'goal-choice': return openGoalChoice();
@@ -1041,7 +1039,7 @@ document.addEventListener('change', e => {
   g.out = e.target.checked ? g.out.filter(x => x !== n) : [...new Set([...g.out, n])];
   e.target.closest('.roster-row').querySelector('.roster-name').classList.toggle('out', !e.target.checked);
   if (!e.target.checked) g.lineup.forEach(L => KEYS.forEach(k => { if (L[k] === n) L[k] = null; }));
-  g.savedAt = new Date().toISOString(); writeLocal(); pushSoon();
+  g.savedAt = new Date().toISOString(); writeLocal();
 });
 
 render();
