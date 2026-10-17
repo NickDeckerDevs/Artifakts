@@ -259,7 +259,7 @@ button { touch-action: manipulation; }
 .sub-row .what { flex: 1; min-width: 0; }
 .sub-row .log-x { padding: 0 4px; }
 .slot-in { display: block; font-size: 9px; color: var(--ok); margin-top: -6px; margin-bottom: 4px; letter-spacing: 0.04em; }
-.spot-canvas { width: 100%; height: auto; display: block; border-radius: 8px; touch-action: none; image-rendering: pixelated; margin-bottom: 12px; cursor: crosshair; }
+.spot-canvas { width: auto; max-width: 100%; height: auto; max-height: 58vh; display: block; margin-left: auto; margin-right: auto; border-radius: 8px; touch-action: none; image-rendering: pixelated; margin-bottom: 12px; cursor: crosshair; }
 .goal-summary { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 .goal-summary small { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 3px; }
 .big-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
@@ -913,22 +913,29 @@ function openOurGoal() {
     <button class="btn full" data-scorer="">Not sure who</button>`);
 }
 
-// ── where it was scored from: the attacking half, pixel style like the tactics board ──
-const HP = 6, HFW = 64, HFH = 49, HOY = 3;   // px per art pixel, half-field size in art pixels, room for the goal
-function drawHalf(cv, spot) {
-  cv.width = HFW * HP; cv.height = (HFH + HOY) * HP;
+// ── where it was scored from: the whole field, the goal we attack always at the top (marked GOAL) ──
+const HP = 6, HFW = 64, HFH = 96, HOY = 10, HOB = 3;   // px per art pixel, field size in art pixels, band above (GOAL), room below
+function drawSpotField(cv, spot) {
+  cv.width = HFW * HP; cv.height = (HOY + HFH + HOB) * HP;
   const x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
   const px = (ax, ay, w, h, c) => { x.fillStyle = c; x.fillRect(ax * HP, (ay + HOY) * HP, w * HP, h * HP); };
   x.fillStyle = '#0f2a14'; x.fillRect(0, 0, cv.width, cv.height);
-  for (let r = 0; r < 7; r++) px(0, r * 8, HFW, Math.min(8, HFH - r * 8), r % 2 ? '#2a7230' : '#2f7d32');
+  for (let r = 0; r < 12; r++) px(0, r * 8, HFW, 8, r % 2 ? '#2a7230' : '#2f7d32');
   const L = '#f2f2ea';
-  px(0, 0, HFW, 1, L); px(0, 0, 1, HFH, L); px(HFW - 1, 0, 1, HFH, L); px(0, 48, HFW, 1, L);
-  const box = (w, h) => { const x0 = (HFW - w) / 2; px(x0, 0, 1, h, L); px(x0 + w - 1, 0, 1, h, L); px(x0, h - 1, w, 1, L); };
-  box(36, 16); box(18, 6); px(31, 11, 2, 2, L);
-  for (let i = 18; i < 46; i++) for (let j = 38; j < 48; j++) if (Math.abs(Math.hypot(i + 0.5 - 32, j + 0.5 - 48.5) - 8.5) < 0.55) px(i, j, 1, 1, L);
-  px(26, -2, 12, 2, '#ffffff');
+  px(0, 0, HFW, 1, L); px(0, HFH - 1, HFW, 1, L); px(0, 0, 1, HFH, L); px(HFW - 1, 0, 1, HFH, L); px(0, 48, HFW, 1, L);
+  const box = (w, h, top) => { const x0 = (HFW - w) / 2;
+    if (top) { px(x0, 0, 1, h, L); px(x0 + w - 1, 0, 1, h, L); px(x0, h - 1, w, 1, L); }
+    else { px(x0, HFH - h, 1, h, L); px(x0 + w - 1, HFH - h, 1, h, L); px(x0, HFH - h, w, 1, L); } };
+  box(36, 16, true); box(18, 6, true); box(36, 16, false); box(18, 6, false);
+  px(31, 11, 2, 2, L); px(31, HFH - 13, 2, 2, L);
+  for (let i = 18; i < 46; i++) for (let j = 38; j < 60; j++) if (Math.abs(Math.hypot(i + 0.5 - 32, j + 0.5 - 48.5) - 8.5) < 0.55) px(i, j, 1, 1, L);
+  // the goal we attack: bright, with a GOAL label above it
+  px(24, -3, 16, 3, '#f5d76e');
+  x.fillStyle = '#f5d76e'; x.font = `700 ${5 * HP}px "DM Sans", system-ui, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText('▲ GOAL ▲', cv.width / 2, 3.2 * HP);
+  px(26, HFH, 12, 2, 'rgba(255,255,255,0.35)');     // our own goal, faint
   if (spot) {   // ball: white with a black outline
-    const cx = Math.round(spot.x * HFW), cy = Math.round(spot.y * 96);
+    const cx = Math.round(spot.x * HFW), cy = Math.round(spot.y * HFH);
     for (let i = -4; i <= 3; i++) for (let j = -4; j <= 3; j++) {
       const d = Math.hypot(i + 0.5, j + 0.5);
       if (d <= 3.3) px(cx + i, cy + j, 1, 1, d > 2.3 ? '#000000' : '#ffffff');
@@ -939,15 +946,15 @@ function openGoalSpot() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   pending.spot = e.spot ? { ...e.spot } : { x: 0.5, y: 0.14 };
   openSheet(`${sheetHead(`⚽ ${esc(e.scorer || 'Our goal')} · ${goalLabel(e)}`, 'Where was it scored from? Tap or drag the ball.')}
-    <canvas class="spot-canvas" id="spotCanvas" aria-label="Attacking half of the field. Tap where the shot was taken."></canvas>
+    <canvas class="spot-canvas" id="spotCanvas" aria-label="Whole field, the goal we attack at the top. Tap where the shot was taken."></canvas>
     <div class="btn-row"><button class="btn" data-action="goal-more">Skip</button><button class="btn btn-primary" data-action="goal-spot-ok">Confirm</button></div>`);
   const cv = $('spotCanvas');
-  drawHalf(cv, pending.spot);
+  drawSpotField(cv, pending.spot);
   const move = ev => {
     const r = cv.getBoundingClientRect();
-    const ax = (ev.clientX - r.left) / r.width * HFW, ay = (ev.clientY - r.top) / r.height * (HFH + HOY) - HOY;
-    pending.spot = { x: Math.min(62, Math.max(2, ax)) / HFW, y: Math.min(47, Math.max(1, ay)) / 96 };
-    drawHalf(cv, pending.spot);
+    const ax = (ev.clientX - r.left) / r.width * HFW, ay = (ev.clientY - r.top) / r.height * (HOY + HFH + HOB) - HOY;
+    pending.spot = { x: Math.min(62, Math.max(2, ax)) / HFW, y: Math.min(HFH - 2, Math.max(1, ay)) / HFH };
+    drawSpotField(cv, pending.spot);
   };
   let down = false;
   cv.addEventListener('pointerdown', ev => { down = true; try { cv.setPointerCapture(ev.pointerId); } catch (_) {} move(ev); });
