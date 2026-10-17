@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f0f0f">
 <title>U10 Boys Team 4 — Lineup Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
@@ -61,7 +61,7 @@ button:focus-visible, select:focus-visible, .tab:focus-visible, .opt:focus-visib
 .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
-.game-select { width: 100%; padding: 11px 12px; margin-bottom: 10px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 500; border: 1px solid var(--border-strong); border-radius: var(--radius); }
+.game-select { width: 100%; padding: 11px 12px; margin-bottom: 10px; background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; border: 1px solid var(--border-strong); border-radius: var(--radius); }
 
 .action-bar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
 .action-btn { padding: 10px 6px; font-size: 12px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); cursor: pointer; }
@@ -177,10 +177,12 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .bottom-status { margin-top: 16px; }
 .viewer-info { font-size: 11px; color: var(--text-faint); margin-top: 14px; text-align: center; }
 .viewer-info .link-btn { font-size: 11px; text-decoration: underline; padding: 0 4px; }
-.composer { position: fixed; inset: 0; z-index: 300; background: var(--bg); display: flex; flex-direction: column; gap: 12px; padding: calc(14px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px)); }
-.composer[hidden] { display: none; }
-.composer-head { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; }
-.composer textarea { flex: 1; width: 100%; resize: none; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px; font: 17px/1.45 var(--font); }
+.note-bar { max-width: 480px; margin: 8px auto 0; display: flex; align-items: center; gap: 8px; }
+.note-bar[hidden] { display: none; }
+.nb-when { font: 500 11px var(--mono); color: var(--text-muted); white-space: nowrap; }
+.nb-input { flex: 1; min-width: 0; height: 40px; padding: 0 10px; font-size: 16px; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: 8px; }
+.nb-btn { flex: 0 0 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 16px; cursor: pointer; }
+.nb-ok { background: var(--ok); color: #111; border-color: var(--ok); font-weight: 700; }
 .note-row { padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
 .note-row:last-child { border-bottom: none; }
 .note-when { font-family: var(--mono); font-size: 11px; color: var(--text-muted); width: 88px; flex-shrink: 0; padding-top: 2px; }
@@ -226,7 +228,14 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner" id="topbar"></div></header>
+<header class="topbar"><div class="topbar-inner" id="topbar"></div>
+  <div class="note-bar" id="composer" hidden>
+    <button class="nb-btn nb-x" data-action="note-cancel" aria-label="Cancel note">✕</button>
+    <span class="nb-when" id="composerTitle"></span>
+    <input class="nb-input" id="noteText" type="text" enterkeyhint="done" autocomplete="off" placeholder="Note…" aria-label="Note">
+    <button class="nb-btn nb-ok" data-action="note-save" aria-label="Save note">✓</button>
+  </div>
+</header>
 <div class="page">
   <div class="eyebrow">U10 Boys · Team 4 · CCSA Fall 2026</div>
   <h1>Lineup Manager</h1>
@@ -285,11 +294,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
   <div class="viewer-info" id="viewerInfo"></div>
 </div>
 
-<div class="composer" id="composer" hidden>
-  <div class="composer-head"><span id="composerTitle">Note</span><button class="link-btn" data-action="note-cancel">Cancel</button></div>
-  <textarea id="noteText" placeholder="Type or tap the mic on your keyboard to talk…"></textarea>
-  <button class="btn btn-primary full" data-action="note-save">Save note</button>
-</div>
+
 
 <div class="overlay" id="overlay" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 
@@ -908,7 +913,7 @@ let noteDraft = null;
 function openNote() {
   // Synchronous focus inside the tap so the phone keyboard (and its mic) opens right away.
   noteDraft = { q, at: new Date().toISOString() };
-  $('composerTitle').textContent = `Note · ${PERIODS[q]} · ${new Date(noteDraft.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+  $('composerTitle').textContent = `${PERIODS[q]} · ${new Date(noteDraft.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
   const ta = $('noteText'); ta.value = '';
   composer.hidden = false; ta.focus();
 }
@@ -1042,7 +1047,10 @@ let pending = null;
 function openSheet(html) { sheet.innerHTML = `<div class="handle"></div>${html}`; overlay.hidden = false; }
 function closeSheet() { overlay.hidden = true; pending = null; render(); }
 overlay.addEventListener('click', e => { if (e.target === overlay) closeSheet(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !overlay.hidden) closeSheet(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !overlay.hidden) closeSheet();
+  if (e.target && e.target.id === 'noteText') { if (e.key === 'Enter') { e.preventDefault(); saveNote(); } if (e.key === 'Escape') { composer.hidden = true; noteDraft = null; } }
+});
 
 function openPlayer(n) {
   pending = { name: n, pos: posOf(q, n) };
