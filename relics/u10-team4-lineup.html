@@ -316,7 +316,7 @@ let sheetState = { status: 'loading', at: null };
 
 // Lineup sync: an Apps Script web app on the same sheet stores each game's lineup in a "Lineups" tab.
 // Anyone can read; saving needs the coach code. Empty SYNC_URL = sync off, everyone edits on their own phone.
-const SYNC_URL = '';
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwjmRIGNnJgvOPjXpnPR3f5pDC6sm6ctchkVfhKvLbtNaEaFJyRwV_q_xx4v2p3NWyDdg/exec';
 const COACH_KEY = 'lineup:coach';
 // Coach link: …/u10-team4-lineup.html#coach=CODE saves the code on this device and removes it from the address bar.
 // #coach=off forgets it.
