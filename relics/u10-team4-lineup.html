@@ -283,6 +283,48 @@ button { touch-action: manipulation; }
 .test-tools .btn:not(.btn-danger) { background: #fff8dc; color: #111; border-color: rgba(0,0,0,0.2); }
 .test-exit { font-size: 12px; color: #111; text-align: center; text-decoration: underline; padding: 4px; }
 
+/* closed games, follow mode, menu, goal detail, parent entries */
+.closed .live-only, .follow .contrib-only { display: none !important; }
+.closed-badge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border-strong); font-size: 11px; font-weight: 600; color: var(--text-muted); vertical-align: middle; }
+.close-box { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.close-box .hint { font-size: 11px; color: var(--text-faint); text-align: center; }
+.menu-btn { flex: 0 0 44px; height: 44px; border-radius: 22px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 18px; cursor: pointer; }
+.topbar-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.menu-list { display: flex; flex-direction: column; gap: 6px; }
+.menu-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; width: 100%; }
+.menu-item small { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 2px; }
+.menu-item .ico { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.menu-item.on { border-color: var(--ok); }
+.menu-group { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin: 10px 2px 2px; }
+.soon { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); margin-left: 6px; vertical-align: 1px; }
+.score-chip .nums, .score-chip .opp { white-space: nowrap; }
+.note-btn.icon { padding: 9px 14px; font-size: 16px; }
+a.menu-item { text-decoration: none; }
+.plan-list { margin: 0 0 14px; padding-left: 18px; font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+.follow-banner { margin: -6px 0 12px; padding: 10px 12px; border-radius: var(--radius); background: #0d2a45; border: 1px solid #1d4a75; color: #cfe6ff; font-size: 12px; line-height: 1.5; }
+.follow-banner[hidden] { display: none; }
+.follow-banner b { color: #fff; }
+.stats-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px; }
+.stats-table th { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--border-strong); }
+.stats-table th:first-child, .stats-table td:first-child { text-align: left; }
+.stats-table td { padding: 7px 4px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
+.goal-detail { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.gd-row { display: flex; gap: 8px; font-size: 13px; }
+.gd-row .k { width: 64px; flex-shrink: 0; color: var(--text-muted); font-size: 12px; padding-top: 1px; }
+.gd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.gd-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px; border-radius: 999px; background: var(--surface2); border: 1px solid var(--border-strong); font-size: 12px; font-weight: 600; }
+.gd-tag img { width: 22px; height: 22px; display: block; }
+.gd-tag.noimg { padding-left: 10px; }
+.spot-canvas.ro { cursor: default; max-height: 46vh; }
+.fp-item { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.fp-item:last-child { border-bottom: none; }
+.fp-item .what { flex: 1; min-width: 0; }
+.fp-item .what small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.fp-btn { padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); }
+.fp-btn.ok { background: var(--ok); border-color: var(--ok); color: #111; }
+.fp-later { margin-top: 8px; }
+.fp-later summary { font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .chip:active { transform: none; } }
 </style>
 </head>
@@ -298,10 +340,11 @@ button { touch-action: manipulation; }
 <div class="page">
   <div class="eyebrow">U10 Boys · Team 4 · CCSA Fall 2026 · Lineups</div>
   <h1 id="teamTitle">Team 4</h1>
+  <div class="follow-banner" id="followBanner" hidden></div>
 
   <select class="game-select" id="gameSelect" aria-label="Game"></select>
 
-  <div class="action-bar coach-only">
+  <div class="action-bar coach-only live-only">
     <button class="action-btn" data-action="roster" aria-label="Manage active players" title="Manage active players">👥 MAP</button>
     <button class="action-btn" data-action="copy">⧉ Copy last game</button>
     <button class="action-btn" data-action="clear">↺ Clear game</button>
@@ -310,9 +353,9 @@ button { touch-action: manipulation; }
   <div class="section scoreboard" id="scoreboard"></div>
 
   <div class="tabs" id="tabs" role="tablist"></div>
-  <div class="field-tools" id="fieldTools"></div>
-  <div class="warnings coach-only" id="warnings"></div>
-  <div class="section coach-only" id="goalies"></div>
+  <div class="field-tools live-only" id="fieldTools"></div>
+  <div class="warnings coach-only live-only" id="warnings"></div>
+  <div class="section coach-only live-only" id="goalies"></div>
   <div class="field" id="field"></div>
   <div class="subs-strip" id="subs"></div>
 
@@ -331,15 +374,17 @@ button { touch-action: manipulation; }
     <div id="log"></div>
   </div>
 
-  <div class="section">
+  <div class="section coach-only" id="fromParents" hidden></div>
+
+  <div class="section live-only contrib-only">
     <div class="section-title">Notes</div>
     <div id="notes"></div>
   </div>
 
-  <div class="note coach-only">Game day: tap ▶ Start Q1 at the whistle, and Start Q2 (etc.) when the next quarter kicks off — it records the real time even if you never look at the clock. Tap any player for “Sub now” (logged at that moment, counts part-quarters) or “Sub at start of quarter” (changes the starters). Tap a spot, then tap it again to confirm. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
+  <div class="note coach-only live-only">Game day: tap ▶ Start Q1 at the whistle, and Start Q2 (etc.) when the next quarter kicks off — it records the real time even if you never look at the clock. Tap any player for “Sub now” (logged at that moment, counts part-quarters) or “Sub at start of quarter” (changes the starters). Tap a spot, then tap it again to confirm. Tap an empty spot to put someone in. “Fill open spots” only fills empty spots — it never moves anyone you've placed. Goalies come from the captains list and the goalie rotation; anyone else in goal needs an override and is flagged. Each game is saved separately.</div>
 
   <div class="bottom-actions">
-    <button class="action-btn primary coach-only" data-action="autofill">✦ Fill open spots</button>
+    <button class="action-btn primary coach-only live-only" data-action="autofill">✦ Fill open spots</button>
     <button class="action-btn primary" data-action="share">📤 Share game</button>
   </div>
 
@@ -350,6 +395,7 @@ button { touch-action: manipulation; }
     </div>
     <div class="sheet-status" id="sheetStatus">Checking the Captains &amp; Goalies sheet…</div>
     <div class="sheet-status" id="syncStatus"></div>
+    <div class="close-box" id="closeBox"></div>
   </div>
   <div class="viewer-info" id="viewerInfo"></div>
   <div class="test-tools" id="testTools" hidden>
@@ -488,7 +534,7 @@ const emptyLineup = () => PERIODS.map(() => Object.fromEntries(KEYS.map(k => [k,
 // clock: the real time each quarter was started/ended (ms). subs: mid-quarter changes — each one is the
 // full field lineup from that moment on, so lineup[q] always stays the quarter's starting lineup.
 const freshClock = () => ({ starts: PERIODS.map(() => null), ends: PERIODS.map(() => null) });
-const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], clock: freshClock(), subs: [], gkPicks: null, formation: '231', notes: [], savedAt: null });
+const freshGame = () => ({ lineup: emptyLineup(), out: [], events: [], clock: freshClock(), subs: [], gkPicks: null, formation: '231', notes: [], closed: null, reviewed: {}, savedAt: null });
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const clone = o => JSON.parse(JSON.stringify(o));
 
@@ -525,6 +571,9 @@ function normalize(x) {
   if (Array.isArray(x.notes)) out.notes = x.notes.filter(n => n && typeof n.text === 'string');
   if (x.ownEvents) out.ownEvents = true;
   if (x.ownClock) out.ownClock = true;
+  if (x.closed && typeof x.closed.at === 'string') out.closed = { at: x.closed.at };
+  if (x.reviewed && typeof x.reviewed === 'object') out.reviewed = { ...x.reviewed };
+  out.events.forEach(e => { if (!e.id) e.id = 'e' + String(e.at || '').replace(/\D/g, '').slice(-10) + e.side; });
   out.savedAt = x.savedAt || null;
   return out;
 }
@@ -537,6 +586,7 @@ function save() {
   g.savedAt = new Date().toISOString();
   writeLocal();
   render();
+  queueLiveSend();
 }
 
 // ─────────────── lineup sync ───────────────
@@ -545,8 +595,8 @@ function save() {
 //   ⬇ Load from sheet — replaces this phone's lineup with the sheet's (asks first if they differ).
 // View-only devices just show the sheet's copy.
 let remoteCopy = undefined; // undefined = not checked yet, null = sheet has nothing for this game
-const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, clock: g.clock, subs: g.subs, formation: g.formation, notes: g.notes, savedAt: g.savedAt });
-const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events, a.formation || '231', a.notes || [], a.subs || [], a.clock || null]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events, b.formation || '231', b.notes || [], b.subs || [], b.clock || null]);
+const syncBody = () => ({ lineup: g.lineup, out: g.out, gkPicks: g.gkPicks, events: g.events, clock: g.clock, subs: g.subs, formation: g.formation, notes: g.notes, closed: g.closed, reviewed: g.reviewed, savedAt: g.savedAt });
+const sameLineup = (a, b) => !!a && !!b && JSON.stringify([a.lineup, a.out, a.gkPicks, a.events, a.formation || '231', a.notes || [], a.subs || [], a.clock || null, a.closed || null]) === JSON.stringify([b.lineup, b.out, b.gkPicks, b.events, b.formation || '231', b.notes || [], b.subs || [], b.clock || null, b.closed || null]);
 const fmtT = iso => iso ? new Date(iso).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
 const post = body => fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.json());
 
@@ -559,28 +609,31 @@ async function pullGame() {
     if (game !== currentId) return;
     if (!out.ok) throw new Error(out.error || 'error');
     remoteCopy = out.data ? normalize(out.data) : null;
+    lastPull = Date.now();
     syncState = { status: 'ok', at: out.updatedAt || null, error: null };
     if (!isCoach() && remoteCopy) {
       const mine = g; g = normalize(clone(remoteCopy));
-      if (mine.ownEvents) { g.events = mine.events; g.ownEvents = true; }
-      if (mine.ownClock) { g.clock = mine.clock; g.ownClock = true; }
+      if (mine.ownEvents && !isFollow()) { g.events = mine.events; g.ownEvents = true; }
+      if (mine.ownClock && !isFollow()) { g.clock = mine.clock; g.ownClock = true; }
+      lastPull = Date.now();
       g.notes = mine.notes || [];   // a viewer's notes are their own, never the coach's
       writeLocal();
       if (overlay.hidden && composer.hidden) render();
-      sendParentNotes();
+      sendParentNotes(); sendParentGoals();
     }
+    if (isCoach()) fetchParentEntries();
   } catch (e) {
     syncState = { status: 'error', at: null, error: String(e.message || e) };
   }
   renderSyncStatus();
 }
-async function saveToSheet(confirmed) {
+async function saveToSheet(confirmed, quiet) {
   if (!isCoach()) return;
   if (!confirmed && remoteCopy && !sameLineup(remoteCopy, g)) {
     return openSheet(`<div class="sheet-title">Replace the sheet's lineup?</div><div class="sheet-sub">The sheet has a different lineup for this game (saved ${fmtT(remoteCopy.savedAt)}). Saving replaces it with this phone's lineup. Anyone viewing will see yours.</div>
       <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="sync-save-yes">Replace the sheet's</button></div>`);
   }
-  overlay.hidden = true;
+  if (!quiet) overlay.hidden = true;
   if (!g.savedAt) { g.savedAt = new Date().toISOString(); writeLocal(); }
   syncState = { status: 'saving', at: null, error: null }; renderSyncStatus();
   try {
@@ -588,10 +641,10 @@ async function saveToSheet(confirmed) {
     if (!out.ok) throw new Error(out.error || 'save failed');
     remoteCopy = normalize(clone(syncBody()));
     syncState = { status: 'ok', at: out.updatedAt, error: null };
-    flash('Saved to the sheet');
+    if (!quiet) flash('Saved to the sheet');
   } catch (e) {
     syncState = { status: 'error', at: null, error: String(e.message || e) };
-    flash("Couldn't save to the sheet");
+    if (!quiet) flash("Couldn't save to the sheet");
   }
   renderSyncStatus();
 }
@@ -840,9 +893,14 @@ function endQuarter(qi) { touchClock(); g.clock.ends[qi] = Date.now(); keepAwake
 // White for the first half of the 15-minute quarter, yellow from 7:30, red from 10:00.
 function timerView() {
   const l = liveQ(), s = Math.min(MAX_SECS, qSecs(l));
-  return { tone: s >= 600 ? 't-late' : s >= 450 ? 't-mid' : '', big: mmss(s), label: `${PERIODS[l]} · tap for clock` };
+  return { tone: s >= 600 ? 't-late' : s >= 450 ? 't-mid' : '', big: mmss(s), label: `${PERIODS[l]} · clock` };
 }
 function timerHTML() {
+  if (isClosed()) return `<span class="start-btn final">Final</span>`;
+  if (isFollow()) {
+    if (liveQ() >= 0) { const v = timerView(); return `<span class="gtime ${v.tone}"><span class="big">${v.big}</span><span class="cap-label">${PERIODS[liveQ()]} · live</span></span>`; }
+    return `<span class="start-btn final">${g.clock.ends.some(Boolean) ? 'Break' : 'Pre-game'}</span>`;
+  }
   if (liveQ() >= 0) {
     const v = timerView();
     return `<button class="gtime ${v.tone}" data-action="clock" aria-label="Quarter clock, tap for options"><span class="big">${v.big}</span><span class="cap-label">${v.label}</span></button>`;
@@ -884,8 +942,10 @@ function openClock() {
 function addGoal(side, scorer) {
   if (isViewer()) g.ownEvents = true;
   const gq = activeQ(), t = Date.now();
-  g.events.push({ side, q: gq, clock: liveQ() === gq ? clockAt(gq, t) : null, scorer: scorer || null, at: new Date(t).toISOString() });
+  const ev = { id: uid(), side, q: gq, clock: liveQ() === gq ? clockAt(gq, t) : null, scorer: scorer || null, at: new Date(t).toISOString() };
+  g.events.push(ev);
   save();
+  if (isViewer()) sendParentGoal(ev);
   if (side === 'us') { pending = { goal: g.events.length - 1 }; return openGoalSpot(); }
   flash('Goal against added');
 }
@@ -993,31 +1053,34 @@ function openGoalShot() {
     <button class="btn btn-primary full" data-action="goal-more">Done</button>`);
 }
 function renderTop() {
-  const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
-  $('topbar').innerHTML = `${timerHTML()}
-    <button class="note-btn" data-action="note" aria-label="Add a note">✎ Note</button>
-    <button class="score-chip" data-action="goal-choice" aria-label="Score ${sc.us} to ${sc.them}, tap to add a goal"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}</span></button>`;
+  const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
+  $('topbar').innerHTML = `<div class="topbar-left"><button class="menu-btn" data-action="menu" aria-label="Menu">☰</button>${timerHTML()}</div>
+    ${add ? `<button class="note-btn icon" data-action="note" aria-label="Add a note">✎</button>` : ''}
+    <button class="score-chip" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score ${sc.us} to ${sc.them}"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}</span></button>`;
 }
 function renderScore() {
-  const x = GAMES.find(v => v.id === currentId), sc = scoreOf();
+  const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
+  const times = PERIODS.map((p, i) => g.clock.starts[i] ? `${p} ${hhmm(g.clock.starts[i])}` : '').filter(Boolean).join(' · ');
   $('scoreboard').innerHTML = `
     <div class="score-row">
-      <div class="team"><span class="team-name">${esc(teamName())}</span><button class="goal-btn us" data-action="goal-us">+ Our goal</button></div>
-      <button class="score-big" data-action="goal-choice" aria-label="Add a goal"><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></button>
-      <div class="team them"><span class="team-name">${esc(x ? x.opp : 'Them')}</span><button class="goal-btn" data-action="goal-them">+ Their goal</button></div>
+      <div class="team"><span class="team-name">${esc(teamName())}</span>${add ? `<button class="goal-btn us" data-action="goal-us">+ Our goal</button>` : ''}</div>
+      <button class="score-big" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score"><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></button>
+      <div class="team them"><span class="team-name">${esc(x ? x.opp : 'Them')}</span>${add ? `<button class="goal-btn" data-action="goal-them">+ Their goal</button>` : ''}</div>
     </div>
-    <div class="timer-row">${timerHTML()}<span class="qtimes" style="text-align:right">${
-      g.clock.starts.some(Boolean) ? PERIODS.map((p, i) => g.clock.starts[i] ? `${p} ${hhmm(g.clock.starts[i])}` : '').filter(Boolean).join(' · ') + ` <button class="link-btn" data-action="clock" style="padding:0 0 0 4px;text-decoration:underline">clock</button>`
-      : 'Tap Start when the whistle blows'}</span></div>`;
+    ${isClosed() ? `<div class="timer-row"><span class="qtimes">Final${times ? ' · ' + times : ''}</span><span class="closed-badge">🔒 Closed out</span></div>`
+    : isFollow() ? (times ? `<div class="timer-row"><span class="qtimes">${times}</span></div>` : '')
+    : `<div class="timer-row">${timerHTML()}<span class="qtimes" style="text-align:right">${
+      times ? times + ` <button class="link-btn" data-action="clock" style="padding:0 0 0 4px;text-decoration:underline">clock</button>` : 'Tap Start when the whistle blows'}</span></div>`}`;
 }
 function renderLog() {
   const ev = g.events.map((e, i) => ({ ...e, i })).sort((a, b) => (a.q - b.q) || String(a.at).localeCompare(String(b.at)));
+  const canDel = !isClosed() && !isFollow();
   $('log').innerHTML = ev.length ? ev.map(e => `<div class="log-row"><span class="log-when">${PERIODS[e.q]}${e.clock ? ' · ' + e.clock : ''}</span>
-    ${e.side === 'us'
-      ? `<button class="log-what tap" data-editgoal="${e.i}">⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}${e.assist ? ` <span style="color:var(--text-muted)">(assist ${esc(e.assist)})</span>` : ''}${(e.shot || []).length ? `<span class="log-detail">${esc(e.shot.join(' · '))}</span>` : ''}</button>`
-      : `<span class="log-what against">Goal against</span>`}
-    <button class="log-x" data-undo="${e.i}" aria-label="Remove">×</button></div>`).join('')
-    : `<span class="log-empty">No goals yet. Tap the score to add one.</span>`;
+    <button class="log-what tap ${e.side === 'them' ? 'against' : ''}" data-editgoal="${e.i}">${e.side === 'us'
+      ? `⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}${e.assist ? ` <span style="color:var(--text-muted)">(assist ${esc(e.assist)})</span>` : ''}${e.from === 'parent' ? ' <span style="color:var(--text-faint)">· from parent</span>' : ''}${(e.shot || []).length ? `<span class="log-detail">${esc(e.shot.join(' · '))}</span>` : ''}`
+      : 'Goal against'}</button>
+    ${canDel ? `<button class="log-x" data-undo="${e.i}" aria-label="Remove">×</button>` : ''}</div>`).join('')
+    : `<span class="log-empty">${canContribute() ? 'No goals yet. Tap the score to add one.' : 'No goals yet.'}</span>`;
 }
 
 // ─────────────── share ───────────────
@@ -1237,7 +1300,262 @@ function renderFieldTools() {
   $('fieldTools').innerHTML = (isViewer()
     ? `<span class="form-label">${FORMATIONS[f].name}</span>`
     : `<span class="seg" role="group" aria-label="Formation">${Object.entries(FORMATIONS).map(([k, v]) => `<button class="${k === f ? 'on' : ''}" data-formation="${k}">${v.name}</button>`).join('')}</span>`)
-    + `<button class="note-btn" data-action="note">✎ Note</button>`;
+    + (canContribute() ? `<button class="note-btn" data-action="note">✎ Note</button>` : '');
+}
+
+// ─────────────── closed games, view modes, menu ───────────────
+// Closing out locks the game: no clock, goals, notes, formation or lineup changes until it's unlocked.
+const isClosed = () => !!g.closed;
+// Parents pick a mode: "sideline" (at the game, can log goals & notes) or "follow" (watching from away, read-only, auto-updates).
+const isFollow = () => isViewer() && local.viewMode === 'follow';
+const canContribute = () => !isClosed() && !isFollow();
+let lastPull = null;
+function kickoff(id = currentId) {
+  const x = GAMES.find(v => v.id === id); if (!x) return null;
+  const [y, mo, d] = x.id.slice(0, 10).split('-').map(Number);
+  const m = String(x.time).match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return new Date(y, mo - 1, d, 9, 0).getTime();       // time TBD: treat as 9 AM
+  const h = (+m[1] % 12) + (/pm/i.test(m[3]) ? 12 : 0);
+  return new Date(y, mo - 1, d, h, +m[2]).getTime();
+}
+const canCloseOut = () => !isClosed() && !isViewer() && kickoff() && Date.now() >= kickoff() + 60 * 60 * 1000;
+function closeOut() {
+  const l = liveQ(); if (l >= 0) g.clock.ends[l] = Date.now();
+  g.closed = { at: new Date().toISOString() };
+  keepAwake(false); gkOpen = false;
+  save();
+  if (SYNC_URL && isCoach()) saveToSheet(true, true);
+  flash('Game closed out 🔒');
+}
+function unlockGame() { g.closed = null; save(); flash('Game unlocked'); }
+function renderCloseBox() {
+  const el = $('closeBox'); if (!el) return;
+  if (isViewer()) { el.innerHTML = ''; return; }
+  if (isClosed()) {
+    el.innerHTML = `<button class="sync-btn" data-action="unlock">🔓 Unlock game</button><span class="hint">Closed out ${fmtT(g.closed.at)} · unlock to make changes</span>`;
+  } else if (canCloseOut()) {
+    el.innerHTML = `<button class="sync-btn" data-action="close-out">🔒 Close out game</button><span class="hint">Stops the clock, locks the game and saves it to the sheet</span>`;
+  } else {
+    el.innerHTML = kickoff() ? `<span class="hint">Close out is available from ${new Date(kickoff() + 3600000).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })} (1 hour after kickoff)</span>` : '';
+  }
+}
+// Follow mode: a strip under the title saying what's happening and when it last updated.
+function renderFollowBanner() {
+  const el = $('followBanner');
+  if (!isFollow()) { el.hidden = true; return; }
+  const l = liveQ(), k = kickoff();
+  let what;
+  if (isClosed()) what = `<b>Final</b> · ${scoreOf().us}–${scoreOf().them}`;
+  else if (l >= 0) what = `🔴 <b>${PERIODS[l]} is on</b> · started ${hhmm(g.clock.starts[l])}`;
+  else if (g.clock.ends.some(Boolean)) { const i = g.clock.ends.map((v, j) => v ? j : -1).filter(j => j >= 0).pop(); what = `<b>Break after ${PERIODS[i]}</b> · ended ${hhmm(g.clock.ends[i])}`; }
+  else what = k ? `Kickoff <b>${new Date(k).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</b>` : 'Not started';
+  const coachT = remoteCopy && remoteCopy.savedAt ? ` · coach's last update ${hhmm(new Date(remoteCopy.savedAt).getTime())}` : '';
+  el.innerHTML = `📱 Following · ${what}<br><span style="opacity:.8">Updates every minute${lastPull ? ` · checked ${hhmm(lastPull)}` : ''}${coachT}</span>`;
+  el.hidden = false;
+}
+// Ask a parent whether they're at the game, once per game, around game time.
+function nearGameTime(id = currentId) { const k = kickoff(id); return k && Date.now() > k - 60 * 60000 && Date.now() < k + 2.5 * 3600000; }
+function maybeAskMode() {
+  if (!isViewer() || !overlay.hidden) return;
+  local.askedMode = local.askedMode || {};
+  if (local.askedMode[currentId] || !nearGameTime()) return;
+  local.askedMode[currentId] = true; writeLocal();
+  openModeSheet(true);
+}
+function openModeSheet(first) {
+  const f = isFollow();
+  openSheet(`${sheetHead(first ? 'Are you at the game?' : 'How are you watching?', 'You can switch any time from the ☰ menu.')}
+    <div class="menu-list">
+      <button class="menu-item ${!f ? 'on' : ''}" data-action="set-mode" data-mode="sideline"><span class="ico">🙋</span><span>I'm at the field<small>Help log goals and notes for Coach Nick</small></span></button>
+      <button class="menu-item ${f ? 'on' : ''}" data-action="set-mode" data-mode="follow"><span class="ico">📱</span><span>Just following along<small>Live score, goals, lineup and quarter times · updates every minute</small></span></button>
+    </div>`);
+}
+// A tab left open for days: when it comes back, jump to the game that's on now (or about to be) and ask.
+let hiddenAt = null;
+function onTabBack() {
+  const away = hiddenAt ? Date.now() - hiddenAt : 0; hiddenAt = null;
+  if (away > 20 * 60000) {
+    const shown = kickoff(), next = GAMES.find(x => { const k = kickoff(x.id); return k && k + 2.5 * 3600000 > Date.now(); });
+    if (next && next.id !== currentId && shown && shown + 2.5 * 3600000 < Date.now() && nearGameTime(next.id)) {
+      writeLocal(); currentId = next.id; g = normalize(local.games[currentId]); q = Math.max(0, liveQ()); gkOpen = false;
+      writeLocal(); render(); flash(`Switched to ${next.day} ${short(next.id)} vs ${next.opp}`);
+    }
+    maybeAskMode();
+  }
+  pullGame();
+}
+
+// ── the ☰ menu ──
+function openMenu() {
+  const viewer = isViewer();
+  openSheet(`${sheetHead('Menu')}
+    <div class="menu-list">
+      ${viewer ? `<div class="menu-group">Watching</div>
+      <button class="menu-item ${!isFollow() ? 'on' : ''}" data-action="set-mode" data-mode="sideline"><span class="ico">🙋</span><span>Sideline mode<small>At the field · log goals and notes</small></span></button>
+      <button class="menu-item ${isFollow() ? 'on' : ''}" data-action="set-mode" data-mode="follow"><span class="ico">📱</span><span>Follow mode<small>Watching from away · auto-updates</small></span></button>` : ''}
+      <div class="menu-group">Team</div>
+      <button class="menu-item" data-action="stats"><span class="ico">📊</span><span>Player stats<small>Minutes, goals, assists, goalie quarters</small></span></button>
+      ${viewer ? '' : `<button class="menu-item" data-action="stub" data-stub="subs"><span class="ico">🔁</span><span>Sub editor <span class="soon">SOON</span><small>Fix or add subs after the game</small></span></button>`}
+      <button class="menu-item" data-action="stub" data-stub="team"><span class="ico">⚙️</span><span>Team settings <span class="soon">SOON</span><small>Captains, goalie rules, roster, numbers</small></span></button>
+      <button class="menu-item" data-action="stub" data-stub="format"><span class="ico">🧩</span><span>Formations &amp; game format <span class="soon">SOON</span><small>7v7 / 9v9 / 11v11, quarters or halves</small></span></button>
+      ${viewer ? '' : `<button class="menu-item" data-action="stub" data-stub="coach"><span class="ico">🧑‍🏫</span><span>Coach tools <span class="soon">SOON</span><small>Teams, staff, stat manager, permissions</small></span></button>`}
+      <div class="menu-group">Other</div>
+      ${TEST ? `<a class="menu-item" href="${location.pathname}"><span class="ico">🧪</span><span>Leave test mode</span></a>` : `<a class="menu-item" href="?test"><span class="ico">🧪</span><span>Test mode<small>Try things without touching real games</small></span></a>`}
+      ${viewer ? `<button class="menu-item" data-action="coach-code"><span class="ico">🔑</span><span>Coach sign-in</span></button>` : ''}
+    </div>`);
+}
+const STUBS = {
+  team: ['Team settings', ['Captains for each game, and the "captains play one goalie quarter" rule', 'Goalie rotation rules (max one quarter per game, alternates)', 'Roster, jersey numbers and parent contacts', 'Team name vote for each game', 'Import from / export to a template Google Sheet you can share']],
+  format: ['Formations & game format', ['Game size: 7v7, 9v9, 11v11, or custom (like 8v8 co-ed)', 'Quarters or halves, how many, and how long', 'Build your own formations and pick a default', 'Playtime targets that follow the format']],
+  subs: ['Sub editor', ['See each quarter as a timeline: who started, who came on, when', 'Fix a sub time or who came on, after the game', 'Add subs you only wrote in your notes', 'Undo a whole quarter of changes']],
+  coach: ['Coach tools', ['Several teams per coach, with assistant coaches and team managers', 'A stat manager role that receives and approves parent entries', 'Who can see and do what (coach, manager, sideline parent, follower)', 'Season archive and end-of-season awards'], 'Needs accounts (Google sign-in) — part of the next infrastructure step.'],
+};
+function openStub(k) {
+  const [title, items, note] = STUBS[k];
+  openSheet(`${sheetHead(`${title} <span class="soon">SOON</span>`, note || 'Planned. Tell Coach Nick what you\'d want here.')}<ul class="plan-list">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+    <button class="btn full" data-action="menu">Back to menu</button>`);
+}
+// ── player stats across games saved on this phone ──
+function seasonStats() {
+  const saved = g, rows = {}, team = { w: 0, l: 0, t: 0, gf: 0, ga: 0, games: 0 };
+  PLAYERS.forEach(p => rows[p.name] = { gp: 0, q: 0, g: 0, a: 0, gk: 0 });
+  const ids = GAMES.map(x => x.id).filter(id => id === currentId ? true : local.games[id]);
+  try {
+    for (const id of ids) {
+      g = id === currentId ? saved : normalize(local.games[id]);
+      const played = g.events.length || g.clock.starts.some(Boolean) || g.closed;
+      if (!played) continue;
+      team.games++;
+      const sc = scoreOf(); team.gf += sc.us; team.ga += sc.them;
+      if (sc.us > sc.them) team.w++; else if (sc.us < sc.them) team.l++; else team.t++;
+      for (const n of present()) {
+        const r = rows[n]; if (!r) continue;
+        const pq = playedActual(n);
+        if (pq > 0) { r.gp++; r.q += pq; }
+        r.gk += g.lineup.filter(L => L.goalie === n).length;
+      }
+      for (const e of g.events) if (e.side === 'us') { if (rows[e.scorer]) rows[e.scorer].g++; if (rows[e.assist]) rows[e.assist].a++; }
+    }
+  } finally { g = saved; }
+  return { rows, team };
+}
+function openStats() {
+  const { rows, team } = seasonStats();
+  const names = PLAYERS.map(p => p.name).sort((a, b) => (NUM[a] || 99) - (NUM[b] || 99));
+  openSheet(`${sheetHead('Player stats', `${team.games} game${team.games === 1 ? '' : 's'} on this phone · ${team.w}W ${team.l}L ${team.t}T · goals ${team.gf}–${team.ga}`)}
+    <table class="stats-table"><thead><tr><th>Player</th><th>GP</th><th>Min</th><th>G</th><th>A</th><th>GK</th></tr></thead><tbody>
+    ${names.map(n => { const r = rows[n]; return `<tr><td>${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td><td>${r.gk || ''}</td></tr>`; }).join('')}
+    </tbody></table>
+    <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · GK goalie quarters. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
+    <button class="btn full" data-action="menu">Back to menu</button>`);
+}
+
+// ── goal detail (tap a goal in the log) ──
+const tagSlug = t => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Icons live in assets/lineup/shot-<slug>.svg (or .png). Until they exist, the tag shows as text.
+const tagChip = t => `<span class="gd-tag"><img alt="" src="assets/lineup/shot-${tagSlug(t)}.svg" onerror="if(this.dataset.png){this.parentNode.classList.add('noimg');this.remove()}else{this.dataset.png=1;this.src=this.src.replace(/\\.svg$/,'.png')}">${esc(t)}</span>`;
+function openGoalDetail(i) {
+  const e = g.events[i]; if (!e) return;
+  const canEdit = !isClosed() && !isFollow();
+  if (e.side === 'them') {
+    pending = { undo: i };
+    return openSheet(`${sheetHead('Goal against', `${goalLabel(e)} · ${esc((GAMES.find(v => v.id === currentId) || {}).opp || '')}`)}
+      ${canEdit ? `<button class="btn btn-danger full" data-action="do-undo">Remove this goal</button>` : ''}`);
+  }
+  openSheet(`${sheetHead(`⚽ ${e.scorer ? numTag(e.scorer) + esc(e.scorer) : 'Our goal'}`, `${goalLabel(e)}${e.from === 'parent' ? ' · logged by ' + esc(e.by || 'a parent') : ''}`)}
+    <canvas class="spot-canvas ro" id="detailCanvas" aria-label="Where the goal was scored from"></canvas>
+    <div class="goal-detail">
+      ${e.spot ? '' : '<div class="gd-row"><span class="k">Location</span><span style="color:var(--text-faint)">Not saved</span></div>'}
+      <div class="gd-row"><span class="k">Assist</span><span>${e.assist ? numTag(e.assist) + esc(e.assist) : '<span style="color:var(--text-faint)">None</span>'}</span></div>
+      <div class="gd-row"><span class="k">Shot</span><span class="gd-tags">${(e.shot || []).length ? e.shot.map(tagChip).join('') : '<span style="color:var(--text-faint)">No details</span>'}</span></div>
+    </div>
+    ${canEdit ? `<div class="btn-row"><button class="btn" data-undo="${i}">Remove</button><button class="btn btn-primary" data-action="goal-edit" data-goal="${i}">✎ Edit</button></div>`
+      : isClosed() && !isViewer() ? '<div class="sheet-hint" style="text-align:center">Unlock the game (bottom of the page) to edit.</div>' : ''}`);
+  drawSpotField($('detailCanvas'), e.spot || null);
+}
+
+// ─────────────── live sync & parent entries ───────────────
+// Coach phone on game day: every change is sent to the sheet a few seconds later (send only, never pulled).
+const isGameDay = () => liveQ() >= 0 || currentId.slice(0, 10) === new Date().toLocaleDateString('en-CA');
+let liveTimer = null;
+function queueLiveSend() {
+  if (!SYNC_URL || !isCoach() || TEST || !isGameDay()) return;
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => saveToSheet(true, true), 4000);
+}
+// Sideline parents: each goal (and later edits to it) goes to the sheet's "Parent entries" tab right away.
+async function sendParentGoal(ev) {
+  if (!SYNC_URL || !isViewer() || isFollow() || !ev || !ev.id) return;
+  const who = viewerId() || {};
+  try {
+    const out = await post({ action: 'parentEvent', game: currentId, id: ev.id, kind: 'goal', name: who.name || 'Parent', player: who.player || '',
+      data: { side: ev.side, q: ev.q, clock: ev.clock, at: ev.at, scorer: ev.scorer, assist: ev.assist || null, shot: ev.shot || [], spot: ev.spot || null } });
+    ev.unsent = !out.ok;
+  } catch (e) { ev.unsent = true; }
+  writeLocal();
+}
+function sendParentGoals() { (g.events || []).filter(e => e.unsent).forEach(sendParentGoal); }
+// Coach side: fetch parent entries for this game, group them, and offer Accept / Dismiss.
+let parentEntries = [];
+async function fetchParentEntries() {
+  if (!SYNC_URL || !isCoach()) return;
+  const game = currentId;
+  try {
+    const out = await (await fetch(`${SYNC_URL}?action=entries&game=${encodeURIComponent(game)}`, { cache: 'no-store' })).json();
+    if (game !== currentId) return;
+    parentEntries = Array.isArray(out.entries) ? out.entries.filter(x => x && x.id && x.data) : [];
+    renderFromParents();
+  } catch (e) {}
+}
+const minsApart = (a, b) => Math.abs(new Date(a).getTime() - new Date(b).getTime()) / 60000;
+// Same side, same quarter, same scorer (or unknown), within 4 minutes = the same goal.
+const sameGoal = (a, b) => a.side === b.side && a.q === b.q && (!a.scorer || !b.scorer || a.scorer === b.scorer) && minsApart(a.at, b.at) <= 4;
+function groupedEntries() {
+  const open = parentEntries.filter(x => x.kind === 'goal' && !g.reviewed[x.id]);
+  const matched = [], groups = [];
+  for (const x of open) {
+    const mine = g.events.find(e => e.from !== 'parent' && sameGoal(e, x.data)) || g.events.find(e => sameGoal(e, x.data));
+    if (mine) { matched.push({ x, mine }); continue; }
+    const grp = groups.find(gr => sameGoal(gr[0].data, x.data));
+    grp ? grp.push(x) : groups.push([x]);
+  }
+  return { groups, matched };
+}
+function entryLine(d) { return `${d.side === 'us' ? `⚽ ${esc(d.scorer || 'Goal (scorer?)')}` : `Goal against`} · ${PERIODS[d.q] || ''}${d.clock ? ' ' + esc(d.clock) : ' ~' + hhmm(new Date(d.at).getTime())}`; }
+function renderFromParents() {
+  const el = $('fromParents');
+  if (!el || isViewer() || isClosed()) { if (el) el.hidden = true; return; }
+  const { groups, matched } = groupedEntries();
+  if (!groups.length && !matched.length) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = `<div class="section-title">From parents</div>
+    ${groups.map((gr, i) => `<div class="fp-item"><span class="what">${entryLine(gr[0].data)}<small>${gr.map(x => esc(x.name)).join(', ')}${gr.length > 1 ? ` · ${gr.length} entries` : ''}</small></span>
+      <button class="fp-btn" data-fpdismiss="${i}">Dismiss</button><button class="fp-btn ok" data-fpaccept="${i}">Accept</button></div>`).join('')}
+    ${matched.length ? `<details class="fp-later"><summary>Already logged by you · ${matched.length} to review later</summary>
+      ${matched.map((m, i) => `<div class="fp-item"><span class="what">${entryLine(m.x.data)}<small>${esc(m.x.name)} · matches your goal ${esc(goalLabel(m.mine))}</small></span>
+        <button class="fp-btn" data-fpmdismiss="${i}">Dismiss</button><button class="fp-btn" data-fpmerge="${i}">Use details</button></div>`).join('')}</details>` : ''}`;
+}
+function acceptGroup(i) {
+  const gr = groupedEntries().groups[i]; if (!gr) return;
+  const ds = gr.map(x => x.data), d0 = ds[0];
+  g.events.push({ id: uid(), side: d0.side, q: d0.q, clock: d0.clock || null, scorer: ds.map(d => d.scorer).find(Boolean) || null, at: d0.at,
+    assist: ds.map(d => d.assist).find(Boolean) || null, shot: [...new Set(ds.flatMap(d => d.shot || []))], spot: ds.map(d => d.spot).find(Boolean) || null,
+    from: 'parent', by: [...new Set(gr.map(x => x.name))].join(', ') });
+  gr.forEach(x => g.reviewed[x.id] = 'accepted');
+  save(); flash('Goal added from a parent');
+}
+function dismissGroup(i) { const gr = groupedEntries().groups[i]; if (!gr) return; gr.forEach(x => g.reviewed[x.id] = 'dismissed'); save(); }
+function mergeMatched(i, use) {
+  const m = groupedEntries().matched[i]; if (!m) return;
+  if (use) {
+    const d = m.x.data, e = m.mine;
+    if (!e.assist && d.assist) e.assist = d.assist;
+    if (!e.spot && d.spot) e.spot = d.spot;
+    if (d.shot && d.shot.length) e.shot = [...new Set([...(e.shot || []), ...d.shot])];
+    if (!e.scorer && d.scorer) e.scorer = d.scorer;
+  }
+  g.reviewed[m.x.id] = use ? 'merged' : 'dismissed';
+  save(); if (use) flash('Details added to your goal');
 }
 
 // ─────────────── render ───────────────
@@ -1266,7 +1584,13 @@ function render() {
     $('testExit').href = location.pathname;
   }
   document.body.classList.toggle('viewer', isViewer());
+  document.body.classList.toggle('closed', isClosed());
+  document.body.classList.toggle('follow', isFollow());
+  if (isClosed()) gkOpen = false;
   renderTop();
+  renderFollowBanner();
+  renderCloseBox();
+  renderFromParents();
   renderFieldTools();
   renderNotes();
   renderViewerInfo();
@@ -1333,7 +1657,11 @@ function render() {
 const overlay = $('overlay'), sheet = $('sheet');
 let pending = null;
 function openSheet(html) { sheet.innerHTML = `<div class="handle"></div>${html}`; overlay.hidden = false; }
-function closeSheet() { overlay.hidden = true; pending = null; render(); }
+function closeSheet() {
+  const p = pending; overlay.hidden = true; pending = null;
+  if (p && p.goal !== undefined && isViewer()) sendParentGoal(g.events[p.goal]);   // parent's goal details go along when they finish
+  render();
+}
 overlay.addEventListener('click', e => { if (e.target === overlay) closeSheet(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !overlay.hidden) closeSheet();
@@ -1443,7 +1771,7 @@ async function openCopy() {
 
 // ─────────────── events ───────────────
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-editgoal],[data-delsub],[data-fillnow]');
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-editgoal],[data-delsub],[data-fillnow],[data-fpaccept],[data-fpdismiss],[data-fpmerge],[data-fpmdismiss]');
   if (!t || t.disabled) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
@@ -1451,9 +1779,21 @@ document.addEventListener('click', e => {
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen',
     'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-shot',
     'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
-    'test-view', 'test-ff', 'test-reset', 'do-test-reset'];
+    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'show-log', 'goal-edit'];
   const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal'];
   if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
+  // A closed-out game (and Follow mode) is read-only: tabs, goal details, stats, share and the menu still work.
+  const EDIT_DATA = ['player', 'slot', 'movepos', 'fill', 'gk', 'gkalt', 'fillnow', 'delsub', 'undo', 'formation', 'scorer', 'assist', 'tag', 'fpaccept', 'fpdismiss', 'fpmerge', 'fpmdismiss'];
+  const EDIT_ACTIONS = ['autofill', 'copy', 'clear', 'roster', 'goal-choice', 'goal-us', 'goal-them', 'note', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'clock',
+    'goal-edit', 'goal-spot', 'goal-spot-ok', 'goal-assist', 'goal-shot', 'goal-more', 'move-confirm', 'do-undo', 'test-ff'];
+  if ((isClosed() || isFollow()) && (EDIT_DATA.some(k => d[k] !== undefined) || EDIT_ACTIONS.includes(d.action))) {
+    overlay.hidden = true; pending = null;
+    return flash(isClosed() ? (isViewer() ? 'This game is final' : 'Game is closed out · unlock it at the bottom to edit') : 'Follow mode is view-only · switch to Sideline in the ☰ menu');
+  }
+  if (d.fpaccept !== undefined) return acceptGroup(+d.fpaccept);
+  if (d.fpdismiss !== undefined) return dismissGroup(+d.fpdismiss);
+  if (d.fpmerge !== undefined) return mergeMatched(+d.fpmerge, true);
+  if (d.fpmdismiss !== undefined) return mergeMatched(+d.fpmdismiss, false);
   // ── goal details ──
   if (d.assist !== undefined) {
     const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
@@ -1469,7 +1809,7 @@ document.addEventListener('click', e => {
     t.classList.toggle('on', set.has(d.tag)); t.setAttribute('aria-pressed', set.has(d.tag));
     g.savedAt = new Date().toISOString(); writeLocal(); return;
   }
-  if (d.editgoal !== undefined) { pending = { goal: +d.editgoal }; return openGoalMore(); }
+  if (d.editgoal !== undefined) return openGoalDetail(+d.editgoal);
   // ── subs ──
   if (d.movepos) {
     if (pending && pending.move) {
@@ -1544,6 +1884,24 @@ document.addEventListener('click', e => {
     case 'goal-assist': return openGoalAssist();
     case 'goal-shot': return openGoalShot();
     case 'move-confirm': return applyMove();
+    case 'goal-edit': pending = { goal: +d.goal }; return openGoalMore();
+    case 'show-log': overlay.hidden = true; return $('log').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    case 'menu': return openMenu();
+    case 'stats': return openStats();
+    case 'stub': return openStub(d.stub);
+    case 'set-mode': {
+      local.viewMode = d.mode === 'follow' ? 'follow' : 'sideline'; writeLocal(); overlay.hidden = true; pending = null;
+      if (isFollow()) { g = normalize(remoteCopy ? clone(remoteCopy) : local.games[currentId]); g.notes = []; writeLocal(); }
+      render(); flash(isFollow() ? 'Follow mode · updates every minute' : 'Sideline mode');
+      if (!isFollow() && !viewerId()) openIdentity();
+      return pullGame();
+    }
+    case 'close-out': return openSheet(`${sheetHead('Close out this game?', 'Stops the clock, locks the lineup, goals and notes, and saves the game to the sheet. You can unlock it later at the bottom of the page.')}
+      <button class="btn btn-primary full" data-action="do-close-out">🔒 Close out game</button>`);
+    case 'do-close-out': overlay.hidden = true; pending = null; return closeOut();
+    case 'unlock': return openSheet(`${sheetHead('Unlock this game?', 'Makes the lineup, goals, notes and clock editable again. Close it out again when you are done.')}
+      <button class="btn btn-danger full" data-action="do-unlock">🔓 Unlock game</button>`);
+    case 'do-unlock': overlay.hidden = true; pending = null; return unlockGame();
     case 'test-view': if (!TEST) return; local.testViewer = !local.testViewer; writeLocal(); flash(isViewer() ? 'Parent view' : 'Coach view'); return render();
     case 'test-ff': {   // pretend 5 more minutes have gone by in the running quarter
       if (!TEST) return;
@@ -1579,7 +1937,7 @@ document.addEventListener('change', e => {
   if (e.target.id === 'gameSelect') {
     writeLocal();
     currentId = e.target.value; g = normalize(local.games[currentId]); q = Math.max(0, liveQ()); gkOpen = false; keepAwake(liveQ() >= 0);
-    writeLocal(); render(); return pullGame();
+    writeLocal(); render(); maybeAskMode(); return pullGame();
   }
   if (e.target.name === 'submode' && pending && pending.move) { pending.mode = e.target.value; pending.pos = null; return renderMoveSheet(); }
   const n = e.target.dataset.roster;
@@ -1592,11 +1950,12 @@ document.addEventListener('change', e => {
 });
 
 render();
-if (isViewer() && !viewerId()) openIdentity();
+if (isViewer()) { if (nearGameTime() && !(local.askedMode || {})[currentId]) maybeAskMode(); else if (!isFollow() && !viewerId()) openIdentity(); }
 syncSheet();
 pullGame();
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullGame(); });
-setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pullGame(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else onTabBack(); });
+setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pullGame().then(renderFollowBanner); }, 60000);
+setInterval(() => { if (document.visibilityState === 'visible' && isCoach() && isGameDay() && !isClosed()) fetchParentEntries(); }, 60000);
 setInterval(tick, 250);
 if (liveQ() >= 0) { q = liveQ(); render(); keepAwake(true); }
 </script>
