@@ -235,6 +235,17 @@ button { touch-action: manipulation; }
 .sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
 .sheet-head .sheet-title { margin: 0; padding-top: 4px; }
 .x-btn { flex: 0 0 36px; height: 36px; border-radius: 18px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 16px; cursor: pointer; }
+.snack-line { display: flex; align-items: center; gap: 6px; width: 100%; margin: -4px 0 12px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.snack-line b { color: var(--text); font-weight: 600; }
+.snack-line .more { margin-left: auto; font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+.sched-list { display: flex; flex-direction: column; gap: 6px; }
+.sched-row { padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); font-size: 13px; }
+.sched-row.next { border-color: var(--ok); }
+.sched-row.past { opacity: 0.6; }
+.sched-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
+.sched-note { font-size: 11px; color: var(--mid-fg); }
+.sched-score { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; }
+.sched-snack { margin-top: 3px; font-size: 12px; color: var(--text-muted); }
 .check { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin: 0 0 12px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface2); font-size: 13px; font-weight: 600; cursor: pointer; }
 .check input { accent-color: var(--ok); width: 20px; height: 20px; margin: 0; flex-shrink: 0; }
 .check small, .copyq-list small { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
@@ -353,6 +364,7 @@ a.menu-item { text-decoration: none; }
   <div class="follow-banner" id="followBanner" hidden></div>
 
   <select class="game-select" id="gameSelect" aria-label="Game"></select>
+  <button class="snack-line" id="snackLine" data-action="schedule" hidden></button>
 
   <div class="action-bar coach-only live-only">
     <button class="action-btn" data-action="roster" aria-label="Manage active players" title="Manage active players">👥 MAP</button>
@@ -538,6 +550,10 @@ const numTag = n => NUM[n] ? `<span class="num">${NUM[n]}</span>` : '';
 // Alphabetical by last name, for ties in the goalie rotation.
 const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador', Jeremiah: 'Castro', Liam: 'Clark', Jaxon: 'Cossairt',
   Abel: 'Dailey', EJ: 'Daley', Jayce: 'Decker', Ethan: 'Gonzalez', Casey: 'Minervini', Cameron: 'Richardson' };
+
+// Snack family per game, from the sheet's "Snack" columns (U family, V player / note).
+const SNACKS = {};
+const EDIT_SHEET = 'https://docs.google.com/spreadsheets/d/1zYW9bpLfCY_dcUrhPObfIXE5i811PnUooATsRMz2VFk/edit#gid=698790171';
 
 // ─────────────── state ───────────────
 const LOCAL_KEY = `lineup:${TEAM_ID}${TEST ? ':test' : ''}`;
@@ -810,7 +826,6 @@ function warningsFor(qi) {
   if (open && bench(qi).length) out.push(`${open} open spot${open > 1 ? 's' : ''}`);
   for (const k of KEYS) if (L[k] && avoids(L[k], k)) out.push(`${L[k]} would rather not play ${POS[k].label}`);
   if (L.goalie && g.lineup.filter(x => x.goalie === L.goalie).length > 1) out.push(`${L.goalie} is in goal more than one quarter this game`);
-  if (offPlan(L.goalie)) out.push({ bad: true, text: `${L.goalie} is in goal but isn't on this game's goalie plan (override)` });
   return out;
 }
 
@@ -1288,12 +1303,26 @@ function toISO(v) {
   const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   return m ? `${m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}` : null;
 }
-const KNOWN = new Set(PLAYERS.map(p => p.name));
+let KNOWN = new Set(PLAYERS.map(p => p.name));
 const cleanName = v => { v = (v || '').trim().replace(/[’']/g, ''); return KNOWN.has(v) ? v : null; };
-// Columns: A Date · D Captain 1 · E Captain 2 · F Goalie override · G–J Q1–Q4 goalie · L Team name · M Player · P Jersey #
+// Columns: A Date · D Captain 1 · E Captain 2 · F Goalie override · G–J Q1–Q4 goalie · L Team name · U–V Snack
+// Player rows: M Player · P Jersey # · Q Last name · R Likes · S Avoid · T On team ("no" = removed)
+const POS_TAGS = ['DEF', 'MID', 'FWD', 'ST', 'GK'];
+const posTags = v => String(v || '').toUpperCase().split(/[^A-Z]+/).filter(t => POS_TAGS.includes(t));
 function applySheet(rows) {
   const head = rows[0] || [];
   if (String(head[0]).trim() !== 'Date' || String(head[3]).trim() !== 'Captain 1') throw new Error('unexpected columns');
+  // The sheet is the roster: a player row needs a jersey # or a last name (the instructions cell has neither).
+  const roster = [];
+  for (const r of rows.slice(1)) {
+    const name = String(r[12] || '').trim().replace(/[’']/g, ''), num = parseInt(r[15], 10), last = String(r[16] || '').trim();
+    if (!name || name.length > 24 || !(num || last) || /^no$/i.test(String(r[19] || '').trim())) continue;
+    roster.push({ name, likes: posTags(r[17]), avoid: posTags(r[18]) });
+    if (num) NUM[name] = num;
+    LAST[name] = last || LAST[name] || name;
+  }
+  if (roster.length >= 7) { PLAYERS.splice(0, PLAYERS.length, ...roster); KNOWN = new Set(roster.map(p => p.name)); }
+  for (const k in SNACKS) delete SNACKS[k];
   const seen = {};
   for (const k in GK_OVERRIDE) delete GK_OVERRIDE[k];
   for (const r of rows.slice(1)) {
@@ -1307,6 +1336,8 @@ function applySheet(rows) {
       if (gk.some(Boolean)) GOALIE_LOG[id] = gk; else delete GOALIE_LOG[id];
       const tn = String(r[11] || '').trim().slice(0, 40);
       if (tn) TEAM_NAMES[id] = tn; else delete TEAM_NAMES[id];
+      const sf = String(r[20] || '').trim(), sw = String(r[21] || '').trim();
+      if (sf || sw) SNACKS[id] = { family: sf, who: sw };
     }
     const n = cleanName(r[12]), num = parseInt(r[15], 10);
     if (n && num) NUM[n] = num;
@@ -1495,6 +1526,8 @@ function openMenu() {
       <button class="menu-item ${!isFollow() ? 'on' : ''}" data-action="set-mode" data-mode="sideline"><span class="ico">🙋</span><span>Sideline mode<small>At the field · log goals and notes</small></span></button>
       <button class="menu-item ${isFollow() ? 'on' : ''}" data-action="set-mode" data-mode="follow"><span class="ico">📱</span><span>Follow mode<small>Watching from away · auto-updates</small></span></button>` : ''}
       <div class="menu-group">Team</div>
+      <button class="menu-item" data-action="schedule"><span class="ico">📅</span><span>Schedule &amp; snacks<small>Every game, field, time and who brings snack</small></span></button>
+      ${viewer ? '' : `<button class="menu-item" data-action="players"><span class="ico">👥</span><span>Players<small>Roster, numbers, likes and avoids · edit in the sheet</small></span></button>`}
       <button class="menu-item" data-action="stats"><span class="ico">📊</span><span>Player stats<small>Minutes, goals, assists, goalie quarters</small></span></button>
       ${viewer ? '' : `<button class="menu-item" data-action="stub" data-stub="subs"><span class="ico">🔁</span><span>Sub editor <span class="soon">SOON</span><small>Fix or add subs after the game</small></span></button>`}
       <button class="menu-item" data-action="stub" data-stub="team"><span class="ico">⚙️</span><span>Team settings <span class="soon">SOON</span><small>Captains, goalie rules, roster, numbers</small></span></button>
@@ -1511,6 +1544,26 @@ const STUBS = {
   subs: ['Sub editor', ['See each quarter as a timeline: who started, who came on, when', 'Fix a sub time or who came on, after the game', 'Add subs you only wrote in your notes', 'Undo a whole quarter of changes']],
   coach: ['Coach tools', ['Several teams per coach, with assistant coaches and team managers', 'A stat manager role that receives and approves parent entries', 'Who can see and do what (coach, manager, sideline parent, follower)', 'Season archive and end-of-season awards'], 'Needs accounts (Google sign-in) — part of the next infrastructure step.'],
 };
+function openSchedule() {
+  const next = nextGameId();
+  const rows = GAMES.map(x => {
+    const sn = SNACKS[x.id], gm = x.id === currentId ? g : local.games[x.id];
+    const sc = gm && gm.events && gm.events.length ? scoreOf(normalize(gm)) : null;
+    return `<div class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}">
+      <div class="sched-top"><b>${x.day} ${short(x.id)}</b> · ${esc(x.time)} · vs ${esc(x.opp)} · ${esc(x.field)}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}${sc ? `<span class="sched-score">${sc.us}–${sc.them}</span>` : ''}</div>
+      <div class="sched-snack">${sn ? `🍎 ${esc(sn.family || sn.who)}${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}` : '<span style="color:var(--text-faint)">No snack set</span>'}</div></div>`;
+  }).join('');
+  openSheet(`${sheetHead('Schedule &amp; snacks', 'All games at Trafalgar. Can\'t make your snack day? Tell Coach Nick so we can swap.')}
+    <div class="sched-list">${rows}</div>
+    ${isViewer() ? '' : `<a class="btn full" href="${EDIT_SHEET}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;text-decoration:none">✎ Edit snacks in the sheet</a>`}`);
+}
+function openPlayers() {
+  const tag = list => list.length ? list.join(', ') : '—';
+  openSheet(`${sheetHead('Players', 'The sheet is the roster. Add a row (name, jersey #, last name) to add a player; type “no” under On team to remove one. Reload after editing.')}
+    <div class="sched-list">${PLAYERS.map(p => `<div class="sched-row"><div class="sched-top">${numTag(p.name)}<b>${esc(p.name)}</b> ${esc(LAST[p.name] && LAST[p.name] !== p.name ? LAST[p.name] : '')}</div>
+      <div class="sched-snack">Likes ${esc(tag(p.likes))} · Avoid ${esc(tag(p.avoid))}</div></div>`).join('')}</div>
+    <a class="btn btn-primary full" href="${EDIT_SHEET}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;text-decoration:none">✎ Edit players in the sheet</a>`);
+}
 function openStub(k) {
   const [title, items, note] = STUBS[k];
   openSheet(`${sheetHead(`${title} <span class="soon">SOON</span>`, note || 'Planned. Tell Coach Nick what you\'d want here.')}<ul class="plan-list">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
@@ -1700,6 +1753,9 @@ function render() {
   renderScore();
   renderLog();
   renderStatus();
+  const sn = SNACKS[currentId];
+  $('snackLine').hidden = !sn;
+  if (sn) $('snackLine').innerHTML = `🍎 Snack: <b>${esc(sn.family || sn.who)}</b>${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}<span class="more">Schedule ›</span>`;
   $('activeCount').textContent = `${present().length} here · 7 on field`;
 
   const live = liveQ();
@@ -1711,20 +1767,21 @@ function render() {
   const offs = [...new Set(g.lineup.map(L => L.goalie).filter(offPlan))];
   const gkChip = (n, role) => {
     const qi = gkQuarterNow(n);
-    const status = role === 'off' ? `${PERIODS[qi]} · not on plan` : qi >= 0 ? PERIODS[qi] : 'needs a quarter';
+    const status = role === 'off' ? `${PERIODS[qi]} · override` : qi >= 0 ? PERIODS[qi] : 'needs a quarter';
     if (role === 'alt') return `<button class="gk-item alt" data-gkalt="${esc(n)}"><span class="gk-name">${numTag(n)}${esc(n)}</span><span class="gk-meta">alternate · ${gkSeason(n)} total</span></button>`;
-    return `<button class="gk-item ${role === 'off' ? 'off' : qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${role === 'off' ? '⚠ ' : ''}${numTag(n)}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} total</span></button>`;
+    return `<button class="gk-item ${qi >= 0 ? 'done' : ''}" data-gk="${esc(n)}"><span class="gk-name">${numTag(n)}${esc(n)}${role === 'cap' ? ' <span class="cap">C</span>' : ''}</span><span class="gk-meta">${status} · ${gkSeason(n)} total</span></button>`;
   };
-  const allSet = !offs.length && plan.order.length === PERIODS.length && plan.order.every(n => gkQuarterNow(n) >= 0) && g.lineup.every(L => L.goalie);
+  const allSet = g.lineup.every(L => L.goalie);   // every quarter has a goalie; overrides are fine
   if (allSet && !gkOpen) {
-    $('goalies').innerHTML = `<button class="gk-summary" data-action="gk-toggle" aria-expanded="false"><span class="list">${PERIODS.map((p, i) => `${p} ${esc(g.lineup[i].goalie)}${isCaptain(g.lineup[i].goalie) ? ' <span class="cap">C</span>' : ''}`).join(' · ')}</span><span class="ok">✓ Goalies set</span></button>`;
+    $('goalies').innerHTML = `<button class="gk-summary" data-action="gk-toggle" aria-expanded="false"><span class="list">${PERIODS.map((p, i) => `${p} ${esc(g.lineup[i].goalie)}${isCaptain(g.lineup[i].goalie) ? ' <span class="cap">C</span>' : ''}`).join(' · ')}</span><span class="ok">✓ Goalies set${offs.length ? ' · override' : ''}</span></button>`;
   } else {
     $('goalies').innerHTML =
       `<div class="section-title" ${allSet ? 'data-action="gk-toggle" style="cursor:pointer"' : ''}>Goalies this game${allSet ? ' · tap to hide' : ''}</div>` +
       `<div class="gk-sub">${allCaps.length ? `Captains: ${allCaps.map(esc).join(' &amp; ')}${allCaps.some(n => !here(n)) ? ' (one is out)' : ''}` : 'No captains set for this game'}</div>` +
       `<div class="gk-grid">${plan.caps.map(n => gkChip(n, 'cap')).join('')}${plan.upNext.map(n => gkChip(n, 'next')).join('')}${offs.map(n => gkChip(n, 'off')).join('')}</div>` +
       (plan.alternates.length ? `<div class="gk-sub" style="margin:10px 0 6px">Next in line, if someone can't go</div><div class="gk-grid">${plan.alternates.map(n => gkChip(n, 'alt')).join('')}</div>` : '') +
-      `<div class="gk-hint">Tap a goalie to put them in goal for ${PERIODS[q]}. Tap an alternate to swap them in. “Total” = goalie quarters in earlier games.${g.gkPicks || GK_OVERRIDE[currentId] ? ' <button class="link-btn" data-action="gk-reset" style="padding:0;font-size:11px;text-decoration:underline">Back to the rotation</button>' : ''}</div>`;
+      `<div class="gk-hint">Tap a goalie to put them in goal for ${PERIODS[q]}. Tap an alternate to swap them in. “Total” = goalie quarters in earlier games.${g.gkPicks || GK_OVERRIDE[currentId] ? ' <button class="link-btn" data-action="gk-reset" style="padding:0;font-size:11px;text-decoration:underline">Back to the rotation</button>' : ''}</div>` +
+      (allSet ? `<button class="btn btn-primary full" data-action="gk-toggle" style="margin-top:10px">✓ Goalies confirmed · close</button>` : '');
   }
 
   // The field shows who is on right now (after any subs); lineup[q] stays the quarter's starters.
@@ -1734,7 +1791,7 @@ function render() {
   $('field').innerHTML = formation().rows.map(r => [r.keys, r.spread]).map(([row, spread]) =>
     `<div class="field-row${spread ? ' spread' : ''}">${row.map(k =>
       `<div class="slot"><div class="slot-label">${POS[k].label}</div>${cameIn[k] && L[k] ? `<span class="slot-in">in ${esc(cameIn[k])}</span>` : ''}<div class="slot-body">${
-        L[k] ? `<button class="chip ${POS[k].cls}${k === 'goalie' && offPlan(L[k]) ? ' off-plan' : ''}" data-player="${esc(L[k])}">${k === 'goalie' && offPlan(L[k]) ? '⚠ ' : ''}${numTag(L[k])}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
+        L[k] ? `<button class="chip ${POS[k].cls}" data-player="${esc(L[k])}">${numTag(L[k])}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
              : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
 
   $('subs').innerHTML = qSubs.length
@@ -1902,7 +1959,7 @@ document.addEventListener('click', e => {
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok',
     'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-shot',
     'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
-    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'show-log', 'goal-edit'];
+    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'schedule', 'show-log', 'goal-edit'];
   const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal', 'ago', 'goalq'];
   if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
   // A closed-out game (and Follow mode) is read-only: tabs, goal details, stats, share and the menu still work.
@@ -2021,6 +2078,8 @@ document.addEventListener('click', e => {
     case 'show-log': overlay.hidden = true; return $('log').scrollIntoView({ behavior: 'smooth', block: 'center' });
     case 'menu': return openMenu();
     case 'stats': return openStats();
+    case 'schedule': return openSchedule();
+    case 'players': return isViewer() ? null : openPlayers();
     case 'stub': return openStub(d.stub);
     case 'set-mode': {
       local.viewMode = d.mode === 'follow' ? 'follow' : 'sideline'; writeLocal(); overlay.hidden = true; pending = null;
