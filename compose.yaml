@@ -1,0 +1,14 @@
+services:
+  feedback-inbox:
+    build: .
+    container_name: sidelines-feedback-inbox
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - feedback_data:/data
+      - ../../relics/assets/lineup:/art:ro
+
+volumes:
+  feedback_data:
+
