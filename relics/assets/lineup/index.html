@@ -45,16 +45,21 @@
     }
     .purpose p { margin: 0; color: #e8e3f0; line-height: 1.65; }
     .purpose strong { color: white; }
-    .gallery-section { margin-top: 3.25rem; scroll-margin-top: 2rem; }
-    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 0 0 1.15rem; padding-bottom: .9rem; border-bottom: 1px solid #34303e; }
+    .gallery-section {
+      margin-top: 2.25rem; padding: 1.35rem;
+      scroll-margin-top: 2rem; border: 1px solid #383343; border-top: 3px solid #b48cff;
+      border-radius: 20px; background: linear-gradient(145deg, #1c1927, #17151f 72%);
+      box-shadow: 0 16px 42px rgba(0,0,0,.18);
+    }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 0 0 1.15rem; padding: 0 .15rem .95rem; border-bottom: 1px solid #484252; }
     .section-heading h2 { margin: 0; font-size: clamp(1.45rem, 3vw, 1.9rem); letter-spacing: -.025em; }
     .section-heading p { margin: .35rem 0 0; color: var(--muted); font-size: .96rem; }
     .section-count { flex: 0 0 auto; padding: .4rem .7rem; border: 1px solid #51475f; border-radius: 999px; color: #e4d7ff; background: #211c2a; font-size: .78rem; font-weight: 700; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
     .card {
       display: flex; flex-direction: column; align-items: stretch; overflow: hidden; width: 100%;
-      padding: 0; border: 1px solid var(--line); border-radius: 17px; color: inherit;
-      text-align: left; background: var(--panel); cursor: pointer;
+      padding: 0; border: 1px solid #514b5e; border-radius: 17px; color: inherit;
+      text-align: left; text-decoration: none; background: #211e2b; cursor: pointer;
       transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
     .card:hover, .card:focus-visible {
@@ -66,8 +71,8 @@
       position: relative; display: grid; place-items: center; min-height: 225px; padding: 2rem;
       overflow: hidden; isolation: isolate;
       background:
-        radial-gradient(ellipse at center, rgba(180,140,255,.075), transparent 68%),
-        var(--stage);
+        radial-gradient(ellipse at center, rgba(180,140,255,.13), transparent 68%),
+        #292631;
     }
     .art::after {
       position: absolute; inset: 12px; z-index: -1; border: 1px solid rgba(255,255,255,.06);
@@ -101,7 +106,7 @@
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     @media (min-width: 600px) { main { width: min(100% - 3rem, 1120px); } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem; } }
     @media (min-width: 900px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; } }
-    @media (max-width: 520px) { main { padding-top: 2.8rem; } .section-heading { align-items: start; } .section-count { margin-top: .2rem; } .art { min-height: 205px; } }
+    @media (max-width: 520px) { main { padding-top: 2.8rem; } .gallery-section { padding: .9rem; border-radius: 16px; } .section-heading { align-items: start; } .section-count { margin-top: .2rem; } .art { min-height: 205px; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
@@ -122,26 +127,26 @@
         <span class="section-count">4 icons</span>
       </div>
       <div class="grid">
-        <button class="card" type="button" data-asset="Assist" aria-label="Give feedback on Assist">
+        <a class="card" data-asset="Assist" aria-label="Suggest art for Assist">
           <span class="art"><img src="./icon-assist.svg" alt="" loading="lazy"></span>
           <span class="caption">Assist</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Goal" aria-label="Give feedback on Goal">
+        </a>
+        <a class="card" data-asset="Goal" aria-label="Suggest art for Goal">
           <span class="art"><img src="./icon-goal.svg" alt="" loading="lazy"></span>
           <span class="caption">Goal</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Sub" aria-label="Give feedback on Sub">
+        </a>
+        <a class="card" data-asset="Sub" aria-label="Suggest art for Sub">
           <span class="art"><img src="./icon-sub.svg" alt="" loading="lazy"></span>
           <span class="caption">Sub</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Whistle" aria-label="Give feedback on Whistle">
+        </a>
+        <a class="card" data-asset="Whistle" aria-label="Suggest art for Whistle">
           <span class="art"><img src="./icon-whistle.svg" alt="" loading="lazy"></span>
           <span class="caption">Whistle</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
+        </a>
       </div>
     </section>
     <section class="gallery-section" aria-labelledby="section-reactions">
@@ -150,21 +155,21 @@
         <span class="section-count">3 icons</span>
       </div>
       <div class="grid">
-        <button class="card" type="button" data-asset="Ball" aria-label="Give feedback on Ball">
+        <a class="card" data-asset="Ball" aria-label="Suggest art for Ball">
           <span class="art"><img src="./react-ball.svg" alt="" loading="lazy"></span>
           <span class="caption">Ball</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Clap" aria-label="Give feedback on Clap">
+        </a>
+        <a class="card" data-asset="Clap" aria-label="Suggest art for Clap">
           <span class="art"><img src="./react-clap.svg" alt="" loading="lazy"></span>
           <span class="caption">Clap</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Fire" aria-label="Give feedback on Fire">
+        </a>
+        <a class="card" data-asset="Fire" aria-label="Suggest art for Fire">
           <span class="art"><img src="./react-fire.svg" alt="" loading="lazy"></span>
           <span class="caption">Fire</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
+        </a>
       </div>
     </section>
     <section class="gallery-section" aria-labelledby="section-how-it-started">
@@ -173,51 +178,51 @@
         <span class="section-count">9 icons</span>
       </div>
       <div class="grid">
-        <button class="card" type="button" data-asset="Open Play" aria-label="Give feedback on Open Play">
+        <a class="card" data-asset="Open Play" aria-label="Suggest art for Open Play">
           <span class="art"><img src="./shot-open-play.svg" alt="" loading="lazy"></span>
           <span class="caption">Open Play</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Counter Attack" aria-label="Give feedback on Counter Attack">
+        </a>
+        <a class="card" data-asset="Counter Attack" aria-label="Suggest art for Counter Attack">
           <span class="art"><img src="./shot-counter-attack.svg" alt="" loading="lazy"></span>
           <span class="caption">Counter Attack</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Penalty" aria-label="Give feedback on Penalty">
+        </a>
+        <a class="card" data-asset="Penalty" aria-label="Suggest art for Penalty">
           <span class="art"><img src="./shot-penalty.svg" alt="" loading="lazy"></span>
           <span class="caption">Penalty</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Free Kick" aria-label="Give feedback on Free Kick">
+        </a>
+        <a class="card" data-asset="Free Kick" aria-label="Suggest art for Free Kick">
           <span class="art"><img src="./shot-free-kick.svg" alt="" loading="lazy"></span>
           <span class="caption">Free Kick</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="From Corner" aria-label="Give feedback on From Corner">
+        </a>
+        <a class="card" data-asset="From Corner" aria-label="Suggest art for From Corner">
           <span class="art"><img src="./shot-from-corner.svg" alt="" loading="lazy"></span>
           <span class="caption">From Corner</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="From Throw In" aria-label="Give feedback on From Throw In">
+        </a>
+        <a class="card" data-asset="From Throw In" aria-label="Suggest art for From Throw In">
           <span class="art"><img src="./shot-from-throw-in.svg" alt="" loading="lazy"></span>
           <span class="caption">From Throw In</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="From Goal Kick" aria-label="Give feedback on From Goal Kick">
+        </a>
+        <a class="card" data-asset="From Goal Kick" aria-label="Suggest art for From Goal Kick">
           <span class="art"><img src="./shot-from-goal-kick.svg" alt="" loading="lazy"></span>
           <span class="caption">From Goal Kick</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Rebound" aria-label="Give feedback on Rebound">
+        </a>
+        <a class="card" data-asset="Rebound" aria-label="Suggest art for Rebound">
           <span class="art"><img src="./shot-rebound.svg" alt="" loading="lazy"></span>
           <span class="caption">Rebound</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Scramble" aria-label="Give feedback on Scramble">
+        </a>
+        <a class="card" data-asset="Scramble" aria-label="Suggest art for Scramble">
           <span class="art"><img src="./shot-scramble.svg" alt="" loading="lazy"></span>
           <span class="caption">Scramble</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
+        </a>
       </div>
     </section>
     <section class="gallery-section" aria-labelledby="section-the-shot">
@@ -226,56 +231,56 @@
         <span class="section-count">10 icons</span>
       </div>
       <div class="grid">
-        <button class="card" type="button" data-asset="Right Foot" aria-label="Give feedback on Right Foot">
+        <a class="card" data-asset="Right Foot" aria-label="Suggest art for Right Foot">
           <span class="art"><img src="./shot-right-foot.svg" alt="" loading="lazy"></span>
           <span class="caption">Right Foot</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Left Foot" aria-label="Give feedback on Left Foot">
+        </a>
+        <a class="card" data-asset="Left Foot" aria-label="Suggest art for Left Foot">
           <span class="art"><img src="./shot-left-foot.svg" alt="" loading="lazy"></span>
           <span class="caption">Left Foot</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Header" aria-label="Give feedback on Header">
+        </a>
+        <a class="card" data-asset="Header" aria-label="Suggest art for Header">
           <span class="art"><img src="./shot-header.svg" alt="" loading="lazy"></span>
           <span class="caption">Header</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Volley" aria-label="Give feedback on Volley">
+        </a>
+        <a class="card" data-asset="Volley" aria-label="Suggest art for Volley">
           <span class="art"><img src="./shot-volley.svg" alt="" loading="lazy"></span>
           <span class="caption">Volley</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Half Volley" aria-label="Give feedback on Half Volley">
+        </a>
+        <a class="card" data-asset="Half Volley" aria-label="Suggest art for Half Volley">
           <span class="art"><img src="./shot-half-volley.svg" alt="" loading="lazy"></span>
           <span class="caption">Half Volley</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Chip" aria-label="Give feedback on Chip">
+        </a>
+        <a class="card" data-asset="Chip" aria-label="Suggest art for Chip">
           <span class="art"><img src="./shot-chip.svg" alt="" loading="lazy"></span>
           <span class="caption">Chip</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="One On One" aria-label="Give feedback on One On One">
+        </a>
+        <a class="card" data-asset="One On One" aria-label="Suggest art for One On One">
           <span class="art"><img src="./shot-one-on-one.svg" alt="" loading="lazy"></span>
           <span class="caption">One On One</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Long Shot" aria-label="Give feedback on Long Shot">
+        </a>
+        <a class="card" data-asset="Long Shot" aria-label="Suggest art for Long Shot">
           <span class="art"><img src="./shot-long-shot.svg" alt="" loading="lazy"></span>
           <span class="caption">Long Shot</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Dribbled The Keeper" aria-label="Give feedback on Dribbled The Keeper">
+        </a>
+        <a class="card" data-asset="Dribbled The Keeper" aria-label="Suggest art for Dribbled The Keeper">
           <span class="art"><img src="./shot-dribbled-the-keeper.svg" alt="" loading="lazy"></span>
           <span class="caption">Dribbled The Keeper</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Deflected" aria-label="Give feedback on Deflected">
+        </a>
+        <a class="card" data-asset="Deflected" aria-label="Suggest art for Deflected">
           <span class="art"><img src="./shot-deflected.svg" alt="" loading="lazy"></span>
           <span class="caption">Deflected</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
+        </a>
       </div>
     </section>
     <section class="gallery-section" aria-labelledby="section-where-it-went">
@@ -284,90 +289,58 @@
         <span class="section-count">8 icons</span>
       </div>
       <div class="grid">
-        <button class="card" type="button" data-asset="Top Bin" aria-label="Give feedback on Top Bin">
+        <a class="card" data-asset="Top Bin" aria-label="Suggest art for Top Bin">
           <span class="art"><img src="./shot-top-bin.svg" alt="" loading="lazy"></span>
           <span class="caption">Top Bin</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="High" aria-label="Give feedback on High">
+        </a>
+        <a class="card" data-asset="High" aria-label="Suggest art for High">
           <span class="art"><img src="./shot-high.svg" alt="" loading="lazy"></span>
           <span class="caption">High</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Mid" aria-label="Give feedback on Mid">
+        </a>
+        <a class="card" data-asset="Mid" aria-label="Suggest art for Mid">
           <span class="art"><img src="./shot-mid.svg" alt="" loading="lazy"></span>
           <span class="caption">Mid</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Low" aria-label="Give feedback on Low">
+        </a>
+        <a class="card" data-asset="Low" aria-label="Suggest art for Low">
           <span class="art"><img src="./shot-low.svg" alt="" loading="lazy"></span>
           <span class="caption">Low</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Near Post" aria-label="Give feedback on Near Post">
+        </a>
+        <a class="card" data-asset="Near Post" aria-label="Suggest art for Near Post">
           <span class="art"><img src="./shot-near-post.svg" alt="" loading="lazy"></span>
           <span class="caption">Near Post</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Far Post" aria-label="Give feedback on Far Post">
+        </a>
+        <a class="card" data-asset="Far Post" aria-label="Suggest art for Far Post">
           <span class="art"><img src="./shot-far-post.svg" alt="" loading="lazy"></span>
           <span class="caption">Far Post</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Through The Legs" aria-label="Give feedback on Through The Legs">
+        </a>
+        <a class="card" data-asset="Through The Legs" aria-label="Suggest art for Through The Legs">
           <span class="art"><img src="./shot-through-the-legs.svg" alt="" loading="lazy"></span>
           <span class="caption">Through The Legs</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
-        <button class="card" type="button" data-asset="Off The Post Bar" aria-label="Give feedback on Off The Post Bar">
+        </a>
+        <a class="card" data-asset="Off The Post Bar" aria-label="Suggest art for Off The Post Bar">
           <span class="art"><img src="./shot-off-the-post-bar.svg" alt="" loading="lazy"></span>
           <span class="caption">Off The Post Bar</span>
           <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
-        </button>
+        </a>
       </div>
     </section>
 
     <footer>Every suggestion is anonymous. No account or email is needed to share an idea for an icon.</footer>
   </main>
 
-  <dialog id="feedback-dialog" aria-labelledby="dialog-title">
-    <div class="dialog-head">
-      <div><p>Shape this player-card badge</p><h2 id="dialog-title">Send an art suggestion</h2></div>
-      <button class="close" type="button" aria-label="Close feedback form">×</button>
-    </div>
-    <div class="form-wrap">
-      <iframe title="Anonymous player-card art feedback form" loading="lazy" referrerpolicy="no-referrer"></iframe>
-      <p class="form-fallback">If the form doesn’t load, <a target="_blank" rel="noopener noreferrer">open it in a new tab</a>.</p>
-    </div>
-  </dialog>
-
   <script>
     const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSdDHZ50x-0tn5TCuTzr2umopRgkvkCgrhcxm0VOizCaNC_B0A/viewform?usp=pp_url&entry.1075361511=";
-    const dialog = document.querySelector("#feedback-dialog");
-    const dialogTitle = document.querySelector("#dialog-title");
-    const frame = dialog.querySelector("iframe");
-    const fallback = dialog.querySelector(".form-fallback a");
-    let lastTrigger;
-
-    document.querySelectorAll(".card").forEach((card) => {
-      card.addEventListener("click", () => {
-        const asset = card.dataset.asset;
-        const url = formBase + encodeURIComponent(asset);
-        lastTrigger = card;
-        dialogTitle.textContent = asset + " · art suggestion";
-        frame.src = url + "&embedded=true";
-        fallback.href = url;
-        dialog.showModal();
-      });
-    });
-
-    dialog.querySelector(".close").addEventListener("click", () => dialog.close());
-    dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) dialog.close();
-    });
-    dialog.addEventListener("close", () => {
-      frame.src = "about:blank";
-      if (lastTrigger) lastTrigger.focus();
+    document.querySelectorAll(".card[data-asset]").forEach((card) => {
+      card.href = formBase + encodeURIComponent(card.dataset.asset);
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
     });
   </script>
 </body>
