@@ -3,64 +3,372 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Soccer Pixel Art Gallery</title>
-  <meta name="description" content="A gallery of soccer pixel art assets.">
+  <meta name="description" content="Help shape the pixel-art achievements players will earn for their profiles and year-end player cards.">
+  <meta name="theme-color" content="#111019">
+  <title>Sidelines Pixel Art Starting point</title>
   <style>
-    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #111827; color: #f9fafb; }
+    :root {
+      color-scheme: dark;
+      --bg: #111019;
+      --panel: #1a1824;
+      --stage: #292631;
+      --line: #403b4c;
+      --text: #faf9fc;
+      --muted: #c1bbcc;
+      --accent: #c7a5ff;
+      --accent-strong: #b48cff;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; }
-    main { width: min(100% - 2rem, 1100px); margin: 0 auto; padding: 3rem 0 5rem; }
-    h1 { margin: 0 0 .5rem; font-size: clamp(2rem, 5vw, 3.5rem); }
-    .intro { color: #cbd5e1; margin: 0 0 2rem; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
-    .card { margin: 0; overflow: hidden; border: 1px solid #334155; border-radius: 16px; background: #1e293b; }
-    .art { display: grid; place-items: center; min-height: 220px; padding: 2rem; background: #f8fafc; }
-    img { display: block; width: min(100%, 220px); height: 160px; object-fit: contain; image-rendering: pixelated; }
-    figcaption { padding: 1rem 1.25rem; font-size: 1.1rem; font-weight: 650; }
-    @media (min-width: 600px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (min-width: 900px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -12%, rgba(126, 76, 188, .22), transparent 48rem),
+        var(--bg);
+    }
+    button { font: inherit; }
+    main { width: min(100% - 2rem, 1120px); margin: 0 auto; padding: 4.25rem 0 5rem; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: .55rem; margin: 0 0 1rem;
+      color: var(--accent); font-size: .77rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 1.5rem; height: 2px; background: var(--accent-strong); }
+    h1 { max-width: 900px; margin: 0; font-size: clamp(2.35rem, 6vw, 4.45rem); line-height: 1.03; letter-spacing: -.045em; }
+    .lede { max-width: 850px; margin: 1rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.7vw, 1.16rem); line-height: 1.75; }
+    .purpose {
+      margin: 2rem 0 3.6rem; padding: 1.2rem 1.4rem 1.35rem;
+      border: 1px solid var(--line); border-left: 4px solid var(--accent-strong);
+      border-radius: 0 14px 14px 0; background: linear-gradient(110deg, rgba(180,140,255,.1), rgba(255,255,255,.018));
+    }
+    .purpose p { margin: 0; color: #e8e3f0; line-height: 1.65; }
+    .purpose strong { color: white; }
+    .gallery-section { margin-top: 3.25rem; scroll-margin-top: 2rem; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 0 0 1.15rem; padding-bottom: .9rem; border-bottom: 1px solid #34303e; }
+    .section-heading h2 { margin: 0; font-size: clamp(1.45rem, 3vw, 1.9rem); letter-spacing: -.025em; }
+    .section-heading p { margin: .35rem 0 0; color: var(--muted); font-size: .96rem; }
+    .section-count { flex: 0 0 auto; padding: .4rem .7rem; border: 1px solid #51475f; border-radius: 999px; color: #e4d7ff; background: #211c2a; font-size: .78rem; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .card {
+      display: flex; flex-direction: column; align-items: stretch; overflow: hidden; width: 100%;
+      padding: 0; border: 1px solid var(--line); border-radius: 17px; color: inherit;
+      text-align: left; background: var(--panel); cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .card:hover, .card:focus-visible {
+      transform: translateY(-3px); border-color: #9675c5;
+      box-shadow: 0 14px 34px rgba(0,0,0,.27), 0 0 0 2px rgba(180,140,255,.16);
+    }
+    .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .art {
+      position: relative; display: grid; place-items: center; min-height: 225px; padding: 2rem;
+      overflow: hidden; isolation: isolate;
+      background:
+        radial-gradient(ellipse at center, rgba(180,140,255,.075), transparent 68%),
+        var(--stage);
+    }
+    .art::after {
+      position: absolute; inset: 12px; z-index: -1; border: 1px solid rgba(255,255,255,.06);
+      border-radius: 11px; content: "";
+    }
+    .art img {
+      display: block; width: min(100%, 190px); height: 165px; object-fit: contain;
+      image-rendering: pixelated; filter: drop-shadow(0 8px 18px rgba(0,0,0,.24));
+    }
+    .caption { padding: 1rem 1.1rem .1rem; font-size: 1.1rem; font-weight: 750; }
+    .card-action { display: flex; justify-content: space-between; align-items: center; padding: .35rem 1.1rem 1rem; color: #bfb6cb; font-size: .82rem; }
+    .card-action span { color: var(--accent); font-size: 1rem; }
+    footer { margin-top: 4rem; padding-top: 1.3rem; border-top: 1px solid #34303e; color: #a9a2b4; font-size: .9rem; line-height: 1.6; }
+    dialog {
+      width: min(680px, calc(100% - 1.25rem)); max-width: 680px; max-height: min(92vh, 900px);
+      padding: 0; overflow: hidden; border: 1px solid #554965; border-radius: 18px;
+      color: var(--text); background: #17151f; box-shadow: 0 28px 90px rgba(0,0,0,.62);
+    }
+    dialog::backdrop { background: rgba(5,4,9,.82); backdrop-filter: blur(5px); }
+    .dialog-head { display: flex; align-items: start; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; border-bottom: 1px solid #383342; }
+    .dialog-head p { margin: 0 0 .2rem; color: var(--accent); font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .dialog-head h2 { margin: 0; font-size: 1.35rem; }
+    .close {
+      display: grid; place-items: center; flex: 0 0 auto; width: 2.4rem; height: 2.4rem;
+      border: 1px solid #50465e; border-radius: 50%; color: white; background: #25212e; cursor: pointer;
+    }
+    .form-wrap { padding: .75rem; }
+    .form-wrap iframe { display: block; width: 100%; height: min(68vh, 700px); min-height: 510px; border: 0; border-radius: 10px; background: white; }
+    .form-fallback { margin: .25rem .5rem .75rem; text-align: center; color: var(--muted); font-size: .9rem; }
+    .form-fallback a { color: #ddc8ff; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (min-width: 600px) { main { width: min(100% - 3rem, 1120px); } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem; } }
+    @media (min-width: 900px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; } }
+    @media (max-width: 520px) { main { padding-top: 2.8rem; } .section-heading { align-items: start; } .section-count { margin-top: .2rem; } .art { min-height: 205px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
   <main>
-    <h1>Soccer Pixel Art Gallery</h1>
-    <p class="intro">34 soccer assets from the lineup library.</p>
-    <div class="grid">
-      <figure class="card"><div class="art"><img src="./icon-assist.svg" alt="Assist" loading="lazy"></div><figcaption>Assist</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./icon-goal.svg" alt="Goal" loading="lazy"></div><figcaption>Goal</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./icon-sub.svg" alt="Sub" loading="lazy"></div><figcaption>Sub</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./icon-whistle.svg" alt="Whistle" loading="lazy"></div><figcaption>Whistle</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./react-ball.svg" alt="Ball" loading="lazy"></div><figcaption>Ball</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./react-clap.svg" alt="Clap" loading="lazy"></div><figcaption>Clap</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./react-fire.svg" alt="Fire" loading="lazy"></div><figcaption>Fire</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-chip.svg" alt="Chip" loading="lazy"></div><figcaption>Chip</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-counter-attack.svg" alt="Counter Attack" loading="lazy"></div><figcaption>Counter Attack</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-deflected.svg" alt="Deflected" loading="lazy"></div><figcaption>Deflected</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-dribbled-the-keeper.svg" alt="Dribbled The Keeper" loading="lazy"></div><figcaption>Dribbled The Keeper</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-far-post.svg" alt="Far Post" loading="lazy"></div><figcaption>Far Post</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-free-kick.svg" alt="Free Kick" loading="lazy"></div><figcaption>Free Kick</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-from-corner.svg" alt="From Corner" loading="lazy"></div><figcaption>From Corner</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-from-goal-kick.svg" alt="From Goal Kick" loading="lazy"></div><figcaption>From Goal Kick</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-from-throw-in.svg" alt="From Throw In" loading="lazy"></div><figcaption>From Throw In</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-half-volley.svg" alt="Half Volley" loading="lazy"></div><figcaption>Half Volley</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-header.svg" alt="Header" loading="lazy"></div><figcaption>Header</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-high.svg" alt="High" loading="lazy"></div><figcaption>High</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-left-foot.svg" alt="Left Foot" loading="lazy"></div><figcaption>Left Foot</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-long-shot.svg" alt="Long Shot" loading="lazy"></div><figcaption>Long Shot</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-low.svg" alt="Low" loading="lazy"></div><figcaption>Low</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-mid.svg" alt="Mid" loading="lazy"></div><figcaption>Mid</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-near-post.svg" alt="Near Post" loading="lazy"></div><figcaption>Near Post</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-off-the-post-bar.svg" alt="Off The Post Bar" loading="lazy"></div><figcaption>Off The Post Bar</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-one-on-one.svg" alt="One On One" loading="lazy"></div><figcaption>One On One</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-open-play.svg" alt="Open Play" loading="lazy"></div><figcaption>Open Play</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-penalty.svg" alt="Penalty" loading="lazy"></div><figcaption>Penalty</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-rebound.svg" alt="Rebound" loading="lazy"></div><figcaption>Rebound</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-right-foot.svg" alt="Right Foot" loading="lazy"></div><figcaption>Right Foot</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-scramble.svg" alt="Scramble" loading="lazy"></div><figcaption>Scramble</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-through-the-legs.svg" alt="Through The Legs" loading="lazy"></div><figcaption>Through The Legs</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-top-bin.svg" alt="Top Bin" loading="lazy"></div><figcaption>Top Bin</figcaption></figure>
-      <figure class="card"><div class="art"><img src="./shot-volley.svg" alt="Volley" loading="lazy"></div><figcaption>Volley</figcaption></figure>
-    </div>
+    <header>
+      <p class="eyebrow">Sidelines · design playground</p>
+      <h1>Sidelines Pixel Art Starting point</h1>
+      <p class="lede">Players can earn these icons for their profiles, like badges in a trading-card collection. We’ll add more over time, and at the end of the year each player’s earned icons will appear on their player card.</p>
+      <div class="purpose">
+        <p><strong>These images matter.</strong> They will celebrate the moments, effort, and memories the kids are proud of. Click any image to help shape the artwork that represents them on their cards.</p>
+      </div>
+    </header>
+
+    <section class="gallery-section" aria-labelledby="section-match-icons">
+      <div class="section-heading">
+        <div><h2 id="section-match-icons">Match icons</h2><p>Moments and milestones from the season.</p></div>
+        <span class="section-count">4 icons</span>
+      </div>
+      <div class="grid">
+        <button class="card" type="button" data-asset="Assist" aria-label="Give feedback on Assist">
+          <span class="art"><img src="./icon-assist.svg" alt="" loading="lazy"></span>
+          <span class="caption">Assist</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Goal" aria-label="Give feedback on Goal">
+          <span class="art"><img src="./icon-goal.svg" alt="" loading="lazy"></span>
+          <span class="caption">Goal</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Sub" aria-label="Give feedback on Sub">
+          <span class="art"><img src="./icon-sub.svg" alt="" loading="lazy"></span>
+          <span class="caption">Sub</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Whistle" aria-label="Give feedback on Whistle">
+          <span class="art"><img src="./icon-whistle.svg" alt="" loading="lazy"></span>
+          <span class="caption">Whistle</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+      </div>
+    </section>
+    <section class="gallery-section" aria-labelledby="section-reactions">
+      <div class="section-heading">
+        <div><h2 id="section-reactions">Reactions</h2><p>The energy players and teammates bring to the game.</p></div>
+        <span class="section-count">3 icons</span>
+      </div>
+      <div class="grid">
+        <button class="card" type="button" data-asset="Ball" aria-label="Give feedback on Ball">
+          <span class="art"><img src="./react-ball.svg" alt="" loading="lazy"></span>
+          <span class="caption">Ball</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Clap" aria-label="Give feedback on Clap">
+          <span class="art"><img src="./react-clap.svg" alt="" loading="lazy"></span>
+          <span class="caption">Clap</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Fire" aria-label="Give feedback on Fire">
+          <span class="art"><img src="./react-fire.svg" alt="" loading="lazy"></span>
+          <span class="caption">Fire</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+      </div>
+    </section>
+    <section class="gallery-section" aria-labelledby="section-how-it-started">
+      <div class="section-heading">
+        <div><h2 id="section-how-it-started">How it started</h2><p>The play or situation that led to the shot.</p></div>
+        <span class="section-count">9 icons</span>
+      </div>
+      <div class="grid">
+        <button class="card" type="button" data-asset="Open Play" aria-label="Give feedback on Open Play">
+          <span class="art"><img src="./shot-open-play.svg" alt="" loading="lazy"></span>
+          <span class="caption">Open Play</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Counter Attack" aria-label="Give feedback on Counter Attack">
+          <span class="art"><img src="./shot-counter-attack.svg" alt="" loading="lazy"></span>
+          <span class="caption">Counter Attack</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Penalty" aria-label="Give feedback on Penalty">
+          <span class="art"><img src="./shot-penalty.svg" alt="" loading="lazy"></span>
+          <span class="caption">Penalty</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Free Kick" aria-label="Give feedback on Free Kick">
+          <span class="art"><img src="./shot-free-kick.svg" alt="" loading="lazy"></span>
+          <span class="caption">Free Kick</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="From Corner" aria-label="Give feedback on From Corner">
+          <span class="art"><img src="./shot-from-corner.svg" alt="" loading="lazy"></span>
+          <span class="caption">From Corner</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="From Throw In" aria-label="Give feedback on From Throw In">
+          <span class="art"><img src="./shot-from-throw-in.svg" alt="" loading="lazy"></span>
+          <span class="caption">From Throw In</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="From Goal Kick" aria-label="Give feedback on From Goal Kick">
+          <span class="art"><img src="./shot-from-goal-kick.svg" alt="" loading="lazy"></span>
+          <span class="caption">From Goal Kick</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Rebound" aria-label="Give feedback on Rebound">
+          <span class="art"><img src="./shot-rebound.svg" alt="" loading="lazy"></span>
+          <span class="caption">Rebound</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Scramble" aria-label="Give feedback on Scramble">
+          <span class="art"><img src="./shot-scramble.svg" alt="" loading="lazy"></span>
+          <span class="caption">Scramble</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+      </div>
+    </section>
+    <section class="gallery-section" aria-labelledby="section-the-shot">
+      <div class="section-heading">
+        <div><h2 id="section-the-shot">The shot</h2><p>The skill or moment of the strike.</p></div>
+        <span class="section-count">10 icons</span>
+      </div>
+      <div class="grid">
+        <button class="card" type="button" data-asset="Right Foot" aria-label="Give feedback on Right Foot">
+          <span class="art"><img src="./shot-right-foot.svg" alt="" loading="lazy"></span>
+          <span class="caption">Right Foot</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Left Foot" aria-label="Give feedback on Left Foot">
+          <span class="art"><img src="./shot-left-foot.svg" alt="" loading="lazy"></span>
+          <span class="caption">Left Foot</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Header" aria-label="Give feedback on Header">
+          <span class="art"><img src="./shot-header.svg" alt="" loading="lazy"></span>
+          <span class="caption">Header</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Volley" aria-label="Give feedback on Volley">
+          <span class="art"><img src="./shot-volley.svg" alt="" loading="lazy"></span>
+          <span class="caption">Volley</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Half Volley" aria-label="Give feedback on Half Volley">
+          <span class="art"><img src="./shot-half-volley.svg" alt="" loading="lazy"></span>
+          <span class="caption">Half Volley</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Chip" aria-label="Give feedback on Chip">
+          <span class="art"><img src="./shot-chip.svg" alt="" loading="lazy"></span>
+          <span class="caption">Chip</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="One On One" aria-label="Give feedback on One On One">
+          <span class="art"><img src="./shot-one-on-one.svg" alt="" loading="lazy"></span>
+          <span class="caption">One On One</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Long Shot" aria-label="Give feedback on Long Shot">
+          <span class="art"><img src="./shot-long-shot.svg" alt="" loading="lazy"></span>
+          <span class="caption">Long Shot</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Dribbled The Keeper" aria-label="Give feedback on Dribbled The Keeper">
+          <span class="art"><img src="./shot-dribbled-the-keeper.svg" alt="" loading="lazy"></span>
+          <span class="caption">Dribbled The Keeper</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Deflected" aria-label="Give feedback on Deflected">
+          <span class="art"><img src="./shot-deflected.svg" alt="" loading="lazy"></span>
+          <span class="caption">Deflected</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+      </div>
+    </section>
+    <section class="gallery-section" aria-labelledby="section-where-it-went">
+      <div class="section-heading">
+        <div><h2 id="section-where-it-went">Where it went</h2><p>The finish and where the ball found its way.</p></div>
+        <span class="section-count">8 icons</span>
+      </div>
+      <div class="grid">
+        <button class="card" type="button" data-asset="Top Bin" aria-label="Give feedback on Top Bin">
+          <span class="art"><img src="./shot-top-bin.svg" alt="" loading="lazy"></span>
+          <span class="caption">Top Bin</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="High" aria-label="Give feedback on High">
+          <span class="art"><img src="./shot-high.svg" alt="" loading="lazy"></span>
+          <span class="caption">High</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Mid" aria-label="Give feedback on Mid">
+          <span class="art"><img src="./shot-mid.svg" alt="" loading="lazy"></span>
+          <span class="caption">Mid</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Low" aria-label="Give feedback on Low">
+          <span class="art"><img src="./shot-low.svg" alt="" loading="lazy"></span>
+          <span class="caption">Low</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Near Post" aria-label="Give feedback on Near Post">
+          <span class="art"><img src="./shot-near-post.svg" alt="" loading="lazy"></span>
+          <span class="caption">Near Post</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Far Post" aria-label="Give feedback on Far Post">
+          <span class="art"><img src="./shot-far-post.svg" alt="" loading="lazy"></span>
+          <span class="caption">Far Post</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Through The Legs" aria-label="Give feedback on Through The Legs">
+          <span class="art"><img src="./shot-through-the-legs.svg" alt="" loading="lazy"></span>
+          <span class="caption">Through The Legs</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+        <button class="card" type="button" data-asset="Off The Post Bar" aria-label="Give feedback on Off The Post Bar">
+          <span class="art"><img src="./shot-off-the-post-bar.svg" alt="" loading="lazy"></span>
+          <span class="caption">Off The Post Bar</span>
+          <span class="card-action" aria-hidden="true">Suggest an art idea <span>↗</span></span>
+        </button>
+      </div>
+    </section>
+
+    <footer>Every suggestion is anonymous. No account or email is needed to share an idea for an icon.</footer>
   </main>
+
+  <dialog id="feedback-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <div><p>Shape this player-card badge</p><h2 id="dialog-title">Send an art suggestion</h2></div>
+      <button class="close" type="button" aria-label="Close feedback form">×</button>
+    </div>
+    <div class="form-wrap">
+      <iframe title="Anonymous player-card art feedback form" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <p class="form-fallback">If the form doesn’t load, <a target="_blank" rel="noopener noreferrer">open it in a new tab</a>.</p>
+    </div>
+  </dialog>
+
+  <script>
+    const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSdDHZ50x-0tn5TCuTzr2umopRgkvkCgrhcxm0VOizCaNC_B0A/viewform?usp=pp_url&entry.1075361511=";
+    const dialog = document.querySelector("#feedback-dialog");
+    const dialogTitle = document.querySelector("#dialog-title");
+    const frame = dialog.querySelector("iframe");
+    const fallback = dialog.querySelector(".form-fallback a");
+    let lastTrigger;
+
+    document.querySelectorAll(".card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const asset = card.dataset.asset;
+        const url = formBase + encodeURIComponent(asset);
+        lastTrigger = card;
+        dialogTitle.textContent = asset + " · art suggestion";
+        frame.src = url + "&embedded=true";
+        fallback.href = url;
+        dialog.showModal();
+      });
+    });
+
+    dialog.querySelector(".close").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener("close", () => {
+      frame.src = "about:blank";
+      if (lastTrigger) lastTrigger.focus();
+    });
+  </script>
 </body>
 </html>
