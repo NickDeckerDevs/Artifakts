@@ -32,6 +32,7 @@
   --rf-bg: #2e0d1e;   --rf-fg: #f093be;
   --def-bg: #042e22;  --def-fg: #4dd6a8;
   --bench-bg: #252420; --bench-fg: #a09c96;
+  --btn-weak: rgba(255,255,255,0.4);
   --radius: 8px;
   --font: 'DM Sans', system-ui, -apple-system, sans-serif;
   --mono: 'DM Mono', ui-monospace, Menlo, monospace;
@@ -46,7 +47,7 @@ button:focus-visible, select:focus-visible, .tab:focus-visible, .opt:focus-visib
 .topbar { position: sticky; top: 0; z-index: 50; margin: -20px -16px 14px; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
   background: rgba(15,15,15,0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
 .topbar-inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
-.start-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 22px; border: none; background: var(--text); color: #111; font-size: 13px; font-weight: 600; cursor: pointer; }
+.start-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 4px; border: 1px solid #fff; background: #000; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
 .start-btn .icon { font-size: 12px; }
 .gtime { display: inline-flex; flex-direction: column; align-items: flex-start; background: none; border: none; padding: 0; cursor: pointer; color: var(--t-color, var(--text)); }
 .gtime .big { font-family: var(--mono); font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -58,7 +59,7 @@ button:focus-visible, select:focus-visible, .tab:focus-visible, .opt:focus-visib
 .score-chip .opp { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
 
-.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; text-align: center; }
 h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
 .game-picker { display: block; width: 100%; margin-bottom: 10px; padding: 10px 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: var(--radius); cursor: pointer; text-align: left; }
@@ -95,58 +96,59 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .sync-btn:disabled { opacity: 0.4; cursor: default; }
 .coach-input { width: 100%; padding: 12px; font: 16px var(--mono); background: var(--surface2); color: var(--text); border: 1px solid var(--border-strong); border-radius: 7px; margin-bottom: 12px; }
 
-.tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-.tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
+.tabs { display: flex; gap: 12px; margin-bottom: 12px; }
+.tab { flex: 1; padding: 10px 4px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 16px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
 .tab.active { background: var(--text); color: #111; border-color: var(--text); }
 .tab .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); margin-left: 4px; vertical-align: middle; }
 
 .warnings { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
 .warning { font-size: 12px; color: var(--warn); background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px; padding: 7px 10px; }
 
-.field { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+/* ── shared "formation board" — used by the live field, the scorer/assist picker, and the sub/move
+   picker so all three stay visually identical. One wrapper class (.field) and the same .board-row /
+   .board-slot grid everywhere; the picker sheets don't get a different "pitch" treatment any more. ── */
+.field { display: flex; flex-direction: column; gap: 15px; padding: 10px; margin-bottom: 10px; }
 .chip { display: block; border-radius: 5px; padding: 8px 4px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; width: 100%; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chip:active { transform: scale(0.95); }
 .empty { font-size: 12px; color: var(--text-faint); background: none; border: 1px dashed var(--border-strong); border-radius: 5px; padding: 8px; width: 100%; cursor: pointer; }
 
 .c-gk { background: var(--gk-bg); color: var(--gk-fg); }
 .c-mid { background: var(--mid-bg); color: var(--mid-fg); }
-.c-lf { background: var(--lf-bg); color: var(--lf-fg); }
+.c-lf, .c-rf { background: var(--lf-bg); color: var(--lf-fg); } /* left/right wing positions (incl. LM/RM) share one color */
 .c-st { background: var(--st-bg); color: var(--st-fg); }
-.c-rf { background: var(--lf-bg); color: var(--lf-fg); } /* left/right wing positions (incl. LM/RM) share one color */
 .c-def { background: var(--def-bg); color: var(--def-fg); }
 .c-bench { background: var(--bench-bg); color: var(--bench-fg); }
 
-/* ── shared "formation board" — used by the live field, the scorer/assist picker, and the sub/move
-   picker so all three stay visually identical. A slot's whole background is the position color when
-   filled; empty slots show only the big abbreviated label. ── */
-.board { display: flex; flex-direction: column; gap: 10px; }
-.board.pitch { padding: 12px 8px; border-radius: 10px; background: #12301a; border: 1px solid #1f4a2a; margin-bottom: 12px; }
-.board-row { display: flex; gap: 8px; justify-content: center; }
+.board-row { display: flex; gap: 15px; justify-content: center; }
 .board-row.spread { justify-content: space-between; }
+.board-row:nth-of-type(3) { justify-content: space-around; } /* the defenders' row */
 .board-slot { flex: 0 0 calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); min-width: 0; min-height: 96px;
   border: 2px solid transparent; border-radius: var(--radius); padding: 8px; position: relative;
   display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
   cursor: pointer; background: var(--surface); color: var(--text); }
-.board-slot.empty { background: var(--surface); border: 1px dashed var(--border-strong); justify-content: flex-start; padding-top: 14px; }
+.board-slot.empty { background: var(--surface); border: 1px dashed var(--border-strong); height: 100%; justify-content: center; align-items: center; }
 .board-slot.empty .board-abbr { color: var(--text-faint); }
 .board-slot:disabled, .board-slot[disabled] { cursor: default; opacity: 0.4; }
 .board-slot.sel { border-color: #fff; }
 .board-slot.cur { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5); }
-.board-abbr { position: absolute; top: 6px; left: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.03em; color: #fff; opacity: 0.95; }
-.board-slot.empty .board-abbr { position: static; font-size: 15px; }
-.board-num { position: absolute; top: 6px; right: 8px; font-family: var(--mono); font-size: 12px; font-weight: 700; color: #fff; opacity: 0.85; }
-.board-name { font-size: 17px; font-weight: 700; line-height: 1.2; margin-top: 10px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board-abbr, .board-num { font-size: 16px; font-weight: 500; }
+.board-abbr { position: absolute; top: 6px; left: 8px; letter-spacing: 0.03em; color: #fff; opacity: 0.95; }
+.board-slot.empty .board-abbr { position: static; font-size: 19px; }
+.board-num { position: absolute; top: 6px; right: 8px; font-family: var(--mono); color: #fff; opacity: 0.85; }
+.board-name { font-size: 19px; font-weight: 700; line-height: 1.2; margin-top: 10px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .board-sub, .board-status { display: block; font-size: 11px; font-weight: 600; opacity: 0.85; margin-top: 3px; }
 .board-status { font-size: 13px; }
 .board-note { position: absolute; top: -18px; left: 0; right: 0; text-align: center; font-size: 10px; color: var(--ok); letter-spacing: 0.03em; }
-.board-bench { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding-top: 6px; border-top: 1px solid #1f4a2a; }
-.board-chip { flex: 0 0 auto; padding: 8px 14px; border-radius: 7px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bench-bg); color: var(--bench-fg); }
-.board-chip small { display: block; font-size: 10px; font-weight: 500; opacity: 0.8; margin-top: 2px; }
+.board-bench { display: flex; flex-direction: column; align-items: center; gap: 15px; padding-top: 10px; margin-top: 4px; border-top: 1px solid var(--border); }
+.board-chip { width: 85%; min-height: 96px; border: none; border-radius: var(--radius); padding: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; background: var(--bench-bg); color: var(--bench-fg); }
+.board-chip .nm { font-size: 19px; font-weight: 700; }
+.board-chip small { display: block; font-size: 12px; font-weight: 600; opacity: 0.85; margin-top: 4px; }
 
 .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 14px; }
 .section-title { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
-.bench-chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
-.bench-chips .chip { width: auto; padding: 7px 14px; }
+.bench-chips { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; min-height: 28px; }
+.bench-chips .chip { width: auto; flex-basis: 45%; padding: 7px 14px; font-size: 18px; }
+.bench-chips .chip .num { font-size: 16px; }
 .bench-empty { font-size: 12px; color: var(--text-faint); }
 
 .pt-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
@@ -190,6 +192,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .link-btn { background: none; border: none; color: var(--text-faint); font-size: 12px; cursor: pointer; padding: 6px; }
 .goal-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
 .goal-choice .goal-btn { padding: 18px 10px; font-size: 15px; }
+.scoreboard button.goal-btn { min-width: 75%; max-width: 75%; }
 .gk-item.alt { border: 1px dashed var(--border-strong); color: var(--text-muted); }
 .gk-item.off { border: 1px solid #ff7a6b; background: #3a1414; color: #ffb3a8; }
 .gk-item.off .gk-meta { color: #ffb3a8; }
@@ -224,7 +227,10 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
 .overlay[hidden] { display: none; }
-.sheet { background: var(--sheet); border-radius: 14px 14px 0 0; padding: 16px 16px calc(28px + env(safe-area-inset-bottom, 0px)); width: 100%; max-width: 480px; border-top: 1px solid var(--border-strong); max-height: 84vh; overflow-y: auto; }
+.sheet { background: var(--sheet); border-radius: 14px 14px 0 0; padding: 16px 16px calc(28px + env(safe-area-inset-bottom, 0px)); width: 100%; max-width: 480px; border-top: 1px solid var(--border-strong);
+  min-height: 75vh; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; justify-content: flex-end; gap: 5px; }
+.sheet .handle { align-self: flex-start; }
+.sheet .field { flex-grow: 1; }
 .handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 14px; }
 .sheet-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
 .sheet-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
@@ -264,7 +270,8 @@ button { touch-action: manipulation; }
 .tab.live.active .live-dot { background: #111; }
 .qtimes { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; line-height: 1.5; }
 .sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
-.sheet-head .sheet-title { margin: 0; padding-top: 4px; }
+.sheet-head .sheet-title { margin: 0; padding-top: 4px; font-size: 20px; }
+.sheet-head .sheet-title .num { font-size: 16px; margin-right: 10px; }
 .x-btn { flex: 0 0 36px; height: 36px; border-radius: 18px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 16px; cursor: pointer; }
 .snack-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin: -4px 0 12px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
 .snack-line b { color: var(--text); font-weight: 600; }
@@ -273,8 +280,8 @@ button { touch-action: manipulation; }
 .game-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-muted); margin: -4px 0 10px; flex-wrap: wrap; }
 
 .cap-badges { padding: 9px 0; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; }
-.cap-side { display: inline-flex; align-items: center; gap: 6px; }
-.cap-side.right { flex-direction: row-reverse; }
+.cap-side { display: inline-flex; align-items: center; gap: 8px; }
+.cap-side.right { flex-direction: row; }
 .armband { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; font-size: 12px; font-weight: 800; border-style: solid; border-radius: 4px; border-width: 1px; border-color: #9b4dca; color: #9b4dca; background: #000; text-shadow: 0 0 2px #fff; }
 .armband-2 { border-color: #9b4dca; color: #9b4dca; }
 .sched-list { display: flex; flex-direction: column; gap: 6px; }
@@ -303,7 +310,7 @@ button { touch-action: manipulation; }
 .radio.on { border-color: var(--ok); }
 .radio.off { opacity: 0.45; cursor: default; }
 .radio small { display: block; font-size: 10px; font-weight: 500; color: var(--text-muted); }
-.sheet-hint { font-size: 11px; color: var(--text-faint); margin: -4px 0 12px; line-height: 1.5; }
+.sheet-hint { font-size: 11px; color: var(--text-faint); margin: -4px 0 12px; line-height: 1.5; text-align: center; }
 .subs-strip { margin: -2px 0 12px; display: flex; flex-direction: column; gap: 4px; }
 .sub-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); padding: 6px 10px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); }
 .sub-row .when { font-family: var(--mono); font-size: 11px; flex-shrink: 0; }
@@ -321,8 +328,10 @@ button { touch-action: manipulation; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .pill { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; }
 .pill.on { background: var(--ok); border-color: var(--ok); color: #111; font-weight: 600; }
-.shot-tags .section-title { font-size: 12px; margin-top: 14px; }
-.shot-tags .pill { font-size: 15px; padding: 10px 14px; }
+.shot-tags .section-title { color: #fff; font-size: 14px; letter-spacing: 3px; text-align: center; margin-bottom: 10px; margin-top: 14px; }
+.shot-tags .pills { gap: 8px; }
+.shot-tags button.pill { font-size: 16px; color: #fff; font-weight: 400; letter-spacing: 1.05px; background: #000; border: 1px solid rgba(255,255,255,0.48); border-radius: 8px; padding: 10px 14px; }
+.shot-tags button.pill.on { background: purple; }
 .log-what.tap { background: none; border: none; color: inherit; text-align: left; padding: 0; font: inherit; cursor: pointer; }
 .log-detail { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
@@ -610,7 +619,28 @@ const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador
   Abel: 'Dailey', EJ: 'Daley', Jayce: 'Decker', Ethan: 'Gonzalez', Casey: 'Minervini', Cameron: 'Richardson' };
 
 // Snack family per game, from the sheet's "Snack" columns (U family, V player / note).
-const SNACKS = {};
+// who = roster nickname bringing snack (display name comes from who + LAST[who]); parent = the sign-up
+// contact from the snack sheet (not always the player's own parent — some games are covered by family friends).
+const SNACKS = {
+  '2026-10-15': { who: '', parent: 'Coach Nick' },
+  '2026-10-17': { who: 'Jeremiah', parent: 'Jessica Castro' },
+  '2026-10-22': { who: 'Jayce', parent: 'Jessica Decker' },
+  '2026-10-24': { who: 'Cameron', parent: 'Dennis Richardson' },
+  '2026-10-29': { who: 'Colt', parent: 'Kelly Bainbridge' },
+  '2026-10-31': { who: 'Ethan', parent: 'Sheneque Brown' },
+  '2026-11-05': { who: 'Alejandro', parent: 'Jose Buenrostro' },
+  '2026-11-07': { who: 'Liam', parent: 'Vanessa Guzman' },
+  '2026-11-12': { who: 'Jaxon', parent: 'Barbara Kramer' },
+  '2026-11-14': { who: 'Abel', parent: 'Donald Dailey' },
+  '2026-11-19': { who: 'EJ', parent: 'Sabrina Daley' },
+  '2026-11-21': { who: 'Casey', parent: 'Claudia Diaz' },
+  '2026-12-03': { who: 'Khair', parent: 'Stephanie Goron' },
+  '2026-12-05': { who: 'Jayce', parent: 'Jessica Decker' },
+  '2026-12-10': { who: 'Cameron', parent: 'Dennis Richardson' },
+  '2026-12-12': { who: 'Colt', parent: 'Volunteer' },
+  '2026-12-13': { who: '', parent: 'If we make it, there will be a snack' },
+  '2026-12-13-2': { who: '', parent: 'If we make it — pizza party' },
+};
 const EDIT_SHEET = 'https://docs.google.com/spreadsheets/d/1zYW9bpLfCY_dcUrhPObfIXE5i811PnUooATsRMz2VFk/edit#gid=698790171';
 
 // ─────────────── state ───────────────
@@ -1140,8 +1170,8 @@ function pickField(o) {
       : boardSlot(k, { disabled: true });
   });
   const extra = (o.extra || []).filter(n => !(o.exclude || []).includes(n));
-  const bench = extra.length ? `<div class="board-bench">${extra.map(n => `<button class="board-chip" ${o.data}="${esc(n)}">${numTag(n)}${esc(n)}<small>came off</small></button>`).join('')}</div>` : '';
-  return `<div class="board pitch">${rows}${bench}</div>`;
+  const bench = extra.length ? `<div class="board-bench">${extra.map(n => `<button class="board-chip" ${o.data}="${esc(n)}"><span class="nm">${numTag(n)}${esc(n)}</span><small>came off</small></button>`).join('')}</div>` : '';
+  return `<div class="field">${rows}${bench}</div>`;
 }
 function openOurGoal() {
   const gq = goalQ(), L = nowLineup(gq), st = qStartEst(gq);
@@ -1613,8 +1643,8 @@ const STUBS = {
 function openSchedule() {
   const next = nextGameId();
   const rows = GAMES.map(x => {
-    const sn = SNACKS[x.id], snacks = sn ? (Array.isArray(sn) ? sn : [sn]) : [];
-    const snackTxt = snacks.length ? `${snackEmoji(x.id)} ${esc(snacks[0].who || snacks[0].family || '')}${snacks[1] ? ' · ' + esc(snacks[1].who || snacks[1].family || '') : ''}` : '<span style="color:var(--text-faint)">No snack set</span>';
+    const sn = SNACKS[x.id];
+    const snackTxt = sn ? `${snackEmoji(x.id)} ${esc(snackWhoName(sn.who) || sn.parent || '')}${sn.who && sn.parent ? ' · ' + esc(sn.parent) : ''}` : '<span style="color:var(--text-faint)">No snack set</span>';
     return `<button class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}" data-pickgame="${esc(x.id)}" style="display:block;width:100%;text-align:left">${gameRowHTML(x)}
       <div class="sched-snack">${snackTxt}</div></button>`;
   }).join('');
@@ -1828,6 +1858,8 @@ function renderGameMeta() {
   const x = GAMES.find(v => v.id === currentId), el = $('gameMeta');
   el.innerHTML = x ? `<span>${x.day} ${short(x.id)} · ${esc(x.time)}</span><span>${opponentSwatch(x.opp)}${esc(x.opp)}${opponentColor(x.opp) ? ' · ' + opponentColor(x.opp) : ''}</span><span>Field ${esc(x.field)}</span>` : '';
 }
+// Full name for display when we have a roster nickname; falls back to whatever text is on file.
+const snackWhoName = who => who ? `${who}${LAST[who] ? ' ' + LAST[who] : ''}` : '';
 function renderCapRow() {
   const caps = captains(), el = $('capRow');
   el.hidden = !caps.length;
@@ -1869,11 +1901,11 @@ function render() {
   renderGameMeta();
   renderCapRow();
   const sn = SNACKS[currentId];
-  const snacks = sn ? (Array.isArray(sn) ? sn : [sn]) : [];
-  $('snackLine').hidden = !snacks.length;
-  if (snacks.length) {
-    const label = e => esc(e.who || e.family || '');
-    $('snackLine').innerHTML = `<span>${snackEmoji(currentId)} <b>${label(snacks[0])}</b></span>${snacks[1] ? `<span><b>${label(snacks[1])}</b></span>` : ''}<span class="more">Schedule ›</span>`;
+  $('snackLine').hidden = !sn;
+  if (sn) {
+    const left = snackWhoName(sn.who) || sn.parent || '';
+    const right = sn.who && sn.parent ? sn.parent : '';
+    $('snackLine').innerHTML = `<span>${snackEmoji(currentId)} <b>${esc(left)}</b></span>${right ? `<span>${esc(right)}</span>` : ''}<span class="more">Schedule ›</span>`;
   }
   $('activeCount').textContent = `${present().length} here · 7 on field`;
 
@@ -1961,7 +1993,7 @@ function renderMoveSheet() {
     const status = from === k ? 'here now' : avoids(n, k) ? 'would rather not' : who ? `${from === 'bench' ? 'for' : 'swap'} ${who}` : 'open';
     return boardSlot(k, { status, selected: p.pos === k, current: from === k, attrs: `data-movepos="${k}"` });
   });
-  const benchBtn = from !== 'bench' ? `<div class="board-bench"><button class="board-chip ${p.pos === 'bench' ? 'sel' : ''}" data-movepos="bench">Bench<small>take off</small></button></div>` : '';
+  const benchBtn = from !== 'bench' ? `<div class="board-bench"><button class="board-chip ${p.pos === 'bench' ? 'sel' : ''}" data-movepos="bench"><span class="nm">Bench</span><small>take off</small></button></div>` : '';
   const live = canSubNow(q), t = Date.now();
   const startNote = !now && subsIn(q).length ? `<div class="sheet-hint">${PERIODS[q]} already has subs. This changes who <b>started</b> ${PERIODS[q]}; the field shows who's on now.</div>` : '';
   sheet.innerHTML = `<div class="handle"></div>${sheetHead(`${numTag(n)}${esc(n)}`, `${from === 'bench' ? 'On the bench' : POS[from].label} · played ${fmtQ(playedActual(n))} of ${PERIODS.length}`)}
@@ -1970,7 +2002,7 @@ function renderMoveSheet() {
       <label class="radio ${now ? 'on' : ''} ${live ? '' : 'off'}"><input type="radio" name="submode" value="now" ${now ? 'checked' : ''} ${live ? '' : 'disabled'}><span>Sub now<small>${live ? `${PERIODS[q]} · ${clockAt(q, t)}` : `start ${PERIODS[q]} first`}</small></span></label>
     </div>
     ${startNote}
-    <div class="board pitch">${rows}${benchBtn}</div>
+    <div class="field">${rows}${benchBtn}</div>
     <div class="sheet-hint">Tap a spot, then Confirm — or tap the same spot twice.</div>
     <button class="btn btn-primary full" data-action="move-confirm" ${p.pos ? '' : 'disabled'}>Confirm</button>`;
   overlay.hidden = false;
