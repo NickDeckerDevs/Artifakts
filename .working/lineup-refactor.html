@@ -278,7 +278,8 @@ button { touch-action: manipulation; }
 .mini-btn { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; }
 .time-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0; font-size: 13px; color: var(--text-muted); }
 .time-row input { font: inherit; font-size: 16px; padding: 8px 10px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); color-scheme: dark; }
-.goal-q { margin-bottom: 10px; }
+.pills.goal-q { margin-bottom: 10px; display: flex; flex-wrap: nowrap; gap: 8px; justify-content: space-between; }
+.goal-q .pill { flex: 1; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 16px; }
 .radio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 .radio { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface2); font-size: 13px; font-weight: 600; cursor: pointer; }
 .radio input { accent-color: var(--ok); width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
@@ -303,6 +304,8 @@ button { touch-action: manipulation; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .pill { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; }
 .pill.on { background: var(--ok); border-color: var(--ok); color: #111; font-weight: 600; }
+.shot-tags .section-title { font-size: 12px; margin-top: 14px; }
+.shot-tags .pill { font-size: 15px; padding: 10px 14px; }
 .log-what.tap { background: none; border: none; color: inherit; text-align: left; padding: 0; font: inherit; cursor: pointer; }
 .log-detail { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
@@ -1179,9 +1182,12 @@ function openGoalSpot() {
   cv.addEventListener('pointercancel', () => { down = false; });
 }
 const SHOT_TAGS = [
-  ['How it started', ['Open play', 'Counter attack', 'Penalty', 'Free kick', 'From corner', 'From throw-in', 'From goal kick', 'Rebound', 'Scramble']],
-  ['The shot', ['Right foot', 'Left foot', 'Header', 'Volley', 'Half-volley', 'Chip', 'One-on-one', 'Long shot', 'Dribbled the keeper', 'Deflected']],
-  ['Where it went', ['Top bin', 'High', 'Mid', 'Low', 'Near post', 'Far post', 'Through the legs', 'Off the post/bar']],
+  ['Set piece', ['Penalty', 'Free kick', 'From corner', 'From throw-in', 'From goal kick']],
+  ['Free play', ['Open play', 'Counter attack', 'Stole ball', 'Breakaway', 'Scramble', 'Rebound', 'Long pass', 'Chaos']],
+  ['The setup', ['One-on-one', 'Dribbled the keeper', 'Fought for it', 'Skill move', 'Fake shot', 'Nutmeg', 'Rainbow flick']],
+  ['Contact', ['Left foot', 'Right foot', 'Left leg', 'Right leg', 'Crotch', 'Body', 'Header']],
+  ['The shot', ['Short shot', 'Power shot', 'Blake shot', 'Volley', 'Half-volley', 'Chip', 'Long shot', 'Dribbled in']],
+  ['Where it went', ['Top bin', 'High', 'Mid', 'Low', 'Near post', 'Far post', 'Deflected', 'Off the post/bar', 'Between legs', 'Off defender', 'Chaos in goal']],
 ];
 function openGoalMore() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
@@ -1206,7 +1212,7 @@ function openGoalShot() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   const on = new Set(e.shot || []);
   openSheet(`${sheetHead(`Shot · ${esc(e.scorer || 'Our goal')}`, 'Pick everything that fits.')}
-    ${SHOT_TAGS.map(([title, list]) => `<div class="tag-group"><div class="section-title">${title}</div><div class="pills">${list.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-tag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div></div>`).join('')}
+    <div class="shot-tags">${SHOT_TAGS.map(([title, list]) => `<div class="tag-group"><div class="section-title">${title}</div><div class="pills">${list.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-tag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div></div>`).join('')}</div>
     <button class="btn btn-primary full" data-action="goal-more">Done</button>`);
 }
 function renderTop() {
