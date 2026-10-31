@@ -1,0 +1,151 @@
+:root {
+  --btn-weak: rgba(255,255,255,0.4);
+}
+
+.eyebrow {
+  text-align: center;
+}
+.field {
+  padding: 10px;
+  gap: 15px;
+}
+.board-row {
+  gap: 15px;
+}
+
+.tabs {
+  gap: 12px;
+  button.tab {
+    font-size: 16px;
+  }
+}
+
+.board-slot {
+  &.empty {
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    .board-abbr {
+      font-size: 19px;
+    } 
+  }
+  .board-num, .board-abbr {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .board-name {
+    font-size: 19px;
+  }
+}
+
+.cap-side {
+  gap: 8px;
+  &.right {
+    flex-direction: row;
+    
+  }
+}
+
+.c-gk { background: var(--gk-bg); color: var(--gk-fg); }
+.c-mid { background: var(--mid-bg); color: var(--mid-fg); }
+.c-lf, .c-rf { background: var(--lf-bg); color: var(--lf-fg); }
+.c-st { background: var(--st-bg); color: var(--st-fg); }
+.c-def { background: var(--def-bg); color: var(--def-fg); }
+.c-bench { background: var(--bench-bg); color: var(--bench-fg); }
+
+.start-btn {
+  border: 1px solid #fff;
+  background: #000;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.board-row {
+  &:nth-of-type(3) { // defense
+    justify-content: space-around;
+  }
+}
+
+.scoreboard {
+  button {
+    &.goal-btn {
+      min-width: 75%;
+      max-width: 75%;
+    }
+    
+  }
+}
+
+.bench-chips {
+  gap: 20px;
+  justify-content: space-between;
+  .chip {
+    font-size: 18px;
+    flex-basis: 45%;
+    .num {
+      font-size: 16px;
+    }
+  }
+}
+.overlay {
+  .sheet {
+    min-height: 75vh;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 5px;
+    .handle {
+      align-self: flex-start;
+      
+    }
+    // this should be the .field implementation, so i'm not going to update The style and beyond, making us less gross.
+    .board.pitch {
+      flex-grow: 1;
+    }
+  }
+  .sheet-head {
+    .sheet-title {
+      font-size: 20px;
+      .num {
+        font-size: 16px;
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+
+
+
+.sheet-hint {
+  text-align: center;
+}
+
+.shot-tags {
+  .section-title {
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .pills {
+    gap: 8px;
+  }
+  button.pill {
+    font-size: 16px;
+    color: #fff;
+    font-weight: 400;
+    letter-spacing: 1.05px;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.48);
+    border-radius: 8px;
+    &.on {
+      background: purple;
+    }
+  }
+  .tag-group {
+    
+  }
+}
