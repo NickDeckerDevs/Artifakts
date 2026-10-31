@@ -153,6 +153,8 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
 .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 14px; }
 .section-title { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+.section-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.section-title-row .section-title { margin-bottom: 0; }
 .bench-chips { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; min-height: 28px; }
 .bench-chips .chip { width: auto; flex-basis: 45%; padding: 7px 14px; font-size: 18px; }
 .bench-chips .chip .num { font-size: 16px; }
@@ -160,10 +162,11 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
 .pt-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
 .pt-name { width: 84px; font-size: 12px; color: var(--text-muted); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pt-track { flex: 1; background: var(--surface2); border-radius: 3px; height: 16px; overflow: hidden; }
-.pt-fill { height: 100%; border-radius: 3px; background: var(--bar); transition: width 0.3s ease; }
-.pt-fill.under { background: var(--text-faint); }
-.pt-fill.over { background: var(--warn); }
+.pt-track { flex: 1; display: flex; gap: 2px; height: 16px; }
+.pt-seg { flex: 1; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.pt-seg-fill { height: 100%; background: var(--bar); transition: width 0.3s ease; }
+.pt-seg-fill.under { background: var(--text-faint); }
+.pt-seg-fill.over { background: var(--warn); }
 .pt-val { width: 42px; font-family: var(--mono); font-size: 11px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .pt-val.over { color: var(--warn); }
 .pt-val.under { color: var(--text-muted); }
@@ -444,26 +447,29 @@ a.menu-item { text-decoration: none; }
   <div class="field" id="field"></div>
   <div class="subs-strip" id="subs"></div>
 
-  <div class="section">
+  <div class="section section-bench">
     <div class="section-title">On the bench</div>
     <div class="bench-chips" id="bench"></div>
   </div>
   <div class="copyq-row coach-only live-only"><button class="mini-btn" data-action="copy-q">⧉ Copy lineup</button></div>
 
-  <div class="section">
+  <div class="section section-playtime">
     <div class="section-title">Playtime this game · target 2 of 4</div>
     <div id="playtime"></div>
   </div>
 
-  <div class="section">
+  <div class="section section-log">
     <div class="section-title">Game log</div>
     <div id="log"></div>
   </div>
 
   <div class="section coach-only" id="fromParents" hidden></div>
 
-  <div class="section live-only contrib-only">
-    <div class="section-title">Notes</div>
+  <div class="section section-notes live-only contrib-only">
+    <div class="section-title-row">
+      <div class="section-title">Notes</div>
+      <button class="note-btn" id="noteBtn" data-action="note" hidden>✎ Note</button>
+    </div>
     <div id="notes"></div>
   </div>
 
@@ -1295,7 +1301,6 @@ function openGoalShot() {
 function renderTop() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
   $('topbar').innerHTML = `<div class="topbar-left"><button class="menu-btn" data-action="menu" aria-label="Menu">☰</button>${timerHTML()}</div>
-    ${add ? `<button class="note-btn icon" data-action="note" aria-label="Add a note">✎</button>` : ''}
     <button class="score-chip" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score ${sc.us} to ${sc.them}"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${x ? opponentSwatch(x.opp) : ''}${esc(x ? x.opp : '')}</span></button>`;
 }
 function renderScore() {
@@ -1530,6 +1535,7 @@ async function sendParentNotes() {
   renderNotes();
 }
 function renderNotes() {
+  $('noteBtn').hidden = !canContribute();
   const list = (g.notes || []).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
   $('notes').innerHTML = list.length ? list.map(n => `<div class="note-row"><span class="note-when">${esc(n.q)} · ${new Date(n.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>
     <span class="note-text">${esc(n.text)}${isViewer() && !n.sent ? ' <span style="color:var(--text-faint)">(not sent yet)</span>' : ''}</span>
@@ -1553,10 +1559,9 @@ function renderViewerInfo() {
 }
 function renderFieldTools() {
   const f = g.formation === '312' ? '312' : '231';
-  $('fieldTools').innerHTML = (isViewer()
+  $('fieldTools').innerHTML = isViewer()
     ? `<span class="form-label">${FORMATIONS[f].name}</span>`
-    : `<span class="seg" role="group" aria-label="Formation">${Object.entries(FORMATIONS).map(([k, v]) => `<button class="${k === f ? 'on' : ''}" data-formation="${k}">${v.name}</button>`).join('')}</span>`)
-    + (canContribute() ? `<button class="note-btn" data-action="note">✎ Note</button>` : '');
+    : `<span class="seg" role="group" aria-label="Formation">${Object.entries(FORMATIONS).map(([k, v]) => `<button class="${k === f ? 'on' : ''}" data-formation="${k}">${v.name}</button>`).join('')}</span>`;
 }
 
 // ─────────────── closed games, view modes, menu ───────────────
@@ -2013,9 +2018,12 @@ function render() {
     : `<span class="bench-empty">Nobody on the bench</span>`;
 
   // Part-quarters count: subbed off halfway through = 0.5 (by the real clock when it ran).
+  // Track is 4 segments, one per quarter, each filled by that quarter's own fraction — not one bar
+  // filled left-to-right by the total, so a Q1+Q3 (skip Q2/Q4) player reads as 2 separate full segments.
   $('playtime').innerHTML = present().map(n => {
     const c = playedActual(n), cls = c > TARGET + 0.05 ? 'over' : c < TARGET - 0.05 ? 'under' : '';
-    return `<div class="pt-row"><span class="pt-name">${numTag(n)}${esc(n)}</span><div class="pt-track"><div class="pt-fill ${cls}" style="width:${c / PERIODS.length * 100}%"></div></div><span class="pt-val ${cls}">${fmtQ(c)}/${PERIODS.length}</span></div>`;
+    const segs = PERIODS.map((_, i) => `<div class="pt-seg"><div class="pt-seg-fill ${cls}" style="width:${Math.max(0, Math.min(1, playedIn(i, n))) * 100}%"></div></div>`).join('');
+    return `<div class="pt-row"><span class="pt-name">${numTag(n)}${esc(n)}</span><div class="pt-track">${segs}</div><span class="pt-val ${cls}">${fmtQ(c)}/${PERIODS.length}</span></div>`;
   }).join('');
 }
 
