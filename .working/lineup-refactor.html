@@ -780,7 +780,7 @@ async function saveToSheet(confirmed, quiet) {
   if (!isCoach()) return;
   if (!confirmed && remoteCopy && !sameLineup(remoteCopy, g)) {
     return openSheet(`<div class="sheet-title">Replace the sheet's lineup?</div><div class="sheet-sub">The sheet has a different lineup for this game (saved ${fmtT(remoteCopy.savedAt)}). Saving replaces it with this phone's lineup. Anyone viewing will see yours.</div>
-      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="sync-save-yes">Replace the sheet's</button></div>`);
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="sync-save-yes">Replace the sheet's</button></div>`, 'sheet-sync-confirm');
   }
   if (!quiet) overlay.hidden = true;
   if (!g.savedAt) { g.savedAt = new Date().toISOString(); writeLocal(); }
@@ -801,7 +801,7 @@ function loadFromSheet(confirmed) {
   if (!remoteCopy) return flash('Nothing saved in the sheet for this game');
   if (!confirmed && g.savedAt && !sameLineup(remoteCopy, g)) {
     return openSheet(`<div class="sheet-title">Replace this phone's lineup?</div><div class="sheet-sub">This phone's lineup for this game will be replaced by the sheet's version (saved ${fmtT(remoteCopy.savedAt)}). This can't be undone.</div>
-      <div class="btn-row"><button class="btn" data-action="cancel">Keep mine</button><button class="btn btn-danger" data-action="sync-load-yes">Replace mine</button></div>`);
+      <div class="btn-row"><button class="btn" data-action="cancel">Keep mine</button><button class="btn btn-danger" data-action="sync-load-yes">Replace mine</button></div>`, 'sheet-sync-confirm');
   }
   overlay.hidden = true;
   g = normalize(clone(remoteCopy)); writeLocal(); render(); flash('Loaded from the sheet');
@@ -1000,7 +1000,7 @@ function tryPlace(n, k) {
     return openSheet(`<div class="sheet-title">Override the goalie plan?</div>
       <div class="sheet-sub"><b>${esc(gk)}</b> isn't on this game's goalie plan. Planned goalies: ${plan.order.map(esc).join(', ') || 'none'}.<br>
       If you do this, ${esc(gk)} gets the goalie quarter in the season count and the rotation adjusts for the next game. The quarter will be flagged.</div>
-      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-override">Put ${esc(gk)} in goal</button></div>`);
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-override">Put ${esc(gk)} in goal</button></div>`, 'sheet-goalie-override');
   }
   place(n, k);
 }
@@ -1162,7 +1162,7 @@ function openClock() {
   }
   const sq = shownQ();
   openSheet(`${sheetHead(sq >= 0 ? `${halfOf(sq)}${sq !== l ? '?' : ''} · ${timerView().big}` : 'Game clock', hint || 'Goals go in the quarter they happened in, by the clock.')}
-    <div class="qtimes" style="margin-bottom:14px">${times}</div><div style="display:flex;flex-direction:column;gap:8px">${btns}</div>`);
+    <div class="qtimes" style="margin-bottom:14px">${times}</div><div style="display:flex;flex-direction:column;gap:8px">${btns}</div>`, 'sheet-clock');
 }
 // Set when quarter i started (i = 0 is kickoff): just now, a few minutes ago, or an exact time.
 function openClockSet(i) { pending = { clockSet: i, at: null }; renderClockSet(); }
@@ -1175,7 +1175,7 @@ function renderClockSet() {
     <div class="section-title" style="margin:16px 0 8px">Or it started earlier</div>` : ''}
     <div class="pills">${[1, 2, 3, 5, 10, 15].map(m => `<button class="pill ${ago === m ? 'on' : ''}" data-ago="${m}">${m} min ago</button>`).join('')}</div>
     <label class="time-row">Exact time <input type="time" id="clockTime" value="${hm24(at || Date.now())}"></label>
-    <button class="btn ${kick ? '' : 'btn-primary'} full" data-action="clock-set-ok" ${at ? '' : 'disabled'}>${at ? `${kick ? '▶ Start game' : 'Set ' + what} at ${hhmm(at)} · ${ago} min ago` : 'Pick a time above'}</button>`);
+    <button class="btn ${kick ? '' : 'btn-primary'} full" data-action="clock-set-ok" ${at ? '' : 'disabled'}>${at ? `${kick ? '▶ Start game' : 'Set ' + what} at ${hhmm(at)} · ${ago} min ago` : 'Pick a time above'}</button>`, 'sheet-clock-set');
 }
 
 // A goal is saved the moment the scorer is picked; location, assist and shot details are added after.
@@ -1193,7 +1193,7 @@ const goalLabel = e => `${PERIODS[e.q]}${e.clock ? ' · ' + e.clock : ''}`;
 function openGoalChoice() {
   const sc = scoreOf(), x = GAMES.find(v => v.id === currentId), gq = goalQ();
   openSheet(`${sheetHead(`Score ${sc.us}–${sc.them} · ${PERIODS[gq]}`)}
-    <div class="goal-choice" style="margin-top:12px"><button class="goal-btn us" data-action="goal-us">⚽ Our goal</button><button class="goal-btn" data-action="goal-them">${esc(x ? x.opp : 'Their')} goal</button></div>`);
+    <div class="goal-choice" style="margin-top:12px"><button class="goal-btn us" data-action="goal-us">⚽ Our goal</button><button class="goal-btn" data-action="goal-them">${esc(x ? x.opp : 'Their')} goal</button></div>`, 'sheet-goal-choice');
 }
 // Players laid out like the formation. opts: { L, data: attr name, exclude: [names], extra: [names] (shown under the field) }
 function pickField(o) {
@@ -1212,7 +1212,7 @@ function openOurGoal() {
   const cameOff = playedThisQ(gq).filter(n => keyIn(L, n) === 'bench');
   openSheet(`${sheetHead(`Our goal · ${PERIODS[gq]}${st && quarterAt(Date.now()) !== null ? ' · ' + mmss((Date.now() - st) / 1000) : ''}`, 'Who scored?')}
     ${pickField({ L, data: 'data-scorer', extra: cameOff })}
-    <button class="btn full" data-scorer="">Not sure who</button>`);
+    <button class="btn full" data-scorer="">Not sure who</button>`, 'sheet-goal-scorer');
 }
 
 // ── where it was scored from: the whole field, the goal we attack always at the top (marked GOAL) ──
@@ -1249,7 +1249,7 @@ function openGoalSpot() {
   pending.spot = e.spot ? { ...e.spot } : { x: 0.5, y: 0.14 };
   openSheet(`${sheetHead(`⚽ ${esc(e.scorer || 'Our goal')} · ${goalLabel(e)}`, 'Where was it scored from? Tap or drag the ball.')}
     <canvas class="spot-canvas" id="spotCanvas" aria-label="Whole field, the goal we attack at the top. Tap where the shot was taken."></canvas>
-    <div class="btn-row"><button class="btn" data-action="goal-more">Skip</button><button class="btn btn-primary" data-action="goal-spot-ok">Confirm</button></div>`);
+    <div class="btn-row"><button class="btn" data-action="goal-more">Skip</button><button class="btn btn-primary" data-action="goal-spot-ok">Confirm</button></div>`, 'sheet-goal-spot');
   const cv = $('spotCanvas');
   drawSpotField(cv, pending.spot);
   const move = ev => {
@@ -1282,21 +1282,21 @@ function openGoalMore() {
       <button class="big-opt ${e.assist ? 'done' : ''}" data-action="goal-assist">Register Assist${e.assist ? `<small>✓ ${esc(e.assist)}</small>` : ''}</button>
       <button class="big-opt ${tags.length ? 'done' : ''}" data-action="goal-shot">Register Shot${tags.length ? `<small>✓ ${esc(tags.join(', '))}</small>` : ''}</button>
     </div>
-    <button class="btn btn-primary full" data-action="cancel">Save</button>`);
+    <button class="btn btn-primary full" data-action="cancel">Save</button>`, 'sheet-goal-more');
 }
 function openGoalAssist() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   const L = nowLineup(e.q), cameOff = playedThisQ(e.q).filter(n => keyIn(L, n) === 'bench');
   openSheet(`${sheetHead(`Assist · ${esc(e.scorer || 'Our goal')}`, 'Who set it up?')}
     ${pickField({ L, data: 'data-assist', exclude: [e.scorer], extra: cameOff })}
-    <div class="btn-row"><button class="btn" data-assist="">No assist</button><button class="btn" data-action="goal-more">Back</button></div>`);
+    <div class="btn-row"><button class="btn" data-assist="">No assist</button><button class="btn" data-action="goal-more">Back</button></div>`, 'sheet-goal-assist');
 }
 function openGoalShot() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   const on = new Set(e.shot || []);
   openSheet(`${sheetHead(`Shot · ${esc(e.scorer || 'Our goal')}`, 'Pick everything that fits.')}
     <div class="shot-tags">${SHOT_TAGS.map(([title, list]) => `<div class="tag-group"><div class="section-title">${title}</div><div class="pills">${list.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-tag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div></div>`).join('')}</div>
-    <button class="btn btn-primary full" data-action="goal-more">Done</button>`);
+    <button class="btn btn-primary full" data-action="goal-more">Done</button>`, 'sheet-goal-shot');
 }
 function renderTop() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
@@ -1369,23 +1369,23 @@ function resultNote() {
   return `${res} ${sc.us}-${sc.them}.${goals.length ? ' Goals: ' + goals.join(', ') + '.' : ''}${g.out.length ? ' Out: ' + g.out.join(', ') : ''}`.trim();
 }
 async function sendResults() {
-  openSheet(`<div class="sheet-title">Updating the results sheet…</div>`);
+  openSheet(`<div class="sheet-title">Updating the results sheet…</div>`, 'sheet-share-progress');
   try {
     const res = await fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ code: coachCode(), action: 'result', game: currentId, goalies: g.lineup.map(L => L.goalie || ''), note: resultNote() }) });
     const out = await res.json();
     if (!out.ok) throw new Error(out.error || 'failed');
     openSheet(`<div class="sheet-title">✓ Results sheet updated</div><div class="sheet-sub">Goalies: ${g.lineup.map((L, i) => PERIODS[i] + ' ' + esc(L.goalie || '—')).join(', ')}<br>Note: ${esc(resultNote())}</div>
-      <button class="btn btn-primary full" data-action="cancel">Done</button>`);
+      <button class="btn btn-primary full" data-action="cancel">Done</button>`, 'sheet-share-result');
   } catch (e) {
     openSheet(`<div class="sheet-title">Couldn't update the sheet</div><div class="sheet-sub">${esc(String(e.message || e))}. Check your signal and try again, or share the game as text instead.</div>
-      <div class="btn-row"><button class="btn" data-action="share-text">Share as text</button><button class="btn btn-primary" data-action="share-results">Try again</button></div>`);
+      <div class="btn-row"><button class="btn" data-action="share-text">Share as text</button><button class="btn btn-primary" data-action="share-results">Try again</button></div>`, 'sheet-share-error');
   }
 }
 function openShareChoice() {
   if (!(SYNC_URL && isCoach())) return shareGame();
   openSheet(`<div class="sheet-title">Share game</div><div class="sheet-sub">Update the results sheet writes this game's four goalies and the score line into the Captains &amp; Goalies sheet.</div>
-    <div class="btn-row" style="flex-direction:column"><button class="btn btn-primary" data-action="share-results">📊 Update results sheet</button><button class="btn" data-action="share-text">📤 Share as text</button><button class="btn" data-action="cancel">Cancel</button></div>`);
+    <div class="btn-row" style="flex-direction:column"><button class="btn btn-primary" data-action="share-results">📊 Update results sheet</button><button class="btn" data-action="share-text">📤 Share as text</button><button class="btn" data-action="cancel">Cancel</button></div>`, 'sheet-share-choice');
 }
 async function shareGame() {
   const text = gameSummary();
@@ -1397,7 +1397,7 @@ async function shareGame() {
   catch (e) {
     openSheet(`<div class="sheet-title">Copy this</div><div class="sheet-sub">Press and hold, Select All, Copy.</div>
       <textarea id="shareText" readonly style="width:100%;height:240px;background:var(--surface2);color:var(--text);border:1px solid var(--border-strong);border-radius:6px;padding:8px;font:12px var(--mono)">${esc(text)}</textarea>
-      <button class="btn full" data-action="cancel" style="margin-top:10px">Done</button>`);
+      <button class="btn full" data-action="cancel" style="margin-top:10px">Done</button>`, 'sheet-share-text');
   }
 }
 function flash(msg) {
@@ -1548,7 +1548,7 @@ function openIdentity() {
   openSheet(`<div class="sheet-title">Who's watching?</div><div class="sheet-sub">Pick your player (optional) and type your name. Notes you add are sent to Coach Nick with your name.</div>
     <div class="picks">${PLAYERS.map(p => `<button class="chip c-bench${pending.idPlayer === p.name ? ' picked' : ''}" data-idpick="${esc(p.name)}">${numTag(p.name)}${esc(p.name)}</button>`).join('')}</div>
     <input class="id-input" id="idName" type="text" autocomplete="name" placeholder="Your name" value="${esc(cur.name || '')}">
-    <button class="btn btn-primary full" data-action="id-save">Save</button>`);
+    <button class="btn btn-primary full" data-action="id-save">Save</button>`, 'sheet-identity');
 }
 function renderViewerInfo() {
   const el = $('viewerInfo');
@@ -1629,7 +1629,7 @@ function openModeSheet(first) {
     <div class="menu-list">
       <button class="menu-item ${!f ? 'on' : ''}" data-action="set-mode" data-mode="sideline"><span class="ico">🙋</span><span>I'm at the field<small>Help log goals and notes for Coach Nick</small></span></button>
       <button class="menu-item ${f ? 'on' : ''}" data-action="set-mode" data-mode="follow"><span class="ico">📱</span><span>Just following along<small>Live score, goals, lineup and quarter times · updates every minute</small></span></button>
-    </div>`);
+    </div>`, 'sheet-mode');
 }
 // A tab left open for days: when it comes back, jump to the game that's on now (or about to be) and ask.
 let hiddenAt = null;
@@ -1666,7 +1666,7 @@ function openMenu() {
       <div class="menu-group">Other</div>
       ${TEST ? `<a class="menu-item" href="${location.pathname}"><span class="ico">🧪</span><span>Leave test mode</span></a>` : `<a class="menu-item" href="?test"><span class="ico">🧪</span><span>Test mode<small>Try things without touching real games</small></span></a>`}
       ${viewer ? `<button class="menu-item" data-action="coach-code"><span class="ico">🔑</span><span>Coach sign-in</span></button>` : ''}
-    </div>`);
+    </div>`, 'sheet-menu');
 }
 const STUBS = {
   team: ['Team settings', ['Captains for each game, and the "captains play one goalie quarter" rule', 'Goalie rotation rules (max one quarter per game, alternates)', 'Roster, jersey numbers and parent contacts', 'Team name vote for each game', 'Import from / export to a template Google Sheet you can share']],
@@ -1681,19 +1681,19 @@ function openSchedule() {
   ).join('');
   openSheet(`${sheetHead('Schedule &amp; snacks', 'All games at Trafalgar. Can\'t make your snack day? Tell Coach Nick so we can swap.')}
     <div class="sched-list">${rows}</div>
-    ${isViewer() ? '' : `<a class="btn full" href="${EDIT_SHEET}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;text-decoration:none">✎ Edit snacks in the sheet</a>`}`);
+    ${isViewer() ? '' : `<a class="btn full" href="${EDIT_SHEET}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;text-decoration:none">✎ Edit snacks in the sheet</a>`}`, 'sheet-schedule');
 }
 function openPlayers() {
   const tag = list => list.length ? list.join(', ') : '—';
   openSheet(`${sheetHead('Players', 'The sheet is the roster. Add a row (name, jersey #, last name) to add a player; type “no” under On team to remove one. Reload after editing.')}
     <div class="sched-list">${PLAYERS.map(p => `<div class="sched-row"><div class="sched-top">${numTag(p.name)}<b>${esc(p.name)}</b> ${esc(LAST[p.name] && LAST[p.name] !== p.name ? LAST[p.name] : '')}</div>
       <div class="sched-snack">Likes ${esc(tag(p.likes))} · Avoid ${esc(tag(p.avoid))}</div></div>`).join('')}</div>
-    <a class="btn btn-primary full" href="${EDIT_SHEET}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;text-decoration:none">✎ Edit players in the sheet</a>`);
+    <a class="btn btn-primary full" href="${EDIT_SHEET}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;text-decoration:none">✎ Edit players in the sheet</a>`, 'sheet-players');
 }
 function openStub(k) {
   const [title, items, note] = STUBS[k];
   openSheet(`${sheetHead(`${title} <span class="soon">SOON</span>`, note || 'Planned. Tell Coach Nick what you\'d want here.')}<ul class="plan-list">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
-    <button class="btn full" data-action="menu">Back to menu</button>`);
+    <button class="btn full" data-action="menu">Back to menu</button>`, 'sheet-stub');
 }
 // ── player stats across games saved on this phone ──
 // Preferred column order for position stats; any formation-specific label not in this list (e.g. from
@@ -1740,7 +1740,7 @@ function openStats() {
     ${names.map(n => { const r = rows[n]; return `<tr><td class="narrow">${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td>${posCols.map(c => `<td>${r.pos[c] || ''}</td>`).join('')}</tr>`; }).join('')}
     </tbody></table></div>
     <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · position columns are quarters started at that position. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
-    <button class="btn full" data-action="menu">Back to menu</button>`);
+    <button class="btn full" data-action="menu">Back to menu</button>`, 'sheet-stats');
 }
 
 // ── share stats across devices: everything cached in this phone's localStorage, as text to paste
@@ -1771,7 +1771,7 @@ function openShareStats() {
   openSheet(`${sheetHead('Share stats', 'Copy this and paste it into our chat — it has every game saved on this phone.')}
     <textarea id="statsExportBox" readonly style="width:100%;min-height:220px;font:11px var(--mono);background:var(--surface2);color:var(--text);border:1px solid var(--border-strong);border-radius:7px;padding:8px">${esc(text)}</textarea>
     <button class="btn btn-primary full" data-action="stats-copy" style="margin-top:10px">⧉ Copy to clipboard</button>
-    <button class="btn full" data-action="stats" style="margin-top:8px">Back to stats</button>`);
+    <button class="btn full" data-action="stats" style="margin-top:8px">Back to stats</button>`, 'sheet-share-stats');
 }
 function copyStatsExport() {
   const box = $('statsExportBox'); if (!box) return;
@@ -1795,7 +1795,7 @@ function openGoalDetail(i) {
   if (e.side === 'them') {
     pending = { undo: i };
     return openSheet(`${sheetHead('Goal against', `${goalLabel(e)} · ${esc((GAMES.find(v => v.id === currentId) || {}).opp || '')}`)}
-      ${canEdit ? `<button class="btn btn-danger full" data-action="do-undo">Remove this goal</button>` : ''}`);
+      ${canEdit ? `<button class="btn btn-danger full" data-action="do-undo">Remove this goal</button>` : ''}`, 'sheet-goal-detail');
   }
   openSheet(`${sheetHead(`⚽ ${e.scorer ? numTag(e.scorer) + esc(e.scorer) : 'Our goal'}`, `${goalLabel(e)}${e.from === 'parent' ? ' · logged by ' + esc(e.by || 'a parent') : ''}`)}
     <canvas class="spot-canvas ro" id="detailCanvas" aria-label="Where the goal was scored from"></canvas>
@@ -1805,7 +1805,7 @@ function openGoalDetail(i) {
       <div class="gd-row"><span class="k">Shot</span><span class="gd-tags">${(e.shot || []).length ? e.shot.map(tagChip).join('') : '<span style="color:var(--text-faint)">No details</span>'}</span></div>
     </div>
     ${canEdit ? `<div class="btn-row"><button class="btn" data-undo="${i}">Remove</button><button class="btn btn-primary" data-action="goal-edit" data-goal="${i}">✎ Edit</button></div>`
-      : isClosed() && !isViewer() ? '<div class="sheet-hint" style="text-align:center">Unlock the game (bottom of the page) to edit.</div>' : ''}`);
+      : isClosed() && !isViewer() ? '<div class="sheet-hint" style="text-align:center">Unlock the game (bottom of the page) to edit.</div>' : ''}`, 'sheet-goal-detail');
   drawSpotField($('detailCanvas'), e.spot || null);
 }
 
@@ -2030,7 +2030,9 @@ function render() {
 // ─────────────── sheets ───────────────
 const overlay = $('overlay'), sheet = $('sheet');
 let pending = null;
-function openSheet(html) { sheet.innerHTML = `<div class="handle"></div>${html}`; overlay.hidden = false; }
+// cls: a semantic class set on #sheet each time it opens (e.g. "sheet-clock", "sheet-goal-choice"),
+// so a specific sheet type can be targeted in CSS. Falls back to "sheet-generic" when not given.
+function openSheet(html, cls) { sheet.className = `sheet ${cls || 'sheet-generic'}`; sheet.innerHTML = `<div class="handle"></div>${html}`; overlay.hidden = false; }
 function closeSheet() {
   const p = pending; overlay.hidden = true; pending = null;
   if (p && p.goal !== undefined && isViewer()) sendParentGoal(g.events[p.goal]);   // parent's goal details go along when they finish
@@ -2060,6 +2062,7 @@ function renderMoveSheet() {
   const benchBtn = from !== 'bench' ? `<div class="board-bench"><button class="board-chip ${p.pos === 'bench' ? 'sel' : ''}" data-movepos="bench"><span class="nm">Bench</span><small>take off</small></button></div>` : '';
   const live = canSubNow(q), t = Date.now();
   const startNote = !now && subsIn(q).length ? `<div class="sheet-hint">${PERIODS[q]} already has subs. This changes who <b>started</b> ${PERIODS[q]}; the field shows who's on now.</div>` : '';
+  sheet.className = 'sheet sheet-move';
   sheet.innerHTML = `<div class="handle"></div>${sheetHead(`${numTag(n)}${esc(n)}`, `${from === 'bench' ? 'On the bench' : POS[from].label} · played ${fmtQ(playedActual(n))} of ${PERIODS.length}`)}
     <div class="radio-row" role="radiogroup" aria-label="When">
       <label class="radio ${!now ? 'on' : ''}"><input type="radio" name="submode" value="start" ${!now ? 'checked' : ''}><span>Sub at start of ${PERIODS[q]}<small>changes the starters</small></span></label>
@@ -2099,31 +2102,31 @@ function openSlot(k) {
     const names = benchNow(q).sort((a, b) => avoids(a, k) - avoids(b, k) || playedActual(a) - playedActual(b));
     pending = { slotNow: k };
     return openSheet(`${sheetHead(`${POS[k].label} · sub now`, `${PERIODS[q]} · ${clockAt(q, Date.now())} — who goes in?`)}
-      <div class="picks">${names.map(n => `<button class="chip ${avoids(n, k) ? 'c-bench' : POS[k].cls}" data-fillnow="${esc(n)}">${esc(n)} · ${fmtQ(playedActual(n))}</button>`).join('') || '<span class="sheet-sub">The bench is empty.</span>'}</div>`);
+      <div class="picks">${names.map(n => `<button class="chip ${avoids(n, k) ? 'c-bench' : POS[k].cls}" data-fillnow="${esc(n)}">${esc(n)} · ${fmtQ(playedActual(n))}</button>`).join('') || '<span class="sheet-sub">The bench is empty.</span>'}</div>`, 'sheet-fill-now');
   }
   const names = bench(q).sort((a, b) => (k === 'goalie' ? offPlan(a) - offPlan(b) : 0) || avoids(a, k) - avoids(b, k) || played(a) - played(b));
   if (k === 'goalie') {
     return openSheet(`<div class="sheet-title">Goalie · ${PERIODS[q]}</div><div class="sheet-sub">Planned goalies first. Picking anyone else needs an override.</div>
       <div class="picks">${names.map(n => `<button class="chip ${offPlan(n) ? 'c-bench' : 'c-gk'}" data-fill="${esc(n)}" data-slot="goalie">${esc(n)}${offPlan(n) ? ' · not on plan' : gkQuarterNow(n) >= 0 ? ' · has ' + PERIODS[gkQuarterNow(n)] : ' · planned'}</button>`).join('') || '<span class="sheet-sub">The bench is empty.</span>'}</div>
-      <button class="btn full" data-action="cancel">Cancel</button>`);
+      <button class="btn full" data-action="cancel">Cancel</button>`, 'sheet-fill-goalie');
   }
   openSheet(`<div class="sheet-title">${POS[k].label}</div><div class="sheet-sub">${PERIODS[q]} — who goes in? Fewest quarters played are listed first.</div>
     <div class="picks">${names.length ? names.map(n =>
       `<button class="chip ${avoids(n, k) ? 'c-bench' : POS[k].cls}" data-fill="${esc(n)}" data-slot="${k}">${esc(n)} · ${played(n)}${avoids(n, k) ? ' ⚠' : ''}</button>`).join('')
       : '<span class="sheet-sub">The bench is empty. Tap a player on the field to move them instead.</span>'}</div>
-    <button class="btn full" data-action="cancel">Cancel</button>`);
+    <button class="btn full" data-action="cancel">Cancel</button>`, 'sheet-fill-slot');
 }
 function openRoster() {
   openSheet(`<div class="sheet-title">Manage active players</div><div class="sheet-sub">Turn off anyone missing this game. They come off every quarter of this game only, and the goalie rotation moves to the next kid in line.</div>
     <div class="roster-list">${PLAYERS.map((p, i) => `<div class="roster-row"><label class="roster-name ${here(p.name) ? '' : 'out'}" for="r${i}">${numTag(p.name)}${esc(p.name)}</label>
       <span class="toggle"><input type="checkbox" id="r${i}" data-roster="${esc(p.name)}" ${here(p.name) ? 'checked' : ''}><label class="toggle-slider" for="r${i}"></label></span></div>`).join('')}</div>
     <button class="btn btn-primary full" data-action="cancel">Done</button>
-    <button class="link-btn" data-action="coach-code" style="display:block;margin:12px auto 0">${isCoach() ? 'Coach mode is on · change' : 'Enter coach code'}</button>`);
+    <button class="link-btn" data-action="coach-code" style="display:block;margin:12px auto 0">${isCoach() ? 'Coach mode is on · change' : 'Enter coach code'}</button>`, 'sheet-roster');
 }
 function openCoachCode() {
   openSheet(`<div class="sheet-title">Coach code</div><div class="sheet-sub">${isCoach() ? 'Coach mode is on for this device.' : 'Coach mode lets this device save lineups and results to the sheet.'}</div>
     <input class="coach-input" id="coachInput" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="coach code" value="">
-    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button>${isCoach() ? '<button class="btn btn-danger" data-action="coach-off">Turn off</button>' : ''}<button class="btn btn-primary" data-action="coach-save">Save</button></div>`);
+    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button>${isCoach() ? '<button class="btn btn-danger" data-action="coach-off">Turn off</button>' : ''}<button class="btn btn-primary" data-action="coach-save">Save</button></div>`, 'sheet-coach-code');
 }
 async function previousSaved() {
   const before = GAMES.map(x => x.id).filter(id => id < currentId).reverse();
@@ -2134,13 +2137,13 @@ async function previousSaved() {
   return null;
 }
 async function openCopy() {
-  openSheet(`<div class="sheet-title">Looking for the last saved game…</div>`);
+  openSheet(`<div class="sheet-title">Looking for the last saved game…</div>`, 'sheet-copy-progress');
   const prev = await previousSaved();
-  if (!prev) return openSheet(`<div class="sheet-title">Nothing to copy yet</div><div class="sheet-sub">No earlier game has a saved lineup.</div><button class="btn full" data-action="cancel">OK</button>`);
+  if (!prev) return openSheet(`<div class="sheet-title">Nothing to copy yet</div><div class="sheet-sub">No earlier game has a saved lineup.</div><button class="btn full" data-action="cancel">OK</button>`, 'sheet-copy-empty');
   pending = prev;
   openSheet(`<div class="sheet-title">Copy the ${short(prev.id)} lineup?</div><div class="sheet-sub">Replaces all four quarters of this game. Anyone marked missing here is left off.</div>
     ${gkCheck('Copy goalies', 'Off: this game keeps its own goalies.')}
-    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="do-copy">Copy</button></div>`);
+    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="do-copy">Copy</button></div>`, 'sheet-copy-confirm');
 }
 const gkCheck = (label, sub) => `<label class="check"><input type="checkbox" id="copyGk"><span>${label}<small>${sub}</small></span></label>`;
 // Copy a quarter's lineup over another. Without goalies, the quarter keeps its own goalie, and the
@@ -2161,7 +2164,7 @@ function openCopyQ() {
   const others = PERIODS.map((_, i) => i).filter(i => i !== q);
   openSheet(`${sheetHead(`Copy a lineup into ${PERIODS[q]}`, `Replaces who starts ${PERIODS[q]}.${subsIn(q).length ? ` Subs already logged in ${PERIODS[q]} stay.` : ''}`)}
     ${gkCheck('Copy goalie', `Off: ${PERIODS[q]} keeps ${g.lineup[q].goalie ? esc(g.lineup[q].goalie) + ' in goal' : 'its goal spot empty'}.`)}
-    <div class="copyq-list">${others.map(i => { const f = filled(i); return `<button class="btn full" data-copyq="${i}" ${f.length || g.lineup[i].goalie ? '' : 'disabled'}><b>From ${PERIODS[i]}</b><small>${f.length ? esc(f.join(', ')) + (g.lineup[i].goalie ? ' · GK ' + esc(g.lineup[i].goalie) : '') : 'empty'}</small></button>`; }).join('')}</div>`);
+    <div class="copyq-list">${others.map(i => { const f = filled(i); return `<button class="btn full" data-copyq="${i}" ${f.length || g.lineup[i].goalie ? '' : 'disabled'}><b>From ${PERIODS[i]}</b><small>${f.length ? esc(f.join(', ')) + (g.lineup[i].goalie ? ' · GK ' + esc(g.lineup[i].goalie) : '') : 'empty'}</small></button>`; }).join('')}</div>`, 'sheet-copy-quarter');
 }
 
 // ─────────────── events ───────────────
@@ -2228,11 +2231,11 @@ document.addEventListener('click', e => {
     const s = g.subs.find(x => x.id === d.delsub); if (!s) return;
     pending = { delsub: s.id };
     return openSheet(`${sheetHead('Remove this sub?', `${PERIODS[s.q]} ${esc(clockAt(s.q, s.at) || hhmm(s.at))} — ${esc(describeSub(s))}`)}
-      <button class="btn btn-danger full" data-action="do-delsub">Remove</button>`);
+      <button class="btn btn-danger full" data-action="do-delsub">Remove</button>`, 'sheet-delsub-confirm');
   }
   if (d.formation) { g.formation = d.formation; return save(); }
   if (d.idpick !== undefined) { pending.idPlayer = pending.idPlayer === d.idpick ? '' : d.idpick; sheet.querySelectorAll('[data-idpick]').forEach(b => b.classList.toggle('picked', b.dataset.idpick === pending.idPlayer)); return; }
-  if (d.delnote !== undefined) { pending = { delnote: d.delnote }; return openSheet(`<div class="sheet-title">Delete this note?</div><div class="btn-row"><button class="btn" data-action="cancel">Keep</button><button class="btn btn-danger" data-action="do-delnote">Delete</button></div>`); }
+  if (d.delnote !== undefined) { pending = { delnote: d.delnote }; return openSheet(`<div class="sheet-title">Delete this note?</div><div class="btn-row"><button class="btn" data-action="cancel">Keep</button><button class="btn btn-danger" data-action="do-delnote">Delete</button></div>`, 'sheet-delnote-confirm'); }
   if (d.fill) { const n = d.fill, k = d.slot; overlay.hidden = true; pending = null; return tryPlace(n, k); }
   if (d.gk) return tryPlace(d.gk, 'goalie');
   if (d.gkalt) {
@@ -2240,7 +2243,7 @@ document.addEventListener('click', e => {
     pending = { alt: a };
     return openSheet(`<div class="sheet-title">Swap in ${esc(a)}</div><div class="sheet-sub">${esc(a)} has ${gkSeason(a)} goalie quarter${gkSeason(a) === 1 ? '' : 's'} so far. Who does ${esc(a)} replace? Captains stay in.</div>
       <div class="picks">${plan.upNext.map(n => `<button class="chip c-gk" data-swapfor="${esc(n)}">${numTag(n)}${esc(n)}${gkQuarterNow(n) >= 0 ? ' · ' + PERIODS[gkQuarterNow(n)] : ''}</button>`).join('')}</div>
-      <button class="btn full" data-action="cancel">Cancel</button>`);
+      <button class="btn full" data-action="cancel">Cancel</button>`, 'sheet-gk-swap');
   }
   if (d.swapfor) { const a = pending && pending.alt; overlay.hidden = true; pending = null; if (a) swapGoalie(a, d.swapfor); return; }
   if (d.scorer !== undefined) { overlay.hidden = true; pending = null; return addGoal('us', d.scorer); }
@@ -2248,7 +2251,7 @@ document.addEventListener('click', e => {
     const ev = g.events[+d.undo]; if (!ev) return;
     pending = { undo: +d.undo };
     return openSheet(`<div class="sheet-title">Remove this goal?</div><div class="sheet-sub">${PERIODS[ev.q]}${ev.clock ? ' · ' + ev.clock : ''} — ${ev.side === 'us' ? 'our goal' + (ev.scorer ? ' by ' + esc(ev.scorer) : '') : 'goal against'}</div>
-      <div class="btn-row"><button class="btn" data-action="cancel">Keep</button><button class="btn btn-danger" data-action="do-undo">Remove</button></div>`);
+      <div class="btn-row"><button class="btn" data-action="cancel">Keep</button><button class="btn btn-danger" data-action="do-undo">Remove</button></div>`, 'sheet-goal-remove-confirm');
   }
   if (d.player) return openPlayer(d.player);
   if (d.slot) return openSlot(d.slot);
@@ -2260,7 +2263,7 @@ document.addEventListener('click', e => {
     case 'autofill': return autofill();
     case 'copy': return openCopy();
     case 'clear': return openSheet(`<div class="sheet-title">Clear this game?</div><div class="sheet-sub">Empties every spot in all four quarters of this game. Other games aren't touched.</div>
-      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-clear">Clear</button></div>`);
+      <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-danger" data-action="do-clear">Clear</button></div>`, 'sheet-clear-confirm');
     case 'cancel': return closeSheet();
     case 'note': return openNote();
     case 'note-save': return saveNote();
@@ -2308,10 +2311,10 @@ document.addEventListener('click', e => {
       return pullGame();
     }
     case 'close-out': return openSheet(`${sheetHead('Close out this game?', 'Stops the clock, locks the lineup, goals and notes, and saves the game to the sheet. You can unlock it later at the bottom of the page.')}
-      <button class="btn btn-primary full" data-action="do-close-out">🔒 Close out game</button>`);
+      <button class="btn btn-primary full" data-action="do-close-out">🔒 Close out game</button>`, 'sheet-close-out-confirm');
     case 'do-close-out': overlay.hidden = true; pending = null; return closeOut();
     case 'unlock': return openSheet(`${sheetHead('Unlock this game?', 'Makes the lineup, goals, notes and clock editable again. Close it out again when you are done.')}
-      <button class="btn btn-danger full" data-action="do-unlock">🔓 Unlock game</button>`);
+      <button class="btn btn-danger full" data-action="do-unlock">🔓 Unlock game</button>`, 'sheet-unlock-confirm');
     case 'do-unlock': overlay.hidden = true; pending = null; return unlockGame();
     case 'test-view': if (!TEST) return; local.testViewer = !local.testViewer; writeLocal(); flash(isViewer() ? 'Parent view' : 'Coach view'); return render();
     case 'test-ff': {   // pretend 5 more minutes have gone by in the running quarter
@@ -2321,7 +2324,7 @@ document.addEventListener('click', e => {
       save(); return flash(`${PERIODS[l]} clock now ${mmss(qSecs(l))}`);
     }
     case 'test-reset': if (!TEST) return; return openSheet(`${sheetHead('Reset all test data?', 'Wipes every test game, note and setting on this phone. Real games are not touched.')}
-      <button class="btn btn-danger full" data-action="do-test-reset">Reset everything</button>`);
+      <button class="btn btn-danger full" data-action="do-test-reset">Reset everything</button>`, 'sheet-test-reset-confirm');
     case 'do-test-reset': if (!TEST) return; try { localStorage.removeItem(LOCAL_KEY); localStorage.removeItem(ID_KEY); } catch (e) {} location.reload(); return;
     case 'do-delsub': { const id = pending && pending.delsub; overlay.hidden = true; pending = null; g.subs = g.subs.filter(s => s.id !== id); return save(); }
     case 'clock': return openClock();
@@ -2356,7 +2359,7 @@ function selectGame(id) {
 }
 function openGamePicker() {
   openSheet(`${sheetHead('Choose a game')}
-    <div class="sched-list">${GAMES.map(x => `<button class="sched-row ${x.id === currentId ? 'next' : ''}" data-pickgame="${esc(x.id)}">${gameCardHTML(x)}</button>`).join('')}</div>`);
+    <div class="sched-list">${GAMES.map(x => `<button class="sched-row ${x.id === currentId ? 'next' : ''}" data-pickgame="${esc(x.id)}">${gameCardHTML(x)}</button>`).join('')}</div>`, 'sheet-game-picker');
 }
 document.addEventListener('change', e => {
   if (e.target.id === 'clockTime' && pending && pending.clockSet !== undefined) {
