@@ -1615,8 +1615,8 @@ function openSchedule() {
   const rows = GAMES.map(x => {
     const sn = SNACKS[x.id], snacks = sn ? (Array.isArray(sn) ? sn : [sn]) : [];
     const snackTxt = snacks.length ? `${snackEmoji(x.id)} ${esc(snacks[0].who || snacks[0].family || '')}${snacks[1] ? ' · ' + esc(snacks[1].who || snacks[1].family || '') : ''}` : '<span style="color:var(--text-faint)">No snack set</span>';
-    return `<div class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}">${gameRowHTML(x)}
-      <div class="sched-snack">${snackTxt}</div></div>`;
+    return `<button class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}" data-pickgame="${esc(x.id)}" style="display:block;width:100%;text-align:left">${gameRowHTML(x)}
+      <div class="sched-snack">${snackTxt}</div></button>`;
   }).join('');
   openSheet(`${sheetHead('Schedule &amp; snacks', 'All games at Trafalgar. Can\'t make your snack day? Tell Coach Nick so we can swap.')}
     <div class="sched-list">${rows}</div>
