@@ -340,6 +340,7 @@ a.menu-item { text-decoration: none; }
 .stats-table th { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--border-strong); }
 .stats-table th:first-child, .stats-table td:first-child { text-align: left; }
 .stats-table td { padding: 7px 4px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
+.stats-table .narrow { max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .goal-detail { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
 .gd-row { display: flex; gap: 8px; font-size: 13px; }
 .gd-row .k { width: 64px; flex-shrink: 0; color: var(--text-muted); font-size: 12px; padding-top: 1px; }
@@ -1610,9 +1611,13 @@ function openStub(k) {
     <button class="btn full" data-action="menu">Back to menu</button>`);
 }
 // ── player stats across games saved on this phone ──
+// Preferred column order for position stats; any formation-specific label not in this list (e.g. from
+// the 3-1-2 formation) still gets its own column, just appended after these.
+const POS_ORDER = ['GK', 'ST', 'CM', 'LM', 'RM', 'LB', 'RB'];
+const sortPosCols = cols => [...cols].sort((a, b) => { const ia = POS_ORDER.indexOf(a), ib = POS_ORDER.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b); });
 function seasonStats() {
-  const saved = g, rows = {}, team = { w: 0, l: 0, t: 0, gf: 0, ga: 0, games: 0 };
-  PLAYERS.forEach(p => rows[p.name] = { gp: 0, q: 0, g: 0, a: 0, gk: 0 });
+  const saved = g, rows = {}, team = { w: 0, l: 0, t: 0, gf: 0, ga: 0, games: 0 }, posCols = new Set();
+  PLAYERS.forEach(p => rows[p.name] = { gp: 0, q: 0, g: 0, a: 0, gk: 0, pos: {} });
   const ids = GAMES.map(x => x.id).filter(id => id === currentId ? true : local.games[id]);
   try {
     for (const id of ids) {
@@ -1629,18 +1634,27 @@ function seasonStats() {
         r.gk += g.lineup.filter(L => L.goalie === n).length;
       }
       for (const e of g.events) if (e.side === 'us') { if (rows[e.scorer]) rows[e.scorer].g++; if (rows[e.assist]) rows[e.assist].a++; }
+      // Position quarters, by who started each quarter (same simplification as the GK count above —
+      // a mid-quarter sub doesn't split the credit).
+      const fmt = FORMATIONS[g.formation] ? g.formation : '231';
+      g.lineup.forEach(L => KEYS.forEach(k => {
+        const n = L[k]; const r = rows[n]; if (!r) return;
+        const abbr = k === 'goalie' ? 'GK' : posAbbr((FORMATIONS[fmt].pos[k] || [POS[k].label])[0]);
+        posCols.add(abbr);
+        r.pos[abbr] = (r.pos[abbr] || 0) + 1;
+      }));
     }
   } finally { g = saved; }
-  return { rows, team };
+  return { rows, team, posCols: sortPosCols(posCols) };
 }
 function openStats() {
-  const { rows, team } = seasonStats();
+  const { rows, team, posCols } = seasonStats();
   const names = PLAYERS.map(p => p.name).sort((a, b) => (NUM[a] || 99) - (NUM[b] || 99));
   openSheet(`${sheetHead('Player stats', `${team.games} game${team.games === 1 ? '' : 's'} on this phone · ${team.w}W ${team.l}L ${team.t}T · goals ${team.gf}–${team.ga}`)}
-    <table class="stats-table"><thead><tr><th>Player</th><th>GP</th><th>Min</th><th>G</th><th>A</th><th>GK</th></tr></thead><tbody>
-    ${names.map(n => { const r = rows[n]; return `<tr><td>${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td><td>${r.gk || ''}</td></tr>`; }).join('')}
-    </tbody></table>
-    <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · GK goalie quarters. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
+    <div style="overflow-x:auto"><table class="stats-table"><thead><tr><th class="narrow">Player</th><th>GP</th><th>Min</th><th>G</th><th>A</th>${posCols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>
+    ${names.map(n => { const r = rows[n]; return `<tr><td class="narrow">${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td>${posCols.map(c => `<td>${r.pos[c] || ''}</td>`).join('')}</tr>`; }).join('')}
+    </tbody></table></div>
+    <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · position columns are quarters started at that position. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
     <button class="btn full" data-action="menu">Back to menu</button>`);
 }
 
