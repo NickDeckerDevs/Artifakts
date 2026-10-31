@@ -29,7 +29,7 @@
   --mid-bg: #0d2a45;  --mid-fg: #7ec2f7;
   --lf-bg: #1a2e0a;   --lf-fg: #92d44e;
   --st-bg: #2e1c04;   --st-fg: #f5b84a;
-  --rf-bg: #2e0d1e;   --rf-fg: #f093be;
+  --rf-bg: #1a2e0a;   --rf-fg: #92d44e;
   --def-bg: #042e22;  --def-fg: #4dd6a8;
   --bench-bg: #252420; --bench-fg: #a09c96;
   --radius: 8px;
@@ -97,8 +97,14 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
 .field-row { display: flex; gap: 8px; justify-content: center; }
 .field-row.spread { justify-content: space-between; }
-.slot { flex: 0 0 calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 6px 10px; min-height: 78px; display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.slot-label { font-size: 9px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; text-align: center; }
+.slot { flex: 0 0 calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 6px 12px; min-height: 96px; display: flex; flex-direction: column; align-items: center; min-width: 0; transition: background 0.15s, border-color 0.15s; }
+.slot.filled-gk  { background: var(--gk-bg);  border-color: var(--gk-fg);  }
+.slot.filled-mid { background: var(--mid-bg); border-color: var(--mid-fg); }
+.slot.filled-lf  { background: var(--lf-bg);  border-color: var(--lf-fg);  }
+.slot.filled-st  { background: var(--st-bg);  border-color: var(--st-fg);  }
+.slot.filled-rf  { background: var(--lf-bg);  border-color: var(--lf-fg);  }
+.slot.filled-def { background: var(--def-bg); border-color: var(--def-fg); }
+.slot-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; margin-bottom: 8px; text-align: center; }
 .slot-body { flex: 1; display: flex; align-items: center; width: 100%; }
 .chip { display: block; border-radius: 5px; padding: 8px 4px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: none; width: 100%; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chip:active { transform: scale(0.95); }
@@ -194,6 +200,7 @@ h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
 .overlay[hidden] { display: none; }
 .sheet { background: var(--sheet); border-radius: 14px 14px 0 0; padding: 16px 16px calc(28px + env(safe-area-inset-bottom, 0px)); width: 100%; max-width: 480px; border-top: 1px solid var(--border-strong); max-height: 84vh; overflow-y: auto; }
+.sheet-tall { max-height: 92vh; }
 .handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 0 auto 14px; }
 .sheet-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
 .sheet-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
@@ -256,6 +263,11 @@ button { touch-action: manipulation; }
 .time-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0; font-size: 13px; color: var(--text-muted); }
 .time-row input { font: inherit; font-size: 16px; padding: 8px 10px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); color-scheme: dark; }
 .goal-q { margin-bottom: 10px; }
+.half-q-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.half-q-btn { flex: 1; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; border: 2px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 20px; font-weight: 800; cursor: pointer; line-height: 1.1; }
+.half-q-btn small { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+.half-q-btn.on { background: var(--ok); border-color: var(--ok); color: #111; }
+.half-q-btn.on small { color: #333; }
 .radio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 .radio { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--surface2); font-size: 13px; font-weight: 600; cursor: pointer; }
 .radio input { accent-color: var(--ok); width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
@@ -345,6 +357,16 @@ a.menu-item { text-decoration: none; }
 .fp-btn.ok { background: var(--ok); border-color: var(--ok); color: #111; }
 .fp-later { margin-top: 8px; }
 .fp-later summary { font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
+.opp-color-badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; vertical-align: 1px; }
+.game-header-row { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; font-size: 12px; color: var(--text-muted); margin: 2px 0 4px; flex-wrap: wrap; }
+.game-header-row b { color: var(--text); font-size: 13px; }
+.cap-badges { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 2px; font-size: 13px; }
+.cap-badge { display: inline-flex; align-items: center; gap: 6px; }
+.armband { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 13px; font-weight: 900; border: 2px solid rgba(255,255,255,0.7); flex-shrink: 0; }
+.armband-1 { background: #6a0dad; color: #000; border-color: rgba(255,255,255,0.8); }
+.armband-2 { background: #111; color: #9b4dca; border-color: rgba(255,255,255,0.7); }
+.snack-row-game { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: var(--text-muted); margin: 4px 0; }
+.snack-row-game b { color: var(--text); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .chip:active { transform: none; } }
 </style>
@@ -364,6 +386,7 @@ a.menu-item { text-decoration: none; }
   <div class="follow-banner" id="followBanner" hidden></div>
 
   <select class="game-select" id="gameSelect" aria-label="Game"></select>
+  <div id="gameHeader" style="margin:4px 0 2px"></div>
   <button class="snack-line" id="snackLine" data-action="schedule" hidden></button>
 
   <div class="action-bar coach-only live-only">
@@ -443,29 +466,29 @@ const TEAM_ID = 'u10b-team4-fall2026';
 // Test mode: …/u10-team4-lineup.html?test — its own storage on this device, never sends anything to the
 // sheets, full coach controls, and a "Reset all test data" button. Real games are never read or touched.
 const TEST = new URLSearchParams(location.search).has('test');
-const PERIODS = ['Q1', 'Q2', 'Q3', 'Q4'];
-const TARGET = 2; // quarters per player
+const PERIODS = ['1st', '2nd'];
+const TARGET = 1; // halves per player (2 halves total)
 const FORMATION = [['lf', 'striker', 'rf'], ['cmid'], ['def1', 'def2'], ['goalie']];
 const POS = {
-  lf:      { label: 'Left Fwd',   cls: 'c-lf',  tags: ['FWD'] },
-  striker: { label: 'Striker',    cls: 'c-st',  tags: ['FWD', 'ST'] },
-  rf:      { label: 'Right Fwd',  cls: 'c-rf',  tags: ['FWD'] },
-  cmid:    { label: 'Center Mid', cls: 'c-mid', tags: ['MID'] },
-  def1:    { label: 'Defender 1', cls: 'c-def', tags: ['DEF'] },
-  def2:    { label: 'Defender 2', cls: 'c-def', tags: ['DEF'] },
-  goalie:  { label: 'Goalie',     cls: 'c-gk',  tags: ['GK'] },
+  lf:      { label: 'LM',  cls: 'c-lf',  tags: ['FWD'] },
+  striker: { label: 'ST',  cls: 'c-st',  tags: ['FWD', 'ST'] },
+  rf:      { label: 'RM',  cls: 'c-rf',  tags: ['FWD'] },
+  cmid:    { label: 'CM',  cls: 'c-mid', tags: ['MID'] },
+  def1:    { label: 'LB',  cls: 'c-def', tags: ['DEF'] },
+  def2:    { label: 'RB',  cls: 'c-def', tags: ['DEF'] },
+  goalie:  { label: 'GK',  cls: 'c-gk',  tags: ['GK'] },
 };
 const KEYS = FORMATION.flat(); // storage keys; what each key means depends on the formation
 // Each formation relabels the same 7 storage keys, so saved lineups keep working when you switch.
 const FORMATIONS = {
   '231': { name: '2-3-1', rows: [
       { keys: ['striker'] }, { keys: ['lf', 'cmid', 'rf'] }, { keys: ['def1', 'def2'] }, { keys: ['goalie'] }],
-    pos: { striker: ['Striker', 'c-st', ['FWD', 'ST']], lf: ['Left Mid', 'c-lf', ['MID']], cmid: ['Center Mid', 'c-mid', ['MID']],
-      rf: ['Right Mid', 'c-rf', ['MID']], def1: ['Left Back', 'c-def', ['DEF']], def2: ['Right Back', 'c-def', ['DEF']] } },
+    pos: { striker: ['ST', 'c-st', ['FWD', 'ST']], lf: ['LM', 'c-lf', ['MID']], cmid: ['CM', 'c-mid', ['MID']],
+      rf: ['RM', 'c-rf', ['MID']], def1: ['LB', 'c-def', ['DEF']], def2: ['RB', 'c-def', ['DEF']] } },
   '312': { name: '3-1-2', rows: [
       { keys: ['lf', 'rf'], spread: true }, { keys: ['cmid'] }, { keys: ['def1', 'striker', 'def2'] }, { keys: ['goalie'] }],
-    pos: { lf: ['Left Fwd', 'c-lf', ['FWD']], rf: ['Right Fwd', 'c-rf', ['FWD']], cmid: ['Center Mid', 'c-mid', ['MID']],
-      def1: ['Left Back', 'c-def', ['DEF']], striker: ['Center Back', 'c-def', ['DEF']], def2: ['Right Back', 'c-def', ['DEF']] } },
+    pos: { lf: ['LF', 'c-lf', ['FWD']], rf: ['RF', 'c-rf', ['FWD']], cmid: ['CM', 'c-mid', ['MID']],
+      def1: ['LB', 'c-def', ['DEF']], striker: ['CB', 'c-def', ['DEF']], def2: ['RB', 'c-def', ['DEF']] } },
 };
 const formation = () => FORMATIONS[g && FORMATIONS[g.formation] ? g.formation : '231'];
 function applyFormation() {
@@ -488,15 +511,21 @@ const PLAYERS = [
   { name: 'Cameron',   likes: ['DEF', 'MID', 'FWD'], avoid: [] },
   { name: 'EJ',        likes: ['DEF', 'MID', 'FWD'], avoid: ['GK'] },
 ];
+// Team colors: 1=Green, 2=Light Blue, 3=Gray, 4=Purple, 5=White, 6=Dark Blue, 7=Yellow, 8=Red
+const TEAM_COLORS = { 1:'Green', 2:'Light Blue', 3:'Gray', 4:'Purple', 5:'White', 6:'Dark Blue', 7:'Yellow', 8:'Red' };
+const TEAM_COLOR_HEX = { 1:'#2e7d32', 2:'#4fc3f7', 3:'#9e9e9e', 4:'#7b1fa2', 5:'#f5f5f5', 6:'#1565c0', 7:'#f9a825', 8:'#c62828' };
+const oppNum = opp => parseInt((opp || '').replace('Team ', ''), 10) || null;
+const oppColor = opp => { const n = oppNum(opp); return n ? TEAM_COLORS[n] : null; };
+
 const GAMES = [
   ['2026-10-10','Sat','12:00 PM','Team 1','2A'], ['2026-10-15','Thu','7:30 PM','Team 3','2A'],
-  ['2026-10-17','Sat','10:30 AM','Team 2','2A'], ['2026-10-22','Thu','7:30 PM','Team 6','4A'],
+  ['2026-10-17','Sat','10:30 AM','Team 2','2A'], ['2026-10-22','Thu','7:30 PM','Team 6','2A'],
   ['2026-10-24','Sat','10:30 AM','Team 8','2A','Fall Festival'], ['2026-10-29','Thu','7:30 PM','Team 7','1C'],
-  ['2026-10-31','Sat','12:00 PM','Team 5','2B'], ['2026-11-05','Thu','7:30 PM','Team 1','4B'],
-  ['2026-11-07','Sat','12:00 PM','Team 3','2A'], ['2026-11-12','Thu','7:30 PM','Team 2','4A'],
-  ['2026-11-14','Sat','10:30 AM','Team 6','2A'], ['2026-11-19','Thu','7:30 PM','Team 8','4A'],
-  ['2026-11-21','Sat','12:00 PM','Team 7','2C'], ['2026-12-03','Thu','7:30 PM','Team 5','4C'],
-  ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','4B','Tournament'],
+  ['2026-10-31','Sat','12:00 PM','Team 5','2B'], ['2026-11-05','Thu','7:30 PM','Team 1','2B'],
+  ['2026-11-07','Sat','12:00 PM','Team 3','2A'], ['2026-11-12','Thu','7:30 PM','Team 2','2A'],
+  ['2026-11-14','Sat','10:30 AM','Team 6','2A'], ['2026-11-19','Thu','7:30 PM','Team 8','2A'],
+  ['2026-11-21','Sat','12:00 PM','Team 7','2C'], ['2026-12-03','Thu','7:30 PM','Team 5','2C'],
+  ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','2B','Tournament'],
   ['2026-12-12','Sat','10:30 AM','Team 2','2A','Tournament'], ['2026-12-13','Sun','TBD','TBD','TBD','Semifinal'], ['2026-12-13-2','Sun','TBD','TBD','TBD','Final'],
 ].map(([id, day, time, opp, field, note]) => ({ id, day, time, opp, field, note }));
 
@@ -551,8 +580,26 @@ const numTag = n => NUM[n] ? `<span class="num">${NUM[n]}</span>` : '';
 const LAST = { Colt: 'Bainbridge', Khair: 'Brown', Alejandro: 'Buenrostro Amador', Jeremiah: 'Castro', Liam: 'Clark', Jaxon: 'Cossairt',
   Abel: 'Dailey', EJ: 'Daley', Jayce: 'Decker', Ethan: 'Gonzalez', Casey: 'Minervini', Cameron: 'Richardson' };
 
-// Snack family per game, from the sheet's "Snack" columns (U family, V player / note).
-const SNACKS = {};
+// Snack family per game, from the snack schedule sheet. Hardcoded here as fallback / primary.
+// Sheet columns U=family, V=player; applySheet() will override if the sheet has newer data.
+const SNACKS = {
+  '2026-10-15': { family: 'Coach Nick Fail', who: 'Coach Nick Fail' },
+  '2026-10-17': { family: 'Jessica Castro',   who: 'Jeremiah Castro' },
+  '2026-10-22': { family: 'Jessica Decker',   who: 'Jayce Decker' },
+  '2026-10-24': { family: 'Dennis Richardson', who: 'Cameron Richardson' },
+  '2026-10-29': { family: 'Kelly Bainbridge', who: 'Colton Bainbridge' },
+  '2026-10-31': { family: 'Sheneque Brown',   who: 'Ethan Gonzalez' },
+  '2026-11-05': { family: 'Jose Buenrostro',  who: 'Alejandro Buenrostro Amador' },
+  '2026-11-07': { family: 'Vanessa Guzman',   who: 'Liam Clark' },
+  '2026-11-12': { family: 'Barbara Kramer',   who: 'Jaxon Cossairt' },
+  '2026-11-14': { family: 'Donald Dailey',    who: 'Abel Dailey' },
+  '2026-11-19': { family: 'Sabrina Daley',    who: 'EJ Daley' },
+  '2026-11-21': { family: 'Claudia Diaz',     who: 'Casey Minervini' },
+  '2026-12-03': { family: 'Stephanie Goron',  who: 'Khair Brown' },
+  '2026-12-05': { family: 'Jessica Decker',   who: 'Jayce Decker' },
+  '2026-12-10': { family: 'Dennis Richardson', who: 'Cameron Richardson' },
+  '2026-12-12': { family: 'Volunteer',         who: 'Colton Bainbridge' },
+};
 const EDIT_SHEET = 'https://docs.google.com/spreadsheets/d/1zYW9bpLfCY_dcUrhPObfIXE5i811PnUooATsRMz2VFk/edit#gid=698790171';
 
 // ─────────────── state ───────────────
@@ -893,7 +940,7 @@ function place(n, k) {
 }
 
 // ─────────────── score & game timer ───────────────
-const QTR_SECS = 15 * 60, MAX_SECS = 99 * 60 + 59;
+const QTR_SECS = 25 * 60, HALF_SECS = 25 * 60, MAX_SECS = 99 * 60 + 59;
 const mmss = s => { s = Math.floor(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 const scoreOf = (x = g) => ({ us: x.events.filter(e => e.side === 'us').length, them: x.events.filter(e => e.side === 'them').length });
 let wakeLock = null;
@@ -910,7 +957,7 @@ const touchClock = () => { if (isViewer()) g.ownClock = true; };
 // ── time is the truth ──
 // Only the kickoff time has to be right. A quarter nobody tapped is assumed to start 15 min + a 1 min
 // break after the one before it, so goals land in the right quarter even if the clock is never advanced.
-const BREAK_SECS = 60;
+const BREAK_SECS = 5 * 60; // 5 min halftime
 function qStartEst(i) {
   const s = g.clock.starts;
   if (s[i]) return s[i];
@@ -1024,9 +1071,9 @@ function openClock() {
       btns += btn('', 'q-adv', `Start ${PERIODS[exp]} now`, `data-advq="${exp}"`);
       if (exp > l + 1) btns += btn('', 'q-adv', `Start ${PERIODS[l + 1]} now`, `data-advq="${l + 1}"`);
     } else if (l + 1 < PERIODS.length) btns += btn('btn-primary', 'q-adv', `⏭ Start ${PERIODS[l + 1]} now`, `data-advq="${l + 1}"`);
-    btns += btn('', 'q-end', `⏸ End ${PERIODS[l]}${l === PERIODS.length - 1 ? ' (final whistle)' : ' (break)'}`);
-    btns += btn('', 'q-fix', `🕑 Change ${l === 0 ? 'kickoff' : PERIODS[l] + ' start'} time`, `data-fixq="${l}"`);
-    btns += btn('btn-danger', 'q-unstart', `Undo: ${PERIODS[l]} didn't start`);
+    btns += btn('', 'q-end', `⏸ End ${PERIODS[l] === '1st' ? '1st Half (halftime)' : PERIODS[l] === '2nd' ? '2nd Half (final whistle)' : PERIODS[l] + (l === PERIODS.length - 1 ? ' (final whistle)' : ' (break)')}`);
+    btns += btn('', 'q-fix', `🕑 Change ${l === 0 ? 'kickoff' : PERIODS[l] + ' half start'} time`, `data-fixq="${l}"`);
+    btns += btn('btn-danger', 'q-unstart', `Undo: ${PERIODS[l]} half didn't start`);
   } else {
     if (n >= 0) {
       btns += btn('btn-primary', 'q-adv', `▶ Start ${PERIODS[n]} now`, `data-advq="${n}"`);
@@ -1036,7 +1083,7 @@ function openClock() {
     if (lastEnded !== undefined) btns += btn('', 'q-reopen', `Reopen ${PERIODS[lastEnded]} (ended by mistake)`);
   }
   const sq = shownQ();
-  openSheet(`${sheetHead(sq >= 0 ? `${PERIODS[sq]}${sq !== l ? '?' : ''} · ${timerView().big}` : 'Game clock', hint || 'Goals go in the quarter they happened in, by the clock.')}
+  openSheet(`${sheetHead(sq >= 0 ? `${PERIODS[sq]} Half${sq !== l ? '?' : ''} · ${timerView().big}` : 'Game clock', hint || 'Goals go in the half they happened in, by the clock.')}
     <div class="qtimes" style="margin-bottom:14px">${times}</div><div style="display:flex;flex-direction:column;gap:8px">${btns}</div>`);
 }
 // Set when quarter i started (i = 0 is kickoff): just now, a few minutes ago, or an exact time.
@@ -1045,8 +1092,8 @@ function renderClockSet() {
   const { clockSet: i, at } = pending, kick = i === 0 && !g.clock.starts[0];
   const ago = at ? Math.round((Date.now() - at) / 60000) : 0;
   const what = i === 0 ? 'kickoff' : PERIODS[i];
-  openSheet(`${sheetHead(kick ? 'Start the game clock' : `When did ${what} start?`, kick ? 'Only the kickoff time has to be right. Quarters and goals are worked out from it.' : 'Goals move to the right quarter on their own.')}
-    ${kick || !g.clock.starts[i] ? `<button class="btn btn-primary full" data-action="clock-now">▶ ${kick ? 'Kicked off' : what + ' started'} just now · ${hhmm(Date.now())}</button>
+  openSheet(`${sheetHead(kick ? 'Start the game clock' : `When did the ${what} half start?`, kick ? 'Only the kickoff time has to be right. Halves and goals are worked out from it.' : 'Goals move to the right half on their own.')}
+    ${kick || !g.clock.starts[i] ? `<button class="btn btn-primary full" data-action="clock-now">▶ ${kick ? 'Kicked off' : what + ' half started'} just now · ${hhmm(Date.now())}</button>
     <div class="section-title" style="margin:16px 0 8px">Or it started earlier</div>` : ''}
     <div class="pills">${[1, 2, 3, 5, 10, 15].map(m => `<button class="pill ${ago === m ? 'on' : ''}" data-ago="${m}">${m} min ago</button>`).join('')}</div>
     <label class="time-row">Exact time <input type="time" id="clockTime" value="${hm24(at || Date.now())}"></label>
@@ -1138,21 +1185,25 @@ function openGoalSpot() {
   cv.addEventListener('pointercancel', () => { down = false; });
 }
 const SHOT_TAGS = [
-  ['How it started', ['Open play', 'Counter attack', 'Penalty', 'Free kick', 'From corner', 'From throw-in', 'From goal kick', 'Rebound', 'Scramble']],
-  ['The shot', ['Right foot', 'Left foot', 'Header', 'Volley', 'Half-volley', 'Chip', 'One-on-one', 'Long shot', 'Dribbled the keeper', 'Deflected']],
-  ['Where it went', ['Top bin', 'High', 'Mid', 'Low', 'Near post', 'Far post', 'Through the legs', 'Off the post/bar']],
+  ['Assist type', ['Through ball', 'Cross', 'Cutback', 'Header assist', 'Flick-on', 'Set up off dribble', 'No assist']],
+  ['Set piece / Free play', ['Open play', 'Counter attack', 'Penalty', 'Free kick', 'Corner kick', 'Throw-in', 'Goal kick', 'Rebound', 'Scramble']],
+  ['The setup', ['One-two', 'Dribbled past defender', 'First touch', 'One-on-one with keeper', 'Deflected to scorer', 'Won the ball back']],
+  ['Contact', ['Right foot', 'Left foot', 'Header', 'Volley', 'Half-volley', 'Chip', 'Toe poke', 'Deflected in']],
+  ['The shot', ['Powerful', 'Placed', 'Curled', 'Far post', 'Near post', 'Low driven', 'Lob']],
+  ['Where it went', ['Top corner', 'Top middle', 'Mid left', 'Mid right', 'Low left', 'Low right', 'Off the post/bar', 'Through the legs']],
 ];
 function openGoalMore() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   const tags = e.shot || [];
   openSheet(`${sheetHead(`⚽ ${esc(e.scorer || 'Our goal')} · ${goalLabel(e)}`)}
-    <div class="pills goal-q" role="group" aria-label="Quarter">${PERIODS.map((p, i) => `<button class="pill ${e.q === i ? 'on' : ''}" data-goalq="${i}" aria-pressed="${e.q === i}">${p}</button>`).join('')}</div>
+    <div class="half-q-row" role="group" aria-label="Half">${PERIODS.map((p, i) => `<button class="half-q-btn${e.q === i ? ' on' : ''}" data-goalq="${i}" aria-pressed="${e.q === i}">${p}<br><small>Half</small></button>`).join('')}</div>
     <div class="goal-summary"><small>${e.spot ? 'Location saved · <button class="link-btn" data-action="goal-spot" style="padding:0;font-size:12px;text-decoration:underline">change</button>' : '<button class="link-btn" data-action="goal-spot" style="padding:0;font-size:12px;text-decoration:underline">Add where it was scored from</button>'}</small></div>
     <div class="big-opts">
       <button class="big-opt ${e.assist ? 'done' : ''}" data-action="goal-assist">Register Assist${e.assist ? `<small>✓ ${esc(e.assist)}</small>` : ''}</button>
-      <button class="big-opt ${tags.length ? 'done' : ''}" data-action="goal-shot">Register Shot${tags.length ? `<small>✓ ${esc(tags.join(', '))}</small>` : ''}</button>
+      <button class="big-opt ${tags.length ? 'done' : ''}" data-action="goal-shot">Goal details${tags.length ? `<small>✓ ${esc(tags.slice(0,3).join(', '))}${tags.length > 3 ? '…' : ''}</small>` : ''}</button>
     </div>
     <button class="btn btn-primary full" data-action="cancel">Save</button>`);
+  document.querySelector('.sheet').classList.add('sheet-tall');
 }
 function openGoalAssist() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
@@ -1164,15 +1215,16 @@ function openGoalAssist() {
 function openGoalShot() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   const on = new Set(e.shot || []);
-  openSheet(`${sheetHead(`Shot · ${esc(e.scorer || 'Our goal')}`, 'Pick everything that fits.')}
+  openSheet(`${sheetHead(`Goal details · ${esc(e.scorer || 'Our goal')}`, 'Pick everything that fits — scroll down for more.')}
     ${SHOT_TAGS.map(([title, list]) => `<div class="tag-group"><div class="section-title">${title}</div><div class="pills">${list.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-tag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div></div>`).join('')}
     <button class="btn btn-primary full" data-action="goal-more">Done</button>`);
+  document.querySelector('.sheet').classList.add('sheet-tall');
 }
 function renderTop() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
   $('topbar').innerHTML = `<div class="topbar-left"><button class="menu-btn" data-action="menu" aria-label="Menu">☰</button>${timerHTML()}</div>
     ${add ? `<button class="note-btn icon" data-action="note" aria-label="Add a note">✎</button>` : ''}
-    <button class="score-chip" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score ${sc.us} to ${sc.them}"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}</span></button>`;
+    <button class="score-chip" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score ${sc.us} to ${sc.them}"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}${x && oppColor(x.opp) ? ' · ' + oppColor(x.opp) : ''}</span></button>`;
 }
 function renderScore() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
@@ -1548,9 +1600,12 @@ function openSchedule() {
   const next = nextGameId();
   const rows = GAMES.map(x => {
     const sn = SNACKS[x.id], gm = x.id === currentId ? g : local.games[x.id];
-    const sc = gm && gm.events && gm.events.length ? scoreOf(normalize(gm)) : null;
+    const gmN = gm ? normalize(gm) : null;
+    const gmPlayed = gmN && (gmN.events.length > 0 || (gmN.clock && gmN.clock.starts && gmN.clock.starts.some(Boolean)));
+    const sc = gmPlayed ? scoreOf(gmN) : null;
+    const color = oppColor(x.opp);
     return `<div class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}">
-      <div class="sched-top"><b>${x.day} ${short(x.id)}</b> · ${esc(x.time)} · vs ${esc(x.opp)} · ${esc(x.field)}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}${sc ? `<span class="sched-score">${sc.us}–${sc.them}</span>` : ''}</div>
+      <div class="sched-top"><b>${x.day} ${short(x.id)}</b> · ${esc(x.time)} · vs ${esc(x.opp)}${color ? ` <span class="opp-color-badge" style="background:${TEAM_COLOR_HEX[oppNum(x.opp)]};color:${oppNum(x.opp)===5?'#111':'#fff'}">${esc(color)}</span>` : ''} · ${esc(x.field)}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}${sc ? `<span class="sched-score">${sc.us > sc.them ? 'W' : sc.us < sc.them ? 'L' : 'T'} ${sc.us}–${sc.them}</span>` : ''}</div>
       <div class="sched-snack">${sn ? `🍎 ${esc(sn.family || sn.who)}${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}` : '<span style="color:var(--text-faint)">No snack set</span>'}</div></div>`;
   }).join('');
   openSheet(`${sheetHead('Schedule &amp; snacks', 'All games at Trafalgar. Can\'t make your snack day? Tell Coach Nick so we can swap.')}
@@ -1570,9 +1625,11 @@ function openStub(k) {
     <button class="btn full" data-action="menu">Back to menu</button>`);
 }
 // ── player stats across games saved on this phone ──
+const STAT_POS = ['goalie','def1','def2','lf','cmid','rf','striker']; // keys
+const STAT_POS_LABELS = { goalie:'GK', def1:'LB', def2:'RB', lf:'LM', cmid:'CM', rf:'RM', striker:'ST' };
 function seasonStats() {
   const saved = g, rows = {}, team = { w: 0, l: 0, t: 0, gf: 0, ga: 0, games: 0 };
-  PLAYERS.forEach(p => rows[p.name] = { gp: 0, q: 0, g: 0, a: 0, gk: 0 });
+  PLAYERS.forEach(p => { rows[p.name] = { gp: 0, q: 0, g: 0, a: 0, gk: 0 }; STAT_POS.forEach(k => rows[p.name][k] = 0); });
   const ids = GAMES.map(x => x.id).filter(id => id === currentId ? true : local.games[id]);
   try {
     for (const id of ids) {
@@ -1587,6 +1644,8 @@ function seasonStats() {
         const pq = playedActual(n);
         if (pq > 0) { r.gp++; r.q += pq; }
         r.gk += g.lineup.filter(L => L.goalie === n).length;
+        // count halves at each position across all lineup snapshots this game
+        for (const L of g.lineup) { for (const k of STAT_POS) { if (L[k] === n) r[k]++; } }
       }
       for (const e of g.events) if (e.side === 'us') { if (rows[e.scorer]) rows[e.scorer].g++; if (rows[e.assist]) rows[e.assist].a++; }
     }
@@ -1596,11 +1655,17 @@ function seasonStats() {
 function openStats() {
   const { rows, team } = seasonStats();
   const names = PLAYERS.map(p => p.name).sort((a, b) => (NUM[a] || 99) - (NUM[b] || 99));
-  openSheet(`${sheetHead('Player stats', `${team.games} game${team.games === 1 ? '' : 's'} on this phone · ${team.w}W ${team.l}L ${team.t}T · goals ${team.gf}–${team.ga}`)}
-    <table class="stats-table"><thead><tr><th>Player</th><th>GP</th><th>Min</th><th>G</th><th>A</th><th>GK</th></tr></thead><tbody>
-    ${names.map(n => { const r = rows[n]; return `<tr><td>${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td><td>${r.gk || ''}</td></tr>`; }).join('')}
-    </tbody></table>
-    <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · GK goalie quarters. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
+  const posKeys = STAT_POS; // goalie, def1, def2, lf, cmid, rf, striker
+  openSheet(`${sheetHead('Player stats', `${team.games} game${team.games === 1 ? '' : 's'} · ${team.w}W ${team.l}L ${team.t}T · ${team.gf}–${team.ga}`)}
+    <div style="overflow-x:auto;margin-bottom:14px"><table class="stats-table" style="min-width:420px"><thead><tr>
+      <th style="min-width:58px;max-width:80px">Player</th><th>GP</th><th>Min</th><th>G</th><th>A</th>
+      ${posKeys.map(k => `<th title="${k}">${STAT_POS_LABELS[k]}</th>`).join('')}
+    </tr></thead><tbody>
+    ${names.map(n => { const r = rows[n];
+      return `<tr><td style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px">${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td>${posKeys.map(k => `<td>${r[k] || ''}</td>`).join('')}</tr>`;
+    }).join('')}
+    </tbody></table></div>
+    <div class="sheet-hint">GP · Min field minutes · G goals · A assists · ${posKeys.map(k => STAT_POS_LABELS[k]).join(' ')} = halves played at each position. Phone-local only.</div>
     <button class="btn full" data-action="menu">Back to menu</button>`);
 }
 
@@ -1722,12 +1787,18 @@ function renderStatus() {
 }
 function finalLabel(id) {
   const x = id === currentId ? g : local.games[id];
-  if (!x || !Array.isArray(x.events) || !x.events.length) return '';
+  // Show score if game has events OR clock was started (a 0-0 game should still show T 0–0)
+  if (!x) return '';
+  const played = Array.isArray(x.events) && x.events.length > 0
+    || (x.clock && x.clock.starts && x.clock.starts.some(Boolean));
+  if (!played) return '';
   const s = scoreOf(x); return ` · ${s.us > s.them ? 'W' : s.us < s.them ? 'L' : 'T'} ${s.us}–${s.them}`;
 }
 function render() {
-  $('gameSelect').innerHTML = GAMES.map(x =>
-    `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
+  $('gameSelect').innerHTML = GAMES.map(x => {
+    const col = oppColor(x.opp);
+    return `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${esc(x.opp)}${col ? ' ('+col+')' : ''} · ${x.field}${x.note ? ' · '+esc(x.note) : ''}${finalLabel(x.id)}</option>`;
+  }).join('');
   applyFormation();
   $('teamTitle').textContent = teamName();
   document.title = `${TEST ? 'TEST · ' : ''}${teamName()} — U10 Team 4 Lineups`;
@@ -1754,8 +1825,28 @@ function render() {
   renderLog();
   renderStatus();
   const sn = SNACKS[currentId];
+  const xGame = GAMES.find(v => v.id === currentId);
+  const caps = captains();
+  // Game header: date · time · field color line
+  const gameHeaderEl = document.getElementById('gameHeader');
+  if (gameHeaderEl && xGame) {
+    const color = oppColor(xGame.opp);
+    const colorN = oppNum(xGame.opp);
+    gameHeaderEl.innerHTML = `<div class="game-header-row">
+      <b>${xGame.day} ${short(xGame.id)}</b>
+      <span>${esc(xGame.time)}</span>
+      <span>${color ? `<span class="opp-color-badge" style="background:${TEAM_COLOR_HEX[colorN]};color:${colorN===5?'#111':'#fff'}">${esc(color)} #${colorN}</span>` : esc(xGame.opp)}</span>
+      <span>Field ${esc(xGame.field)}</span>
+      ${xGame.note ? `<span class="sched-note">${esc(xGame.note)}</span>` : ''}
+    </div>
+    ${caps.length >= 2 ? `<div class="cap-badges">
+      <span class="cap-badge"><span class="armband armband-1">C</span> ${esc(caps[0])}${NUM[caps[0]] ? ' #'+NUM[caps[0]] : ''}</span>
+      <span class="cap-badge">${esc(caps[1])}${NUM[caps[1]] ? ' #'+NUM[caps[1]] : ''} <span class="armband armband-2">C</span></span>
+    </div>` : ''}
+    ${sn ? `<div class="snack-row-game">🍎 <b>${esc(sn.who || sn.family)}</b><span style="color:var(--text-faint)">·</span><span>${esc(sn.family && sn.who && sn.who !== sn.family ? sn.family : '')}</span></div>` : ''}`;
+  }
   $('snackLine').hidden = !sn;
-  if (sn) $('snackLine').innerHTML = `🍎 Snack: <b>${esc(sn.family || sn.who)}</b>${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}<span class="more">Schedule ›</span>`;
+  if (sn) $('snackLine').innerHTML = `🍎 <b>${esc(sn.who || sn.family)}</b>${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.family) : ''}<span class="more">Schedule ›</span>`;
   $('activeCount').textContent = `${present().length} here · 7 on field`;
 
   const live = liveQ();
@@ -1788,11 +1879,14 @@ function render() {
   const L = nowLineup(q), qSubs = subsIn(q);
   const cameIn = {};
   qSubs.forEach((s, i) => { const prev = i ? qSubs[i - 1].lineup : g.lineup[q]; KEYS.forEach(k => { if (s.lineup[k] !== prev[k]) cameIn[k] = clockAt(q, s.at) || hhmm(s.at); }); });
+  const clsToFill = { 'c-gk':'filled-gk','c-mid':'filled-mid','c-lf':'filled-lf','c-st':'filled-st','c-rf':'filled-rf','c-def':'filled-def' };
   $('field').innerHTML = formation().rows.map(r => [r.keys, r.spread]).map(([row, spread]) =>
-    `<div class="field-row${spread ? ' spread' : ''}">${row.map(k =>
-      `<div class="slot"><div class="slot-label">${POS[k].label}</div>${cameIn[k] && L[k] ? `<span class="slot-in">in ${esc(cameIn[k])}</span>` : ''}<div class="slot-body">${
+    `<div class="field-row${spread ? ' spread' : ''}">${row.map(k => {
+      const filled = L[k] ? (' ' + (clsToFill[POS[k].cls] || '')) : '';
+      return `<div class="slot${filled}"><div class="slot-label">${POS[k].label}</div>${cameIn[k] && L[k] ? `<span class="slot-in">in ${esc(cameIn[k])}</span>` : ''}<div class="slot-body">${
         L[k] ? `<button class="chip ${POS[k].cls}" data-player="${esc(L[k])}">${numTag(L[k])}${esc(L[k])}${isCaptain(L[k]) ? ' <span class="cap">C</span>' : ''}</button>`
-             : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`).join('')}</div>`).join('');
+             : `<button class="empty" data-slot="${k}" aria-label="Fill ${POS[k].label}">—</button>`}</div></div>`;
+    }).join('')}</div>`).join('');
 
   $('subs').innerHTML = qSubs.length
     ? `<div class="sub-row" style="background:none;border:none;padding:0 2px"><span class="what">Started ${PERIODS[q]}: ${layoutKeys().filter(k => g.lineup[q][k]).map(k => esc(g.lineup[q][k])).join(', ')}</span></div>` +
