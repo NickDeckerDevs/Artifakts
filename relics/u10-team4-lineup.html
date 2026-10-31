@@ -437,6 +437,13 @@ a.menu-item { text-decoration: none; }
 
 <div class="overlay" id="overlay" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 
+<!-- TEMP: stats export for Nick to paste into chat — remove this block once he's copied what he needs -->
+<div id="shareStatsBox" style="max-width:480px;margin:24px auto;padding:12px;border-top:1px dashed #555;">
+  <button id="shareStatsBtn" style="width:100%;padding:12px;font-size:14px;font-weight:600;background:#222;color:#fff;border:1px solid #555;border-radius:8px;cursor:pointer;">📋 Export stats (temporary)</button>
+  <textarea id="shareStatsOut" readonly style="display:none;width:100%;min-height:220px;margin-top:10px;font:11px monospace;background:#111;color:#eee;border:1px solid #555;border-radius:6px;padding:8px;"></textarea>
+  <button id="shareStatsCopy" style="display:none;width:100%;margin-top:8px;padding:10px;font-size:13px;background:#333;color:#fff;border:1px solid #555;border-radius:8px;cursor:pointer;">⧉ Copy to clipboard</button>
+</div>
+
 <script>
 // ─────────────── team ───────────────
 const TEAM_ID = 'u10b-team4-fall2026';
@@ -2161,6 +2168,53 @@ setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pu
 setInterval(() => { if (document.visibilityState === 'visible' && isCoach() && isGameDay() && !isClosed()) fetchParentEntries(); }, 60000);
 setInterval(tick, 250);
 if (liveQ() >= 0) { q = liveQ(); render(); keepAwake(true); }
+</script>
+
+<script>
+// TEMP: see the matching HTML block above — delete both once stats are copied out.
+(function () {
+  var btn = document.getElementById('shareStatsBtn');
+  var out = document.getElementById('shareStatsOut');
+  var copyBtn = document.getElementById('shareStatsCopy');
+  btn.addEventListener('click', function () {
+    var games = {};
+    var ids = Object.keys((local && local.games) || {});
+    for (var i = 0; i < ids.length; i++) {
+      var id = ids[i];
+      var gm = normalize(local.games[id]);
+      if (gm.events.length || gm.clock.starts.some(Boolean) || gm.closed) games[id] = gm;
+    }
+    var stats = seasonStats();
+    var lines = [];
+    lines.push(TEAM_ID + ' stats export · ' + new Date().toLocaleString());
+    lines.push(stats.team.games + ' games · ' + stats.team.w + 'W ' + stats.team.l + 'L ' + stats.team.t + 'T · goals ' + stats.team.gf + '-' + stats.team.ga);
+    lines.push('');
+    var names = PLAYERS.map(function (p) { return p.name; }).sort(function (a, b) { return (NUM[a] || 99) - (NUM[b] || 99); });
+    lines.push('Player GP Min G A GK');
+    names.forEach(function (n) {
+      var r = stats.rows[n];
+      lines.push([n, r.gp, Math.round(r.q * QTR_SECS / 60), r.g || 0, r.a || 0, r.gk || 0].join(' '));
+    });
+    lines.push('');
+    lines.push('DATA ' + JSON.stringify({ team: TEAM_ID, exportedAt: new Date().toISOString(), games: games }));
+    out.value = lines.join('\n');
+    out.style.display = 'block';
+    copyBtn.style.display = 'block';
+  });
+  copyBtn.addEventListener('click', function () {
+    out.focus(); out.select();
+    var done = function (ok) { copyBtn.textContent = ok ? '✓ Copied' : 'Select the text above and copy by hand'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(out.value).then(function () { done(true); }).catch(function () {
+        var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+        done(ok);
+      });
+    } else {
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      done(ok);
+    }
+  });
+})();
 </script>
 </body>
 </html>
