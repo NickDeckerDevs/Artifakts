@@ -239,6 +239,7 @@ button { touch-action: manipulation; }
 .snack-line b { color: var(--text); font-weight: 600; }
 .snack-line .more { margin-left: auto; font-size: 11px; color: var(--text-faint); white-space: nowrap; }
 .sched-list { display: flex; flex-direction: column; gap: 6px; }
+.opp-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 .sched-row { padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); font-size: 13px; }
 .sched-row.next { border-color: var(--ok); }
 .sched-row.past { opacity: 0.6; }
@@ -489,16 +490,21 @@ const PLAYERS = [
   { name: 'EJ',        likes: ['DEF', 'MID', 'FWD'], avoid: ['GK'] },
 ];
 const GAMES = [
-  ['2026-10-10','Sat','12:00 PM','Team 1','2A'], ['2026-10-15','Thu','7:30 PM','Team 3','2A'],
-  ['2026-10-17','Sat','10:30 AM','Team 2','2A'], ['2026-10-22','Thu','7:30 PM','Team 6','4A'],
+  ['2026-10-10','Sat','12:00 PM','Team 1','2A','Cancelled'], ['2026-10-15','Thu','7:30 PM','Team 3','2A'],
+  ['2026-10-17','Sat','10:30 AM','Team 2','2A'], ['2026-10-22','Thu','7:30 PM','Team 6','2A'],
   ['2026-10-24','Sat','10:30 AM','Team 8','2A','Fall Festival'], ['2026-10-29','Thu','7:30 PM','Team 7','1C'],
-  ['2026-10-31','Sat','12:00 PM','Team 5','2B'], ['2026-11-05','Thu','7:30 PM','Team 1','4B'],
-  ['2026-11-07','Sat','12:00 PM','Team 3','2A'], ['2026-11-12','Thu','7:30 PM','Team 2','4A'],
-  ['2026-11-14','Sat','10:30 AM','Team 6','2A'], ['2026-11-19','Thu','7:30 PM','Team 8','4A'],
-  ['2026-11-21','Sat','12:00 PM','Team 7','2C'], ['2026-12-03','Thu','7:30 PM','Team 5','4C'],
-  ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','4B','Tournament'],
+  ['2026-10-31','Sat','12:00 PM','Team 5','2B'], ['2026-11-05','Thu','7:30 PM','Team 1','2B'],
+  ['2026-11-07','Sat','12:00 PM','Team 3','2A'], ['2026-11-12','Thu','7:30 PM','Team 2','2A'],
+  ['2026-11-14','Sat','10:30 AM','Team 6','2A'], ['2026-11-19','Thu','7:30 PM','Team 8','2A'],
+  ['2026-11-21','Sat','12:00 PM','Team 7','2C'], ['2026-12-03','Thu','7:30 PM','Team 5','2C'],
+  ['2026-12-05','Sat','12:00 PM','Team 1','2A','Tournament'], ['2026-12-10','Thu','7:30 PM','Team 3','2B','Tournament'],
   ['2026-12-12','Sat','10:30 AM','Team 2','2A','Tournament'], ['2026-12-13','Sun','TBD','TBD','TBD','Semifinal'], ['2026-12-13-2','Sun','TBD','TBD','TBD','Final'],
 ].map(([id, day, time, opp, field, note]) => ({ id, day, time, opp, field, note }));
+// Opponent team colors (jersey number -> color), shown next to the opponent number everywhere it appears.
+const TEAM_COLORS = { 1: 'Green', 2: 'Light Blue', 3: 'Gray', 4: 'Purple', 5: 'White', 6: 'Dark Blue', 7: 'Yellow', 8: 'Red' };
+const TEAM_COLOR_HEX = { Green: '#2e7d32', 'Light Blue': '#64b5f6', Gray: '#9e9e9e', Purple: '#9b4dca', White: '#ffffff', 'Dark Blue': '#1a3a7a', Yellow: '#f5d76e', Red: '#d32f2f' };
+const opponentColor = opp => { const m = /(\d+)/.exec(opp || ''); return m ? TEAM_COLORS[+m[1]] || '' : ''; };
+const opponentSwatch = opp => { const c = opponentColor(opp); return c ? `<span class="opp-dot" style="background:${TEAM_COLOR_HEX[c]}${c === 'White' ? ';border:1px solid #999' : ''}" title="${c}"></span>` : ''; };
 
 // Captains: two per game, each plays one goalie quarter. Master copy: "Team 4 Captains & Goalies" sheet.
 const CAPTAINS = {
@@ -1172,7 +1178,7 @@ function renderTop() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
   $('topbar').innerHTML = `<div class="topbar-left"><button class="menu-btn" data-action="menu" aria-label="Menu">☰</button>${timerHTML()}</div>
     ${add ? `<button class="note-btn icon" data-action="note" aria-label="Add a note">✎</button>` : ''}
-    <button class="score-chip" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score ${sc.us} to ${sc.them}"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${esc(x ? x.opp : '')}</span></button>`;
+    <button class="score-chip" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score ${sc.us} to ${sc.them}"><span class="nums">${sc.us}–${sc.them}</span><span class="opp">vs ${x ? opponentSwatch(x.opp) : ''}${esc(x ? x.opp : '')}</span></button>`;
 }
 function renderScore() {
   const x = GAMES.find(v => v.id === currentId), sc = scoreOf(), add = canContribute();
@@ -1181,7 +1187,7 @@ function renderScore() {
     <div class="score-row">
       <div class="team"><span class="team-name">${esc(teamName())}</span>${add ? `<button class="goal-btn us" data-action="goal-us">+ Our goal</button>` : ''}</div>
       <button class="score-big" data-action="${add ? 'goal-choice' : 'show-log'}" aria-label="Score"><span class="score-num">${sc.us}</span> <span class="score-dash">–</span> <span class="score-num">${sc.them}</span></button>
-      <div class="team them"><span class="team-name">${esc(x ? x.opp : 'Them')}</span>${add ? `<button class="goal-btn" data-action="goal-them">+ Their goal</button>` : ''}</div>
+      <div class="team them"><span class="team-name">${x ? opponentSwatch(x.opp) : ''}${esc(x ? x.opp : 'Them')}</span>${add ? `<button class="goal-btn" data-action="goal-them">+ Their goal</button>` : ''}</div>
     </div>
     ${isClosed() ? `<div class="timer-row"><span class="qtimes">Final${times ? ' · ' + times : ''}</span><span class="closed-badge">🔒 Closed out</span></div>`
     : isFollow() ? (times ? `<div class="timer-row"><span class="qtimes">${times}</span></div>` : '')
@@ -1550,7 +1556,7 @@ function openSchedule() {
     const sn = SNACKS[x.id], gm = x.id === currentId ? g : local.games[x.id];
     const sc = gm && gm.events && gm.events.length ? scoreOf(normalize(gm)) : null;
     return `<div class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}">
-      <div class="sched-top"><b>${x.day} ${short(x.id)}</b> · ${esc(x.time)} · vs ${esc(x.opp)} · ${esc(x.field)}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}${sc ? `<span class="sched-score">${sc.us}–${sc.them}</span>` : ''}</div>
+      <div class="sched-top"><b>${x.day} ${short(x.id)}</b> · ${esc(x.time)} · vs ${opponentSwatch(x.opp)}${esc(x.opp)} · ${esc(x.field)}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}${sc ? `<span class="sched-score">${sc.us}–${sc.them}</span>` : ''}</div>
       <div class="sched-snack">${sn ? `🍎 ${esc(sn.family || sn.who)}${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}` : '<span style="color:var(--text-faint)">No snack set</span>'}</div></div>`;
   }).join('');
   openSheet(`${sheetHead('Schedule &amp; snacks', 'All games at Trafalgar. Can\'t make your snack day? Tell Coach Nick so we can swap.')}
@@ -1722,12 +1728,14 @@ function renderStatus() {
 }
 function finalLabel(id) {
   const x = id === currentId ? g : local.games[id];
-  if (!x || !Array.isArray(x.events) || !x.events.length) return '';
+  if (!x) return '';
+  const played = (Array.isArray(x.events) && x.events.length) || (x.clock && Array.isArray(x.clock.starts) && x.clock.starts.some(Boolean));
+  if (!played) return '';
   const s = scoreOf(x); return ` · ${s.us > s.them ? 'W' : s.us < s.them ? 'L' : 'T'} ${s.us}–${s.them}`;
 }
 function render() {
   $('gameSelect').innerHTML = GAMES.map(x =>
-    `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
+    `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)}${opponentColor(x.opp) ? ' (' + opponentColor(x.opp) + ')' : ''} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
   applyFormation();
   $('teamTitle').textContent = teamName();
   document.title = `${TEST ? 'TEST · ' : ''}${teamName()} — U10 Team 4 Lineups`;
