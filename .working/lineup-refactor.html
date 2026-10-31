@@ -1625,6 +1625,7 @@ function openMenu() {
       <button class="menu-item" data-action="schedule"><span class="ico">📅</span><span>Schedule &amp; snacks<small>Every game, field, time and who brings snack</small></span></button>
       ${viewer ? '' : `<button class="menu-item" data-action="players"><span class="ico">👥</span><span>Players<small>Roster, numbers, likes and avoids · edit in the sheet</small></span></button>`}
       <button class="menu-item" data-action="stats"><span class="ico">📊</span><span>Player stats<small>Minutes, goals, assists, goalie quarters</small></span></button>
+      ${viewer ? '' : `<button class="menu-item" data-action="share-stats"><span class="ico">📋</span><span>Share stats<small>Copy this phone's saved games to paste elsewhere</small></span></button>`}
       ${viewer ? '' : `<button class="menu-item" data-action="stub" data-stub="subs"><span class="ico">🔁</span><span>Sub editor <span class="soon">SOON</span><small>Fix or add subs after the game</small></span></button>`}
       <button class="menu-item" data-action="stub" data-stub="team"><span class="ico">⚙️</span><span>Team settings <span class="soon">SOON</span><small>Captains, goalie rules, roster, numbers</small></span></button>
       <button class="menu-item" data-action="stub" data-stub="format"><span class="ico">🧩</span><span>Formations &amp; game format <span class="soon">SOON</span><small>7v7 / 9v9 / 11v11, quarters or halves</small></span></button>
@@ -1710,6 +1711,48 @@ function openStats() {
     </tbody></table></div>
     <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · position columns are quarters started at that position. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
     <button class="btn full" data-action="menu">Back to menu</button>`);
+}
+
+// ── share stats across devices: everything cached in this phone's localStorage, as text to paste
+// elsewhere (chat, notes, whatever) — until there's a real backend, this is the bridge. ──
+function exportStatsText() {
+  const { rows, team, posCols } = seasonStats();
+  const names = PLAYERS.map(p => p.name).sort((a, b) => (NUM[a] || 99) - (NUM[b] || 99));
+  const lines = [];
+  lines.push(`${teamName()} · stats from this phone · ${new Date().toLocaleString()}`);
+  lines.push(`${team.games} game${team.games === 1 ? '' : 's'} · ${team.w}W ${team.l}L ${team.t}T · goals ${team.gf}-${team.ga}`);
+  lines.push('');
+  lines.push(['Player', 'GP', 'Min', 'G', 'A', ...posCols].join(' '));
+  names.forEach(n => {
+    const r = rows[n];
+    lines.push([n, r.gp, Math.round(r.q * QTR_SECS / 60), r.g || 0, r.a || 0, ...posCols.map(c => r.pos[c] || 0)].join(' '));
+  });
+  lines.push('');
+  const games = {};
+  for (const id of Object.keys(local.games || {})) {
+    const gm = normalize(local.games[id]);
+    if (gm.events.length || gm.clock.starts.some(Boolean) || gm.closed) games[id] = gm;
+  }
+  lines.push('DATA ' + JSON.stringify({ team: TEAM_ID, exportedAt: new Date().toISOString(), games }));
+  return lines.join('\n');
+}
+function openShareStats() {
+  const text = exportStatsText();
+  openSheet(`${sheetHead('Share stats', 'Copy this and paste it into our chat — it has every game saved on this phone.')}
+    <textarea id="statsExportBox" readonly style="width:100%;min-height:220px;font:11px var(--mono);background:var(--surface2);color:var(--text);border:1px solid var(--border-strong);border-radius:7px;padding:8px">${esc(text)}</textarea>
+    <button class="btn btn-primary full" data-action="stats-copy" style="margin-top:10px">⧉ Copy to clipboard</button>
+    <button class="btn full" data-action="stats" style="margin-top:8px">Back to stats</button>`);
+}
+function copyStatsExport() {
+  const box = $('statsExportBox'); if (!box) return;
+  box.focus(); box.select();
+  const done = ok => flash(ok ? 'Copied — paste it into the chat' : 'Couldn’t copy automatically — the text above is selected, copy it by hand');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(box.value).then(() => done(true)).catch(() => { let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} done(ok); });
+  } else {
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    done(ok);
+  }
 }
 
 // ── goal detail (tap a goal in the log) ──
@@ -2231,6 +2274,8 @@ document.addEventListener('click', e => {
     case 'show-log': overlay.hidden = true; return $('log').scrollIntoView({ behavior: 'smooth', block: 'center' });
     case 'menu': return openMenu();
     case 'stats': return openStats();
+    case 'share-stats': return openShareStats();
+    case 'stats-copy': return copyStatsExport();
     case 'schedule': return openSchedule();
     case 'players': return isViewer() ? null : openPlayers();
     case 'stub': return openStub(d.stub);
