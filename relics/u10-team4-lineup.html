@@ -466,8 +466,8 @@ const TEAM_ID = 'u10b-team4-fall2026';
 // Test mode: …/u10-team4-lineup.html?test — its own storage on this device, never sends anything to the
 // sheets, full coach controls, and a "Reset all test data" button. Real games are never read or touched.
 const TEST = new URLSearchParams(location.search).has('test');
-const PERIODS = ['1st', '2nd'];
-const TARGET = 1; // halves per player (2 halves total)
+const PERIODS = ['Q1', 'Q2', 'Q3', 'Q4'];
+const TARGET = 2; // quarters per player (4 quarters total)
 const FORMATION = [['lf', 'striker', 'rf'], ['cmid'], ['def1', 'def2'], ['goalie']];
 const POS = {
   lf:      { label: 'LM',  cls: 'c-lf',  tags: ['FWD'] },
@@ -940,7 +940,7 @@ function place(n, k) {
 }
 
 // ─────────────── score & game timer ───────────────
-const QTR_SECS = 25 * 60, HALF_SECS = 25 * 60, MAX_SECS = 99 * 60 + 59;
+const QTR_SECS = 15 * 60, HALF_SECS = 30 * 60, MAX_SECS = 99 * 60 + 59;
 const mmss = s => { s = Math.floor(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 const scoreOf = (x = g) => ({ us: x.events.filter(e => e.side === 'us').length, them: x.events.filter(e => e.side === 'them').length });
 let wakeLock = null;
@@ -957,7 +957,7 @@ const touchClock = () => { if (isViewer()) g.ownClock = true; };
 // ── time is the truth ──
 // Only the kickoff time has to be right. A quarter nobody tapped is assumed to start 15 min + a 1 min
 // break after the one before it, so goals land in the right quarter even if the clock is never advanced.
-const BREAK_SECS = 5 * 60; // 5 min halftime
+const BREAK_SECS = 60; // 1 min between quarters
 function qStartEst(i) {
   const s = g.clock.starts;
   if (s[i]) return s[i];
