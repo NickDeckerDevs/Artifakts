@@ -61,7 +61,16 @@ button:focus-visible, select:focus-visible, .tab:focus-visible, .opt:focus-visib
 .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
 h1 { font-size: 20px; font-weight: 600; margin: 0 0 14px; }
 
-.game-select { width: 100%; padding: 11px 12px; margin-bottom: 10px; background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; border: 1px solid var(--border-strong); border-radius: var(--radius); }
+.game-picker { display: block; width: 100%; margin-bottom: 10px; padding: 10px 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: var(--radius); cursor: pointer; text-align: left; }
+.game-row-top { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; flex-wrap: wrap; }
+.game-row-bottom { display: flex; justify-content: space-between; gap: 8px; margin-top: 3px; font-size: 12px; color: var(--text-muted); }
+.game-row .ball { display: inline-block; font-size: 13px; }
+.game-row .ball.live { animation: ballpulse 1.1s ease-in-out infinite; }
+@keyframes ballpulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.game-row .score { font-variant-numeric: tabular-nums; margin: 0 2px; }
+.game-list { display: flex; flex-direction: column; gap: 6px; }
+.game-list .game-row-wrap { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; text-align: left; }
+.game-list .game-row-wrap.on { border-color: var(--ok); }
 
 .action-bar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
 .action-btn { padding: 10px 6px; font-size: 12px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); cursor: pointer; }
@@ -257,9 +266,17 @@ button { touch-action: manipulation; }
 .sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
 .sheet-head .sheet-title { margin: 0; padding-top: 4px; }
 .x-btn { flex: 0 0 36px; height: 36px; border-radius: 18px; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 16px; cursor: pointer; }
-.snack-line { display: flex; align-items: center; gap: 6px; width: 100%; margin: -4px 0 12px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.snack-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin: -4px 0 12px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
 .snack-line b { color: var(--text); font-weight: 600; }
-.snack-line .more { margin-left: auto; font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+.snack-line .more { font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+
+.game-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-muted); margin: -4px 0 10px; flex-wrap: wrap; }
+
+.cap-badges { padding: 9px 0; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; }
+.cap-side { display: inline-flex; align-items: center; gap: 6px; }
+.cap-side.right { flex-direction: row-reverse; }
+.armband { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; font-size: 12px; font-weight: 800; border-style: solid; border-radius: 4px; border-width: 1px; border-color: #9b4dca; color: #9b4dca; background: #000; text-shadow: 0 0 2px #fff; }
+.armband-2 { border-color: #9b4dca; color: #9b4dca; }
 .sched-list { display: flex; flex-direction: column; gap: 6px; }
 .opp-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 .sched-row { padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); font-size: 13px; }
@@ -378,7 +395,9 @@ a.menu-item { text-decoration: none; }
   <h1 id="teamTitle">Team 4</h1>
   <div class="follow-banner" id="followBanner" hidden></div>
 
-  <select class="game-select" id="gameSelect" aria-label="Game"></select>
+  <button class="game-picker" id="gamePicker" data-action="game-picker" aria-label="Choose game"></button>
+  <div class="game-meta" id="gameMeta"></div>
+  <div class="cap-row" id="capRow" hidden></div>
   <button class="snack-line" id="snackLine" data-action="schedule" hidden></button>
 
   <div class="action-bar coach-only live-only">
@@ -1594,11 +1613,10 @@ const STUBS = {
 function openSchedule() {
   const next = nextGameId();
   const rows = GAMES.map(x => {
-    const sn = SNACKS[x.id], gm = x.id === currentId ? g : local.games[x.id];
-    const sc = gm && gm.events && gm.events.length ? scoreOf(normalize(gm)) : null;
-    return `<div class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}">
-      <div class="sched-top"><b>${x.day} ${short(x.id)}</b> · ${esc(x.time)} · vs ${opponentSwatch(x.opp)}${esc(x.opp)} · ${esc(x.field)}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}${sc ? `<span class="sched-score">${sc.us}–${sc.them}</span>` : ''}</div>
-      <div class="sched-snack">${sn ? `🍎 ${esc(sn.family || sn.who)}${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}` : '<span style="color:var(--text-faint)">No snack set</span>'}</div></div>`;
+    const sn = SNACKS[x.id], snacks = sn ? (Array.isArray(sn) ? sn : [sn]) : [];
+    const snackTxt = snacks.length ? `${snackEmoji(x.id)} ${esc(snacks[0].who || snacks[0].family || '')}${snacks[1] ? ' · ' + esc(snacks[1].who || snacks[1].family || '') : ''}` : '<span style="color:var(--text-faint)">No snack set</span>';
+    return `<div class="sched-row ${x.id === next ? 'next' : ''} ${x.id < next ? 'past' : ''}">${gameRowHTML(x)}
+      <div class="sched-snack">${snackTxt}</div></div>`;
   }).join('');
   openSheet(`${sheetHead('Schedule &amp; snacks', 'All games at Trafalgar. Can\'t make your snack day? Tell Coach Nick so we can swap.')}
     <div class="sched-list">${rows}</div>
@@ -1787,9 +1805,42 @@ function finalLabel(id) {
   if (!played) return '';
   const s = scoreOf(x); return ` · ${s.us > s.them ? 'W' : s.us < s.them ? 'L' : 'T'} ${s.us}–${s.them}`;
 }
+// ── shared game row: used by the game picker and the schedule view, so they can't drift apart ──
+function gameRowIcon(x) {
+  const fl = finalLabel(x.id);
+  if (/ W /.test(fl)) return '✅';
+  if (/ L /.test(fl)) return '❌';
+  if (/ T /.test(fl)) return '➖';
+  const live = x.id === currentId && liveQ() >= 0;
+  return `<span class="ball${live ? ' live' : ''}" aria-label="${live ? 'live' : 'upcoming'}">⚽</span>`;
+}
+function gameRowHTML(x) {
+  const gm = x.id === currentId ? g : local.games[x.id];
+  const sc = gm && gm.events && gm.events.length ? scoreOf(normalize(gm)) : null;
+  return `<div class="game-row">
+    <div class="game-row-top">${gameRowIcon(x)} ${opponentSwatch(x.opp)}${esc(x.opp)}${sc ? ` <span class="score">${sc.us}–${sc.them}</span>` : ''}${x.note ? ` <span class="sched-note">${esc(x.note)}</span>` : ''}</div>
+    <div class="game-row-bottom"><span>${x.day} ${short(x.id)}</span><span>${esc(x.time)}</span><span>Field ${esc(x.field)}</span></div>
+  </div>`;
+}
+const SNACK_EMOJI = ['🍎', '🍊', '🍌', '🍇', '🍓', '🥨', '🍪', '🥕', '🍉', '🍿'];
+function snackEmoji(id) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) | 0; return SNACK_EMOJI[Math.abs(h) % SNACK_EMOJI.length]; }
+function renderGameMeta() {
+  const x = GAMES.find(v => v.id === currentId), el = $('gameMeta');
+  el.innerHTML = x ? `<span>${x.day} ${short(x.id)} · ${esc(x.time)}</span><span>${opponentSwatch(x.opp)}${esc(x.opp)}${opponentColor(x.opp) ? ' · ' + opponentColor(x.opp) : ''}</span><span>Field ${esc(x.field)}</span>` : '';
+}
+function renderCapRow() {
+  const caps = captains(), el = $('capRow');
+  el.hidden = !caps.length;
+  if (!caps.length) return;
+  const [c1, c2] = caps, tag = n => `${esc(n)}${NUM[n] ? ' #' + NUM[n] : ''}`;
+  el.innerHTML = `<div class="cap-badges">
+    <span class="cap-side"><span class="armband" aria-hidden="true">C</span>${tag(c1)}</span>
+    ${c2 ? `<span class="cap-side right">${tag(c2)}<span class="armband armband-2" aria-hidden="true">C</span></span>` : ''}
+  </div>`;
+}
 function render() {
-  $('gameSelect').innerHTML = GAMES.map(x =>
-    `<option value="${x.id}" ${x.id === currentId ? 'selected' : ''}>${x.day} ${short(x.id)} · ${x.time} · vs ${esc(x.opp)}${opponentColor(x.opp) ? ' (' + opponentColor(x.opp) + ')' : ''} · ${x.field}${x.note ? ' · ' + esc(x.note) : ''}${finalLabel(x.id)}</option>`).join('');
+  const curGame = GAMES.find(x => x.id === currentId);
+  $('gamePicker').innerHTML = curGame ? gameRowHTML(curGame) : '';
   applyFormation();
   $('teamTitle').textContent = teamName();
   document.title = `${TEST ? 'TEST · ' : ''}${teamName()} — U10 Team 4 Lineups`;
@@ -1815,9 +1866,15 @@ function render() {
   renderScore();
   renderLog();
   renderStatus();
+  renderGameMeta();
+  renderCapRow();
   const sn = SNACKS[currentId];
-  $('snackLine').hidden = !sn;
-  if (sn) $('snackLine').innerHTML = `🍎 Snack: <b>${esc(sn.family || sn.who)}</b>${sn.family && sn.who && sn.who !== sn.family ? ' · ' + esc(sn.who) : ''}<span class="more">Schedule ›</span>`;
+  const snacks = sn ? (Array.isArray(sn) ? sn : [sn]) : [];
+  $('snackLine').hidden = !snacks.length;
+  if (snacks.length) {
+    const label = e => esc(e.who || e.family || '');
+    $('snackLine').innerHTML = `<span>${snackEmoji(currentId)} <b>${label(snacks[0])}</b></span>${snacks[1] ? `<span><b>${label(snacks[1])}</b></span>` : ''}<span class="more">Schedule ›</span>`;
+  }
   $('activeCount').textContent = `${present().length} here · 7 on field`;
 
   const live = liveQ();
@@ -2013,7 +2070,7 @@ function openCopyQ() {
 
 // ─────────────── events ───────────────
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-editgoal],[data-delsub],[data-fillnow],[data-fpaccept],[data-fpdismiss],[data-fpmerge],[data-fpmdismiss],[data-ago],[data-goalq],[data-copyq]');
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-editgoal],[data-delsub],[data-fillnow],[data-fpaccept],[data-fpdismiss],[data-fpmerge],[data-fpmdismiss],[data-ago],[data-goalq],[data-copyq],[data-pickgame]');
   if (!t || t.disabled) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
@@ -2021,8 +2078,8 @@ document.addEventListener('click', e => {
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok',
     'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-shot',
     'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
-    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'schedule', 'show-log', 'goal-edit'];
-  const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal', 'ago', 'goalq'];
+    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'schedule', 'show-log', 'goal-edit', 'game-picker'];
+  const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal', 'ago', 'goalq', 'pickgame'];
   if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
   // A closed-out game (and Follow mode) is read-only: tabs, goal details, stats, share and the menu still work.
   const EDIT_DATA = ['player', 'slot', 'movepos', 'fill', 'gk', 'gkalt', 'fillnow', 'delsub', 'undo', 'formation', 'scorer', 'assist', 'tag', 'fpaccept', 'fpdismiss', 'fpmerge', 'fpmdismiss', 'ago', 'goalq', 'copyq'];
@@ -2100,7 +2157,9 @@ document.addEventListener('click', e => {
   if (d.player) return openPlayer(d.player);
   if (d.slot) return openSlot(d.slot);
   if (d.pos) { pending.pos = d.pos; sheet.querySelectorAll('.opt').forEach(o => o.classList.toggle('selected', o === t)); return; }
+  if (d.pickgame) { overlay.hidden = true; return selectGame(d.pickgame); }
   switch (d.action) {
+    case 'game-picker': return openGamePicker();
     case 'roster': return openRoster();
     case 'autofill': return autofill();
     case 'copy': return openCopy();
@@ -2192,12 +2251,16 @@ document.addEventListener('click', e => {
     case 'clock-set-ok': { const p = pending; overlay.hidden = true; pending = null; if (p && p.at) setQuarterStart(p.clockSet, p.at); return; }
   }
 });
+function selectGame(id) {
+  writeLocal();
+  currentId = id; g = normalize(local.games[currentId]); q = Math.max(0, liveQ()); gkOpen = false; keepAwake(liveQ() >= 0);
+  writeLocal(); render(); maybeAskMode(); return pullGame();
+}
+function openGamePicker() {
+  openSheet(`${sheetHead('Choose a game')}
+    <div class="game-list">${GAMES.map(x => `<button class="game-row-wrap ${x.id === currentId ? 'on' : ''}" data-pickgame="${esc(x.id)}">${gameRowHTML(x)}</button>`).join('')}</div>`);
+}
 document.addEventListener('change', e => {
-  if (e.target.id === 'gameSelect') {
-    writeLocal();
-    currentId = e.target.value; g = normalize(local.games[currentId]); q = Math.max(0, liveQ()); gkOpen = false; keepAwake(liveQ() >= 0);
-    writeLocal(); render(); maybeAskMode(); return pullGame();
-  }
   if (e.target.id === 'clockTime' && pending && pending.clockSet !== undefined) {
     const [h, m] = (e.target.value || '').split(':').map(Number);
     if (isNaN(h) || isNaN(m)) return;
