@@ -203,3 +203,32 @@ nothing broke.
 - Formation switching (`231` vs `312`) without losing saved lineups,
   because storage keys are formation-independent.
 - Close-out / Follow mode / viewer read-only gating.
+
+## Deferred (explicitly, not for the next game — from `export-asks.txt`)
+
+- **Single source-of-truth sheet.** There are currently two sheets: the
+  "Team 4 Captains & Goalies" sheet (`SHEET_CSV`, `SYNC_URL`'s backing
+  sheet) and a separate snack sheet
+  (`https://docs.google.com/spreadsheets/d/1tlbIeQeAQAWp6bo7g2xKNEt1MdHhi8QUgxKnEF3hzt4/edit`).
+  The coach doesn't want to manage two spreadsheets. Proposal: merge the
+  snack tab into the Captains & Goalies sheet. Open question from the
+  coach: he doesn't want his private notes visible to parents even with
+  a merged sheet — comment-only access for parents on a notes tab is
+  probably enough, not a blocker, but confirm before merging.
+- **Live snack sync.** `SNACKS` in `lineup-refactor.html` is a hardcoded
+  JS constant, copied by hand from the snack sheet — editing the sheet
+  does nothing to the app. Needs an Apps Script endpoint (likely another
+  action on the same `apps-script-sync.gs` web app, or a second `doGet`
+  action reading the merged sheet above) so snack edits show up without
+  a code change.
+- **Possible Supabase migration.** The coach has a Supabase instance
+  already backing the separate `sideline` rewrite project and wondered
+  whether this app's whole backend (currently Google Sheets + Apps
+  Script) should move there instead, rather than building more
+  Sheets-specific sync logic. Not decided — would be a bigger scope
+  change than anything else in this file, and `sideline` itself isn't
+  ready yet per the coach's own timeline.
+- Any of the above may also explain lingering stats/goalie-count doubts
+  if a past game's data never made it into the sheet at all (as opposed
+  to just not being pulled by this device) — worth re-checking once the
+  single-sheet question is settled, not before.

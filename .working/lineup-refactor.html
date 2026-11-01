@@ -396,6 +396,8 @@ a.menu-item { text-decoration: none; }
 .stats-table th:first-child, .stats-table td:first-child { text-align: left; }
 .stats-table td { padding: 7px 4px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
 .stats-table .narrow { max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gk-recalc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 2px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.gk-recalc-row small { color: var(--text-faint); font-size: 11px; }
 .goal-detail { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
 .gd-row { display: flex; gap: 8px; font-size: 13px; }
 .gd-row .k { width: 64px; flex-shrink: 0; color: var(--text-muted); font-size: 12px; padding-top: 1px; }
@@ -1272,14 +1274,16 @@ const SHOT_TAGS = [
   ['The shot', ['Short shot', 'Power shot', 'Blake shot', 'Volley', 'Half-volley', 'Chip', 'Long shot', 'Dribbled in']],
   ['Where it went', ['Top bin', 'High', 'Mid', 'Low', 'Near post', 'Far post', 'Deflected', 'Off the post/bar', 'Between legs', 'Off defender', 'Chaos in goal']],
 ];
+// Flat list (not grouped, unlike SHOT_TAGS) describing how an assist was delivered.
+const ASSIST_TAGS = ['Short pass', 'Pass', 'Long pass', 'Through ball', 'Big air', 'Multiple passes'];
 function openGoalMore() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
-  const tags = e.shot || [];
+  const tags = e.shot || [], aTags = e.assistTags || [];
   openSheet(`${sheetHead(`⚽ ${esc(e.scorer || 'Our goal')} · ${goalLabel(e)}`)}
     <div class="pills goal-q" role="group" aria-label="Quarter">${PERIODS.map((p, i) => `<button class="pill ${e.q === i ? 'on' : ''}" data-goalq="${i}" aria-pressed="${e.q === i}">${p}</button>`).join('')}</div>
     <div class="goal-summary"><small>${e.spot ? 'Location saved · <button class="link-btn" data-action="goal-spot" style="padding:0;font-size:12px;text-decoration:underline">change</button>' : '<button class="link-btn" data-action="goal-spot" style="padding:0;font-size:12px;text-decoration:underline">Add where it was scored from</button>'}</small></div>
     <div class="big-opts">
-      <button class="big-opt ${e.assist ? 'done' : ''}" data-action="goal-assist">Register Assist${e.assist ? `<small>✓ ${esc(e.assist)}</small>` : ''}</button>
+      <button class="big-opt ${e.assist ? 'done' : ''}" data-action="${e.assist ? 'goal-assist-tags' : 'goal-assist'}">Register Assist${e.assist ? `<small>✓ ${esc(e.assist)}${aTags.length ? ' · ' + esc(aTags.join(', ')) : ''}</small>` : ''}</button>
       <button class="big-opt ${tags.length ? 'done' : ''}" data-action="goal-shot">Register Shot${tags.length ? `<small>✓ ${esc(tags.join(', '))}</small>` : ''}</button>
     </div>
     <button class="btn btn-primary full" data-action="cancel">Save</button>`, 'sheet-goal-more');
@@ -1290,6 +1294,13 @@ function openGoalAssist() {
   openSheet(`${sheetHead(`Assist · ${esc(e.scorer || 'Our goal')}`, 'Who set it up?')}
     ${pickField({ L, data: 'data-assist', exclude: [e.scorer], extra: cameOff })}
     <div class="btn-row"><button class="btn" data-assist="">No assist</button><button class="btn" data-action="goal-more">Back</button></div>`, 'sheet-goal-assist');
+}
+function openGoalAssistTags() {
+  const e = g.events[pending.goal]; if (!e) return closeSheet();
+  const on = new Set(e.assistTags || []);
+  openSheet(`${sheetHead(`Assist · ${esc(e.assist || '')}`, 'How was it set up?')}
+    <div class="pills">${ASSIST_TAGS.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-atag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div>
+    <div class="btn-row"><button class="btn" data-action="goal-assist">Change who assisted</button><button class="btn btn-primary" data-action="goal-more">Done</button></div>`, 'sheet-goal-assist-tags');
 }
 function openGoalShot() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
@@ -1343,7 +1354,7 @@ function gameSummary() {
   if (g.events.length) {
     lines.push('Goals:');
     [...g.events].sort((a, b) => a.q - b.q).forEach(e =>
-      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? teamName() + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') + (e.assist ? `, assist ${e.assist}` : '') + ((e.shot || []).length ? ` [${e.shot.join(', ')}]` : '') : x.opp}`));
+      lines.push(`  ${PERIODS[e.q]}${e.clock ? ' ' + e.clock : ''} — ${e.side === 'us' ? teamName() + (e.scorer ? ' (#' + (NUM[e.scorer] || '?') + ' ' + e.scorer + ')' : '') + (e.assist ? `, assist ${e.assist}${(e.assistTags || []).length ? ` [${e.assistTags.join(', ')}]` : ''}` : '') + ((e.shot || []).length ? ` [${e.shot.join(', ')}]` : '') : x.opp}`));
   }
   if (g.subs.length) {
     lines.push('Subs:');
@@ -1360,7 +1371,7 @@ function gameSummary() {
   lines.push('');
   lines.push('DATA ' + JSON.stringify({ team: TEAM_ID, game: currentId, opp: x.opp, captains: caps, out: g.out,
     goalies: g.lineup.map(L => L.goalie), lineup: g.lineup, subs: g.subs, clock: g.clock,
-    events: g.events.map(({ side, q, clock, scorer, assist, shot, spot }) => ({ side, q, clock, scorer, assist, shot, spot })) }));
+    events: g.events.map(({ side, q, clock, scorer, assist, assistTags, shot, spot }) => ({ side, q, clock, scorer, assist, assistTags, shot, spot })) }));
   return lines.join('\n');
 }
 function resultNote() {
@@ -1658,6 +1669,7 @@ function openMenu() {
       <button class="menu-item" data-action="schedule"><span class="ico">📅</span><span>Schedule &amp; snacks<small>Every game, field, time and who brings snack</small></span></button>
       ${viewer ? '' : `<button class="menu-item" data-action="players"><span class="ico">👥</span><span>Players<small>Roster, numbers, likes and avoids · edit in the sheet</small></span></button>`}
       <button class="menu-item" data-action="stats"><span class="ico">📊</span><span>Player stats<small>Minutes, goals, assists, goalie quarters</small></span></button>
+      ${viewer ? '' : '<button class="menu-item" data-action="recalc-goalies"><span class="ico">🔄</span><span>Recalculate goalie plan<small>Pull every game from the sheet and re-check the rotation</small></span></button>'}
       ${viewer ? '' : `<button class="menu-item" data-action="share-stats"><span class="ico">📋</span><span>Share stats<small>Copy this phone's saved games to paste elsewhere</small></span></button>`}
       ${viewer ? '' : `<button class="menu-item" data-action="stub" data-stub="subs"><span class="ico">🔁</span><span>Sub editor <span class="soon">SOON</span><small>Fix or add subs after the game</small></span></button>`}
       <button class="menu-item" data-action="stub" data-stub="team"><span class="ico">⚙️</span><span>Team settings <span class="soon">SOON</span><small>Captains, goalie rules, roster, numbers</small></span></button>
@@ -1763,6 +1775,19 @@ async function openStats() {
   openSheet(`${sheetHead('Player stats', 'Checking the sheet for every game…')}`, 'sheet-stats');
   await syncAllGames();
   renderStatsSheet();
+}
+// Shows the goalie rotation plainly, with each name's season goalie-quarter count, after pulling
+// every game from the sheet — so you can see the numbers it used, not just trust the result.
+async function openRecalcGoalies() {
+  openSheet(`${sheetHead('Goalie plan', 'Checking the sheet for every game…')}`, 'sheet-recalc-goalies');
+  await syncAllGames();
+  const plan = goaliePlan();
+  const row = (n, tag) => n ? `<div class="gk-recalc-row"><span>${numTag(n)}${esc(n)}${tag ? ` <small>${esc(tag)}</small>` : ''}</span><span>${gkSeason(n)} quarter${gkSeason(n) === 1 ? '' : 's'}</span></div>` : '';
+  sheet.innerHTML = `<div class="handle"></div>${sheetHead('Goalie plan', `Based on every game synced to the sheet, as of now.`)}
+    ${row(plan.caps[0], 'Captain · Q1')}${row(plan.upNext[0], 'Q2')}${row(plan.caps[1], 'Captain · Q3')}${row(plan.upNext[1], 'Q4')}
+    ${plan.alternates.length ? `<div class="sheet-hint">Next alternates: ${plan.alternates.map(n => `${esc(n)} (${gkSeason(n)})`).join(', ')}</div>` : ''}
+    <div class="sheet-hint">Picks already made for this game aren't changed — use "Back to the rotation" in the goalie section to clear them separately.</div>
+    <button class="btn full" data-action="menu">Back to menu</button>`;
 }
 
 // ── share stats across devices: everything cached in this phone's localStorage, as text to paste
@@ -2191,21 +2216,21 @@ function openCopyQ() {
 
 // ─────────────── events ───────────────
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-editgoal],[data-delsub],[data-fillnow],[data-fpaccept],[data-fpdismiss],[data-fpmerge],[data-fpmdismiss],[data-ago],[data-goalq],[data-copyq],[data-pickgame]');
+  const t = e.target.closest('[data-action],[data-player],[data-slot],[data-q],[data-pos],[data-fill],[data-gk],[data-gkalt],[data-swapfor],[data-scorer],[data-undo],[data-formation],[data-delnote],[data-idpick],[data-movepos],[data-assist],[data-tag],[data-atag],[data-editgoal],[data-delsub],[data-fillnow],[data-fpaccept],[data-fpdismiss],[data-fpmerge],[data-fpmdismiss],[data-ago],[data-goalq],[data-copyq],[data-pickgame]');
   if (!t || t.disabled) return;
   const d = t.dataset;
   if (d.q !== undefined) { q = +d.q; return render(); }
   // Viewers can follow along (game, quarter, goals, clock, notes); every lineup tap is simply ignored.
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok',
-    'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-shot',
+    'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-assist-tags', 'goal-shot',
     'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
     'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'schedule', 'show-log', 'goal-edit', 'game-picker'];
-  const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'editgoal', 'ago', 'goalq', 'pickgame'];
+  const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'atag', 'editgoal', 'ago', 'goalq', 'pickgame'];
   if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
   // A closed-out game (and Follow mode) is read-only: tabs, goal details, stats, share and the menu still work.
-  const EDIT_DATA = ['player', 'slot', 'movepos', 'fill', 'gk', 'gkalt', 'fillnow', 'delsub', 'undo', 'formation', 'scorer', 'assist', 'tag', 'fpaccept', 'fpdismiss', 'fpmerge', 'fpmdismiss', 'ago', 'goalq', 'copyq'];
+  const EDIT_DATA = ['player', 'slot', 'movepos', 'fill', 'gk', 'gkalt', 'fillnow', 'delsub', 'undo', 'formation', 'scorer', 'assist', 'tag', 'atag', 'fpaccept', 'fpdismiss', 'fpmerge', 'fpmdismiss', 'ago', 'goalq', 'copyq'];
   const EDIT_ACTIONS = ['autofill', 'copy', 'clear', 'roster', 'goal-choice', 'goal-us', 'goal-them', 'note', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'clock', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok', 'copy-q',
-    'goal-edit', 'goal-spot', 'goal-spot-ok', 'goal-assist', 'goal-shot', 'goal-more', 'move-confirm', 'do-undo', 'test-ff'];
+    'goal-edit', 'goal-spot', 'goal-spot-ok', 'goal-assist', 'goal-assist-tags', 'goal-shot', 'goal-more', 'move-confirm', 'do-undo', 'test-ff'];
   if ((isClosed() || isFollow()) && (EDIT_DATA.some(k => d[k] !== undefined) || EDIT_ACTIONS.includes(d.action))) {
     overlay.hidden = true; pending = null;
     return flash(isClosed() ? (isViewer() ? 'This game is final' : 'Game is closed out · unlock it at the bottom to edit') : 'Follow mode is view-only · switch to Sideline in the ☰ menu');
@@ -2218,7 +2243,17 @@ document.addEventListener('click', e => {
   if (d.assist !== undefined) {
     const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
     if (isViewer()) g.ownEvents = true;
-    ev.assist = d.assist || null; save(); return openGoalMore();
+    ev.assist = d.assist || null; if (!ev.assist) ev.assistTags = [];
+    save(); return ev.assist ? openGoalAssistTags() : openGoalMore();
+  }
+  if (d.atag !== undefined) {
+    const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
+    if (isViewer()) g.ownEvents = true;
+    const set = new Set(ev.assistTags || []);
+    set.has(d.atag) ? set.delete(d.atag) : set.add(d.atag);
+    ev.assistTags = ASSIST_TAGS.filter(x => set.has(x));
+    t.classList.toggle('on', set.has(d.atag)); t.setAttribute('aria-pressed', set.has(d.atag));
+    g.savedAt = new Date().toISOString(); writeLocal(); return;
   }
   if (d.ago !== undefined && pending && pending.clockSet !== undefined) { pending.at = Date.now() - +d.ago * 60000; return renderClockSet(); }
   if (d.goalq !== undefined && pending && pending.goal !== undefined) {   // fixing a goal's quarter by hand pins it there
@@ -2314,12 +2349,14 @@ document.addEventListener('click', e => {
     }
     case 'goal-more': return pending && pending.goal !== undefined ? openGoalMore() : closeSheet();
     case 'goal-assist': return openGoalAssist();
+    case 'goal-assist-tags': return openGoalAssistTags();
     case 'goal-shot': return openGoalShot();
     case 'move-confirm': return applyMove();
     case 'goal-edit': pending = { goal: +d.goal }; return openGoalMore();
     case 'show-log': overlay.hidden = true; return $('log').scrollIntoView({ behavior: 'smooth', block: 'center' });
     case 'menu': return openMenu();
     case 'stats': return openStats();
+    case 'recalc-goalies': return openRecalcGoalies();
     case 'share-stats': return openShareStats();
     case 'stats-copy': return copyStatsExport();
     case 'schedule': return openSchedule();
@@ -2404,6 +2441,10 @@ render();
 if (isViewer()) { if (nearGameTime() && !(local.askedMode || {})[currentId]) maybeAskMode(); else if (!isFollow() && !viewerId()) openIdentity(); }
 syncSheet();
 pullGame();
+// The goalie rotation (goaliePlan()) reads every earlier game's goalie from local.games, same as
+// seasonStats() — pull them all in up front for coaches so the rotation isn't computed from whatever
+// happens to already be cached on this phone.
+if (isCoach()) syncAllGames().then(render);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else onTabBack(); });
 setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pullGame().then(renderFollowBanner); }, 60000);
 setInterval(() => { if (document.visibilityState === 'visible' && isCoach() && isGameDay() && !isClosed()) fetchParentEntries(); }, 60000);

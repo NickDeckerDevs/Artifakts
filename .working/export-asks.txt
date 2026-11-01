@@ -1,0 +1,179 @@
+NOTE - FOR THE SYNCING THINGS, I just need you to take the csv data and color screenshot and get that stuff updated in your sheet, once we get done with this round of revisions, I'll have a few days between games to get a handoff and get it ported over - I mentioned thinking and some other things like that in the text below. We are not going to do that now. That needs to be deferred, and go ahead and create a handoff file or whatever, or a next steps. We're not going to worry about that right now. We just need to get the app updated so when I do the game tomorrow, I've got these new features in it, because I believe I'm going to send this out to the parents before the game!
+
+Needs the fields updated, needs the color of teams, needs the snack schedule copied.
+
+I got it set up and all fixed up... however I'm not seeing it update inside the lineup app. It looks like 
+i need a little app script or something because I need to be able to update my snack sheet (https://docs.google.com/spreadsheets/d/1tlbIeQeAQAWp6bo7g2xKNEt1MdHhi8QUgxKnEF3hzt4/edit?gid=868711475#gid=868711475) and it update the app. so that needs to be solved.
+
+and in reality, I really need just one source for all of that, so if I have to move my entire tabs over, I think we should do that... I can't manage two spreadsheets. However, this is the problem - I don't want my notes to be visible. (this isn't a deal breaker) -- so they could have comment access if they really want, but I'd love it to be.. MAN you know what.. I have my database setup on supabase for the sideline app..
+
+I wonder if I should move this codebase over to that and pause the build on that to get this migrated over.
+
+I also think we need to have the date, time, team spread out
+
+Saturday 10/31 12pm                       White Team #5                  Field 2B
+
+then the captains row
+
+Let's do some kinda captain armband C like purple armband and black C with a white outline on the C?
+
+Then make a variation of that with black armband, purple c, white online for the other captain
+
+Put <armband> Captain 1 #X                                                              Captain 2 name #X <armband>
+
+then the snack row...
+
+let's do
+
+<Random Snack emoji>Liam Clark                                             Vanessa Guzman
+
+that way they have some horizontal spacing in the app
+
+If they click on the game in the schedule then that will show the score, players, and all that where they can click into that piece there just like they could in the live game view to see how it went
+
+Now I need to be able to modify these goals when I'm in the game view....
+
+Sometimes Im in the wrong quarter. like erin will put a goal in and i'll put the same one in but mine is in the wrong quarter.
+
+So I need to be able to modify that stuff.
+
+I really think that goals should be tracked by the actual time that it happened. And I think that we should leave the clock out of advancing the quarters.
+
+So if I mark a goal, it does it by time, and when I close out the game I can confirm what quarter the goals are
+
+And the time.. It is a bit too crazy. it is too hard to work with every quarter.
+
+I say we control time by the half.
+
+So start time, and then how it allows you to change it -- i really like that.
+
+I talked to a ref and he said he does 25 minute timer, then there is halftime and another 25 minutes
+
+half time is 5 minutes, but really it might eat up into time because every ref is different..
+
+The time the user clicks the goal button is when you mark the time. 
+
+How to handle scoring
+without a clock being started
+
+game starts at 10am, goals up to 10:12:50 are 1st quarter, 
+then next 12.5 minutes is 2nd quarter
+then you have 5 minute break, then 12.5 minutes for 3rd quarter, etc for 4th quarter
+
+If I start the clock, it just syncs with that start time we set, first 12.5 minutes is the 1st, then the second, same with after halftime
+
+so that then makes our timer change to 
+start
+then we can press it for 
+end first half
+start second half
+change time
+undo
+
+I also need to be able to change the team name for each game.. but I dont want to do that from the game view, that is too messy
+
+Dropdown on game view for selecting the game
+
+I want it to go (fake/sample data)
+
+win result
+<win icon> <purple jersey> 12-3 <dark blue jersey icon> #6    
+ Thursday                                 10/22 7:30p                     2A                                         
+
+// I'm specifically talking about 00 because I noticed that our 00 tie is not showing up. It's just showing up as blank. We need to make sure that shows up correctly.
+
+tie result
+<tie icon> <yellowjersy> 0-0 <green jersry icon> #1
+Saturday               12/1 11:00a                               6B
+
+Game that is today or in the future
+<future/today game icon> <yellowjersy> VS <green jersry icon> #1
+Saturday               12/1 11:00a                               6B
+
+Today game icon idea
+soccer ball that pulses/kinda glows (I attached our game ball. It's a yellow select ball with red and purple-bluish type colors on it. That is our game ball.
+
+If you were to make that much more simplified, it could be a white-to-yellow and a light purple-to-darker purple. Really, just have it pulse or glow.)
+
+Future game icon idea 
+I also attached a picture of a white select ball. We also play with that at practice. That could be more of just a basic icon that doesn't glow or pulse or anything. So something like that.
+
+Player Stats
+
+I need the the player column to not take up so much room. I'm guessing that the player column is probably filling the extra space, and the other stat ones are smaller. So what I want to add to this all right, we've got goals and assists, and we have goal kick. Let's put all of the positions on there. That way I can see every position and make sure that I've moved kids around.
+
+I feel like i'm not sure that the stats are collecting correctly, and that the goalie stats and who is the next goalie is setup correctly.. i'm having a super hard time being convinced that ethan and jaxon have not played goalie...
+
+I dunno, I think that the stats are incorrect, and I have doubt that the goalie selection coming into the app is correct.
+
+If some of this is due to syncing, I say lets put that as a part 2 along with moving the stuff to the database..
+
+The Position / Formation setup.....
+currently the striker to the goalie takes up less than half of the vertical space. I want it to take up much more space. I'd like to see this stuff without my glasses on!
+
+So we have a lot of changes here
+
+change striker, left mid, center mid, etc to their abbreviations. ST, CM, LM, GK, LB, RB, ETC I need the label to be more of an contrast. i dont know if the app is colored for dark mode, but I see it as mostly dark.. so that is my perspective. I'm not asking you to put it into dark mode or put it into light mode or anything like that. I'm telling you that when I see the gray box around the position, the text is just slightly brighter. I need that to be much more brighter, more of like a white And just the abbreviation
+
+I would like the player names to be larger. And I would like the numbers to be larger. So let's place the box for the position
+----------------
+LM               4
+         EJ
+---------------
+ I believe that the "left mid" and the "four" should be overlaid, right? 
+
+So we want the box to really be more of the player's name, where you can see "left mid" and the number "4." And when I say "the player name," that means let's make the colored background the entire gray box. 
+
+Let's take the box, and once the player is in there, we fill instead of putting the player tag with the name and the number inside the box, let's consume the box that color contrast is much better than the gray, so let's do that
+
+And so what we need is more vertical space, and we need between them, but we also want them to take up more vertical space 
+
+I would also like the left and right mids to be the same color. I don't like them being opposite colors. Let's keep them the same color
+
+With this in mind, what we want to do is make it so that I'm able to read this a little bit better. I don't need you to make it super large.
+
+the final items -- the goal tracking.
+
+when you first click goal, it only opens up to mid way, because the players in their positions are not that big. And if we are taking the formation thing that I talked about above, it's already going to be a little bit bigger, so I think that's going to help it take up this space, right?
+
+I want the green area where  the formation is to be taller and to be more spaced out. I want it to have breathing room with the names bigger.  I dont have my glasses on when a goal is scored most of the time...
+
+All right, so that's the formation, right? The Who Scored. We definitely need to make sure we have borders on those as well, because there's not a lot of separation with that green background. Let's make that green background lighter, give it some opacity so that it is like that.
+
+Let's make sure we're using the same HTML template of how these are laid out. What I would like that slide: instead of coming up only just about halfway, it should be most of the way up vertically. After selecting the player, that area is the size
+
+So then when we get to the next screen, I want the Q1 through Q4 to be like squares, and let's spread them out a little bit
+
+Again, when you do register assist, we need to make sure that is still larger and following that same template from our main screen
+
+Register shot
+ this part is the hardest one for me. It takes so long
+
+::If Assist was selected::
+Assist Details
+short pass, pass, long pass, through ball, big air, multiple passes
+
+Instead of saying how it started, let's do 
+Set piece
+penalty, free kick, From corner, from throw-in, from goal kick
+
+Free Play
+Open Play, Counter Attack, Stole Ball, Breakaway, Scramble, Rebound, Long Pass, Chaos
+
+The Setup
+one-on-one, dribbled the keeper, fought for it, skill move, fake shot, nutmeg, rainbow flick
+
+Contact
+Left Foot, Right Foot, Left Leg, Right Leg, Crotch, Body, Header
+
+The Shot
+Short Shot, Power Shot, Blake Shot, Volley, Half-Volley, Chip, Long Shot, Dribbled In
+
+Where it went
+Top Bin, High, Mid, Low, Near Post, Far Post, Deflected,  Off the Post/Bar, Between Legs, Off Defender, Chaos In Goal
+
+but this stuff needs to take up more space vertically, so bump up the height of the text here as well. I dont mind if this section scrolls between pick everything that fits and the Done button
+
+so lets work up a plan for this. it will be two parts -- one part is the app updates i need done now, and the other are deferred to my next session in a repo, and that will really need a handoff on the whole app history and everything.
+
+
