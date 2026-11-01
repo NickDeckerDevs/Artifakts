@@ -1299,7 +1299,7 @@ function openGoalAssistTags() {
   const e = g.events[pending.goal]; if (!e) return closeSheet();
   const on = new Set(e.assistTags || []);
   openSheet(`${sheetHead(`Assist · ${esc(e.assist || '')}`, 'How was it set up?')}
-    <div class="pills">${ASSIST_TAGS.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-atag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div>
+    <div class="shot-tags"><div class="pills">${ASSIST_TAGS.map(t => `<button class="pill ${on.has(t) ? 'on' : ''}" data-atag="${esc(t)}" aria-pressed="${on.has(t)}">${esc(t)}</button>`).join('')}</div></div>
     <div class="btn-row"><button class="btn" data-action="goal-assist">Change who assisted</button><button class="btn btn-primary" data-action="goal-more">Done</button></div>`, 'sheet-goal-assist-tags');
 }
 function openGoalShot() {
