@@ -647,7 +647,33 @@ let sheetState = { status: 'loading', at: null };
 // Month) · Award (free text, no fixed list) · Player · Note (optional). Empty until Nick publishes
 // the tab and sends the link — syncAwards() just no-ops until AWARDS_CSV is set.
 const AWARDS_CSV = '';
-let AWARDS = []; // [{ date, award, player, note }]
+// Placeholder awards for games already played — fallback until the sheet is published, same pattern
+// as TEAM_NAMES/CAPTAINS/GOALIE_LOG above. Gets fully replaced the moment AWARDS_CSV loads real rows.
+let AWARDS = [
+  { date: '2026-10-15', award: 'Goalie of the Day', player: 'Jayce', note: '' },
+  { date: '2026-10-15', award: 'Man of the Match', player: 'Liam', note: '' },
+  { date: '2026-10-15', award: 'Goal of the Game', player: 'Khair', note: '' },
+  { date: '2026-10-17', award: 'Goalie of the Day', player: 'Colt', note: '' },
+  { date: '2026-10-17', award: 'Man of the Match', player: 'Jeremiah', note: '' },
+  { date: '2026-10-17', award: 'Goal of the Game', player: 'Alejandro', note: '' },
+  { date: '2026-10-17', award: 'Play of the Game', player: 'EJ', note: 'Diving save that started the counter' },
+  { date: '2026-10-22', award: 'Goalie of the Day', player: 'Ethan', note: '' },
+  { date: '2026-10-22', award: 'Man of the Match', player: 'Abel', note: '' },
+  { date: '2026-10-22', award: 'Goal of the Game', player: 'Jaxon', note: '' },
+  { date: '2026-10-24', award: 'Goalie of the Day', player: 'Jaxon', note: '' },
+  { date: '2026-10-24', award: 'Man of the Match', player: 'Cameron', note: '' },
+  { date: '2026-10-24', award: 'Goal of the Game', player: 'Liam', note: '6 goals scored this game' },
+  { date: '2026-10-24', award: 'Goal of the Game', player: 'Khair', note: '6 goals scored this game' },
+  { date: '2026-10-24', award: 'Play of the Game', player: 'Jayce', note: 'Nutmeg that set up the 2nd goal' },
+  { date: '2026-10-29', award: 'Goalie of the Day', player: 'Abel', note: '' },
+  { date: '2026-10-29', award: 'Man of the Match', player: 'EJ', note: '' },
+  { date: '2026-10-29', award: 'Goal of the Game', player: 'Casey', note: '' },
+  { date: '2026-10-31', award: 'Goalie of the Day', player: 'Jeremiah', note: '' },
+  { date: '2026-10-31', award: 'Man of the Match', player: 'Khair', note: '' },
+  { date: '2026-10-31', award: 'Goal of the Game', player: 'Ethan', note: '' },
+  { date: '2026-10-31', award: 'Play of the Game', player: 'Colt', note: 'Last-minute equalizer run' },
+  { date: '2026-10', award: 'Player of the Month', player: 'Liam', note: 'Most consistent performer in October' },
+]; // [{ date, award, player, note }]
 let awardsState = { status: AWARDS_CSV ? 'loading' : 'off', at: null };
 
 // Lineup sync: an Apps Script web app on the same sheet stores each game's lineup in a "Lineups" tab.
