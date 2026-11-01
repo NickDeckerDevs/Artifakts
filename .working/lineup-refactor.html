@@ -398,6 +398,15 @@ a.menu-item { text-decoration: none; }
 .stats-table .narrow { max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gk-recalc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 2px; border-bottom: 1px solid var(--border); font-size: 13px; }
 .gk-recalc-row small { color: var(--text-faint); font-size: 11px; }
+.section-awards { padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); margin-bottom: 10px; }
+.section-awards .section-title { margin-bottom: 6px; }
+.award-row { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 3px 0; flex-wrap: wrap; }
+.award-icon { font-size: 14px; }
+.award-name { color: var(--text-faint); }
+.award-player { font-weight: 600; }
+.award-note { color: var(--text-faint); font-size: 11px; width: 100%; padding-left: 20px; }
+.awards-group-title { font-size: 13px; font-weight: 700; margin: 14px 0 6px; }
+.awards-group-title:first-child { margin-top: 0; }
 .goal-detail { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
 .gd-row { display: flex; gap: 8px; font-size: 13px; }
 .gd-row .k { width: 64px; flex-shrink: 0; color: var(--text-muted); font-size: 12px; padding-top: 1px; }
@@ -433,6 +442,8 @@ a.menu-item { text-decoration: none; }
   <div class="follow-banner" id="followBanner" hidden></div>
 
   <button class="game-picker" id="gamePicker" data-action="game-picker" aria-label="Choose game"></button>
+
+  <div class="section section-awards" id="gameAwards" hidden></div>
 
   <div class="action-bar coach-only live-only">
     <button class="action-btn" data-action="roster" aria-label="Manage active players" title="Manage active players">👥 MAP</button>
@@ -630,6 +641,14 @@ const GOALIE_LOG = {
 // logged goalie quarters and jersey numbers; the lists in this file are the fallback when it can't be reached.
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJFoF_YW-3ObI6bLTV3I_b2GDfKGVEh0X3rSKFtFsACTXwzZEYvBkC0_Jl6T0B_yTsZKD4emTsKD1G/pub?gid=698790171&single=true&output=csv';
 let sheetState = { status: 'loading', at: null };
+
+// Awards: a separate "Awards" tab (same spreadsheet), published to the web as its own CSV, one row
+// per award given — Date (a game id like Captains/SNACKS, or a 'YYYY-MM' month for Player of the
+// Month) · Award (free text, no fixed list) · Player · Note (optional). Empty until Nick publishes
+// the tab and sends the link — syncAwards() just no-ops until AWARDS_CSV is set.
+const AWARDS_CSV = '';
+let AWARDS = []; // [{ date, award, player, note }]
+let awardsState = { status: AWARDS_CSV ? 'loading' : 'off', at: null };
 
 // Lineup sync: an Apps Script web app on the same sheet stores each game's lineup in a "Lineups" tab.
 // Anyone can read; saving needs the coach code. Empty SYNC_URL = sync off, everyone edits on their own phone.
@@ -1499,6 +1518,72 @@ async function syncSheet() {
   }
   render();
 }
+// Date column is either a game id (per-game award) or 'YYYY-MM' (Player of the Month for that month).
+const isMonthId = v => /^\d{4}-\d{2}$/.test(v);
+function applyAwards(rows) {
+  const head = rows[0] || [];
+  if (String(head[0]).trim() !== 'Date' || String(head[1]).trim() !== 'Award') throw new Error('unexpected columns');
+  const out = [];
+  for (const r of rows.slice(1)) {
+    const date = String(r[0] || '').trim(), award = String(r[1] || '').trim(), player = cleanName(r[2]);
+    if (!date || !award || !player) continue;
+    if (!isMonthId(date) && !GAMES.some(x => x.id === date)) continue;
+    out.push({ date, award, player, note: String(r[3] || '').trim() });
+  }
+  AWARDS = out;
+}
+async function syncAwards() {
+  if (!AWARDS_CSV) return;
+  if (local.awards && local.awards.rows) { try { applyAwards(local.awards.rows); awardsState = { status: 'cached', at: local.awards.at }; } catch (e) {} }
+  render();
+  try {
+    const res = await fetch(AWARDS_CSV, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = parseCSV(await res.text());
+    applyAwards(rows);
+    local.awards = { rows, at: new Date().toISOString() };
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); } catch (e) {}
+    awardsState = { status: 'ok', at: local.awards.at };
+  } catch (e) {
+    awardsState = { status: local.awards ? 'cached' : 'failed', at: local.awards ? local.awards.at : null, error: String(e.message || e) };
+  }
+  render();
+}
+const awardsForGame = id => AWARDS.filter(a => a.date === id);
+const awardsForPlayer = name => AWARDS.filter(a => a.player === name);
+function awardsByType() {
+  const out = {};
+  for (const a of AWARDS) (out[a.award] = out[a.award] || []).push(a);
+  return out;
+}
+const AWARD_ICONS = { 'Goalie of the Day': '🧤', 'Goal of the Game': '⚽', 'Man of the Match': '⭐', 'Play of the Game': '🎬', 'Player of the Month': '🏆' };
+const awardIcon = a => AWARD_ICONS[a] || '🏅';
+function openAwards(view) {
+  const byType = awardsByType();
+  const names = PLAYERS.map(p => p.name).sort((a, b) => (NUM[a] || 99) - (NUM[b] || 99)).filter(n => awardsForPlayer(n).length);
+  const dateLabel = d => isMonthId(d) ? new Date(d + '-01').toLocaleDateString([], { month: 'long', year: 'numeric' }) : short(d);
+  const byPlayerHTML = names.length ? names.map(n => `<div class="awards-group-title">${numTag(n)}${esc(n)}</div>
+    ${awardsForPlayer(n).map(a => `<div class="award-row"><span class="award-icon">${awardIcon(a.award)}</span><span class="award-name">${esc(a.award)}</span><span class="award-player">${esc(dateLabel(a.date))}</span>${a.note ? `<span class="award-note">${esc(a.note)}</span>` : ''}</div>`).join('')}`).join('')
+    : '<div class="sheet-hint">No awards recorded yet.</div>';
+  const byAwardHTML = Object.keys(byType).length ? Object.keys(byType).map(award => `<div class="awards-group-title">${awardIcon(award)} ${esc(award)}</div>
+    ${byType[award].map(a => `<div class="award-row"><span class="award-player">${numTag(a.player)}${esc(a.player)}</span><span class="award-name">${esc(dateLabel(a.date))}</span>${a.note ? `<span class="award-note">${esc(a.note)}</span>` : ''}</div>`).join('')}`).join('')
+    : '<div class="sheet-hint">No awards recorded yet.</div>';
+  openSheet(`${sheetHead('Awards')}
+    <div class="tabs" role="tablist">
+      <button class="tab ${view === 'player' ? 'active' : ''}" role="tab" aria-selected="${view === 'player'}" data-action="awards-tab" data-tabview="player">By player</button>
+      <button class="tab ${view === 'award' ? 'active' : ''}" role="tab" aria-selected="${view === 'award'}" data-action="awards-tab" data-tabview="award">By award</button>
+    </div>
+    ${view === 'award' ? byAwardHTML : byPlayerHTML}
+    <button class="btn full" data-action="menu">Back to menu</button>`, 'sheet-awards');
+}
+function renderGameAwards() {
+  const el = $('gameAwards'); if (!el) return;
+  const list = awardsForGame(currentId);
+  el.hidden = !list.length;
+  if (!list.length) return;
+  el.innerHTML = `<div class="section-title">Awards</div>
+    ${list.map(a => `<div class="award-row"><span class="award-icon">${awardIcon(a.award)}</span><span class="award-name">${esc(a.award)}</span><span class="award-player">${numTag(a.player)}${esc(a.player)}</span>${a.note ? `<span class="award-note">${esc(a.note)}</span>` : ''}</div>`).join('')}`;
+}
 function renderSheetStatus() {
   const el = $('sheetStatus'); if (!el) return;
   const t = sheetState.at ? new Date(sheetState.at).toLocaleString([], { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
@@ -1669,6 +1754,7 @@ function openMenu() {
       <button class="menu-item" data-action="schedule"><span class="ico">📅</span><span>Schedule &amp; snacks<small>Every game, field, time and who brings snack</small></span></button>
       ${viewer ? '' : `<button class="menu-item" data-action="players"><span class="ico">👥</span><span>Players<small>Roster, numbers, likes and avoids · edit in the sheet</small></span></button>`}
       <button class="menu-item" data-action="stats"><span class="ico">📊</span><span>Player stats<small>Minutes, goals, assists, goalie quarters</small></span></button>
+      <button class="menu-item" data-action="awards"><span class="ico">🏆</span><span>Awards<small>Goalie of the day, MVP, goal of the game, and more</small></span></button>
       ${viewer ? '' : '<button class="menu-item" data-action="recalc-goalies"><span class="ico">🔄</span><span>Recalculate goalie plan<small>Pull every game from the sheet and re-check the rotation</small></span></button>'}
       ${viewer ? '' : `<button class="menu-item" data-action="share-stats"><span class="ico">📋</span><span>Share stats<small>Copy this phone's saved games to paste elsewhere</small></span></button>`}
       ${viewer ? '' : `<button class="menu-item" data-action="stub" data-stub="subs"><span class="ico">🔁</span><span>Sub editor <span class="soon">SOON</span><small>Fix or add subs after the game</small></span></button>`}
@@ -1990,6 +2076,7 @@ function gameCardHTML(x) {
 function render() {
   const curGame = GAMES.find(x => x.id === currentId);
   $('gamePicker').innerHTML = curGame ? gameCardHTML(curGame) : '';
+  renderGameAwards();
   applyFormation();
   $('teamTitle').textContent = teamName();
   document.title = `${TEST ? 'TEST · ' : ''}${teamName()} — U10 Team 4 Lineups`;
@@ -2224,7 +2311,7 @@ document.addEventListener('click', e => {
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok',
     'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-assist-tags', 'goal-shot',
     'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
-    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'stub', 'schedule', 'show-log', 'goal-edit', 'game-picker'];
+    'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'awards', 'awards-tab', 'stub', 'schedule', 'show-log', 'goal-edit', 'game-picker'];
   const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'atag', 'editgoal', 'ago', 'goalq', 'pickgame'];
   if (isViewer() && !(d.action && VIEW_OK.includes(d.action)) && !VIEW_DATA.some(k => d[k] !== undefined)) return;
   // A closed-out game (and Follow mode) is read-only: tabs, goal details, stats, share and the menu still work.
@@ -2357,6 +2444,8 @@ document.addEventListener('click', e => {
     case 'menu': return openMenu();
     case 'stats': return openStats();
     case 'recalc-goalies': return openRecalcGoalies();
+    case 'awards': return openAwards('player');
+    case 'awards-tab': return openAwards(d.tabview);
     case 'share-stats': return openShareStats();
     case 'stats-copy': return copyStatsExport();
     case 'schedule': return openSchedule();
@@ -2440,6 +2529,7 @@ document.addEventListener('change', e => {
 render();
 if (isViewer()) { if (nearGameTime() && !(local.askedMode || {})[currentId]) maybeAskMode(); else if (!isFollow() && !viewerId()) openIdentity(); }
 syncSheet();
+syncAwards();
 pullGame();
 // The goalie rotation (goaliePlan()) reads every earlier game's goalie from local.games, same as
 // seasonStats() — pull them all in up front for coaches so the rotation isn't computed from whatever
