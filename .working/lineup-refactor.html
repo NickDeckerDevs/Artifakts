@@ -1732,15 +1732,37 @@ function seasonStats() {
   } finally { g = saved; }
   return { rows, team, posCols: sortPosCols(posCols) };
 }
-function openStats() {
+// Season stats only ever reflect what's in `local.games` on THIS device. To show the real season
+// across every device, pull every known game id from the sheet first and merge in whatever this
+// device doesn't already have (or has an older copy of), before computing seasonStats().
+async function syncAllGames() {
+  if (!SYNC_URL) return;
+  const ids = GAMES.map(x => x.id).filter(id => id !== currentId);
+  await Promise.all(ids.map(async id => {
+    try {
+      const out = await (await fetch(`${SYNC_URL}?action=get&game=${encodeURIComponent(id)}`, { cache: 'no-store' })).json();
+      if (!out.ok || !out.data) return;
+      const incoming = normalize(out.data);
+      const existing = local.games[id];
+      if (!existing || !existing.savedAt || (incoming.savedAt && incoming.savedAt > existing.savedAt)) local.games[id] = incoming;
+    } catch (e) { /* offline or one game failed — keep whatever's local for it */ }
+  }));
+  try { localStorage.setItem(LOCAL_KEY, JSON.stringify(local)); } catch (e) {}
+}
+function renderStatsSheet() {
   const { rows, team, posCols } = seasonStats();
   const names = PLAYERS.map(p => p.name).sort((a, b) => (NUM[a] || 99) - (NUM[b] || 99));
-  openSheet(`${sheetHead('Player stats', `${team.games} game${team.games === 1 ? '' : 's'} on this phone · ${team.w}W ${team.l}L ${team.t}T · goals ${team.gf}–${team.ga}`)}
+  sheet.innerHTML = `<div class="handle"></div>${sheetHead('Player stats', `${team.games} game${team.games === 1 ? '' : 's'} · ${team.w}W ${team.l}L ${team.t}T · goals ${team.gf}–${team.ga}`)}
     <div style="overflow-x:auto"><table class="stats-table"><thead><tr><th class="narrow">Player</th><th>GP</th><th>Min</th><th>G</th><th>A</th>${posCols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>
     ${names.map(n => { const r = rows[n]; return `<tr><td class="narrow">${numTag(n)}${esc(n)}</td><td>${r.gp}</td><td>${Math.round(r.q * QTR_SECS / 60)}</td><td>${r.g || ''}</td><td>${r.a || ''}</td>${posCols.map(c => `<td>${r.pos[c] || ''}</td>`).join('')}</tr>`; }).join('')}
     </tbody></table></div>
-    <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · position columns are quarters started at that position. Counts games saved on this phone; a season-wide version comes with team accounts.</div>
-    <button class="btn full" data-action="menu">Back to menu</button>`, 'sheet-stats');
+    <div class="sheet-hint">GP games played · Min minutes on the field (15-minute quarters, part-quarters count) · G goals · A assists · position columns are quarters started at that position.${SYNC_URL ? ' Includes every game synced to the sheet, not just this device.' : ' Counts games saved on this phone (test mode — sync is off).'}</div>
+    <button class="btn full" data-action="menu">Back to menu</button>`;
+}
+async function openStats() {
+  openSheet(`${sheetHead('Player stats', 'Checking the sheet for every game…')}`, 'sheet-stats');
+  await syncAllGames();
+  renderStatsSheet();
 }
 
 // ── share stats across devices: everything cached in this phone's localStorage, as text to paste

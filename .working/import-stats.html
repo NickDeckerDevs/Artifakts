@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Import stats → Sheet</title>
+<style>
+  :root { --bg:#0f1115; --surface:#1a1d24; --surface2:#20242c; --border:#333945; --text:#e8eaed; --text-faint:#8a8f99;
+    --ok:#3ecf7e; --warn:#e8b64a; --danger:#e8524a; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:16px; background:var(--bg); color:var(--text); font:14px/1.4 system-ui,-apple-system,sans-serif; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .sub { color:var(--text-faint); font-size:12px; margin-bottom:16px; }
+  label { display:block; font-size:12px; color:var(--text-faint); margin:14px 0 4px; }
+  input[type=text], textarea { width:100%; background:var(--surface2); color:var(--text); border:1px solid var(--border);
+    border-radius:7px; padding:8px; font-family:var(--mono); font-size:12px; }
+  textarea { min-height:160px; resize:vertical; }
+  button { font:600 13px system-ui,sans-serif; padding:10px 14px; border-radius:7px; border:1px solid var(--border);
+    background:var(--surface2); color:var(--text); cursor:pointer; margin-right:8px; margin-top:10px; }
+  button:disabled { opacity:.4; cursor:default; }
+  button.primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+  button.danger { background:var(--danger); border-color:var(--danger); color:#fff; }
+  .step { margin-top:22px; padding-top:16px; border-top:1px solid var(--border); }
+  .game { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+  .game .id { font-family:var(--mono); font-weight:600; }
+  .game .tag { display:inline-block; font-size:11px; font-weight:600; padding:2px 7px; border-radius:5px; margin-left:8px; }
+  .tag.new { background:rgba(62,207,126,.18); color:var(--ok); }
+  .tag.same { background:rgba(138,143,153,.18); color:var(--text-faint); }
+  .tag.diff { background:rgba(232,182,74,.18); color:var(--warn); }
+  .tag.sent { background:rgba(62,207,126,.3); color:var(--ok); }
+  .tag.err { background:rgba(232,82,74,.18); color:var(--danger); }
+  .detail { font-size:12px; color:var(--text-faint); margin-top:6px; }
+  .diffline { font-family:var(--mono); font-size:11px; color:var(--warn); margin-top:4px; }
+  .status { font-size:12px; color:var(--text-faint); margin-top:8px; }
+  #log { font-family:var(--mono); font-size:11px; color:var(--text-faint); white-space:pre-wrap; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1>Import stats → Google Sheet</h1>
+<div class="sub">One-time backfill tool. Paste the "Export stats" output from the live app, then Parse → Review → Import.
+Not part of the app — nothing else uses this file.</div>
+
+<label for="coach">Coach code</label>
+<input type="text" id="coach" placeholder="paste your coach code (same one the app uses)">
+
+<label for="paste">Export output (paste the whole thing — text and all)</label>
+<textarea id="paste" placeholder="Paste here..."></textarea>
+
+<div>
+  <button id="btnParse" class="primary">1. Parse</button>
+  <button id="btnReview" disabled>2. Review</button>
+  <button id="btnImport" disabled class="danger">3. Import</button>
+</div>
+
+<div id="parseOut"></div>
+<div id="reviewOut"></div>
+<div id="importOut"></div>
+<div id="log"></div>
+
+<script>
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwjmRIGNnJgvOPjXpnPR3f5pDC6sm6ctchkVfhKvLbtNaEaFJyRwV_q_xx4v2p3NWyDdg/exec';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const log = m => { const el = document.getElementById('log'); el.textContent += (el.textContent ? '\n' : '') + m; };
+
+const coachInput = document.getElementById('coach');
+coachInput.value = localStorage.getItem('import-stats:coach') || '';
+coachInput.addEventListener('change', () => localStorage.setItem('import-stats:coach', coachInput.value.trim()));
+
+let parsedGames = null;   // { id: gameData }
+let reviewed = null;      // { id: { status: 'new'|'same'|'diff', remote } }
+
+function post(body) {
+  return fetch(SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.json());
+}
+function get(game) {
+  return fetch(`${SYNC_URL}?action=get&game=${encodeURIComponent(game)}`, { cache: 'no-store' }).then(r => r.json());
+}
+// Same comparison the app itself uses (lineup-refactor.html: sameLineup) — same fields, same order.
+function sameGame(a, b) {
+  const key = x => JSON.stringify([x.lineup, x.out, x.gkPicks, x.events, x.formation || '231', x.notes || [], x.subs || [], x.clock || null, x.closed || null]);
+  return !!a && !!b && key(a) === key(b);
+}
+
+function describeGame(id, gm) {
+  const goals = (gm.events || []).filter(e => e.side === 'us').length;
+  const against = (gm.events || []).filter(e => e.side === 'them').length;
+  const started = gm.clock && gm.clock.starts && gm.clock.starts.some(Boolean);
+  return `${goals}-${against}${started ? '' : ' · not started'}${gm.closed ? ' · closed' : ''}${(gm.notes || []).length ? ' · ' + gm.notes.length + ' note(s)' : ''}`;
+}
+
+document.getElementById('btnParse').addEventListener('click', () => {
+  const text = document.getElementById('paste').value;
+  const m = text.match(/DATA\s+(\{[\s\S]*\})\s*$/);
+  const out = document.getElementById('parseOut');
+  document.getElementById('reviewOut').innerHTML = '';
+  document.getElementById('importOut').innerHTML = '';
+  document.getElementById('btnReview').disabled = true;
+  document.getElementById('btnImport').disabled = true;
+  reviewed = null;
+  if (!m) { out.innerHTML = '<div class="status" style="color:var(--danger)">Couldn\'t find a DATA {...} block in that text — paste the full Export output.</div>'; parsedGames = null; return; }
+  let data;
+  try { data = JSON.parse(m[1]); } catch (e) { out.innerHTML = `<div class="status" style="color:var(--danger)">That JSON didn't parse: ${esc(e.message)}</div>`; parsedGames = null; return; }
+  parsedGames = data.games || {};
+  const ids = Object.keys(parsedGames).sort();
+  if (!ids.length) { out.innerHTML = '<div class="status">Parsed OK, but no games in it.</div>'; return; }
+  out.innerHTML = `<div class="step"><div class="status">Parsed ${ids.length} game(s) from ${esc(data.team || '?')}, exported ${esc(data.exportedAt || '?')}:</div>` +
+    ids.map(id => `<div class="game" id="g-${id}"><span class="id">${esc(id)}</span><div class="detail">${esc(describeGame(id, parsedGames[id]))}</div></div>`).join('') + `</div>`;
+  document.getElementById('btnReview').disabled = false;
+});
+
+document.getElementById('btnReview').addEventListener('click', async () => {
+  if (!parsedGames) return;
+  const ids = Object.keys(parsedGames).sort();
+  const out = document.getElementById('reviewOut');
+  out.innerHTML = '<div class="step"><div class="status">Checking the sheet…</div></div>';
+  document.getElementById('btnReview').disabled = true;
+  reviewed = {};
+  for (const id of ids) {
+    try {
+      const res = await get(id);
+      if (!res.ok) throw new Error(res.error || 'error');
+      const remote = res.data;
+      const status = !remote ? 'new' : sameGame(remote, parsedGames[id]) ? 'same' : 'diff';
+      reviewed[id] = { status, remote };
+    } catch (e) {
+      reviewed[id] = { status: 'err', error: String(e.message || e) };
+    }
+  }
+  out.innerHTML = `<div class="step"><div class="status">Review complete — checked against the live sheet:</div>` +
+    ids.map(id => {
+      const r = reviewed[id];
+      let extra = '';
+      if (r.status === 'diff') extra = `<div class="diffline">Sheet has different data for this game (saved ${esc((r.remote && r.remote.savedAt) || 'unknown time')}) — importing will overwrite it.</div>`;
+      if (r.status === 'err') extra = `<div class="diffline" style="color:var(--danger)">Couldn't check: ${esc(r.error)}</div>`;
+      return `<div class="game"><span class="id">${esc(id)}</span><span class="tag ${r.status}">${r.status}</span><div class="detail">${esc(describeGame(id, parsedGames[id]))}</div>${extra}</div>`;
+    }).join('') + `</div>`;
+  const anyWritable = ids.some(id => reviewed[id].status === 'new' || reviewed[id].status === 'diff');
+  document.getElementById('btnImport').disabled = !anyWritable;
+  document.getElementById('btnReview').disabled = false;
+});
+
+document.getElementById('btnImport').addEventListener('click', async () => {
+  const code = coachInput.value.trim();
+  if (!code) { alert('Enter your coach code first.'); return; }
+  localStorage.setItem('import-stats:coach', code);
+  if (!parsedGames || !reviewed) return;
+  const ids = Object.keys(parsedGames).filter(id => reviewed[id].status === 'new' || reviewed[id].status === 'diff');
+  if (!ids.length) { alert('Nothing to import — every game already matches the sheet.'); return; }
+  if (!confirm(`Write ${ids.length} game(s) to the sheet now? This cannot be undone from here.`)) return;
+  document.getElementById('btnImport').disabled = true;
+  const out = document.getElementById('importOut');
+  out.innerHTML = '<div class="step"><div class="status">Importing…</div></div>';
+  const results = [];
+  for (const id of ids) {
+    try {
+      const res = await post({ code, action: 'save', game: id, data: parsedGames[id] });
+      if (!res.ok) throw new Error(res.error || 'save failed');
+      results.push({ id, ok: true });
+    } catch (e) {
+      results.push({ id, ok: false, error: String(e.message || e) });
+    }
+  }
+  out.innerHTML = `<div class="step"><div class="status">Done.</div>` +
+    results.map(r => `<div class="game"><span class="id">${esc(r.id)}</span><span class="tag ${r.ok ? 'sent' : 'err'}">${r.ok ? 'imported' : 'failed'}</span>${r.ok ? '' : `<div class="diffline" style="color:var(--danger)">${esc(r.error)}</div>`}</div>`).join('') + `</div>`;
+  log(`Imported ${results.filter(r => r.ok).length}/${results.length} game(s) at ${new Date().toLocaleString()}`);
+});
+</script>
+</body>
+</html>
