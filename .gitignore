@@ -5,3 +5,4 @@ CLAUDE.md
 .env
 deployArtifact-skill.config.json
 github-pages-skill.config.json
+tools/u10team4-saveddata/server/.coachcode

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Server bootstrap test</title>
+<style>
+  body { font-family: sans-serif; max-width: 480px; margin: 3rem auto; }
+  input, button { font-size: 1rem; padding: 0.4rem; }
+  #status { margin-top: 1rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>testarea-stamp trigger</h1>
+  <p>Submits an argument to the <code>/run-skill</code> endpoint, which shells out to
+     <code>claude -p "/testarea-stamp &lt;arg&gt;"</code> headlessly.</p>
+  <input id="arg" type="text" value="hello from the server" size="40" />
+  <button id="go">Run skill</button>
+  <div id="status"></div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+
+    async function poll(id) {
+      const res = await fetch(`/run-skill/${id}`);
+      const body = await res.json();
+      if (body.status === 'pending') {
+        statusEl.textContent = `[${id}] pending...`;
+        setTimeout(() => poll(id), 1000);
+        return;
+      }
+      statusEl.textContent = `[${id}] ${body.status}\n` + JSON.stringify(body, null, 2);
+    }
+
+    document.getElementById('go').addEventListener('click', async () => {
+      const arg = document.getElementById('arg').value;
+      statusEl.textContent = 'submitting...';
+      const res = await fetch('/run-skill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ skill: 'testarea-stamp', args: arg }),
+      });
+      const body = await res.json();
+      poll(body.id);
+    });
+  </script>
+</body>
+</html>
