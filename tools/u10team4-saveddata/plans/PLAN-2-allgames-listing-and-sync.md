@@ -1,5 +1,35 @@
 # PLAN 2 — `allgames.html` listing page + sheet↔local sync
 
+## Status — built 2026-11-07 (commits `a85ac94`, `71730f9`)
+
+Built as specced: `tools/u10team4-saveddata/review/allgames.html`, a new `action=schedule` Apps
+Script endpoint in `.working/apps-script-sync.gs` (full main-tab schedule, since `listGames_()`
+alone can't see never-touched future games), and a `POST /api/sync-game` endpoint on Plan 1's
+server that writes `games/<game-id>/{original-data.json,audio/}` — the only thing that writes
+under `games/`.
+
+- **Local data shape chosen**: `{game, pulledAt, coachGame, parentEntries}` — matches what
+  `generate-match-review` (Plan 3, built separately) expects for its `original-data.json` input.
+  `coachGame` is the raw lineup `data` object from `action=get`; `parentEntries` is `action=entries`'s
+  array as-is.
+- **Diffing**: plain `JSON.stringify` equality between local and the freshly-pulled sheet data
+  (`pulledAt` excluded from the comparison so a no-op check doesn't always look "changed"). No
+  hash/timestamp scheme — deliberately kept simple per the plan's own guidance.
+- **Voice-capture audio**: `checkFromSource()` also pulls the Drive file id out of each
+  voice-captured parent entry's `audioUrl` (`/d/<id>/` or `?id=`), re-downloads the clip via
+  `action=audio&id=<id>` (same mechanism `finalize-match` uses), and ships it to the server as
+  base64 alongside the JSON payload so `games/<id>/audio/` is populated without the server needing
+  any Drive credentials of its own.
+- **Verified**: started the server, confirmed `/review/allgames.html` is served, and exercised
+  `POST /api/sync-game` directly (valid write + bad-game-id rejection). **Not** verified against
+  the live sheet end-to-end — the new `schedule` action isn't deployed yet. See
+  [`nick-to-do.md`](./nick-to-do.md) item 1: Nick needs to redeploy
+  `.working/apps-script-sync.gs` (edit the existing deployment, not a new one) before this page
+  will show real data.
+- Plan 4 has since (separately) started wiring this page's Action/View columns to `/run-skill` —
+  found and fixed one bug in that work in passing: `actionCell()`/`viewCell()` were defined but
+  `render()` was still emitting the old disabled placeholder buttons instead of calling them.
+
 Can be run anytime in parallel with any other plan that can be run in parallel.
 
 See [`CONTEXT.md`](./CONTEXT.md) for the shared architecture/background this plan assumes,
