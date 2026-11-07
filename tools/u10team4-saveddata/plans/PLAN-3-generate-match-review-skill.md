@@ -72,3 +72,46 @@ itself, so it can be triggered headlessly by Plan 1's server with zero network c
 - Confirm the award section shows the correct CSV rows for a game date that has real entries in
   `u10team4-award-draft.csv.csv` (e.g. `2026-10-17`), including existing Nick/Erin comment text.
 - Confirm a 6-goal game offers exactly 2 Goal-of-the-Game slots.
+
+## Status: done (2026-11-07)
+
+Built, verified by hand-built test folder, and committed (`870bea4`). What future agents (Plan 4,
+Plan 5) need to know:
+
+- **The skill file itself is not in git.** `.claude/skills/generate-match-review/SKILL.md` exists
+  on disk but `.claude/` is gitignored repo-wide (same as `finalize-match` — check with
+  `git check-ignore .claude/skills/finalize-match/SKILL.md` if ever in doubt). Don't expect `git
+  log`/`git show` to find it; read it straight off disk. This also means it doesn't travel with
+  `git clone` — if this repo is ever freshly cloned, the skill needs to be recreated or copied in
+  manually.
+- **Folder contract Plan 2's sync must produce**, per `tools/u10team4-saveddata/games/<game-id>/`:
+  - `original-data.json` — exactly the shape of the existing
+    `tools/u10team4-saveddata/2026-11-05_original-data.json` (`{game, pulledAt, coachGame,
+    parentEntries}`). The skill reads `coachGame.lineup`/`coachGame.subs[*].lineup` for the roster
+    and `coachGame.events` + `parentEntries` for clustering — no other roster/schedule source.
+  - Zero or more audio files directly in that folder, named `<game>_<entry-or-event-id>.<ext>`.
+  - Nothing else is required; the skill fails loudly (does not fall back to the network) if
+    `original-data.json` is missing.
+- **Output**: `review/<game-id>-review.html` (committed) and
+  `<folder>/<game-id>_original-data.json` (the clustered-candidates audit record, committed) — both
+  written by the skill itself, so Plan 4's launcher just needs to invoke the skill with a folder
+  path and then point Nick at the resulting review HTML; it doesn't need to know the award/CSV
+  logic at all.
+- **Award section seed**: the skill reads `u10team4-award-draft.csv.csv` directly (a fixed repo
+  path, not part of the per-game folder) — normalizes `"Goalie of the Day"` → `"Goalie of the
+  Match"`, filters by the game's date for the per-game section, and separately by calendar month
+  for the read-only Player-Of-The-Month block. If Nick's CSV edits (Nick to-do item 3) land after
+  this plan was built, no code changes are needed — the skill re-reads the CSV fresh every run.
+- **Template contract** (`review/template.html`) now expects these placeholders in addition to the
+  pre-existing `{{GAME_ID}}`/`{{DATA_JSON}}`/`{{ROSTER_JSON}}`: `{{AWARD_CSV_JSON}}` (array of
+  `{Award, Player, Note, Status, Nick_Comment, Erin_Comment}` for this game's date, `Award`
+  pre-normalized), `{{POTM_CSV_JSON}}` (same row shape, current month, reference-only — never
+  rendered as a picker), `{{GOAL_SLOTS}}` (integer). Plan 5's edit/pushback page reads the
+  exported `{goals, awards}` JSON — `awards` entries are now `{player, award, note}` with `award`
+  always one of the three canonical per-game names (never free text, never `Player Of The Month`).
+- **Not handled by this skill, by design** — left for Plan 5: waiting for Nick's review, merging a
+  finalized export back into the coach's game object, and any `save`/`awards`/`finalizeMark` call.
+  This skill only ever writes local files and opens a browser tab.
+- **Deferred, not part of this plan**: tag-chip vote-count display for the per-goal `Tags` field
+  (see `backlog.md`) — Nick asked for it while reviewing this plan's award work, but it's scoped to
+  a different part of the template and was pushed to the backlog instead of bundled in.
