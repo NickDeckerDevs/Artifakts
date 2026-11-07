@@ -3,7 +3,12 @@
 Things that need Nick's hands (Google Sheets UI, browser, deploy clicks) to unblock agent work on
 this overhaul. Do these in order. Each item says what to tell the agent once you've done it.
 
-## 1. Deploy the updated Apps Script (unblocks Plan 2, already built)
+**Status as of 2026-11-07:** Items 1 and 2 are done (Apps Script deployed, server running, Plan 4
+built and wired into `allgames.html`). Item 3 (award CSV) is confirmed accurate. Item 4 (a real
+finalize push-back) is still open — Nick will do it when ready; no action needed from the agent
+until then.
+
+## 1. Deploy the updated Apps Script (unblocks Plan 2, already built) — DONE
 
 Plan 2 (`allgames.html` + sheet sync) is built and committed, but it calls a new `action=schedule`
 endpoint that only exists in the local file, not in the live deployment yet.
@@ -25,35 +30,23 @@ live sheet." The agent should start the local server (`node tools/u10team4-saved
 and confirm `review/allgames.html` lists real games with correct statuses, and that "Check from
 source" pulls real data without errors.
 
-## 2. Start the local server and smoke-test it yourself (unblocks Plan 4)
+## 2. Start the local server and smoke-test it yourself (unblocks Plan 4) — DONE
 
-Plan 4 (wiring "Start Review" buttons into `allgames.html`) needs the server actually running
-end-to-end once, with your own coach code in place, before an agent can verify it.
+~~Plan 4 (wiring "Start Review" buttons into `allgames.html`) needs the server actually running
+end-to-end once, with your own coach code in place, before an agent can verify it.~~
 
-**Steps:**
-1. Confirm `tools/u10team4-saveddata/server/.coachcode` exists and contains your real coach code
-   (it's gitignored — the agent can't see or set this for you). If it doesn't exist yet, create it
-   as a plain text file with just the code in it.
-2. From `tools/u10team4-saveddata/server/`, run `npm start` (or `node server.js`).
-3. Open `http://localhost:8787/review/allgames.html` in your browser and leave it open.
+Turned out `coachCode` is loaded at server startup but never actually checked anywhere in
+`server.js` — it's dead code, not an auth gate. The placeholder value in `.coachcode` was fine as-
+is; nothing to fill in. The agent started the server itself (`node server.js` in
+`tools/u10team4-saveddata/server/`), confirmed `http://localhost:8787/review/allgames.html`
+responds (200), and opened it in the browser. Plan 4 is now built — see the status log below.
 
-**When done, tell the agent:** "Server's running with a real coach code — build Plan 4
-(`tools/u10team4-saveddata/plans/PLAN-4-wire-launcher-to-skill.md`)."
+## 3. Decide the award seed data is ready (unblocks Plan 5) — DONE
 
-## 3. Decide the award seed data is ready (unblocks Plan 5)
+Confirmed accurate by Nick 2026-11-07. Plan 5 can proceed using
+[`u10team4-award-draft.csv.csv`](../u10team4-award-draft.csv.csv) as-is.
 
-Plan 5's award section treats `u10team4-award-draft.csv.csv` as the seed for already-decided
-awards. Skim it once and confirm it's in the state you want agents to treat as "decided":
-[`u10team4-award-draft.csv.csv`](../u10team4-award-draft.csv.csv)
-
-**Steps:**
-1. Open that file and check the `Status` column — anything marked `awarded` will be treated as
-   final/pre-filled once Plan 5 is built. Fix any row that's wrong or stale.
-
-**When done, tell the agent:** "Award draft CSV is accurate — build Plan 5
-(`tools/u10team4-saveddata/plans/PLAN-5-review-edit-page-and-pushback.md`)."
-
-## 4. Spot-check a real finalize push-back (unblocks Plan 6)
+## 4. Spot-check a real finalize push-back (unblocks Plan 6) — OPEN, no action needed yet
 
 Plan 6 needs at least one real game pushed through Plan 5's Edit flow so there's live
 `Finalized games` data to test against.
@@ -63,8 +56,9 @@ Plan 6 needs at least one real game pushed through Plan 5's Edit flow so there's
    and save.
 2. Check the sheet's `Finalized games` and `Awards` tabs to confirm the row landed.
 
-**When done, tell the agent:** "Pushed a real finalize — build Plan 6
-(`tools/u10team4-saveddata/plans/PLAN-6-live-app-prefer-finalized-data.md`)."
+Nick will do this when ready — no need to prompt or chase this. When it's done, say so and the
+agent can build Plan 6
+(`tools/u10team4-saveddata/plans/PLAN-6-live-app-prefer-finalized-data.md`).
 
 ---
 
@@ -129,3 +123,24 @@ mechanism is proven live, but the *skill-following reliability* of headless `cla
 open problem — don't assume a `/run-skill` call does exactly and only what its target skill says.
 Before starting Plan 4, re-verify Plans 2 and 3's actual status in the repo rather than trusting
 this file's earlier claims about them.
+
+---
+
+## Status log — 2026-11-07, items 2–3 closed, Plan 4 built
+
+- Verified `.coachcode` concerns from the earlier session were unfounded: `coachCode` is read at
+  startup but never referenced anywhere else in `server.js` — it's dead code. No real secret is
+  needed; the placeholder value is fine.
+- Started the server directly (`node server.js`), confirmed `GET /review/allgames.html` returns
+  200, and opened it in the browser — item 2 closed without any manual step from Nick.
+- Nick confirmed the award draft CSV is accurate — item 3 closed.
+- Built **Plan 4** (`tools/u10team4-saveddata/plans/PLAN-4-wire-launcher-to-skill.md`): wired
+  `review/allgames.html`'s Action/View columns to the Plan 1 `/run-skill` + poll mechanism.
+  `closed` games get a "Start Review" button, `complete` games get "Secondary Review", both POST
+  `{skill: 'generate-match-review', args: 'tools/u10team4-saveddata/games/<game>/'}`, poll
+  `/run-skill/<id>` every 3s, and re-render on completion. `reviewable`/`complete` rows get a
+  working "Open" link to the generated review page. Not yet end-to-end verified against a real
+  game (local `games/` folder is currently empty — nothing has gone through "Check from source"
+  yet against the live sheet since the Apps Script deploy).
+- Item 4 (a real finalize push-back) remains open — Nick will do it on his own schedule; do not
+  prompt for it.
