@@ -461,9 +461,22 @@ a.menu-item { text-decoration: none; }
 .fp-later summary { font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .chip:active { transform: none; } }
+
+.wrong-app-banner {
+  background: #1a1a1a;
+  color: #fff;
+  border: 2px solid #7b2cbf;
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+.wrong-app-banner a { color: #fff; text-decoration: underline; }
 </style>
 </head>
 <body>
+<div class="wrong-app-banner">This is not the correct app, please click <a href="https://teampurp.teamroom.soccer/" target="_blank" rel="noopener">https://teampurp.teamroom.soccer/</a> to get the live version</div>
 <header class="topbar"><div class="test-banner" id="testBanner" hidden>🧪 TEST MODE · not a real game · nothing is sent</div><div class="topbar-inner" id="topbar"></div>
   <div class="note-bar" id="composer" hidden>
     <button class="nb-btn nb-x" data-action="note-cancel" aria-label="Cancel note">✕</button>
