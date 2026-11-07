@@ -1,0 +1,82 @@
+[
+  {
+    "id": "mw48ydza4xnf",
+    "side": "us",
+    "q": 0,
+    "at": "2026-11-06T00:39:10.918Z",
+    "submissions": [
+      { "by": "Coach", "mode": "coach", "text": null, "q": 0, "clock": "7:26", "at": "2026-11-06T00:39:10.918Z", "scorer": "Cameron", "assist": null, "tags": ["Stole ball", "One-on-one", "Skill move", "Right foot", "Far post"], "spot": { "x": 0.842, "y": 0.233 } },
+      { "by": "Erin", "mode": "typed", "text": null, "q": 0, "clock": "7:36", "at": "2026-11-06T00:39:24.166Z", "scorer": "Cameron", "assist": null, "tags": [], "spot": { "x": 0.788, "y": 0.191 } }
+    ]
+  },
+  {
+    "id": "mw492yh8cgdj",
+    "side": "us",
+    "q": 0,
+    "at": "2026-11-06T00:41:35.293Z",
+    "submissions": [
+      { "by": "Erin", "mode": "typed", "text": null, "q": 0, "clock": "9:47", "at": "2026-11-06T00:41:35.293Z", "scorer": "Cameron", "assist": null, "tags": ["Penalty", "Right foot"], "spot": { "x": 0.615, "y": 0.113 } },
+      { "by": "Coach", "mode": "coach", "text": null, "q": 0, "clock": "10:59", "at": "2026-11-06T00:42:44.108Z", "scorer": "Cameron", "assist": null, "tags": ["Penalty"], "spot": { "x": 0.5, "y": 0.14 } }
+    ]
+  },
+  {
+    "id": "mw49gv4km40k",
+    "side": "us",
+    "q": 0,
+    "at": "2026-11-06T00:53:30.501Z",
+    "submissions": [
+      { "by": "Erin", "mode": "typed", "text": null, "q": 1, "clock": "10:10", "at": "2026-11-06T00:53:30.501Z", "scorer": "Jeremiah", "assist": "Cameron", "tags": [], "spot": { "x": 0.69, "y": 0.073 } },
+      { "by": "Coach", "mode": "coach", "text": null, "q": 0, "clock": "21:48", "at": "2026-11-06T00:53:32.948Z", "scorer": "Jeremiah", "assist": null, "tags": ["Near post"], "spot": { "x": 0.678, "y": 0.098 } }
+    ]
+  },
+  {
+    "id": "mw49o9bri58z",
+    "side": "us",
+    "q": 2,
+    "at": "2026-11-06T00:59:17.650Z",
+    "submissions": [
+      { "by": "Erin", "mode": "typed", "text": null, "q": 2, "clock": "0:44", "at": "2026-11-06T00:59:17.650Z", "scorer": "Abel", "assist": null, "tags": ["Left foot"], "spot": { "x": 0.482, "y": 0.216 } },
+      { "by": "Coach", "mode": "coach", "text": null, "q": 2, "clock": null, "at": "2026-11-06T00:59:17.943Z", "scorer": "Abel", "assist": null, "tags": ["One-on-one", "Fought for it", "Skill move", "Left foot"], "spot": { "x": 0.544, "y": 0.199 } }
+    ]
+  },
+  {
+    "id": "mw499sz3ff9v",
+    "side": "them",
+    "q": 0,
+    "at": "2026-11-06T00:48:03.567Z",
+    "submissions": [
+      { "by": "Coach", "mode": "coach", "text": null, "q": 0, "clock": "16:18", "at": "2026-11-06T00:48:03.567Z", "scorer": null, "assist": null, "tags": [], "spot": null },
+      { "by": "Erin", "mode": "typed", "text": null, "q": 1, "clock": "4:43", "at": "2026-11-06T00:48:03.773Z", "scorer": null, "assist": null, "tags": [], "spot": null }
+    ]
+  },
+  {
+    "id": "mw49tdyji4du",
+    "side": "them",
+    "q": 1,
+    "at": "2026-11-06T01:03:17.227Z",
+    "submissions": [
+      { "by": "Coach", "mode": "coach", "text": null, "q": 1, "clock": "6:24", "at": "2026-11-06T01:03:17.227Z", "scorer": null, "assist": null, "tags": [], "spot": null },
+      { "by": "Erin", "mode": "typed", "text": null, "q": 2, "clock": "4:46", "at": "2026-11-06T01:03:19.642Z", "scorer": null, "assist": null, "tags": [], "spot": null }
+    ]
+  },
+  {
+    "id": "mw49x8z6zdwl",
+    "side": "them",
+    "q": 1,
+    "at": "2026-11-06T01:06:01.793Z",
+    "submissions": [
+      { "by": "Erin", "mode": "typed", "text": null, "q": 2, "clock": "7:28", "at": "2026-11-06T01:06:01.793Z", "scorer": null, "assist": null, "tags": [], "spot": null },
+      { "by": "Coach", "mode": "coach", "text": null, "q": 1, "clock": "9:24", "at": "2026-11-06T01:06:17.394Z", "scorer": null, "assist": null, "tags": [], "spot": null }
+    ]
+  },
+  {
+    "id": "mw4a5mdifocf",
+    "side": "them",
+    "q": 1,
+    "at": "2026-11-06T01:12:31.836Z",
+    "submissions": [
+      { "by": "Erin", "mode": "typed", "text": null, "q": 3, "clock": "1:13", "at": "2026-11-06T01:12:31.836Z", "scorer": null, "assist": null, "tags": [], "spot": null },
+      { "by": "Coach", "mode": "coach", "text": null, "q": 1, "clock": "15:55", "at": "2026-11-06T01:12:48.006Z", "scorer": null, "assist": null, "tags": [], "spot": null }
+    ]
+  }
+]

@@ -1,0 +1,390 @@
+{
+  "game": "2026-11-05",
+  "pulledAt": "2026-11-07T03:26:52.984Z",
+  "coachGame": {
+    "lineup": [
+      {
+        "lf": "Alejandro",
+        "striker": "Casey",
+        "rf": "Cameron",
+        "cmid": "Abel",
+        "def1": "Jayce",
+        "def2": "Ethan",
+        "goalie": "Jaxon"
+      },
+      {
+        "lf": "Cameron",
+        "striker": "Abel",
+        "rf": "Jeremiah",
+        "cmid": "Jayce",
+        "def1": "Khair",
+        "def2": "Liam",
+        "goalie": "Colt"
+      },
+      {
+        "lf": "Jaxon",
+        "striker": "Casey",
+        "rf": "Cameron",
+        "cmid": "Jayce",
+        "def1": "Ethan",
+        "def2": "EJ",
+        "goalie": "Abel"
+      },
+      {
+        "lf": "Jeremiah",
+        "striker": "Alejandro",
+        "rf": "Colt",
+        "cmid": "Jayce",
+        "def1": "Ethan",
+        "def2": "Khair",
+        "goalie": "Liam"
+      }
+    ],
+    "out": [],
+    "gkPicks": null,
+    "events": [
+      {
+        "id": "mw48ydza4xnf",
+        "side": "us",
+        "q": 0,
+        "clock": "7:26",
+        "scorer": "Cameron",
+        "at": "2026-11-06T00:39:10.918Z",
+        "spot": {
+          "x": 0.842,
+          "y": 0.233
+        },
+        "shot": [
+          "Stole ball",
+          "One-on-one",
+          "Skill move",
+          "Right foot",
+          "Far post"
+        ]
+      },
+      {
+        "id": "mw492yh8cgdj",
+        "side": "us",
+        "q": 0,
+        "clock": "10:59",
+        "scorer": "Cameron",
+        "at": "2026-11-06T00:42:44.108Z",
+        "spot": {
+          "x": 0.5,
+          "y": 0.14
+        },
+        "shot": [
+          "Penalty"
+        ]
+      },
+      {
+        "id": "mw499sz3ff9v",
+        "side": "them",
+        "q": 0,
+        "clock": "16:18",
+        "scorer": null,
+        "at": "2026-11-06T00:48:03.567Z"
+      },
+      {
+        "id": "mw49gv4km40k",
+        "side": "us",
+        "q": 0,
+        "clock": "21:48",
+        "scorer": "Jeremiah",
+        "at": "2026-11-06T00:53:32.948Z",
+        "spot": {
+          "x": 0.678,
+          "y": 0.098
+        },
+        "shot": [
+          "Near post"
+        ]
+      },
+      {
+        "id": "mw49o9bri58z",
+        "side": "us",
+        "q": 2,
+        "clock": null,
+        "scorer": "Abel",
+        "at": "2026-11-06T00:59:17.943Z",
+        "spot": {
+          "x": 0.544,
+          "y": 0.199
+        },
+        "qFixed": true,
+        "shot": [
+          "One-on-one",
+          "Fought for it",
+          "Skill move",
+          "Left foot"
+        ]
+      },
+      {
+        "id": "mw49tdyji4du",
+        "side": "them",
+        "q": 1,
+        "clock": "6:24",
+        "scorer": null,
+        "at": "2026-11-06T01:03:17.227Z"
+      },
+      {
+        "id": "mw49x8z6zdwl",
+        "side": "them",
+        "q": 1,
+        "clock": "9:24",
+        "scorer": null,
+        "at": "2026-11-06T01:06:17.394Z"
+      },
+      {
+        "id": "mw4a5mdifocf",
+        "side": "them",
+        "q": 1,
+        "clock": "15:55",
+        "scorer": null,
+        "at": "2026-11-06T01:12:48.006Z"
+      }
+    ],
+    "clock": {
+      "starts": [
+        1793925104911,
+        null,
+        null,
+        null
+      ],
+      "ends": [
+        1793926552560,
+        null,
+        null,
+        null
+      ]
+    },
+    "subs": [
+      {
+        "id": "mw48uf4zme5b",
+        "q": 0,
+        "at": 1793925365794,
+        "lineup": {
+          "lf": "Alejandro",
+          "striker": "Casey",
+          "rf": "Cameron",
+          "cmid": "EJ",
+          "def1": "Jayce",
+          "def2": "Ethan",
+          "goalie": "Jaxon"
+        }
+      },
+      {
+        "id": "mw48uzzvl8qb",
+        "q": 0,
+        "at": 1793925392827,
+        "lineup": {
+          "lf": "Alejandro",
+          "striker": "Casey",
+          "rf": "Cameron",
+          "cmid": "EJ",
+          "def1": "Khair",
+          "def2": "Ethan",
+          "goalie": "Jaxon"
+        }
+      },
+      {
+        "id": "mw48v8e7tnne",
+        "q": 0,
+        "at": 1793925403711,
+        "lineup": {
+          "lf": "Alejandro",
+          "striker": "Casey",
+          "rf": "Cameron",
+          "cmid": "EJ",
+          "def1": "Khair",
+          "def2": "Liam",
+          "goalie": "Jaxon"
+        }
+      },
+      {
+        "id": "mw491tanp4ig",
+        "q": 0,
+        "at": 1793925710735,
+        "lineup": {
+          "lf": "Alejandro",
+          "striker": "Casey",
+          "rf": "Cameron",
+          "cmid": "Abel",
+          "def1": "Khair",
+          "def2": "Liam",
+          "goalie": "Jaxon"
+        }
+      }
+    ],
+    "formation": "231",
+    "notes": [],
+    "closed": {
+      "at": "2026-11-07T03:25:09.489Z"
+    },
+    "reviewed": {},
+    "savedAt": "2026-11-07T03:25:09.489Z"
+  },
+  "parentEntries": [
+    {
+      "id": "mw48yo7auwlt",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T00:39:36.125Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "us",
+        "q": 0,
+        "clock": "7:36",
+        "at": "2026-11-06T00:39:24.166Z",
+        "scorer": "Cameron",
+        "assist": null,
+        "shot": [],
+        "spot": {
+          "x": 0.788,
+          "y": 0.191
+        }
+      }
+    },
+    {
+      "id": "mw491hdpl2ou",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T00:43:50.950Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "us",
+        "q": 0,
+        "clock": "9:47",
+        "at": "2026-11-06T00:41:35.293Z",
+        "scorer": "Cameron",
+        "assist": null,
+        "shot": [
+          "Penalty",
+          "Right foot"
+        ],
+        "spot": {
+          "x": 0.615,
+          "y": 0.113
+        }
+      }
+    },
+    {
+      "id": "mw499t4tlvtw",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T00:48:04.543Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "them",
+        "q": 1,
+        "clock": "4:43",
+        "at": "2026-11-06T00:48:03.773Z",
+        "scorer": null,
+        "assist": null,
+        "shot": [],
+        "spot": null
+      }
+    },
+    {
+      "id": "mw49gt8lxqmw",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T00:54:13.296Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "us",
+        "q": 1,
+        "clock": "10:10",
+        "at": "2026-11-06T00:53:30.501Z",
+        "scorer": "Jeremiah",
+        "assist": "Cameron",
+        "shot": [],
+        "spot": {
+          "x": 0.69,
+          "y": 0.073
+        }
+      }
+    },
+    {
+      "id": "mw49o93m9jkg",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T00:59:44.370Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "us",
+        "q": 2,
+        "clock": "0:44",
+        "at": "2026-11-06T00:59:17.650Z",
+        "scorer": "Abel",
+        "assist": null,
+        "shot": [
+          "Left foot"
+        ],
+        "spot": {
+          "x": 0.482,
+          "y": 0.216
+        }
+      }
+    },
+    {
+      "id": "mw49tftm3m5t",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T01:03:21.240Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "them",
+        "q": 2,
+        "clock": "4:46",
+        "at": "2026-11-06T01:03:19.642Z",
+        "scorer": null,
+        "assist": null,
+        "shot": [],
+        "spot": null
+      }
+    },
+    {
+      "id": "mw49wwxtannc",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T01:06:02.910Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "them",
+        "q": 2,
+        "clock": "7:28",
+        "at": "2026-11-06T01:06:01.793Z",
+        "scorer": null,
+        "assist": null,
+        "shot": [],
+        "spot": null
+      }
+    },
+    {
+      "id": "mw4a59wc4sph",
+      "game": "2026-11-05",
+      "sentAt": "2026-11-06T01:12:32.946Z",
+      "name": "Erin",
+      "player": "",
+      "kind": "goal",
+      "data": {
+        "side": "them",
+        "q": 3,
+        "clock": "1:13",
+        "at": "2026-11-06T01:12:31.836Z",
+        "scorer": null,
+        "assist": null,
+        "shot": [],
+        "spot": null
+      }
+    }
+  ]
+}
