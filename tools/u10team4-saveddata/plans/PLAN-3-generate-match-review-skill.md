@@ -96,7 +96,7 @@ Plan 5) need to know:
   `<folder>/<game-id>_original-data.json` (the clustered-candidates audit record, committed) — both
   written by the skill itself, so Plan 4's launcher just needs to invoke the skill with a folder
   path and then point Nick at the resulting review HTML; it doesn't need to know the award/CSV
-  logic at all.
+  logic at all. Committing the outputs is no longer done by the skill: the server commits after a successful run (see PLAN-1 status update, 2026-11-07).
 - **Award section seed**: the skill reads `u10team4-award-draft.csv.csv` directly (a fixed repo
   path, not part of the per-game folder) — normalizes `"Goalie of the Day"` → `"Goalie of the
   Match"`, filters by the game's date for the per-game section, and separately by calendar month

@@ -69,3 +69,63 @@ what data it's given:
   sheet (check the `Awards`/`Finalized games` tabs) — all without any prompt for a coach code.
 - Confirm the award picker refuses to let two Man-of-the-Match awards be saved for one game, and
   refuses to save an award with no note.
+
+## Status update (2026-11-07)
+
+Built, not yet pushed-to-sheet-verified (see "Gated on Nick" below).
+
+- **`review/template.html` now branches on whether it was generated or served raw.** The
+  skill-generated copy (`review/<game-id>-review.html`) is unchanged — full reviewable working
+  view, same placeholders, same Export-to-download flow (still feeds the existing `finalize-match`
+  skill per the backlog's "retire later" note). Opening the template file itself, raw, as
+  `/review/template.html?game=<id>&mode=details|edit`, is the new path: the embedded
+  `{{DATA_JSON}}`/etc. placeholders are never substituted, `JSON.parse` on them throws, and that
+  failure is the signal (`candidates === null` → `isFinalOnly`) to switch into a separate
+  `bootFinalOnly()` render path that fetches `games/<id>/<id>_finalized-data.json` (and
+  `original-data.json` for the roster) instead, and skips all raw-submission UI.
+- **Edit mode's Save button posts to the server's new `POST /api/finalize-game`**
+  (`tools/u10team4-saveddata/server/server.js`) — `{ game, goals, awards }`. The server: writes
+  `games/<id>/<id>_finalized-data.json` locally, merges `goals` into the game's `coachGame.events`
+  (lineup/subs/clock/formation/notes/closed carried over unchanged from `original-data.json`), then
+  POSTs `save` → `awards` → `finalizeMark` to the sheet in that order, using the coach code the
+  server already holds (`server/.coachcode`) — no prompt. Details mode hides the Save button and
+  renders everything read-only.
+- **Award cardinality**: `bootFinalOnly()` recomputes `goalSlots` from the finalized goal count
+  (`1 + floor(totalGoals/5)`) and pads `awardState` to exactly that many Goal-of-the-Game slots
+  plus exactly 1 Man-of-the-Match and 1 Goalie-of-the-Match slot — matching Plan 3's generation-time
+  rule, so Edit can't add an extra slot of any award type. A note is still required before Save for
+  any slot with a player picked (existing `missingNote` check, reused as-is).
+- **`u10team4-award-draft.csv.csv` discussion rows are not re-fetched in Edit/Details mode** — the
+  CSV read lives in the `generate-match-review` skill (Plan 3), not the server, and re-reading it
+  outside that skill was out of scope here. The award pickers still work (seeded from the game's
+  already-saved `finalized-data.json` awards, not the CSV), just without the Nick/Erin discussion
+  text shown on the original reviewable page. Flag to Nick if that context turns out to matter in
+  practice — easy to add later by having the server read the CSV too.
+- **Goal location (the drag-to-reposition spot) is not editable in Edit mode** — carried over as-is
+  from the finalized data, no UI for it on this page. Scoped cut to keep this build to what the
+  plan asked for (scorer/assist/tags/awards); flag if Nick wants it added.
+- **`allgames.html`'s View column** now shows Details / Edit / App for `complete` games (was a
+  single disabled "Open"): Details and Edit open `/review/template.html?game=<id>&mode=...`, App
+  opens the live lineup app via the new `?game=<id>` deep link (see below). `reviewable` keeps its
+  existing single "Open" link to the generated review page unchanged.
+- **`relics/u10-team4-lineup.html` now honors `?game=<id>`** (scoped one-line change near
+  `currentId = ...`, where `GAMES` is already defined) — wins over today's-game/last-used-game
+  only when that id is actually in the schedule; falls through to the existing logic otherwise. No
+  other change to that file's load/sync behavior.
+- **Server now also serves `relics/`**, not just `tools/u10team4-saveddata/` — needed for the App
+  link, since `relics/` lives at the repo root, outside the server's existing `DATA_ROOT`.
+  Special-cased in `serveStatic()`, not a general static-root change.
+- **Verified so far** (no sheet writes made — see below): server starts clean, `GET
+  /relics/u10-team4-lineup.html?game=2026-11-05` → 200, `GET
+  /review/template.html?game=2026-11-05&mode=details` → 200, `POST /api/finalize-game` with a
+  nonexistent game id correctly 404s with `no original-data.json for <id>`.
+- **Not verified — gated on Nick, needs his go-ahead before running**: an actual `/api/finalize-game`
+  call writes real rows into the live "Team 4 Captains & Goalies" sheet's `Awards` and `Finalized
+  games` tabs (and overwrites that game's `Lineups` row's `events`). Running it against the test
+  game (`2026-11-05`, fabricated data) would pollute those tabs with fake rows, so it wasn't run
+  without his sign-off. Nick to-do: pick a real or throwaway game id, confirm it's fine to write
+  test rows (or point at a truly disposable game id), then click Edit on it from `allgames.html`,
+  change an award, Save, and confirm in the sheet. Full verification checklist from this plan
+  (two Man-of-the-Match blocked, missing-note blocked, Details is fully read-only, raw-submission
+  sections absent) still needs a real run-through in the browser too — everything above was
+  exercised via `curl`, not by clicking through the page.

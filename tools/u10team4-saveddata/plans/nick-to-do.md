@@ -3,10 +3,11 @@
 Things that need Nick's hands (Google Sheets UI, browser, deploy clicks) to unblock agent work on
 this overhaul. Do these in order. Each item says what to tell the agent once you've done it.
 
-**Status as of 2026-11-07:** Items 1 and 2 are done (Apps Script deployed, server running, Plan 4
-built and wired into `allgames.html`). Item 3 (award CSV) is confirmed accurate. Item 4 (a real
-finalize push-back) is still open — Nick will do it when ready; no action needed from the agent
-until then.
+**Status as of 2026-11-07:** Items 1–3 are done (Apps Script deployed, server running, Plan 4 built
+and wired into `allgames.html`, award CSV confirmed accurate). Plan 5 is now built too — see item 5
+below, which replaces item 4's old framing: `coachCode` is **no longer dead code** (correcting
+item 2's note) — Plan 5's `/api/finalize-game` endpoint uses it to push to the sheet with no
+prompt.
 
 ## 1. Deploy the updated Apps Script (unblocks Plan 2, already built) — DONE
 
@@ -46,18 +47,31 @@ responds (200), and opened it in the browser. Plan 4 is now built — see the st
 Confirmed accurate by Nick 2026-11-07. Plan 5 can proceed using
 [`u10team4-award-draft.csv.csv`](../u10team4-award-draft.csv.csv) as-is.
 
-## 4. Spot-check a real finalize push-back (unblocks Plan 6) — OPEN, no action needed yet
+## 4. Spot-check a real finalize push-back (unblocks Plan 6) — OPEN, do this next
 
-Plan 6 needs at least one real game pushed through Plan 5's Edit flow so there's live
-`Finalized games` data to test against.
+Plan 5 (edit/details page + push-back) is now built. Plan 6 needs at least one real game pushed
+through its Edit flow so there's live `Finalized games` data to test against — **this is the next
+thing blocking agent progress.**
 
 **Steps:**
-1. Once Plan 5 is built, open `allgames.html`, pick a `complete`-eligible game, go through Edit,
-   and save.
-2. Check the sheet's `Finalized games` and `Awards` tabs to confirm the row landed.
+1. Start the server (`node tools/u10team4-saveddata/server/server.js`), open
+   `http://localhost:8787/review/allgames.html`.
+2. Pick a game marked `complete` (has a `finalizedAt`) — or, if none exist yet, pick any `closed`
+   game, run "Start Review", then manually drop a `<game-id>_finalized-data.json` into its
+   `games/<game-id>/` folder to simulate one being complete (an agent can do this part for you if
+   you'd rather not hand-edit JSON — just ask).
+3. Click **Edit** in its View column, change an award or scorer, and **Save**.
+4. Check the sheet's `Awards` and `Finalized games` tabs, and the game's `Lineups` row, to confirm
+   the write landed as expected.
 
-Nick will do this when ready — no need to prompt or chase this. When it's done, say so and the
-agent can build Plan 6
+**Important — this is a real write to the live "Team 4 Captains & Goalies" sheet**, not a dry run.
+Don't do step 3 against a game with data you care about until you're comfortable it works —
+consider picking a throwaway/test game id for the first try. The agent deliberately did not run
+this itself (see Plan 5's status update) because it would have written fake rows into your real
+sheet without asking first.
+
+When it's done, tell the agent what happened (worked / didn't / what you saw in the sheet) — that
+closes this item and unblocks Plan 6
 (`tools/u10team4-saveddata/plans/PLAN-6-live-app-prefer-finalized-data.md`).
 
 ---
@@ -67,7 +81,7 @@ agent can build Plan 6
 1. Deploy Apps Script → agent verifies Plan 2
 2. Run server with real coach code → agent builds Plan 4
 3. Confirm award CSV → agent builds Plan 5
-4. Push a real finalize → agent builds Plan 6
+4. **Push a real finalize (item 4 above, your turn now)** → agent builds Plan 6
 
 Plan 3 (`generate-match-review` skill) is already built and doesn't need anything from you to
 build — only to run, which Plan 4 wires up.
@@ -144,3 +158,27 @@ this file's earlier claims about them.
   yet against the live sheet since the Apps Script deploy).
 - Item 4 (a real finalize push-back) remains open — Nick will do it on his own schedule; do not
   prompt for it.
+
+---
+
+## Status log — 2026-11-07, Plan 5 built
+
+- Built **Plan 5**: `review/template.html` now also serves as the Edit/Details page for
+  `complete` games (`?game=<id>&mode=edit|details`, see the plan's own status update for exactly
+  how), the server gained `POST /api/finalize-game` (writes local finalized data, then pushes
+  `save`/`awards`/`finalizeMark` to the sheet with no prompt), `allgames.html`'s View column now
+  offers Details/Edit/App for `complete` games, and `relics/u10-team4-lineup.html` honors a
+  `?game=<id>` deep link.
+- Verified via `curl` only (server starts clean, the new routes respond, a bad game id to
+  `/api/finalize-game` 404s correctly) — **did not** run a real Edit→Save against the live sheet,
+  since the only game with local data right now is the fabricated `2026-11-05` test game and that
+  would have written fake rows into the real `Awards`/`Finalized games` tabs without asking first.
+  That's now item 4 above — it needs Nick's hands.
+- Scope cuts made, flagged in Plan 5's status update: goal location (spot) isn't editable in Edit
+  mode, and the award pickers in Edit/Details mode don't re-show the CSV discussion text (Nick's
+  comments etc.) the way the original reviewable page does — both fixable later if it matters.
+- Found and fixed the same stale-server-process gotcha as the Plan 1 session: a restart left the
+  old `server.js` holding port 8787, so the new code wasn't actually running until it was killed
+  (`Stop-Process`) and restarted. Worth remembering for any future server restart: check
+  `Get-NetTCPConnection -LocalPort 8787` / `Get-Process node` if a change doesn't seem to take
+  effect.

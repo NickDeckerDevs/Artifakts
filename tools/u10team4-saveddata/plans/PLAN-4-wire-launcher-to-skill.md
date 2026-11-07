@@ -53,3 +53,12 @@ done-marker/poll mechanism Plan 1 built), the page refreshes that row's status f
   page.
 - Click "Secondary Review" on a `complete` game and confirm the existing
   `<game-id>_finalized-data.json` is untouched afterward (diff it before/after).
+
+## Status update (2026-11-07)
+
+- Launcher wiring is in place in `review/allgames.html` (Start Review / Secondary Review buttons,
+  `/run-skill` POST, 3s poll).
+- Server-side commit added to `/run-skill` (see PLAN-1 status update). The Start Review run for
+  `2026-11-05` finished `done` with `committed: true`.
+- Not yet verified: clicking the buttons in the browser (the run was triggered via curl), the
+  `reviewable` status transition in the page, and Secondary Review on a `complete` game.

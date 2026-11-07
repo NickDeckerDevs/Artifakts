@@ -64,3 +64,18 @@ command (e.g. `node server.js` from that folder, or an `npm start`), that:
   `git log`/`git status` shows it was committed (not pushed).
 - Confirm the server reads `.coachcode` (or equivalent) once at startup without prompting, and that
   file is listed in `.gitignore`.
+
+## Status update (2026-11-07): server now commits run outputs itself
+
+- Headless `claude -p` runs did not reliably commit their own output (seen in the `testarea-stamp`
+  bootstrap test and again on the real `/generate-match-review` run). Committing moved out of the
+  skill and into `server.js`.
+- After a run exits 0, `commitRunOutputs()` in `server.js` runs `git add` and `git commit` (pathspec
+  limited to the game folder and `review/<game-id>-review.html`) with `execFile`, no shell. It only
+  runs when the request includes `folderPath`.
+- The done-marker now includes `committed: true|false` and `paths`. If the commit fails, the marker
+  is written as `status: 'error'` with the message.
+- Not pushed. `.done.json` markers and test artifacts under `testarea/` are not committed.
+- Verified: a real `/run-skill` call for game `2026-11-05` finished `done` with `committed: true`,
+  commit `12a8bf5`. The first restart attempt ran stale code because the old server still held
+  port 8787; that was fixed by restarting.

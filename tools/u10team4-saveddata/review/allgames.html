@@ -125,8 +125,14 @@ function actionCell(g, status) {
 }
 
 function viewCell(g, status) {
-  if (status === 'reviewable' || status === 'complete') {
+  if (status === 'reviewable') {
     return `<a href="/review/${encodeURIComponent(g.game)}-review.html" target="_blank">Open</a>`;
+  }
+  if (status === 'complete') {
+    const id = encodeURIComponent(g.game);
+    return `<a href="/review/template.html?game=${id}&mode=details" target="_blank">Details</a>` +
+      `<a href="/review/template.html?game=${id}&mode=edit" target="_blank">Edit</a>` +
+      `<a href="/relics/u10-team4-lineup.html?game=${id}" target="_blank">App</a>`;
   }
   return `<button disabled>Open</button>`;
 }

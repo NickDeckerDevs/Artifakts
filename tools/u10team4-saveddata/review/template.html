@@ -71,11 +71,27 @@ h1 { font-size: 18px; margin: 0 0 4px; }
 <script id="potmCsvData" type="application/json">{{POTM_CSV_JSON}}</script>
 <script id="goalSlotsData" type="application/json">{{GOAL_SLOTS}}</script>
 <script>
-// candidates: [{ id, side, q, at, submissions: [{by, mode, text?, scorer?, assist?, tags?, spot?}, ...] }]
-// q is a best-guess only — sideline game clocks drift and quarters often don't line up between
-// the coach's log and parent submissions, so it's always editable below, never trusted as-is.
-const candidates = JSON.parse(document.getElementById('gameData').textContent);
-const ROSTER = JSON.parse(document.getElementById('rosterData').textContent);
+// Two ways this page gets opened:
+// - Generated (Plan 3's skill writes review/<game-id>-review.html with these placeholders
+//   substituted): full reviewable working view over raw submissions, below.
+// - Served raw at /review/template.html?game=<id>&mode=details|edit (Plan 5's Details/Edit
+//   links from allgames.html, for a `complete` game): placeholders are never substituted, so
+//   JSON.parse on them throws — that failure is the signal to switch into final-only mode,
+//   which fetches `<game-id>_finalized-data.json` instead and skips all raw-submission UI.
+const qs = new URLSearchParams(location.search);
+const MODE = qs.get('mode'); // null on a generated page; 'details' or 'edit' on a served one
+let candidates, ROSTER;
+try {
+  // candidates: [{ id, side, q, at, submissions: [{by, mode, text?, scorer?, assist?, tags?, spot?}, ...] }]
+  // q is a best-guess only — sideline game clocks drift and quarters often don't line up between
+  // the coach's log and parent submissions, so it's always editable below, never trusted as-is.
+  candidates = JSON.parse(document.getElementById('gameData').textContent);
+  ROSTER = JSON.parse(document.getElementById('rosterData').textContent);
+} catch (e) {
+  candidates = null; // final-only mode — see bootFinalOnly() at the bottom of this script.
+  ROSTER = [];
+}
+const isFinalOnly = candidates === null;
 const HP = 6, HFW = 64, HFH = 96, HOY = 10, HOB = 3;
 const DOT_COLORS = ['#7ec2f7', '#f5b84a', '#92d44e', '#f093be', '#4dd6a8', '#ff7a6b'];
 function drawField(cv) {
@@ -117,7 +133,7 @@ function playerOptions(current, extraCandidates) {
 }
 
 const container = document.getElementById('goals');
-const state = candidates.map(c => {
+const state = (candidates || []).map(c => {
   const spots = c.submissions.filter(s => s.spot).map(s => s.spot);
   return {
     c,
@@ -195,9 +211,15 @@ function escapeAttr(s) { return escapeHtml(s); }
 // 1 + floor(totalGoals / 5) slots per game; Man of the Match and Goalie of the Match get
 // exactly 1 slot each. Player of the Month is month-level, not decided from this page — it's
 // shown read-only below for context only (see CONTEXT.md's award model).
-const awardCsvRows = JSON.parse(document.getElementById('awardCsvData').textContent); // this game's date, normalized Award names
-const potmCsvRows = JSON.parse(document.getElementById('potmCsvData').textContent); // current calendar month, Player Of The Month rows
-const goalSlots = JSON.parse(document.getElementById('goalSlotsData').textContent);
+let awardCsvRows, potmCsvRows, goalSlots;
+try {
+  awardCsvRows = JSON.parse(document.getElementById('awardCsvData').textContent); // this game's date, normalized Award names
+  potmCsvRows = JSON.parse(document.getElementById('potmCsvData').textContent); // current calendar month, Player Of The Month rows
+  goalSlots = JSON.parse(document.getElementById('goalSlotsData').textContent);
+} catch (e) {
+  // Final-only mode (see boot() below) fills these in once the finalized-data fetch resolves.
+  awardCsvRows = []; potmCsvRows = []; goalSlots = 0;
+}
 
 function rowsFor(awardName) { return awardCsvRows.filter(r => r.Award === awardName); }
 function discussionHtml(rows) {
@@ -221,13 +243,14 @@ function makeSlots(awardName, count) {
   }
   return slots;
 }
-const awardState = [
+let awardState = [
   ...makeSlots('Goal of the Game', goalSlots),
   ...makeSlots('Man of the Match', 1),
   ...makeSlots('Goalie of the Match', 1),
 ];
 
 const awardsContainer = document.getElementById('awards');
+const exportBtn = document.getElementById('exportBtn');
 function renderAwards() {
   const groups = [
     { name: 'Goal of the Game', hint: `${goalSlots} slot${goalSlots === 1 ? '' : 's'} this game (1 + one per 5 goals scored).` },
@@ -281,30 +304,146 @@ container.addEventListener('change', e => {
   if (t.dataset.include !== undefined) state[+t.dataset.include].include = t.checked;
 });
 
-document.getElementById('exportBtn').addEventListener('click', () => {
+if (!isFinalOnly) {
+  exportBtn.addEventListener('click', () => {
+    const picked = awardState.filter(st => st.player.trim());
+    const missingNote = picked.find(st => !st.note.trim());
+    if (missingNote) {
+      alert(`"${missingNote.award}" for ${missingNote.player} needs a note before exporting.`);
+      renderAwards();
+      return;
+    }
+    const out = state.filter(st => st.include).map(st => ({
+      side: st.c.side, q: st.q, at: st.c.at,
+      scorer: st.scorer || null, assist: st.assist || null,
+      shot: st.tags.split(',').map(s => s.trim()).filter(Boolean),
+      spot: { x: Math.round(st.spot.x * 1000) / 1000, y: Math.round(st.spot.y * 1000) / 1000 },
+      by: [...new Set(st.c.submissions.map(s => s.by).filter(Boolean))].join(', '),
+    }));
+    const awardsOut = picked.map(st => ({ player: st.player.trim(), award: st.award, note: st.note.trim() }));
+    const blob = new Blob([JSON.stringify({ goals: out, awards: awardsOut }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'finalized-draft.json';
+    a.click();
+  });
+}
+
+// ─────────────── Final-only mode (Plan 5): Details/Edit for a `complete` game ───────────────
+// Reached by opening this file raw (not the skill-generated copy), as
+// /review/template.html?game=<id>&mode=details|edit — see the try/catch above that sets
+// `candidates = null`. Fetches `<game-id>_finalized-data.json` instead of using embedded data,
+// skips all raw-submission UI, and (in edit mode) saves by POSTing straight to the server's
+// /api/finalize-game, which pushes to the sheet immediately — no download, no publish step.
+let goalsState = [];
+function ensureSlotCounts() {
+  const padTo = (name, count) => {
+    const slots = awardState.filter(s => s.award === name);
+    while (slots.length < count) { const s = { award: name, player: '', note: '' }; awardState.push(s); slots.push(s); }
+  };
+  padTo('Goal of the Game', goalSlots);
+  padTo('Man of the Match', 1);
+  padTo('Goalie of the Match', 1);
+}
+function renderFinalGoals() {
+  const editable = MODE === 'edit';
+  container.innerHTML = goalsState.map((st, gi) => `<div class="goal-card" data-gi="${gi}">
+    <div class="goal-head"><span class="when">${st.side === 'us' ? '⚽ Our goal' : 'Goal against'} · Q${(st.q ?? 0) + 1}</span></div>
+    <div class="goal-cols">
+      <div><div class="col-title">Scorer</div>${editable
+        ? `<select data-ffield="scorer" data-gi="${gi}">${playerOptions(st.scorer)}</select>`
+        : `<div>${escapeHtml(st.scorer || '—')}</div>`}</div>
+      <div><div class="col-title">Assist</div>${editable
+        ? `<select data-ffield="assist" data-gi="${gi}">${playerOptions(st.assist)}</select>`
+        : `<div>${escapeHtml(st.assist || '—')}</div>`}</div>
+      <div><div class="col-title">Tags</div>${editable
+        ? `<textarea rows="2" data-ffield="tags" data-gi="${gi}">${escapeHtml(st.tags)}</textarea>`
+        : `<div>${escapeHtml(st.tags || '—')}</div>`}</div>
+    </div>
+  </div>`).join('');
+}
+async function saveFinalOnly() {
   const picked = awardState.filter(st => st.player.trim());
   const missingNote = picked.find(st => !st.note.trim());
   if (missingNote) {
-    alert(`"${missingNote.award}" for ${missingNote.player} needs a note before exporting.`);
+    alert(`"${missingNote.award}" for ${missingNote.player} needs a note before saving.`);
     renderAwards();
     return;
   }
-  const out = state.filter(st => st.include).map(st => ({
-    side: st.c.side, q: st.q, at: st.c.at,
+  const goalsOut = goalsState.map(st => ({
+    side: st.side, q: st.q, at: st.at,
     scorer: st.scorer || null, assist: st.assist || null,
     shot: st.tags.split(',').map(s => s.trim()).filter(Boolean),
-    spot: { x: Math.round(st.spot.x * 1000) / 1000, y: Math.round(st.spot.y * 1000) / 1000 },
-    by: [...new Set(st.c.submissions.map(s => s.by).filter(Boolean))].join(', '),
+    spot: st.spot || null,
   }));
   const awardsOut = picked.map(st => ({ player: st.player.trim(), award: st.award, note: st.note.trim() }));
-  const blob = new Blob([JSON.stringify({ goals: out, awards: awardsOut }, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'finalized-draft.json';
-  a.click();
-});
+  exportBtn.disabled = true; exportBtn.textContent = 'Saving…';
+  try {
+    const res = await fetch('/api/finalize-game', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: qs.get('game'), goals: goalsOut, awards: awardsOut }),
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || 'save failed');
+    exportBtn.textContent = 'Saved ✓';
+  } catch (e) {
+    alert(`Save failed: ${e.message}`);
+    exportBtn.disabled = false; exportBtn.textContent = 'Save (pushes to sheet)';
+  }
+}
+async function bootFinalOnly() {
+  const game = qs.get('game');
+  if (!game) { container.innerHTML = '<p>Missing ?game=&lt;id&gt; in the URL.</p>'; exportBtn.style.display = 'none'; return; }
+  const editable = MODE === 'edit';
+  document.title = `${editable ? 'Edit' : 'Details'} — ${game}`;
+  document.querySelector('h1').textContent = `${editable ? 'Edit' : 'Details'} — ${game}`;
+  document.querySelector('.sub').textContent = editable
+    ? 'Final goals and awards for this completed game. Saving pushes straight to the sheet — no separate publish step, no coach-code prompt.'
+    : 'Final goals and awards for this completed game (read-only).';
 
-render();
+  const finalizedRes = await fetch(`/games/${encodeURIComponent(game)}/${game}_finalized-data.json`, { cache: 'no-store' });
+  if (!finalizedRes.ok) { container.innerHTML = '<p>No finalized data yet for this game.</p>'; exportBtn.style.display = 'none'; return; }
+  const finalized = await finalizedRes.json();
+  try {
+    const originalRes = await fetch(`/games/${encodeURIComponent(game)}/original-data.json`, { cache: 'no-store' });
+    if (originalRes.ok) {
+      const original = await originalRes.json();
+      const lineup = (original.coachGame && original.coachGame.lineup) || [];
+      ROSTER = [...new Set(lineup.flatMap(l => Object.values(l)).filter(Boolean))];
+    }
+  } catch (e) { /* roster is a nice-to-have for the dropdowns; missing it isn't fatal */ }
+
+  goalsState = finalized.goals.map(g => ({ ...g, tags: (g.shot || []).join(', ') }));
+  goalSlots = 1 + Math.floor(goalsState.length / 5);
+  awardState = finalized.awards.map(a => ({ ...a }));
+  ensureSlotCounts();
+  renderFinalGoals();
+  renderAwards();
+
+  if (editable) {
+    container.addEventListener('input', e => {
+      const t = e.target;
+      if (t.dataset.ffield === undefined) return;
+      goalsState[+t.dataset.gi][t.dataset.ffield] = t.value;
+    });
+    container.addEventListener('change', e => {
+      const t = e.target;
+      if (t.dataset.ffield === undefined) return;
+      goalsState[+t.dataset.gi][t.dataset.ffield] = t.value;
+    });
+    exportBtn.textContent = 'Save (pushes to sheet)';
+    exportBtn.onclick = null;
+    exportBtn.addEventListener('click', saveFinalOnly);
+  } else {
+    exportBtn.style.display = 'none';
+  }
+}
+
+if (isFinalOnly) {
+  bootFinalOnly();
+} else {
+  render();
+}
 </script>
 </body>
 </html>
