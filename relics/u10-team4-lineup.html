@@ -346,6 +346,26 @@ button { touch-action: manipulation; }
 .sub-row .what { flex: 1; min-width: 0; }
 .sub-row .log-x { padding: 0 4px; }
 .spot-canvas { width: auto; max-width: 100%; height: auto; max-height: 58vh; display: block; margin-left: auto; margin-right: auto; border-radius: 8px; touch-action: none; image-rendering: pixelated; margin-bottom: 12px; cursor: crosshair; }
+/* ── fast goal capture: text/voice, reviewed after the game instead of picked live ── */
+.capture-row { display: flex; gap: 8px; margin: 2px 0 10px; }
+.capture-btn { flex: 1; padding: 13px 8px; border-radius: 8px; border: 1px dashed var(--border-strong); background: none; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.capture-btn .ic { font-size: 18px; }
+.capture-btn:active { background: var(--surface2); }
+.capture-textarea { width: 100%; min-height: 140px; padding: 12px; font-size: 16px; line-height: 1.5; background: var(--surface2); color: var(--text); border: 1px solid var(--border-strong); border-radius: 8px; resize: vertical; margin-bottom: 10px; font-family: inherit; }
+.voice-stage { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px 8px 22px; }
+.mic-dot { width: 84px; height: 84px; border-radius: 50%; background: var(--surface2); border: 2px solid var(--border-strong); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+.mic-dot.rec { border-color: var(--danger-border); background: var(--danger-bg); animation: voicepulse 1.4s ease-in-out infinite; }
+@keyframes voicepulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,122,107,0.35); } 50% { box-shadow: 0 0 0 14px rgba(255,122,107,0); } }
+.voice-timer { font-family: var(--mono); font-size: 32px; font-variant-numeric: tabular-nums; }
+.voice-timer.warn-mid { color: var(--warn); }
+.voice-timer.warn-late { color: #ff7a6b; }
+.voice-banner { font-size: 13px; font-weight: 700; text-align: center; min-height: 18px; letter-spacing: 0.01em; }
+.voice-banner.warn-mid { color: var(--warn); }
+.voice-banner.warn-late { color: #ff7a6b; }
+.voice-banner.saved { color: var(--ok); }
+.voice-ctl-row { display: flex; gap: 10px; }
+.voice-ctl { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surface2); color: var(--text); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.voice-ctl.stop { background: #ff7a6b; border-color: #ff7a6b; color: #2a0a06; }
 .goal-summary { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 .goal-summary small { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 3px; }
 .big-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
@@ -1245,8 +1265,141 @@ function openOurGoal() {
   const cameOff = playedThisQ(gq).filter(n => keyIn(L, n) === 'bench');
   openSheet(`${sheetHead(`Our goal · ${PERIODS[gq]}${st && quarterAt(Date.now()) !== null ? ' · ' + mmss((Date.now() - st) / 1000) : ''}`, 'Who scored?')}
     ${pickField({ L, data: 'data-scorer', extra: cameOff })}
+    <div class="capture-row">
+      <button class="capture-btn" data-action="goal-capture-text"><span class="ic">⌨️</span>Input Text</button>
+      <button class="capture-btn" data-action="goal-capture-voice"><span class="ic">🎙️</span>Voice Record</button>
+    </div>
     <button class="btn full" data-scorer="">Not sure who</button>`, 'sheet-goal-scorer');
 }
+
+// ── fast capture: say or type what happened instead of picking scorer/assist/shot live;
+// the finalize-match skill (tools/u10team4-saveddata) matches these up after the game. ──
+function captureBy() { const who = isViewer() ? viewerId() : null; return who ? who.name : 'Coach'; }
+function addGoalCapture(capture) {
+  if (isViewer()) g.ownEvents = true;
+  const blob = capture._blob; delete capture._blob;   // never let a Blob reach save()/JSON.stringify
+  const t = Date.now(), qa = quarterAt(t), gq = qa === null ? activeQ() : qa;
+  const ev = { id: uid(), side: 'us', q: gq, clock: qa === null ? null : mmss(Math.max(0, (t - qStartEst(gq)) / 1000)),
+    scorer: null, capture, needsReview: true, at: new Date(t).toISOString() };
+  g.events.push(ev);
+  save();
+  if (isViewer()) sendParentGoal(ev);
+  if (blob) idbPutAudio(ev.id, blob).then(() => uploadCaptureAudio(ev));
+  pending = { goal: g.events.length - 1 };
+  return openGoalSpot();
+}
+function openGoalCaptureText() {
+  openSheet(`${sheetHead('What happened?', "Type it quick — we'll match it up to the right player after the game.")}
+    <textarea class="capture-textarea" id="captureTextArea" placeholder='e.g. "Jeremiah, breakaway down the left, Jayce assisted"'></textarea>
+    <div class="btn-row"><button class="btn" data-action="cancel">Cancel</button><button class="btn btn-primary" data-action="capture-text-save">Save</button></div>`, 'sheet-capture-text');
+  $('captureTextArea').focus();
+}
+function saveGoalCaptureText() {
+  const text = ($('captureTextArea').value || '').trim();
+  if (!text) return flash('Type something first');
+  addGoalCapture({ mode: 'text', text, by: captureBy(), submittedAt: new Date().toISOString() });
+}
+
+// ── voice capture: 60s hard cap, countdown banners from Nick's spec ──
+let voiceRec = null;
+function voiceResetState() {
+  voiceRec = { recorder: null, stream: null, chunks: [], blob: null, startedAt: 0, pausedMs: 0, pauseStartedAt: 0, timer: null, state: 'idle' };
+}
+function openGoalCaptureVoice() {
+  voiceResetState();
+  openSheet(`${sheetHead('Record what happened', 'Tap record and say what happened — who scored, who assisted, how.')}
+    <div class="voice-stage">
+      <div class="mic-dot" id="vMic">🎙️</div>
+      <div class="voice-timer" id="vTimer">0:00</div>
+      <div class="voice-banner" id="vBanner"></div>
+      <div class="voice-ctl-row" id="vCtls"></div>
+    </div>
+    <div class="btn-row" id="vSaveRow" style="display:none"><button class="btn" data-action="capture-voice-rerecord">Re-record</button><button class="btn btn-primary" data-action="capture-voice-save">Save</button></div>
+    <button class="btn full" data-action="cancel">Cancel</button>`, 'sheet-capture-voice');
+  renderVoiceCtls();
+}
+function voiceStopTracks() { if (voiceRec && voiceRec.stream) voiceRec.stream.getTracks().forEach(tr => { try { tr.stop(); } catch (e) {} }); }
+function renderVoiceCtls() {
+  const ctls = $('vCtls'); if (!ctls) return;
+  const s = voiceRec.state, saveRow = $('vSaveRow');
+  if (s === 'idle') { ctls.innerHTML = `<button class="voice-ctl" data-action="capture-voice-start">●</button>`; ctls.style.display = 'flex'; saveRow.style.display = 'none'; }
+  else if (s === 'recording') { ctls.innerHTML = `<button class="voice-ctl" data-action="capture-voice-pause">⏸</button><button class="voice-ctl stop" data-action="capture-voice-stop">■</button>`; ctls.style.display = 'flex'; saveRow.style.display = 'none'; }
+  else if (s === 'paused') { ctls.innerHTML = `<button class="voice-ctl" data-action="capture-voice-resume">●</button><button class="voice-ctl stop" data-action="capture-voice-stop">■</button>`; ctls.style.display = 'flex'; saveRow.style.display = 'none'; }
+  else { ctls.style.display = 'none'; saveRow.style.display = 'flex'; }
+}
+function voiceBannerFor(ms) {
+  if (ms >= 60000) return { cls: 'warn-late saved', text: "Okay, we're shutting this off now — better hurry — SAVED" };
+  if (ms >= 45000) return { cls: 'warn-late', text: 'You really have 15 seconds!' };
+  if (ms >= 30000) return { cls: 'warn-mid', text: 'OH BOY BETTER HURRY' };
+  return { cls: '', text: '' };
+}
+function voiceTick() {
+  if (!voiceRec || voiceRec.state !== 'recording') return;
+  const elapsed = Date.now() - voiceRec.startedAt - voiceRec.pausedMs, capped = Math.min(elapsed, 60000);
+  const tEl = $('vTimer'); if (tEl) { tEl.textContent = mmss(capped / 1000); tEl.className = 'voice-timer ' + (capped >= 45000 ? 'warn-late' : capped >= 30000 ? 'warn-mid' : ''); }
+  const b = voiceBannerFor(capped), bEl = $('vBanner'); if (bEl) { bEl.textContent = b.text; bEl.className = 'voice-banner ' + b.cls; }
+  if (elapsed >= 60000) voiceStop(true);
+}
+async function voiceStart() {
+  if (!navigator.mediaDevices || !window.MediaRecorder) return flash('Voice recording is not supported on this device — try Input Text instead');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mime = ['audio/webm', 'audio/mp4', 'audio/aac'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    voiceRec.stream = stream; voiceRec.recorder = rec; voiceRec.chunks = [];
+    rec.ondataavailable = ev => { if (ev.data && ev.data.size) voiceRec.chunks.push(ev.data); };
+    rec.onstop = () => { voiceRec.blob = new Blob(voiceRec.chunks, { type: rec.mimeType || 'audio/webm' }); voiceStopTracks(); };
+    rec.start();
+    voiceRec.startedAt = Date.now(); voiceRec.pausedMs = 0; voiceRec.state = 'recording';
+    voiceRec.timer = setInterval(voiceTick, 250);
+    renderVoiceCtls();
+  } catch (e) { flash('Mic permission denied'); }
+}
+function voicePause() {
+  if (!voiceRec || voiceRec.state !== 'recording') return;
+  try { voiceRec.recorder.pause(); } catch (e) { return; }
+  voiceRec.state = 'paused'; voiceRec.pauseStartedAt = Date.now(); renderVoiceCtls();
+}
+function voiceResume() {
+  if (!voiceRec || voiceRec.state !== 'paused') return;
+  try { voiceRec.recorder.resume(); } catch (e) { return; }
+  voiceRec.pausedMs += Date.now() - voiceRec.pauseStartedAt; voiceRec.state = 'recording'; renderVoiceCtls();
+}
+function voiceStop(auto) {
+  if (!voiceRec || !voiceRec.recorder) return;
+  clearInterval(voiceRec.timer);
+  try { voiceRec.recorder.stop(); } catch (e) {}
+  voiceRec.state = 'review';
+  renderVoiceCtls();
+  if (auto) setTimeout(voiceSave, 300);   // let onstop finish building the blob first
+}
+function voiceRerecord() { voiceStopTracks(); voiceResetState(); const t = $('vTimer'), b = $('vBanner'); if (t) { t.textContent = '0:00'; t.className = 'voice-timer'; } if (b) { b.textContent = ''; b.className = 'voice-banner'; } renderVoiceCtls(); }
+function voiceSave() {
+  if (!voiceRec || !voiceRec.blob) return flash('Nothing recorded yet');
+  addGoalCapture({ mode: 'voice', _blob: voiceRec.blob, by: captureBy(), submittedAt: new Date().toISOString() });
+}
+
+// ── IndexedDB cache for voice clips (not localStorage — too small/string-only for audio) ──
+const VOICE_DB = 'u10-voice-captures';
+function idbOpen() { return new Promise((res, rej) => { const req = indexedDB.open(VOICE_DB, 1); req.onupgradeneeded = () => req.result.createObjectStore('clips'); req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); }
+async function idbPutAudio(id, blob) { try { const db = await idbOpen(); await new Promise((res, rej) => { const tx = db.transaction('clips', 'readwrite'); tx.objectStore('clips').put(blob, id); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); } catch (e) {} }
+async function idbGetAudio(id) { try { const db = await idbOpen(); return await new Promise((res, rej) => { const tx = db.transaction('clips', 'readonly'); const r = tx.objectStore('clips').get(id); r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error); }); } catch (e) { return null; } }
+async function idbDeleteAudio(id) { try { const db = await idbOpen(); db.transaction('clips', 'readwrite').objectStore('clips').delete(id); } catch (e) {} }
+function blobToBase64(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = rej; r.readAsDataURL(blob); }); }
+// Uploads the cached clip to Drive (via Apps Script) so the finalize skill, running on Nick's
+// computer, can fetch and transcribe it; retried on next load/online event via retryCaptureUploads().
+async function uploadCaptureAudio(ev) {
+  if (!SYNC_URL || !ev || !ev.capture || ev.capture.mode !== 'voice' || ev.capture.audioUrl) return;
+  const blob = await idbGetAudio(ev.id); if (!blob) return;
+  try {
+    const b64 = await blobToBase64(blob);
+    const out = await post({ action: 'captureAudio', game: currentId, id: ev.id, mime: blob.type || 'audio/webm', audioB64: b64 });
+    if (out && out.ok && out.url) { ev.capture.audioUrl = out.url; ev.capture.unsent = false; idbDeleteAudio(ev.id); }
+    else ev.capture.unsent = true;
+  } catch (e) { ev.capture.unsent = true; }
+  if (isViewer()) { writeLocal(); if (ev.capture.audioUrl) sendParentGoal(ev); } else save();
+}
+function retryCaptureUploads() { (g.events || []).filter(e => e.capture && e.capture.mode === 'voice' && !e.capture.audioUrl).forEach(uploadCaptureAudio); }
 
 // ── where it was scored from: the whole field, the goal we attack always at the top (marked GOAL) ──
 const HP = 6, HFW = 64, HFH = 96, HOY = 10, HOB = 3;   // px per art pixel, field size in art pixels, band above (GOAL), room below
@@ -1364,7 +1517,7 @@ function renderLog() {
   const canDel = !isClosed() && !isFollow();
   $('log').innerHTML = ev.length ? ev.map(e => `<div class="log-row"><span class="log-when">${PERIODS[e.q]}${e.clock ? ' · ' + e.clock : ''}</span>
     <button class="log-what tap ${e.side === 'them' ? 'against' : ''}" data-editgoal="${e.i}">${e.side === 'us'
-      ? `⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}${e.assist ? ` <span style="color:var(--text-muted)">(assist ${esc(e.assist)})</span>` : ''}${e.from === 'parent' ? ' <span style="color:var(--text-faint)">· from parent</span>' : ''}${(e.shot || []).length ? `<span class="log-detail">${esc(e.shot.join(' · '))}</span>` : ''}`
+      ? `⚽ Goal${e.scorer ? ' — ' + esc(e.scorer) : ''}${e.assist ? ` <span style="color:var(--text-muted)">(assist ${esc(e.assist)})</span>` : ''}${e.from === 'parent' ? ' <span style="color:var(--text-faint)">· from parent</span>' : ''}${e.needsReview ? ` <span style="color:var(--warn)">· ${e.capture && e.capture.mode === 'voice' ? '🎤' : '📝'} needs review</span>` : ''}${(e.shot || []).length ? `<span class="log-detail">${esc(e.shot.join(' · '))}</span>` : ''}`
       : 'Goal against'}</button>
     ${canDel ? `<button class="log-x" data-undo="${e.i}" aria-label="Remove">×</button>` : ''}</div>`).join('')
     : `<span class="log-empty">${canContribute() ? 'No goals yet. Tap the score to add one.' : 'No goals yet.'}</span>`;
@@ -1950,9 +2103,12 @@ function openGoalDetail(i) {
     return openSheet(`${sheetHead('Goal against', `${goalLabel(e)} · ${esc((GAMES.find(v => v.id === currentId) || {}).opp || '')}`)}
       ${canEdit ? `<button class="btn btn-danger full" data-action="do-undo">Remove this goal</button>` : ''}`, 'sheet-goal-detail');
   }
-  openSheet(`${sheetHead(`⚽ ${e.scorer ? numTag(e.scorer) + esc(e.scorer) : 'Our goal'}`, `${goalLabel(e)}${e.from === 'parent' ? ' · logged by ' + esc(e.by || 'a parent') : ''}`)}
+  openSheet(`${sheetHead(`⚽ ${e.scorer ? numTag(e.scorer) + esc(e.scorer) : 'Our goal'}`, `${goalLabel(e)}${e.from === 'parent' ? ' · logged by ' + esc(e.by || 'a parent') : ''}${e.needsReview ? ' · needs review' : ''}`)}
     <canvas class="spot-canvas ro" id="detailCanvas" aria-label="Where the goal was scored from"></canvas>
     <div class="goal-detail">
+      ${e.capture ? `<div class="gd-row"><span class="k">${e.capture.mode === 'voice' ? '🎤 Voice' : '📝 Text'}</span><span>${e.capture.mode === 'text' ? esc(e.capture.text || '')
+        : e.capture.audioUrl ? 'Recorded — uploaded, ready to transcribe' : e.capture.unsent ? 'Recorded — upload pending (will retry)' : 'Recorded — uploading…'}</span></div>
+        <div class="gd-row"><span class="k">By</span><span>${esc(e.capture.by || '')}</span></div>` : ''}
       ${e.spot ? '' : '<div class="gd-row"><span class="k">Location</span><span style="color:var(--text-faint)">Not saved</span></div>'}
       <div class="gd-row"><span class="k">Assist</span><span>${e.assist ? numTag(e.assist) + esc(e.assist) : '<span style="color:var(--text-faint)">None</span>'}</span></div>
       <div class="gd-row"><span class="k">Shot</span><span class="gd-tags">${(e.shot || []).length ? e.shot.map(tagChip).join('') : '<span style="color:var(--text-faint)">No details</span>'}</span></div>
@@ -1976,8 +2132,8 @@ async function sendParentGoal(ev) {
   if (!SYNC_URL || !isViewer() || isFollow() || !ev || !ev.id) return;
   const who = viewerId() || {};
   try {
-    const out = await post({ action: 'parentEvent', game: currentId, id: ev.id, kind: 'goal', name: who.name || 'Parent', player: who.player || '',
-      data: { side: ev.side, q: ev.q, clock: ev.clock, at: ev.at, scorer: ev.scorer, assist: ev.assist || null, shot: ev.shot || [], spot: ev.spot || null } });
+    const out = await post({ action: 'parentEvent', game: currentId, id: ev.id, kind: ev.capture ? ev.capture.mode : 'goal', name: who.name || 'Parent', player: who.player || '',
+      data: { side: ev.side, q: ev.q, clock: ev.clock, at: ev.at, scorer: ev.scorer, assist: ev.assist || null, shot: ev.shot || [], spot: ev.spot || null, capture: ev.capture || null, needsReview: ev.needsReview || false } });
     ev.unsent = !out.ok;
   } catch (e) { ev.unsent = true; }
   writeLocal();
@@ -2188,6 +2344,7 @@ let pending = null;
 // so a specific sheet type can be targeted in CSS. Falls back to "sheet-generic" when not given.
 function openSheet(html, cls) { sheet.className = `sheet ${cls || 'sheet-generic'}`; sheet.innerHTML = `<div class="handle"></div>${html}`; overlay.hidden = false; }
 function closeSheet() {
+  if (voiceRec) { clearInterval(voiceRec.timer); voiceStopTracks(); voiceRec = null; }   // release the mic if a recording was left open
   const p = pending; overlay.hidden = true; pending = null;
   if (p && p.goal !== undefined && isViewer()) sendParentGoal(g.events[p.goal]);   // parent's goal details go along when they finish
   render();
@@ -2330,6 +2487,7 @@ document.addEventListener('click', e => {
   // Viewers can follow along (game, quarter, goals, clock, notes); every lineup tap is simply ignored.
   const VIEW_OK = ['cancel', 'share', 'share-text', 'gk-toggle', 'clock', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok',
     'goal-choice', 'goal-us', 'goal-them', 'goal-spot', 'goal-spot-ok', 'goal-more', 'goal-assist', 'goal-assist-tags', 'goal-shot',
+    'goal-capture-text', 'goal-capture-voice', 'capture-text-save', 'capture-voice-start', 'capture-voice-pause', 'capture-voice-resume', 'capture-voice-stop', 'capture-voice-rerecord', 'capture-voice-save',
     'do-undo', 'note', 'note-save', 'note-cancel', 'do-delnote', 'identity', 'id-save', 'coach-code', 'coach-save', 'coach-off',
     'test-view', 'test-ff', 'test-reset', 'do-test-reset', 'menu', 'set-mode', 'stats', 'awards', 'awards-tab', 'stub', 'schedule', 'show-log', 'goal-edit', 'game-picker'];
   const VIEW_DATA = ['scorer', 'undo', 'delnote', 'idpick', 'assist', 'tag', 'atag', 'editgoal', 'ago', 'goalq', 'pickgame'];
@@ -2337,7 +2495,8 @@ document.addEventListener('click', e => {
   // A closed-out game (and Follow mode) is read-only: tabs, goal details, stats, share and the menu still work.
   const EDIT_DATA = ['player', 'slot', 'movepos', 'fill', 'gk', 'gkalt', 'fillnow', 'delsub', 'undo', 'formation', 'scorer', 'assist', 'tag', 'atag', 'fpaccept', 'fpdismiss', 'fpmerge', 'fpmdismiss', 'ago', 'goalq', 'copyq'];
   const EDIT_ACTIONS = ['autofill', 'copy', 'clear', 'roster', 'goal-choice', 'goal-us', 'goal-them', 'note', 'q-start', 'q-next', 'q-end', 'q-restart', 'q-unstart', 'q-reopen', 'clock', 'q-adv', 'q-fix', 'clock-now', 'clock-set-ok', 'copy-q',
-    'goal-edit', 'goal-spot', 'goal-spot-ok', 'goal-assist', 'goal-assist-tags', 'goal-shot', 'goal-more', 'move-confirm', 'do-undo', 'test-ff'];
+    'goal-edit', 'goal-spot', 'goal-spot-ok', 'goal-assist', 'goal-assist-tags', 'goal-shot', 'goal-more', 'move-confirm', 'do-undo', 'test-ff',
+    'goal-capture-text', 'goal-capture-voice', 'capture-text-save', 'capture-voice-start', 'capture-voice-pause', 'capture-voice-resume', 'capture-voice-stop', 'capture-voice-rerecord', 'capture-voice-save'];
   if ((isClosed() || isFollow()) && (EDIT_DATA.some(k => d[k] !== undefined) || EDIT_ACTIONS.includes(d.action))) {
     overlay.hidden = true; pending = null;
     return flash(isClosed() ? (isViewer() ? 'This game is final' : 'Game is closed out · unlock it at the bottom to edit') : 'Follow mode is view-only · switch to Sideline in the ☰ menu');
@@ -2452,11 +2611,23 @@ document.addEventListener('click', e => {
     case 'goal-spot-ok': {
       const ev = pending && g.events[pending.goal]; if (!ev) return closeSheet();
       if (isViewer()) g.ownEvents = true;
-      ev.spot = { x: Math.round(pending.spot.x * 1000) / 1000, y: Math.round(pending.spot.y * 1000) / 1000 }; save(); return openGoalMore();
+      ev.spot = { x: Math.round(pending.spot.x * 1000) / 1000, y: Math.round(pending.spot.y * 1000) / 1000 }; save();
+      // Captured (text/voice) goals skip assist/shot picking live — the finalize-match skill fills those in.
+      if (ev.needsReview) { flash("Goal saved — we'll match it up after the game"); return closeSheet(); }
+      return openGoalMore();
     }
     case 'goal-more': return pending && pending.goal !== undefined ? openGoalMore() : closeSheet();
     case 'goal-assist': return openGoalAssist();
     case 'goal-assist-tags': return openGoalAssistTags();
+    case 'goal-capture-text': return openGoalCaptureText();
+    case 'goal-capture-voice': return openGoalCaptureVoice();
+    case 'capture-text-save': return saveGoalCaptureText();
+    case 'capture-voice-start': return voiceStart();
+    case 'capture-voice-pause': return voicePause();
+    case 'capture-voice-resume': return voiceResume();
+    case 'capture-voice-stop': return voiceStop(false);
+    case 'capture-voice-rerecord': return voiceRerecord();
+    case 'capture-voice-save': return voiceSave();
     case 'goal-shot': return openGoalShot();
     case 'move-confirm': return applyMove();
     case 'goal-edit': pending = { goal: +d.goal }; return openGoalMore();
@@ -2555,6 +2726,8 @@ pullGame();
 // seasonStats() — pull them all in up front for coaches so the rotation isn't computed from whatever
 // happens to already be cached on this phone.
 if (isCoach()) syncAllGames().then(render);
+retryCaptureUploads();
+window.addEventListener('online', retryCaptureUploads);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') hiddenAt = Date.now(); else onTabBack(); });
 setInterval(() => { if (document.visibilityState === 'visible' && !isCoach()) pullGame().then(renderFollowBanner); }, 60000);
 setInterval(() => { if (document.visibilityState === 'visible' && isCoach() && isGameDay() && !isClosed()) fetchParentEntries(); }, 60000);
