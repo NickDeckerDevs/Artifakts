@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team 4 — All games</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; }
+  h1 { margin-bottom: 0.25rem; }
+  .sub { color: #666; margin-bottom: 1.25rem; }
+  button { font: inherit; padding: 0.4rem 0.9rem; border-radius: 6px; border: 1px solid #999; background: #fff; cursor: pointer; }
+  button:hover { background: #f0f0f0; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #ddd; }
+  th { color: #666; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .badge { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; }
+  .badge-not-started { background: #eee; color: #666; }
+  .badge-open { background: #dbeafe; color: #1d4ed8; }
+  .badge-closed { background: #fef3c7; color: #92400e; }
+  .badge-reviewable { background: #ede9fe; color: #6d28d9; }
+  .badge-complete { background: #d1fae5; color: #047857; }
+  #status { margin: 0.75rem 0; min-height: 1.2em; color: #444; font-size: 0.9rem; }
+  .err { color: #b91c1c; }
+  .actions button { margin-right: 0.4rem; font-size: 0.85rem; padding: 0.25rem 0.6rem; }
+</style>
+</head>
+<body>
+  <h1>Team 4 — All games</h1>
+  <div class="sub">Derived status per game. Local data under <code>tools/u10team4-saveddata/games/</code> is only ever written by the local server.</div>
+  <button id="checkBtn">Check from source</button>
+  <div id="status"></div>
+  <table id="gamesTable">
+    <thead>
+      <tr><th>Game</th><th>Date</th><th>Status</th><th>Action</th><th>View</th></tr>
+    </thead>
+    <tbody id="gamesBody"></tbody>
+  </table>
+
+<script>
+// Same Apps Script deployment the live app (relics/u10-team4-lineup.html) talks to.
+// Server is the only mechanism for persisting locally — this page never writes files itself.
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwjmRIGNnJgvOPjXpnPR3f5pDC6sm6ctchkVfhKvLbtNaEaFJyRwV_q_xx4v2p3NWyDdg/exec';
+
+const statusEl = document.getElementById('status');
+const bodyEl = document.getElementById('gamesBody');
+const checkBtn = document.getElementById('checkBtn');
+
+function setStatus(text, isError) {
+  statusEl.textContent = text;
+  statusEl.className = isError ? 'err' : '';
+}
+
+async function sheetGet(params) {
+  const res = await fetch(`${SYNC_URL}?${params}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`sheet fetch failed (${res.status})`);
+  return res.json();
+}
+
+// Local per-game data, served statically by the server from tools/u10team4-saveddata/games/.
+async function localGameData(game) {
+  try {
+    const res = await fetch(`/games/${encodeURIComponent(game)}/original-data.json`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) {
+    return null;
+  }
+}
+
+async function reviewPageExists(game) {
+  try {
+    const res = await fetch(`/review/${encodeURIComponent(game)}-review.html`, { cache: 'no-store' });
+    return res.ok;
+  } catch (err) {
+    return false;
+  }
+}
+
+// Merge the full schedule (every date, played or not) with listGames (closed/finalized status
+// for games that already have a Lineups row) — the schedule alone doesn't know closed/finalized,
+// and listGames alone would hide never-touched future games.
+async function loadGames() {
+  const [scheduleRes, listRes] = await Promise.all([
+    sheetGet('action=schedule'),
+    sheetGet('action=listGames'),
+  ]);
+  const byId = new Map();
+  (scheduleRes.games || []).forEach(g => byId.set(g.game, { game: g.game, date: g.date, closed: false, finalizedAt: null, hasLineup: false }));
+  (listRes.games || []).forEach(g => {
+    const existing = byId.get(g.game) || { game: g.game, date: g.game.slice(0, 10) };
+    byId.set(g.game, { ...existing, closed: !!g.closed, finalizedAt: g.finalizedAt || null, hasLineup: true });
+  });
+  return [...byId.values()].sort((a, b) => b.game.localeCompare(a.game));
+}
+
+async function deriveStatus(g) {
+  if (!g.hasLineup) return 'not started';
+  if (g.finalizedAt) return 'complete';
+  if (g.closed) return (await reviewPageExists(g.game)) ? 'reviewable' : 'closed';
+  return 'open';
+}
+
+function badge(status) {
+  const cls = status.replace(/\s+/g, '-');
+  return `<span class="badge badge-${cls}">${status}</span>`;
+}
+
+async function render() {
+  setStatus('Loading games…');
+  let games;
+  try {
+    games = await loadGames();
+  } catch (err) {
+    setStatus(`Could not load games from the sheet: ${err.message}`, true);
+    return;
+  }
+
+  const rows = await Promise.all(games.map(async g => ({ g, status: await deriveStatus(g) })));
+
+  bodyEl.innerHTML = rows.map(({ g, status }) => `
+    <tr>
+      <td>${g.game}</td>
+      <td>${g.date || g.game.slice(0, 10)}</td>
+      <td>${badge(status)}</td>
+      <td class="actions"><button disabled title="Wired up in Plan 4">Generate review</button></td>
+      <td class="actions"><button disabled title="Wired up in Plan 4">Open</button></td>
+    </tr>
+  `).join('');
+
+  setStatus(`${games.length} game(s). Last checked ${new Date().toLocaleTimeString()}.`);
+}
+
+// A Drive share URL (file.getUrl()) looks like .../d/<fileId>/view — pull the id back out so we
+// can re-fetch the clip through the sheet's own action=audio passthrough (same pattern
+// finalize-match uses; see .claude/skills/finalize-match/SKILL.md).
+function driveFileId(url) {
+  if (!url) return null;
+  const m = String(url).match(/\/d\/([^/]+)/) || String(url).match(/[?&]id=([^&]+)/);
+  return m ? m[1] : null;
+}
+
+const AUDIO_EXT = { 'audio/mp4': 'm4a', 'audio/aac': 'aac' };
+
+async function blobToBase64(blob) {
+  const buf = await blob.arrayBuffer();
+  let binary = '';
+  const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+// Any voice-captured parent entry that has an uploaded clip we don't have locally yet.
+async function collectAudioFiles(game, parentEntries) {
+  const files = [];
+  for (const entry of parentEntries) {
+    const capture = entry.data && entry.data.capture;
+    if (!capture || capture.mode !== 'voice' || !capture.audioUrl) continue;
+    const fileId = driveFileId(capture.audioUrl);
+    if (!fileId) continue;
+    const ext = Object.entries(AUDIO_EXT).find(([mime]) => (capture.mime || '').includes(mime))?.[1] || 'webm';
+    const name = `${game}_${entry.id}.${ext}`;
+    try {
+      const res = await fetch(`${SYNC_URL}?action=audio&id=${encodeURIComponent(fileId)}`, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const base64 = await blobToBase64(await res.blob());
+      files.push({ name, base64 });
+    } catch (err) {
+      // Best-effort — a failed clip download shouldn't block the rest of the sync.
+    }
+  }
+  return files;
+}
+
+// "Check from source": for every game with a Lineups row, pull its current sheet data
+// (coachGame + parentEntries, same shape generate-match-review expects) and compare to the
+// local copy; whenever they differ, POST the new data through the server so it gets persisted
+// (the only path anything under games/ is written through).
+async function checkFromSource() {
+  checkBtn.disabled = true;
+  try {
+    const games = await loadGames();
+    const withLineup = games.filter(g => g.hasLineup);
+    let updated = 0;
+    for (let i = 0; i < withLineup.length; i++) {
+      const g = withLineup[i];
+      setStatus(`Checking ${g.game} (${i + 1}/${withLineup.length})…`);
+      const [lineupRes, entriesRes] = await Promise.all([
+        sheetGet(`action=get&game=${encodeURIComponent(g.game)}`),
+        sheetGet(`action=entries&game=${encodeURIComponent(g.game)}`),
+      ]);
+      if (!lineupRes.data) continue;
+      const parentEntries = entriesRes.entries || [];
+      const wrapped = { game: g.game, coachGame: lineupRes.data, parentEntries };
+
+      const local = await localGameData(g.game);
+      const localComparable = local ? { game: local.game, coachGame: local.coachGame, parentEntries: local.parentEntries } : null;
+      if (JSON.stringify(localComparable) === JSON.stringify(wrapped)) continue;
+
+      const files = await collectAudioFiles(g.game, parentEntries);
+      const syncRes = await fetch('/api/sync-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ game: g.game, data: { ...wrapped, pulledAt: new Date().toISOString() }, files }),
+      });
+      if (!syncRes.ok) throw new Error(`sync failed for ${g.game} (${syncRes.status})`);
+      updated++;
+    }
+    setStatus(`Check from source done — ${updated} game(s) updated locally.`);
+  } catch (err) {
+    setStatus(`Check from source failed: ${err.message}`, true);
+  } finally {
+    checkBtn.disabled = false;
+    await render();
+  }
+}
+
+checkBtn.addEventListener('click', checkFromSource);
+render();
+</script>
+</body>
+</html>

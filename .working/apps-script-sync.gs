@@ -27,6 +27,10 @@ function doGet(e) {
   // Every known game id (from the Lineups tab) plus its closed/finalized status, so the
   // finalize-match skill can show Nick which games still need review without him naming one.
   if (p.action === 'listGames') return json_(listGames_());
+  // Full schedule (every scheduled date, played or not) from the main tab — listGames_() only
+  // knows about games that already have a Lineups row, so a never-touched future game wouldn't
+  // show up there. Used by allgames.html to list "not started" games.
+  if (p.action === 'schedule') return json_(schedule_());
   return json_({ ok: true });
 }
 
@@ -238,6 +242,23 @@ function listGames_() {
   }
   const list = Object.keys(games).map(k => games[k]).sort((a, b) => b.game.localeCompare(a.game));
   return { ok: true, games: list };
+}
+// Every scheduled date on the main tab, played or not, with the same game-id convention
+// (date, or date-2/-3/... for a same-day second/third game) as writeResult_ uses.
+function schedule_() {
+  const sh = SpreadsheetApp.getActive().getSheetByName(MAIN_TAB);
+  if (!sh || sh.getLastRow() < 2) return { ok: true, games: [] };
+  const dates = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getDisplayValues();
+  const seen = {};
+  const games = [];
+  dates.forEach(r => {
+    const iso = toIso_(r[0]);
+    if (!iso) return;
+    seen[iso] = (seen[iso] || 0) + 1;
+    const n = seen[iso];
+    games.push({ game: n === 1 ? iso : `${iso}-${n}`, date: iso });
+  });
+  return { ok: true, games: games };
 }
 function audioFile_(fileId) {
   try { return DriveApp.getFileById(fileId).getBlob(); } catch (err) { return json_({ ok: false, error: 'not found' }); }

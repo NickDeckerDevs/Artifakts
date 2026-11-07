@@ -152,8 +152,58 @@ function handleRunSkillStatus(req, res, id) {
   });
 }
 
+const GAME_ID_RE = /^\d{4}-\d{2}-\d{2}(-\d+)?$/;
+
+// POST /api/sync-game — body: { game: string, data: object }
+// Writes the sheet's current data for a game into its local per-game folder — the only place
+// anything under games/ gets written from. Synchronous: this is just an fs write, not a
+// long-running job, so it doesn't need the done-marker/poll mechanism /run-skill uses.
+async function handleSyncGame(req, res) {
+  let body;
+  try {
+    body = JSON.parse(await readBody(req));
+  } catch (err) {
+    sendJson(res, 400, { error: 'invalid JSON body' });
+    return;
+  }
+
+  const { game, data, files } = body || {};
+  if (!game || typeof game !== 'string' || !GAME_ID_RE.test(game) || !data || typeof data !== 'object') {
+    sendJson(res, 400, { error: 'game (matching YYYY-MM-DD[-n]) and data (object) are required' });
+    return;
+  }
+
+  const gameDir = path.join(GAMES_DIR, game);
+  const audioDir = path.join(gameDir, 'audio');
+  try {
+    fs.mkdirSync(audioDir, { recursive: true });
+    fs.writeFileSync(path.join(gameDir, 'original-data.json'), JSON.stringify(data, null, 2));
+    let filesWritten = 0;
+    if (Array.isArray(files)) {
+      files.forEach((f) => {
+        if (!f || typeof f.name !== 'string' || typeof f.base64 !== 'string') return;
+        const safeName = path.basename(f.name); // no directory traversal via the clip name
+        fs.writeFileSync(path.join(audioDir, safeName), Buffer.from(f.base64, 'base64'));
+        filesWritten++;
+      });
+    }
+    sendJson(res, 200, { ok: true, game, filesWritten });
+  } catch (err) {
+    console.error(`[server] /api/sync-game failed for ${game}:`, err);
+    sendJson(res, 500, { ok: false, error: err.message });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const urlPath = req.url || '/';
+
+  if (req.method === 'POST' && urlPath === '/api/sync-game') {
+    handleSyncGame(req, res).catch((err) => {
+      console.error('[server] /api/sync-game error:', err);
+      sendJson(res, 500, { error: 'internal error' });
+    });
+    return;
+  }
 
   if (req.method === 'POST' && urlPath === '/run-skill') {
     handleRunSkill(req, res).catch((err) => {
