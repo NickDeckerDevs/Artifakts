@@ -19,9 +19,12 @@
   .badge-closed { background: #fef3c7; color: #92400e; }
   .badge-reviewable { background: #ede9fe; color: #6d28d9; }
   .badge-complete { background: #d1fae5; color: #047857; }
+  .badge-running { background: #e0e7ff; color: #3730a3; }
   #status { margin: 0.75rem 0; min-height: 1.2em; color: #444; font-size: 0.9rem; }
   .err { color: #b91c1c; }
-  .actions button { margin-right: 0.4rem; font-size: 0.85rem; padding: 0.25rem 0.6rem; }
+  .actions button, .actions a { margin-right: 0.4rem; font-size: 0.85rem; padding: 0.25rem 0.6rem; }
+  .actions a { text-decoration: none; border: 1px solid #999; border-radius: 6px; color: #222; display: inline-block; }
+  .actions a:hover { background: #f0f0f0; }
 </style>
 </head>
 <body>
@@ -105,6 +108,81 @@ function badge(status) {
   return `<span class="badge badge-${cls}">${status}</span>`;
 }
 
+// game -> run-skill job id, for games currently generating a review.
+const runningJobs = new Map();
+
+function actionCell(g, status) {
+  if (runningJobs.has(g.game)) {
+    return `<button disabled>Running…</button>`;
+  }
+  if (status === 'closed') {
+    return `<button data-action="start" data-game="${g.game}">Start Review</button>`;
+  }
+  if (status === 'complete') {
+    return `<button data-action="secondary" data-game="${g.game}">Secondary Review</button>`;
+  }
+  return `<button disabled title="No action for ${status} games">—</button>`;
+}
+
+function viewCell(g, status) {
+  if (status === 'reviewable' || status === 'complete') {
+    return `<a href="/review/${encodeURIComponent(g.game)}-review.html" target="_blank">Open</a>`;
+  }
+  return `<button disabled>Open</button>`;
+}
+
+async function startReview(game) {
+  const res = await fetch('/run-skill', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      skill: 'generate-match-review',
+      args: `tools/u10team4-saveddata/games/${game}/`,
+    }),
+  });
+  if (!res.ok) throw new Error(`run-skill failed (${res.status})`);
+  const { id } = await res.json();
+  runningJobs.set(game, id);
+  pollJob(game, id);
+}
+
+function pollJob(game, id) {
+  const tick = async () => {
+    let body;
+    try {
+      const res = await fetch(`/run-skill/${id}`, { cache: 'no-store' });
+      body = await res.json();
+    } catch (err) {
+      setTimeout(tick, 3000);
+      return;
+    }
+    if (body.status === 'pending') {
+      setTimeout(tick, 3000);
+      return;
+    }
+    runningJobs.delete(game);
+    if (body.status === 'error') {
+      setStatus(`Review generation failed for ${game}: ${body.error || body.stderr || 'unknown error'}`, true);
+    } else {
+      setStatus(`Review for ${game} is ready.`);
+    }
+    render();
+  };
+  tick();
+}
+
+bodyEl.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('button[data-action]');
+  if (!btn) return;
+  const game = btn.dataset.game;
+  btn.disabled = true;
+  startReview(game).catch((err) => {
+    setStatus(`Could not start review for ${game}: ${err.message}`, true);
+    render();
+  });
+  render();
+});
+
 async function render() {
   setStatus('Loading games…');
   let games;
@@ -121,9 +199,9 @@ async function render() {
     <tr>
       <td>${g.game}</td>
       <td>${g.date || g.game.slice(0, 10)}</td>
-      <td>${badge(status)}</td>
-      <td class="actions"><button disabled title="Wired up in Plan 4">Generate review</button></td>
-      <td class="actions"><button disabled title="Wired up in Plan 4">Open</button></td>
+      <td>${badge(runningJobs.has(g.game) ? 'running' : status)}</td>
+      <td class="actions">${actionCell(g, status)}</td>
+      <td class="actions">${viewCell(g, status)}</td>
     </tr>
   `).join('');
 
