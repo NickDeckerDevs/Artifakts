@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Finalize goals — {{GAME_ID}}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Same dark theme as relics/u10-team4-lineup.html, trimmed to what this page needs. */
+:root { color-scheme: dark; --bg:#0f0f0f; --surface:#1c1c1e; --surface2:#2a2a2d; --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.18);
+  --text:#f0ede8; --text-muted:#8f8b86; --text-faint:#5e5b58; --ok:#4dd6a8; --warn:#f5b84a; --font:'DM Sans',system-ui,sans-serif; --mono:'DM Mono',ui-monospace,monospace; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: var(--font); background: var(--bg); color: var(--text); padding: 20px; }
+h1 { font-size: 18px; margin: 0 0 4px; }
+.sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.goal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 18px; }
+.goal-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.goal-head .when { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+.goal-cols { display: grid; grid-template-columns: 1fr 1fr 220px; gap: 14px; align-items: start; }
+@media (max-width: 900px) { .goal-cols { grid-template-columns: 1fr; } }
+.col-title { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+.sub-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 8px 10px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; }
+.sub-card .who { font-weight: 600; color: var(--text); }
+.sub-card .mode { color: var(--text-faint); }
+.sub-card .txt { margin-top: 4px; color: var(--text-muted); white-space: pre-wrap; }
+.chip { display: inline-block; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 11px; cursor: pointer; margin: 2px 4px 0 0; }
+.chip:hover { border-color: var(--ok); }
+.field-row { margin-bottom: 10px; }
+.field-row label { display: block; font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.field-row input, .field-row textarea { width: 100%; padding: 7px 8px; font-size: 13px; background: var(--surface2); color: var(--text); border: 1px solid var(--border-strong); border-radius: 6px; font-family: inherit; }
+.spot-canvas { width: 100%; max-width: 180px; height: auto; border-radius: 6px; image-rendering: pixelated; cursor: crosshair; display: block; margin: 0 auto 6px; }
+.legend { font-size: 10px; color: var(--text-faint); text-align: center; line-height: 1.4; }
+.legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+.toprow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.btn { padding: 10px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--text); color: #111; }
+.exclude-row label { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.section-title { font-size: 14px; font-weight: 600; margin: 24px 0 10px; }
+.award-row { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 10px; align-items: start; }
+@media (max-width: 900px) { .award-row { grid-template-columns: 1fr; } }
+.award-row .field-row { margin-bottom: 0; }
+.award-row .remove-btn { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border-strong); border-radius: 6px; padding: 7px 10px; font-size: 12px; cursor: pointer; align-self: start; }
+.add-award-btn { background: var(--surface2); color: var(--text); border: 1px dashed var(--border-strong); border-radius: 7px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
+.award-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.award-block h3 { font-size: 13px; margin: 0 0 8px; }
+.award-discussion { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 8px 10px; margin-bottom: 10px; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+.award-discussion .row { margin-bottom: 4px; }
+.award-discussion .lbl { color: var(--text-faint); text-transform: uppercase; font-size: 10px; letter-spacing: .05em; margin-right: 4px; }
+.award-note-missing { border-color: var(--warn) !important; }
+.award-hint { font-size: 11px; color: var(--text-faint); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="toprow">
+  <div>
+    <h1>Finalize goals — {{GAME_ID}}</h1>
+    <div class="sub">Left: every raw submission (typed, transcribed, or fully picked). Middle/right: pick the final
+      scorer/assist/tags and drag the <span style="color:#b87cff">purple dot</span> to the real spot (click a numbered
+      dot to snap to it). Uncheck "Include this goal" to drop a false match. When done, Export — the finalize-match
+      skill picks the file up from there.</div>
+  </div>
+  <button class="btn" id="exportBtn">Export finalized JSON</button>
+</div>
+<div id="goals"></div>
+
+<div class="section-title">Awards for this game</div>
+<div id="awards"></div>
+<div class="award-block" id="potmBlock"></div>
+
+<script id="gameData" type="application/json">{{DATA_JSON}}</script>
+<script id="rosterData" type="application/json">{{ROSTER_JSON}}</script>
+<script id="awardCsvData" type="application/json">{{AWARD_CSV_JSON}}</script>
+<script id="potmCsvData" type="application/json">{{POTM_CSV_JSON}}</script>
+<script id="goalSlotsData" type="application/json">{{GOAL_SLOTS}}</script>
+<script>
+// candidates: [{ id, side, q, at, submissions: [{by, mode, text?, scorer?, assist?, tags?, spot?}, ...] }]
+// q is a best-guess only — sideline game clocks drift and quarters often don't line up between
+// the coach's log and parent submissions, so it's always editable below, never trusted as-is.
+const candidates = JSON.parse(document.getElementById('gameData').textContent);
+const ROSTER = JSON.parse(document.getElementById('rosterData').textContent);
+const HP = 6, HFW = 64, HFH = 96, HOY = 10, HOB = 3;
+const DOT_COLORS = ['#7ec2f7', '#f5b84a', '#92d44e', '#f093be', '#4dd6a8', '#ff7a6b'];
+function drawField(cv) {
+  cv.width = HFW * HP; cv.height = (HOY + HFH + HOB) * HP;
+  const x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
+  const px = (ax, ay, w, h, c) => { x.fillStyle = c; x.fillRect(ax * HP, (ay + HOY) * HP, w * HP, h * HP); };
+  x.fillStyle = '#0f2a14'; x.fillRect(0, 0, cv.width, cv.height);
+  for (let r = 0; r < 12; r++) px(0, r * 8, HFW, 8, r % 2 ? '#2a7230' : '#2f7d32');
+  const L = '#f2f2ea';
+  px(0, 0, HFW, 1, L); px(0, HFH - 1, HFW, 1, L); px(0, 0, 1, HFH, L); px(HFW - 1, 0, 1, HFH, L); px(0, 48, HFW, 1, L);
+  const box = (w, h, top) => { const x0 = (HFW - w) / 2;
+    if (top) { px(x0, 0, 1, h, L); px(x0 + w - 1, 0, 1, h, L); px(x0, h - 1, w, 1, L); }
+    else { px(x0, HFH - h, 1, h, L); px(x0 + w - 1, HFH - h, 1, h, L); px(x0, HFH - h, w, 1, L); } };
+  box(36, 16, true); box(18, 6, true); box(36, 16, false); box(18, 6, false);
+  x.fillStyle = '#f5d76e'; x.font = `700 ${5 * HP}px sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText('▲ GOAL ▲', cv.width / 2, 3.2 * HP);
+}
+function drawDot(cv, spot, color, label, big) {
+  const x = cv.getContext('2d');
+  const cx = spot.x * HFW * HP, cy = (spot.y * HFH + HOY) * HP, r = big ? 11 : 8;
+  x.beginPath(); x.fillStyle = color; x.arc(cx, cy, r, 0, Math.PI * 2); x.fill();
+  x.strokeStyle = '#000'; x.lineWidth = 2; x.stroke();
+  if (label) { x.fillStyle = '#000'; x.font = 'bold 10px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(label, cx, cy); }
+}
+function avgSpot(spots) {
+  if (!spots.length) return null;
+  return { x: spots.reduce((s, p) => s + p.x, 0) / spots.length, y: spots.reduce((s, p) => s + p.y, 0) / spots.length };
+}
+function mostCommon(vals) {
+  const counts = {};
+  vals.filter(Boolean).forEach(v => counts[v] = (counts[v] || 0) + 1);
+  return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || '';
+}
+function playerOptions(current, extraCandidates) {
+  const extra = (extraCandidates || []).filter(n => !ROSTER.includes(n));
+  const names = current && !ROSTER.includes(current) && !extra.includes(current) ? [current, ...extra, ...ROSTER] : [...extra, ...ROSTER];
+  return `<option value="">— none —</option>` +
+    names.map(n => `<option value="${escapeAttr(n)}" ${current === n ? 'selected' : ''}>${escapeHtml(n)}</option>`).join('');
+}
+
+const container = document.getElementById('goals');
+const state = candidates.map(c => {
+  const spots = c.submissions.filter(s => s.spot).map(s => s.spot);
+  return {
+    c,
+    include: true,
+    q: c.q, // best guess from clustering; fix it below if the clock drifted
+    scorer: mostCommon(c.submissions.map(s => s.scorer)),
+    assist: mostCommon(c.submissions.map(s => s.assist)),
+    tags: [...new Set(c.submissions.flatMap(s => s.tags || []))].join(', '),
+    spot: avgSpot(spots) || { x: 0.5, y: 0.14 },
+  };
+});
+
+function render() {
+  container.innerHTML = state.map((st, gi) => {
+    const c = st.c;
+    return `<div class="goal-card" data-gi="${gi}">
+      <div class="goal-head"><span class="when">${c.side === 'us' ? '⚽ Our goal' : 'Goal against'} · ${new Date(c.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })}</span>
+        <label class="exclude-row"><input type="checkbox" data-include="${gi}" ${st.include ? 'checked' : ''}> Include this goal</label></div>
+      <div class="goal-cols">
+        <div><div class="col-title">Raw submissions (${c.submissions.length})</div>
+          ${c.submissions.map((s, si) => `<div class="sub-card">
+            <span class="who">${s.by || 'Unknown'}</span> <span class="mode">· ${s.mode}${s.q != null ? ` · logged as Q${s.q + 1}` : ''}</span>
+            ${s.text ? `<div class="txt">"${escapeHtml(s.text)}"</div>` : ''}
+            ${s.scorer ? `<button class="chip" data-apply="scorer" data-gi="${gi}" data-val="${escapeHtml(s.scorer)}">scorer: ${escapeHtml(s.scorer)}</button>` : ''}
+            ${s.assist ? `<button class="chip" data-apply="assist" data-gi="${gi}" data-val="${escapeHtml(s.assist)}">assist: ${escapeHtml(s.assist)}</button>` : ''}
+          </div>`).join('')}
+        </div>
+        <div><div class="col-title">Final</div>
+          <div class="field-row"><label>Quarter (game clock drifts — check this)</label>
+            <select data-field="q" data-gi="${gi}">
+              ${[0, 1, 2, 3].map(qi => `<option value="${qi}" ${st.q === qi ? 'selected' : ''}>Q${qi + 1}</option>`).join('')}
+              <option value="" ${st.q == null ? 'selected' : ''}>Unknown</option>
+            </select>
+          </div>
+          <div class="field-row"><label>Scorer</label>
+            <select data-field="scorer" data-gi="${gi}">${playerOptions(st.scorer)}</select>
+          </div>
+          <div class="field-row"><label>Assist</label>
+            <select data-field="assist" data-gi="${gi}">${playerOptions(st.assist)}</select>
+          </div>
+          <div class="field-row"><label>Tags (comma-separated)</label><textarea rows="2" data-field="tags" data-gi="${gi}">${escapeHtml(st.tags)}</textarea></div>
+        </div>
+        <div>
+          <div class="col-title">Location</div>
+          <canvas class="spot-canvas" id="cv-${gi}"></canvas>
+          <div class="legend">${c.submissions.map((s, si) => s.spot ? `<span><span class="dot" style="background:${DOT_COLORS[si % DOT_COLORS.length]}"></span>${si + 1}</span>` : '').join(' ')}
+            <span><span class="dot" style="background:#b87cff"></span>avg (drag me)</span></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  state.forEach((st, gi) => {
+    const cv = document.getElementById(`cv-${gi}`);
+    drawField(cv);
+    st.c.submissions.forEach((s, si) => { if (s.spot) drawDot(cv, s.spot, DOT_COLORS[si % DOT_COLORS.length], String(si + 1)); });
+    drawDot(cv, st.spot, '#b87cff', '', true);
+    let down = false;
+    const move = ev => {
+      const r = cv.getBoundingClientRect();
+      const ax = (ev.clientX - r.left) / r.width * HFW, ay = (ev.clientY - r.top) / r.height * (HOY + HFH + HOB) - HOY;
+      st.spot = { x: Math.min(62, Math.max(2, ax)) / HFW, y: Math.min(HFH - 2, Math.max(1, ay)) / HFH };
+      drawField(cv); st.c.submissions.forEach((s, si) => { if (s.spot) drawDot(cv, s.spot, DOT_COLORS[si % DOT_COLORS.length], String(si + 1)); });
+      drawDot(cv, st.spot, '#b87cff', '', true);
+    };
+    cv.addEventListener('pointerdown', ev => { down = true; try { cv.setPointerCapture(ev.pointerId); } catch (e) {} move(ev); });
+    cv.addEventListener('pointermove', ev => { if (down) move(ev); });
+    cv.addEventListener('pointerup', () => down = false);
+    cv.addEventListener('pointercancel', () => down = false);
+  });
+}
+function escapeHtml(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function escapeAttr(s) { return escapeHtml(s); }
+
+// Award model: exactly 4 canonical awards, no free text. Goal of the Game gets
+// 1 + floor(totalGoals / 5) slots per game; Man of the Match and Goalie of the Match get
+// exactly 1 slot each. Player of the Month is month-level, not decided from this page — it's
+// shown read-only below for context only (see CONTEXT.md's award model).
+const awardCsvRows = JSON.parse(document.getElementById('awardCsvData').textContent); // this game's date, normalized Award names
+const potmCsvRows = JSON.parse(document.getElementById('potmCsvData').textContent); // current calendar month, Player Of The Month rows
+const goalSlots = JSON.parse(document.getElementById('goalSlotsData').textContent);
+
+function rowsFor(awardName) { return awardCsvRows.filter(r => r.Award === awardName); }
+function discussionHtml(rows) {
+  if (!rows.length) return '';
+  return rows.map(r => `<div class="award-discussion">
+    ${r.Player ? `<div class="row"><span class="lbl">Candidate</span>${escapeHtml(r.Player)} <span class="lbl">(${escapeHtml(r.Status)})</span></div>` : ''}
+    ${r.Note ? `<div class="row"><span class="lbl">Note</span>${escapeHtml(r.Note)}</div>` : ''}
+    ${r.Nick_Comment ? `<div class="row"><span class="lbl">Nick</span>${escapeHtml(r.Nick_Comment)}</div>` : ''}
+    ${r.Erin_Comment ? `<div class="row"><span class="lbl">Erin</span>${escapeHtml(r.Erin_Comment)}</div>` : ''}
+  </div>`).join('');
+}
+function candidateNames(rows) { return [...new Set(rows.map(r => r.Player).filter(Boolean))]; }
+
+// One slot = {award, player, note}. Seeded from already-`awarded` CSV rows; `candidate`/`none`
+// rows only seed the player dropdown's options, not the picked value.
+function makeSlots(awardName, count) {
+  const awarded = rowsFor(awardName).filter(r => r.Status === 'awarded');
+  const slots = [];
+  for (let i = 0; i < count; i++) {
+    slots.push({ award: awardName, player: awarded[i] ? awarded[i].Player : '', note: awarded[i] ? awarded[i].Note : '' });
+  }
+  return slots;
+}
+const awardState = [
+  ...makeSlots('Goal of the Game', goalSlots),
+  ...makeSlots('Man of the Match', 1),
+  ...makeSlots('Goalie of the Match', 1),
+];
+
+const awardsContainer = document.getElementById('awards');
+function renderAwards() {
+  const groups = [
+    { name: 'Goal of the Game', hint: `${goalSlots} slot${goalSlots === 1 ? '' : 's'} this game (1 + one per 5 goals scored).` },
+    { name: 'Man of the Match', hint: 'Exactly 1 per game.' },
+    { name: 'Goalie of the Match', hint: 'Exactly 1 per game.' },
+  ];
+  awardsContainer.innerHTML = groups.map(g => {
+    const rows = rowsFor(g.name);
+    const candidates = candidateNames(rows);
+    return `<div class="award-block">
+      <h3>${g.name}</h3>
+      <div class="award-hint">${g.hint} Leave a slot's player blank to skip it — a note is required only when a player is picked.</div>
+      ${discussionHtml(rows)}
+      ${awardState.map((st, ai) => st.award !== g.name ? '' : `<div class="award-row" data-ai="${ai}">
+        <div class="field-row"><label>Player</label><select data-afield="player" data-ai="${ai}">${playerOptions(st.player, candidates)}</select></div>
+        <div class="field-row"><label>Note (required if a player is picked)</label>
+          <input type="text" data-afield="note" data-ai="${ai}" value="${escapeAttr(st.note)}" placeholder="Why this player" class="${st.player && !st.note ? 'award-note-missing' : ''}"></div>
+      </div>`).join('')}
+    </div>`;
+  }).join('') + `<div class="award-block">
+      <h3>Player Of The Month — reference only</h3>
+      <div class="award-hint">Decided monthly, not per game — shown here for context, not picked on this page.</div>
+      ${discussionHtml(potmCsvRows) || '<div class="award-discussion">No discussion logged for this month yet.</div>'}
+    </div>`;
+}
+const applyAwardField = e => {
+  const t = e.target;
+  if (t.dataset.afield !== undefined) { awardState[+t.dataset.ai][t.dataset.afield] = t.value; renderAwards(); }
+};
+awardsContainer.addEventListener('change', applyAwardField);
+renderAwards();
+
+container.addEventListener('click', e => {
+  const apply = e.target.closest('[data-apply]');
+  if (apply) {
+    const gi = +apply.dataset.gi, field = apply.dataset.apply, val = apply.dataset.val;
+    state[gi][field] = val;
+    return render();
+  }
+});
+const applyField = e => {
+  const t = e.target;
+  if (t.dataset.field === undefined) return;
+  const gi = +t.dataset.gi;
+  state[gi][t.dataset.field] = t.dataset.field === 'q' ? (t.value === '' ? null : +t.value) : t.value;
+};
+container.addEventListener('input', applyField);
+container.addEventListener('change', applyField);
+container.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.include !== undefined) state[+t.dataset.include].include = t.checked;
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const picked = awardState.filter(st => st.player.trim());
+  const missingNote = picked.find(st => !st.note.trim());
+  if (missingNote) {
+    alert(`"${missingNote.award}" for ${missingNote.player} needs a note before exporting.`);
+    renderAwards();
+    return;
+  }
+  const out = state.filter(st => st.include).map(st => ({
+    side: st.c.side, q: st.q, at: st.c.at,
+    scorer: st.scorer || null, assist: st.assist || null,
+    shot: st.tags.split(',').map(s => s.trim()).filter(Boolean),
+    spot: { x: Math.round(st.spot.x * 1000) / 1000, y: Math.round(st.spot.y * 1000) / 1000 },
+    by: [...new Set(st.c.submissions.map(s => s.by).filter(Boolean))].join(', '),
+  }));
+  const awardsOut = picked.map(st => ({ player: st.player.trim(), award: st.award, note: st.note.trim() }));
+  const blob = new Blob([JSON.stringify({ goals: out, awards: awardsOut }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'finalized-draft.json';
+  a.click();
+});
+
+render();
+</script>
+</body>
+</html>
