@@ -39,6 +39,21 @@
       "name": "Sidelines Pixel Art Starting point",
       "category": "Soccer",
       "file": "relics/assets/lineup/"
+    },
+    {
+      "name": "homelab rack pre build",
+      "category": "homelab",
+      "file": "homelab/homelab-rack-pre-build.html"
+    },
+    {
+      "name": "homelab rack build",
+      "category": "homelab",
+      "file": "homelab/homelab-rack-build.html"
+    },
+    {
+      "name": "homelab rack up, diagnose, troubleshoot and optimize",
+      "category": "homelab",
+      "file": "homelab/homelab-rack-up-diagnose-troubleshoot-and-optimize.html"
     }
   ]
 }
