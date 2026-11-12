@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home network dashboard</title>
+<style>
+:root{color-scheme:dark;--bg:#101619;--panel:#161f23;--raised:#1d292e;--ink:#edf4f2;--muted:#a5b6bc;--edge:#33464c;--teal:#93e4d0;--amber:#f1c583;--blue:#b2caff;--radius:16px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans","Segoe UI",system-ui,sans-serif}
+main{max-width:1232px;margin:auto;padding:40px 32px 56px}h1,h2,h3,p{margin:0}h1{font-size:clamp(2.2rem,5vw,4.2rem);line-height:1.05;letter-spacing:-.06em;margin:12px 0 16px}h2{font-size:1.55rem;letter-spacing:-.035em}h3{font-size:1.15rem;line-height:1.3}a{color:var(--teal);text-underline-offset:4px}button,input,select{font:inherit}button,select{cursor:pointer}
+.header{padding:34px;border:1px solid var(--edge);border-radius:var(--radius);background:linear-gradient(113deg,#20383a,#172226 70%);display:flex;justify-content:space-between;align-items:end;gap:24px}.header p,.muted{color:var(--muted)}.snapshot{font:13px/1.45 "IBM Plex Mono",monospace;color:var(--teal)}.links{display:flex;gap:16px;flex-wrap:wrap;white-space:nowrap}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0 34px}.metric{background:var(--panel);border:1px solid var(--edge);border-radius:var(--radius);padding:18px 22px}.metric strong{font-size:1.75rem;display:block;letter-spacing:-.04em}.metric span{color:var(--muted)}
+.section-heading{margin:0 0 14px}.section-heading p{margin-top:4px}.topology{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,.65fr);gap:16px}.map,.branch,.inventory,.health{background:var(--panel);border:1px solid var(--edge);border-radius:var(--radius);padding:22px;min-width:0}
+.gateway,.switch{border:1px solid var(--edge);background:var(--raised);border-radius:12px;padding:12px 16px}.gateway{width:fit-content}.gateway small,.switch small{color:var(--muted);display:block}.wire{height:20px;width:2px;background:var(--teal);margin-left:24px}.switch{display:flex;justify-content:space-between;align-items:center;gap:12px}.switch code,.port code{color:var(--teal)}.port-list{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px;padding-top:12px}.port{display:grid;grid-template-columns:68px 1fr;align-items:center;text-align:left;gap:9px;min-width:0;min-height:46px;padding:7px 9px;border:1px solid var(--edge);background:var(--bg);color:var(--ink);border-radius:8px}.port span{font-size:.88rem;line-height:1.2}.port:hover,.port[aria-pressed="true"]{background:#23403f;border-color:var(--teal)}.port[data-port="SFP+ 2"] code{color:var(--muted)}
+.branch .tag{display:inline-block;margin-bottom:8px}.branch ul{padding-left:20px;margin:10px 0 0}.branch li{margin-bottom:5px}.branch p{margin:10px 0}.tag{font-size:.78rem;line-height:1.35;padding:3px 7px;border-radius:5px;background:#24383c;color:var(--teal);display:inline-block}.tag.open{background:#413322;color:var(--amber)}.tag.offline{background:#283239;color:#c4cfd5}.tag.source{background:#29374c;color:var(--blue)}
+.action,.clear{border:1px solid var(--edge);border-radius:8px;background:var(--raised);color:var(--ink);padding:7px 12px}.action:hover,.clear:hover{border-color:var(--teal)}:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.inventory,.health{margin-top:24px}.filters{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:16px 0 10px}.filters label{display:grid;gap:4px;font-size:.86rem;color:var(--muted)}.filters .search{flex:1;min-width:190px}.filters input,.filters select{min-height:40px;border:1px solid var(--edge);border-radius:8px;background:var(--bg);color:var(--ink);padding:6px 10px;width:100%}.filters .clear{min-height:40px}.table-wrap{overflow:auto;margin-top:10px}table{border-collapse:collapse;width:100%;text-align:left;white-space:nowrap}th,td{padding:9px 10px;border-bottom:1px solid var(--edge)}th{font-size:.82rem;color:var(--muted);font-weight:600}td{font-size:.9rem}td:first-child{white-space:normal;min-width:145px}code{font-family:"IBM Plex Mono",Consolas,monospace;font-size:.86em}td code{color:#c5d8dc}.empty{padding:18px 0;color:var(--muted)}
+.health-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.signal{background:var(--raised);border:1px solid var(--edge);border-radius:10px;padding:13px}.signal p{margin-top:5px;color:var(--muted);font-size:.9rem}details{border-top:1px solid var(--edge);padding-top:12px;margin-top:16px}summary{cursor:pointer;color:var(--teal)}details ul{padding-left:22px;color:var(--muted)}.foot{font-size:.86rem;color:var(--muted);margin-top:12px}
+@media(max-width:850px){.topology{grid-template-columns:1fr}.header{align-items:start;flex-direction:column}.summary{margin-bottom:22px}}
+@media(max-width:540px){main{padding:16px 12px 30px}.header,.map,.branch,.inventory,.health{padding:15px}.summary,.health-grid{grid-template-columns:1fr;gap:7px}.metric{padding:8px 12px;display:flex;align-items:baseline;gap:10px}.metric strong{font-size:1.25rem}.port-list{grid-template-columns:1fr}.filters label{flex:1}.switch{align-items:start;flex-direction:column;gap:4px}}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<main>
+<header class="header">
+  <div><p class="snapshot">Survey snapshot · November 11, 2026</p><h1>Home network</h1><p>See which devices share a rack port and where the cable path is still open.</p></div>
+  <nav class="links" aria-label="Related documents"><a href="homelab-rack-build.html">Rack build</a></nav>
+</header>
+<section class="summary" aria-label="Survey counts">
+  <div class="metric"><strong id="count-clients"></strong><span>Comcast device entries</span></div>
+  <div class="metric"><strong id="count-trace"></strong><span>IPv4 targets replied</span></div>
+  <div class="metric"><strong id="count-links"></strong><span>active MikroTik ports observed</span></div>
+</section>
+<section aria-labelledby="topology-title">
+  <div class="section-heading"><h2 id="topology-title">Rack connections</h2><p class="muted">Select a port to see its devices and cable notes.</p></div>
+  <div class="topology">
+    <div class="map">
+      <div class="gateway"><strong>Comcast modem/router</strong><small>LAN 6 · existing Ethernet adapter</small></div>
+      <div class="wire" aria-hidden="true"></div>
+      <div class="switch"><div><strong>MikroTik switch</strong><small>CRS310 · view from the rack</small></div><code>SFP+ 1 uplink</code></div>
+      <div class="port-list" id="ports" aria-label="MikroTik ports"></div>
+    </div>
+    <section class="branch" id="branch" aria-label="Selected port" aria-live="polite"></section>
+  </div>
+</section>
+<section class="inventory" id="inventory" aria-labelledby="inventory-title">
+  <h2 id="inventory-title" tabindex="-1">Device inventory</h2>
+  <div class="filters">
+    <label class="search">Search <input id="search" type="search" placeholder="Device or port"></label>
+    <label>Port <select id="port-filter"><option value="">All ports</option><option value="unmapped">Path unknown</option></select></label>
+    <label>Record <select id="source-filter"><option value="">All records</option><option value="online">Comcast online</option><option value="offline">Comcast offline</option><option value="infrastructure">Infrastructure</option><option value="winbox">WinBox only</option></select></label>
+    <button class="clear" id="reset" type="button">Clear filters</button>
+  </div>
+  <p id="results" class="muted" role="status"></p>
+  <div class="table-wrap" id="table-wrap" tabindex="0" aria-label="Scrollable device table">
+    <table><thead><tr><th scope="col">Device</th><th scope="col">MikroTik path</th><th scope="col">Trace result</th><th scope="col">Record</th></tr></thead><tbody id="devices"></tbody></table>
+  </div>
+  <p class="empty" id="empty" hidden>No devices match these filters.</p>
+  <p class="foot">Household records use generic names. Online and offline are Comcast’s labels at the time of the survey. A device can appear in WinBox without replying to traceroute.</p>
+</section>
+<section class="health" aria-labelledby="health-title">
+  <h2 id="health-title">Health monitoring</h2>
+  <p class="muted">Live collection hasn’t started. The values above come from the saved survey.</p>
+  <div class="health-grid">
+    <div class="signal"><h3>Internet</h3><p>Track gateway reachability and an external connection separately so a cable outage and an internet outage are distinguishable.</p></div>
+    <div class="signal"><h3>Switch links</h3><p>Track link up or down, negotiated speed, and errors. Watch both NAS cables individually.</p></div>
+    <div class="signal"><h3>Services</h3><p>Track the NAS and Home Assistant independently of the devices’ ping replies. Show the time of the last successful check.</p></div>
+  </div>
+  <details><summary>What still needs a cable check</summary><ul>
+    <li>Living room · confirm the PlayStation uses LAN and identify the room cable’s exact jack on the 16-port TP-Link.</li>
+    <li>Orbi and recorder · identify where the recorder plugs in and how the satellite connects.</li>
+    <li>NAS · match the upper and lower NAS jacks to MikroTik ports 2 and 4.</li>
+  </ul></details>
+</section>
+</main>
+<script type="application/json" id="survey-data">
+{
+  "traceReplies": 31,
+  "traceTargets": 45,
+  "devices": [
+    {
+      "name": "Comcast modem/router",
+      "path": "SFP+ 1",
+      "ports": [
+        "SFP+ 1"
+      ],
+      "trace": "1 hop",
+      "source": "infrastructure"
+    },
+    {
+      "name": "Household device 01",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "No trace reply · MAC seen",
+      "source": "online"
+    },
+    {
+      "name": "Orbi satellite",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Office Mac Studio",
+      "path": "Ethernet 8",
+      "ports": [
+        "Ethernet 8"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 02",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 03",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 04",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Dishwasher",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 05",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 06",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 07",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 08",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "No trace reply · MAC seen",
+      "source": "online"
+    },
+    {
+      "name": "Household device 09",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "No trace reply",
+      "source": "online"
+    },
+    {
+      "name": "SmartThings hub",
+      "path": "Ethernet 7",
+      "ports": [
+        "Ethernet 7"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Thermostat",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Living-room PlayStation",
+      "path": "Ethernet 7",
+      "ports": [
+        "Ethernet 7"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Network audio player",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Network audio player",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "LG TV",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 10",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Camera recorder",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "16-port TP-Link house switch",
+      "path": "Ethernet 7",
+      "ports": [
+        "Ethernet 7"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 11",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "No trace reply · MAC seen",
+      "source": "online"
+    },
+    {
+      "name": "Household device 12",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Office Windows PC",
+      "path": "Ethernet 3",
+      "ports": [
+        "Ethernet 3"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Refrigerator",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 13",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Office Samsung TV",
+      "path": "Ethernet 6",
+      "ports": [
+        "Ethernet 6"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 14",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 15",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 16",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Orbi base",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Office Apple TV",
+      "path": "Ethernet 5",
+      "ports": [
+        "Ethernet 5"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Laundry appliance",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "ASUSTOR NAS",
+      "path": "Ethernet 2 + 4",
+      "ports": [
+        "Ethernet 2",
+        "Ethernet 4"
+      ],
+      "trace": "1 hop",
+      "source": "online"
+    },
+    {
+      "name": "Household device 17",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 18",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 19",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 20",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "No trace reply · MAC seen",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 21",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 22",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 23",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 24",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 25",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Household device 26",
+      "path": "",
+      "ports": [],
+      "trace": "No trace reply",
+      "source": "offline"
+    },
+    {
+      "name": "Additional switch address 01",
+      "path": "Ethernet 1",
+      "ports": [
+        "Ethernet 1"
+      ],
+      "trace": "",
+      "source": "winbox"
+    },
+    {
+      "name": "Additional switch address 02",
+      "path": "NAS pair on Ethernet 2 and 4",
+      "ports": [
+        "Ethernet 2",
+        "Ethernet 4"
+      ],
+      "trace": "",
+      "source": "winbox"
+    },
+    {
+      "name": "Additional switch address 03",
+      "path": "SFP+ 1",
+      "ports": [
+        "SFP+ 1"
+      ],
+      "trace": "",
+      "source": "winbox"
+    },
+    {
+      "name": "Additional switch address 04",
+      "path": "SFP+ 1",
+      "ports": [
+        "SFP+ 1"
+      ],
+      "trace": "",
+      "source": "winbox"
+    }
+  ]
+}
+</script>
+<script>
+const survey = JSON.parse(document.querySelector('#survey-data').textContent);
+const ports = [
+  {id:'SFP+ 1', label:'Comcast uplink', title:'Comcast modem/router', status:'Confirmed rack connection', note:'Comcast LAN 6 reaches the MikroTik through the existing Ethernet adapter in SFP+ 1.'},
+  {id:'SFP+ 2', label:'No active link', title:'No active link observed', status:'No link in survey', note:'The switch showed no active link at the time of the check.'},
+  {id:'Ethernet 1', label:'Orbi and recorder', title:'Orbi and camera recorder branch', status:'Rack port observed', note:'Both Orbi units and the camera recorder were learned here. The exact recorder jack and how the Orbi satellite connects are still open.', open:true},
+  {id:'Ethernet 2', label:'NAS · link 1', title:'ASUSTOR NAS · paired links', status:'Paired with Ethernet 4', note:'The NAS uses both Ethernet 2 and 4. Keep both cables in their original jacks. The corresponding upper and lower NAS sockets are still unverified.'},
+  {id:'Ethernet 3', label:'Windows PC', title:'Office Windows PC', status:'Office west wall', note:'The PC uses its own wall jack. The build guide assigns this cable to patch panel jack 01.'},
+  {id:'Ethernet 4', label:'NAS · link 2', title:'ASUSTOR NAS · paired links', status:'Paired with Ethernet 2', note:'The NAS uses both Ethernet 2 and 4. Keep both cables in their original jacks. The corresponding upper and lower NAS sockets are still unverified.'},
+  {id:'Ethernet 5', label:'Apple TV', title:'Office Apple TV', status:'Office south wall', note:'The Apple TV uses its own wall jack. The build guide assigns this cable to patch panel jack 03.'},
+  {id:'Ethernet 6', label:'Samsung TV', title:'Office Samsung TV', status:'Office south wall', note:'The Samsung TV uses its own wall jack. The build guide assigns this cable to patch panel jack 04.'},
+  {id:'Ethernet 7', label:'TP-Link and PlayStation', title:'House switch and living-room branch', status:'Rack port observed', note:'The TP-Link, SmartThings hub and PlayStation were learned here. If the console uses LAN through the small living-room switch, that switch shares this path. Its exact rack jack is still open.', open:true},
+  {id:'Ethernet 8', label:'Mac Studio', title:'Office Mac Studio', status:'Office west wall', note:'The Mac uses its own wall jack. The build guide assigns this cable to patch panel jack 02.'}
+];
+const records = {online:'Comcast online', offline:'Comcast offline', infrastructure:'Infrastructure', winbox:'WinBox only'};
+const search = document.querySelector('#search');
+const portFilter = document.querySelector('#port-filter');
+const sourceFilter = document.querySelector('#source-filter');
+const portList = document.querySelector('#ports');
+const branch = document.querySelector('#branch');
+const tbody = document.querySelector('#devices');
+
+function node(tag, text, className) {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  if (className) element.className = className;
+  return element;
+}
+
+function renderInventory() {
+  const query = search.value.trim().toLowerCase();
+  const port = portFilter.value;
+  const source = sourceFilter.value;
+  const matches = survey.devices.filter(device => {
+    const portMatch = !port || (port === 'unmapped' ? !device.ports.length : device.ports.includes(port));
+    const recordMatch = !source || device.source === source;
+    const searchable = [device.name, device.path, records[device.source]].join(' ').toLowerCase();
+    return portMatch && recordMatch && searchable.includes(query);
+  });
+  tbody.replaceChildren(...matches.map(device => {
+    const row = document.createElement('tr');
+    row.append(node('td', device.name));
+    row.append(node('td', device.path || 'Unknown'), node('td', device.trace || '—'));
+    const record = document.createElement('td');
+    record.append(node('span', records[device.source], 'tag ' + (device.source === 'online' ? '' : device.source === 'offline' ? 'offline' : 'source')));
+    row.append(record);
+    return row;
+  }));
+  document.querySelector('#results').textContent = matches.length + ' of ' + survey.devices.length + ' records';
+  document.querySelector('#table-wrap').hidden = !matches.length;
+  document.querySelector('#empty').hidden = Boolean(matches.length);
+}
+
+function showBranch(port) {
+  for (const button of portList.querySelectorAll('button')) {
+    button.setAttribute('aria-pressed', String(button.dataset.port === port.id));
+  }
+  const connected = survey.devices.filter(device => device.ports.includes(port.id));
+  branch.replaceChildren(node('span', port.status, 'tag' + (port.open ? ' open' : '')), node('h3', port.title), node('p', port.note, 'muted'));
+  if (!connected.length) return;
+  const examples = connected.slice().sort((first, second) => {
+    const priority = device => /Orbi|recorder|PlayStation|SmartThings|house switch/i.test(device.name) ? 0 : 1;
+    return priority(first) - priority(second);
+  }).slice(0, 4);
+  const list = document.createElement('ul');
+  for (const device of examples) list.append(node('li', device.name));
+  branch.append(list);
+  const button = node('button', 'Show all ' + connected.length + ' port records', 'action');
+  button.type = 'button';
+  button.addEventListener('click', () => {
+    search.value = '';
+    sourceFilter.value = '';
+    portFilter.value = port.id;
+    renderInventory();
+    document.querySelector('#inventory-title').focus();
+  });
+  const controls = document.createElement('p');
+  controls.append(button);
+  branch.append(controls);
+}
+
+for (const port of ports) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'port';
+  button.dataset.port = port.id;
+  button.setAttribute('aria-controls', 'branch');
+  button.append(node('code', port.id), node('span', port.label));
+  button.addEventListener('click', () => showBranch(port));
+  portList.append(button);
+  portFilter.add(new Option(port.id, port.id));
+}
+search.addEventListener('input', renderInventory);
+portFilter.addEventListener('change', renderInventory);
+sourceFilter.addEventListener('change', renderInventory);
+document.querySelector('#reset').addEventListener('click', () => {
+  search.value = '';
+  portFilter.value = '';
+  sourceFilter.value = '';
+  renderInventory();
+});
+document.querySelector('#count-clients').textContent = survey.devices.filter(device => device.source === 'online' || device.source === 'offline').length;
+document.querySelector('#count-trace').textContent = survey.traceReplies + ' / ' + survey.traceTargets;
+document.querySelector('#count-links').textContent = '9 / 10';
+showBranch(ports[0]);
+renderInventory();
+</script>
+</body>
+</html>

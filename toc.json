@@ -54,6 +54,11 @@
       "name": "homelab rack up, diagnose, troubleshoot and optimize",
       "category": "homelab",
       "file": "homelab/homelab-rack-up-diagnose-troubleshoot-and-optimize.html"
+    },
+    {
+      "name": "homelab network dashboard",
+      "category": "homelab",
+      "file": "homelab/homelab-network-dashboard.html"
     }
   ]
 }

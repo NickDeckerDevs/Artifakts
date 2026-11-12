@@ -14,7 +14,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 </head>
 <body>
 <header><div><h1>homelab rack build</h1></div></header>
-<nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a></div></nav>
+<nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
 <main>
 <section class="guide-section" id="rack"><h2>15U rack drawing</h2><ul class="steps"><li>Use this page as a reference while the network stays up</li>
 <li>Select a rack slot to open its device instructions</li>
@@ -34,14 +34,14 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li><strong>3 · MIKROTIK SWITCH</strong><ul><li>Original 24 V adapter</li><li>Use the widest spaced battery socket if the plug needs room</li></ul></li>
 <li><strong>4 · TP-LINK HOUSE SWITCH</strong><ul><li>Original AC cord</li></ul></li>
 <li><strong>5 · LTE BACKUP</strong><ul><li>Reserved and empty</li></ul></li>
-<li><strong>6 · SPARE</strong><ul><li>Label it if the UPS has a sixth battery socket</li></ul></li></ul></section><section class="device-group"><h4>Tecmojo rear AC outlets</h4><ul class="steps"><li><strong>1 · SMARTTHINGS HUB</strong><ul><li>Use the original Samsung adapter</li><li>Label front rocker 1 SMARTTHINGS HUB</li><li>Use a short rated outlet saver if the adapter does not fit</li><li>Support the adapter near the strip if using an outlet saver</li></ul></li>
+<li><strong>6 · SPARE</strong><ul><li>Label it if the UPS has a sixth battery socket</li></ul></li></ul></section><section class="device-group"><h4>Tecmojo rear AC outlets</h4><ul class="steps"><li>1 · Available for the TP-Link house switch if you choose wall-powered front restart control</li>
 <li>2 · SPARE / KEEP CLEAR</li>
 <li>3 · SPARE</li>
 <li>4 · SPARE</li>
 <li>5 · SPARE</li>
 <li>6 · SPARE</li>
 <li>7 · SPARE</li>
-<li>8 · SPARE</li>
+<li><strong>8 · SMARTTHINGS HUB</strong><ul><li>Use the original Samsung adapter</li><li>Label front rocker 8 SMARTTHINGS HUB</li><li>Use a short rated outlet saver if the adapter does not fit</li><li>Support the adapter near the strip if using an outlet saver</li></ul></li>
 <li>9 · SPARE</li></ul></section><section class="device-group"><h4>Tecmojo front USB</h4><ul class="steps"><li>USB-A 1 · Empty</li>
 <li>USB-A 2 · Empty</li>
 <li>USB-C 1 · Empty</li>
@@ -53,20 +53,24 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep cords out of the ladder path</li></ul></section><section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.cyberpowersystems.com/product/ups/intelligent-lcd/cp1500avrlcd3/">CyberPower outlet-bank reference</a></li>
 <li><a href="https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902.pdf?v=1759800105">Tecmojo installation manual</a></li></ul></section></section>
 <section class="guide-section" id="cable-map"><h2>Ethernet cable destinations</h2><ul class="steps"><li>Use the existing switch sockets</li>
-<li>The jack-number fields save in this browser</li>
-<li>Keep unidentified loose leads labeled and parked</li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Comcast modem/router LAN 6</li><li><b>To</b> Original Comcast jack on the MikroTik<span data-show="gateway"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="gateway"></label></li></ul></li>
-<li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik<span data-show="nas-top"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-top"></label></li></ul></li>
-<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik<span data-show="nas-bottom"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-bottom"></label></li></ul></li>
-<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> Original office PC jack on the MikroTik<span data-show="pc"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="pc"></label></li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 02</li><li><b>To</b> Original Mac Studio jack on the MikroTik<span data-show="mac"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="mac"></label></li></ul></li>
-<li><strong>OFFICE 2.5G SWITCH</strong><ul><li><b>From</b> Front of patch panel jack 03</li><li><b>To</b> Original TRENDnet jack on the MikroTik<span data-show="trendnet"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="trendnet"></label></li></ul></li>
-<li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> Original house-switch jack on the MikroTik<span data-show="house-mikrotik"></span></li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="house-mikrotik"></label></li><li><label>TP-Link jack number <input type="text" inputmode="numeric" maxlength="2" data-port="house-tplink"></label></li></ul></li>
-<li><strong>MEDIA SWITCH</strong><ul><li><b>From</b> Front of patch panel jack 04</li><li><b>To</b> Original media-switch jack on the TP-Link rack switch<span data-show="media"></span></li><li><label>TP-Link jack number <input type="text" inputmode="numeric" maxlength="2" data-port="media"></label></li></ul></li>
-<li><strong>Other house cables</strong><ul><li><b>From</b> Front of each assigned patch panel jack from 05 onward</li><li><b>To</b> The original TP-Link rack-switch jack for that cable</li><li>Record each pair on the panel label</li></ul></li></ul></section><section class="device-group"><h4>Wall leads at the back of the patch panel</h4><ul class="steps"><li><strong>OFFICE PC wall lead</strong><ul><li><b>From</b> Wall jack serving the PC</li><li><b>To</b> Back of patch panel jack 01</li></ul></li>
-<li><strong>MAC STUDIO wall lead</strong><ul><li><b>From</b> Wall jack serving the Mac Studio</li><li><b>To</b> Back of patch panel jack 02</li></ul></li>
-<li><strong>OFFICE 2.5G SWITCH wall lead</strong><ul><li><b>From</b> Wall jack serving the TRENDnet office switch</li><li><b>To</b> Back of patch panel jack 03</li></ul></li>
-<li><strong>MEDIA SWITCH wall lead</strong><ul><li><b>From</b> Wall jack serving the 5-port TP-Link media switch</li><li><b>To</b> Back of patch panel jack 04</li><li>Use this position once that wall lead is identified</li></ul></li>
-<li><strong>Other identified house leads</strong><ul><li>Use a separate rear patch panel jack for each lead</li><li>Start at jack 05</li><li>Record which original TP-Link switch jack serves each lead</li></ul></li></ul></section></section>
+<li>Use jacks 01–04 for the four office drops</li>
+<li>Reserve jack 05 for the living-room switch</li>
+<li>Use the jack-number fields for the remaining unverified sockets</li>
+<li>Keep unidentified loose leads labeled and parked</li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Comcast modem/router LAN 6</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li></ul></li>
+<li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-top"></label></li></ul></li>
+<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-bottom"></label></li></ul></li>
+<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
+<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 02</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
+<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of patch panel jack 03</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of patch panel jack 04</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
+<li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li><li><label>TP-Link jack number <input type="text" inputmode="numeric" maxlength="2" data-port="house-tplink"></label></li></ul></li>
+<li><strong>LIVING-ROOM SWITCH · reserve 05</strong><ul><li><b>From</b> Front of patch panel jack 05 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li><li><label>TP-Link jack number <input type="text" inputmode="numeric" maxlength="2" data-port="media"></label></li></ul></li>
+<li><strong>Other house cables</strong><ul><li><b>From</b> Front of each assigned patch panel jack from 06 onward</li><li><b>To</b> The original TP-Link rack-switch jack for that cable</li><li>Record each pair on the panel label</li></ul></li></ul></section><section class="device-group"><h4>Wall leads at the back of the patch panel</h4><ul class="steps"><li><strong>OFFICE PC wall lead</strong><ul><li><b>From</b> West wall · lead currently on MikroTik Ethernet 3</li><li><b>To</b> Back of patch panel jack 01</li></ul></li>
+<li><strong>MAC STUDIO wall lead</strong><ul><li><b>From</b> West wall · lead currently on MikroTik Ethernet 8</li><li><b>To</b> Back of patch panel jack 02</li></ul></li>
+<li><strong>OFFICE APPLE TV wall lead</strong><ul><li><b>From</b> South wall · lead currently on MikroTik Ethernet 5</li><li><b>To</b> Back of patch panel jack 03</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV wall lead</strong><ul><li><b>From</b> South wall · lead currently on MikroTik Ethernet 6</li><li><b>To</b> Back of patch panel jack 04</li></ul></li>
+<li><strong>LIVING-ROOM SWITCH · reserve 05</strong><ul><li>Leave this jack empty until the wall lead is identified</li></ul></li>
+<li><strong>Other identified house leads</strong><ul><li>Use a separate rear patch panel jack for each lead</li><li>Start at jack 06</li><li>Record which original TP-Link switch jack serves each lead</li></ul></li></ul></section></section>
 <section class="guide-section" id="devices"><h2>Device instructions</h2><details class="slot"><summary><span class="unit">U1</span>Lower cable opening</summary><article class="device" id="mount-brush"><h3>Cable Matters lower brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount at U1 on the front posts</li>
 <li>Use #10-32 rack screws</li></ul></section>
 <section class="device-group"><h4>Cable route</h4><ul class="steps"><li><strong>Lower brush opening</strong><ul><li>Keep empty for this build</li><li>Reserve for future front USB leads</li></ul></li>
@@ -75,7 +79,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Case · 19 × 1.75 × 4.96 in (W × H × D)</li>
 <li>Check rear plug clearance below the NAS tray</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Strip wall cord</strong><ul><li><b>From</b> Tecmojo captive cord</li><li><b>To</b> Grounded wall socket</li></ul></li>
-<li><strong>SmartThings adapter</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Tecmojo rear outlet 1</li><li>Label rocker 1 SMARTTHINGS HUB</li></ul></li>
+<li><strong>SmartThings adapter</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Tecmojo rear outlet 8</li><li>Label rocker 8 SMARTTHINGS HUB</li></ul></li>
 <li><a href="#power-map">See all nine outlets</a></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>USB-A 1 · Empty</li>
 <li>USB-A 2 · Empty</li>
@@ -96,8 +100,8 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>USB</h4><ul class="steps"><li><strong>SONOFF radio cable</strong><ul><li><b>From</b> SONOFF USB-C</li><li><b>To</b> Original NAS USB jack</li><li>Carries data and power</li></ul></li>
 <li>Leave unused USB sockets empty</li>
 <li>Leave HDMI empty unless already in use</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>NAS TOP</strong><ul><li><b>From</b> Upper rear NAS Ethernet jack</li><li><b>To</b> Original NAS TOP jack on the MikroTik<span data-show="nas-top"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
-<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower rear NAS Ethernet jack</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik<span data-show="nas-bottom"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>NAS TOP</strong><ul><li><b>From</b> Upper rear NAS Ethernet jack</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
+<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower rear NAS Ethernet jack</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
 <li>Strap the Ethernet leads loosely near the tray</li>
 <li>Strap the Ethernet leads loosely below U15</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.asustor.com/product/spec?p_id=82">ASUSTOR dimensions and downloads</a></li></ul></section></article>
@@ -112,31 +116,36 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep U9 and U10 clear above it</li>
 <li>Estimated case · 13 × 2 × 9.5 in (W × H × D)</li>
 <li>Check for 2–3 inches of ventilation clearance around the case</li>
-<li>Use a ventilated surface beside the rack if the clearance or coax bend is too tight</li></ul></section>
+<li>Dry-fit the included shelf and route the coax during installation</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Modem/router AC cord</strong><ul><li><b>From</b> Rear power inlet</li><li><b>To</b> UPS battery socket 2</li><li>Use the left rear post</li></ul></li></ul></section>
 <section class="device-group"><h4>Coax</h4><ul class="steps"><li><strong>White Comcast cable</strong><ul><li><b>From</b> Existing coax feed</li><li><b>To</b> Threaded modem/router socket</li><li>Leave a gentle bend behind the rack</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Modem/router LAN 6</li><li><b>To</b> Original Comcast jack on the MikroTik<span data-show="gateway"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li><li>LAN 6 is the existing 2.5 GbE connection</li></ul></li>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Modem/router LAN 6</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li><li>Use the right rear post</li><li>Pass through the U15 brush</li><li>LAN 6 is the existing 2.5 GbE connection</li></ul></li>
 <li>Leave LAN 1–5 empty</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://manuals.plus/comcast-business/cga4332com-advanced-wifi-gateway-router-manual.pdf">Technicolor gateway manual</a></li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">U11</span>16-inch hub shelf</summary><article class="device" id="mount-hub"><h3>Samsung SmartThings hub</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit one IRONDIY 1U × 16-inch vented tray</li>
+<details class="slot"><summary><span class="unit">U11</span>16-inch shelf · SmartThings and cellular backup</summary><article class="device" id="mount-hub"><h3>Samsung SmartThings hub</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit one IRONDIY 1U × 16-inch vented tray</li>
 <li>Dry-fit the rear extension brackets</li>
-<li>Check hub height under the U12 switch</li>
+<li>Dry-fit both devices side by side under the U12 switch</li>
 <li>Leave room for the plugs behind the sliding stop</li>
 <li>Use a stable surface beside the rack if the shelf hardware cannot fit</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Samsung adapter DC lead</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Hub power jack</li></ul></li>
-<li><strong>Samsung adapter AC plug</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Tecmojo outlet 1</li><li>Use the left rear post for the power lead</li></ul></li></ul></section>
+<li><strong>Samsung adapter AC plug</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Tecmojo outlet 8</li><li>Use the left rear post for the power lead</li></ul></li></ul></section>
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Existing wired connection</strong><ul><li><b>From</b> Hub Ethernet jack</li><li><b>To</b> Original switch jack</li><li>Leave this connection empty if the hub uses Wi-Fi</li></ul></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the hub’s USB socket empty</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.samsung.com/nz/smartthings/hub/smartthings-v3-hub-gp-u999sjvlgaa/">Samsung hub family reference</a></li>
-<li><a href="https://www.amazon.com/dp/B0GXHL7MXW">Ordered 16-inch shelves</a></li></ul></section></article></details>
+<li><a href="https://www.amazon.com/dp/B0GXHL7MXW">Ordered 16-inch shelves</a></li></ul></section></article>
+<article class="device" id="mount-lte"><h3>Comcast cellular backup box</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Dry-fit the box beside the SmartThings hub on the U11 shelf</li>
+<li>Keep its original adapter with it</li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li>Reserve UPS battery socket 5</li>
+<li>Keep the adapter disconnected for now</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Keep Ethernet disconnected until the Comcast failover handoff is confirmed</li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U12</span>House switch</summary><article class="device" id="mount-house"><h3>TP-Link 16-port house switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit the TP-Link Kit-13 ears to the switch</li>
 <li>Use the kit’s chassis screws</li>
 <li>Mount at U12 using #10-32 rack screws</li>
 <li>Case reference · 11.57 × 1.73 × 7.09 in (W × H × D)</li>
 <li>Check the hole spacing on your switch</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>TP-Link AC cord</strong><ul><li><b>From</b> Original TP-Link power inlet</li><li><b>To</b> UPS battery socket 4</li><li>Use the left rear post</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> Original house-switch jack on the MikroTik<span data-show="house-mikrotik"></span></li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
-<li><strong>MEDIA SWITCH</strong><ul><li><b>From</b> Front of patch panel jack 04</li><li><b>To</b> Original media-switch jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>TP-Link AC cord</strong><ul><li><b>From</b> Original TP-Link power inlet</li><li><b>To</b> UPS battery socket 4</li><li>Use the left rear post</li><li>Tecmojo outlet 1 is the wall-powered option for front restart control</li><li>Use the UPS assignment to keep this switch powered during a wall outage</li></ul></li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
+<li><strong>LIVING-ROOM SWITCH · reserve 05</strong><ul><li><b>From</b> Front of patch panel jack 05 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
 <li><strong>Each other house cable</strong><ul><li><b>From</b> Front of its assigned patch panel jack</li><li><b>To</b> Original TP-Link rack-switch jack</li></ul></li>
 <li>Keep wired Wi-Fi on its existing house-side connection</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.tp-link.com/us/business-networking/soho-switch-easy-smart/tl-sg1016de/">TP-Link switch specifications and downloads</a></li>
@@ -147,15 +156,17 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Label the panel jacks</li>
 <li>Support the Ethernet bundle with loose Velcro on the rear bar</li></ul></section>
 <section class="device-group"><h4>Ethernet · back of panel</h4><ul class="steps"><li>Bring the wall leads in around the open rear side</li>
-<li><strong>OFFICE PC wall lead</strong><ul><li><b>From</b> Wall jack serving the PC</li><li><b>To</b> Back of patch panel jack 01</li></ul></li>
-<li><strong>MAC STUDIO wall lead</strong><ul><li><b>From</b> Wall jack serving the Mac Studio</li><li><b>To</b> Back of patch panel jack 02</li></ul></li>
-<li><strong>OFFICE 2.5G SWITCH wall lead</strong><ul><li><b>From</b> Wall jack serving the TRENDnet office switch</li><li><b>To</b> Back of patch panel jack 03</li></ul></li>
-<li><strong>MEDIA SWITCH wall lead</strong><ul><li><b>From</b> Wall jack serving the 5-port TP-Link media switch</li><li><b>To</b> Back of patch panel jack 04</li><li>Use this position once that wall lead is identified</li></ul></li>
-<li><strong>Other identified house leads</strong><ul><li>Use a separate rear patch panel jack for each lead</li><li>Start at jack 05</li><li>Record which original TP-Link switch jack serves each lead</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet · front of panel</h4><ul class="steps"><li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> Original office PC jack on the MikroTik<span data-show="pc"></span></li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 02</li><li><b>To</b> Original Mac Studio jack on the MikroTik<span data-show="mac"></span></li></ul></li>
-<li><strong>OFFICE 2.5G SWITCH</strong><ul><li><b>From</b> Front of patch panel jack 03</li><li><b>To</b> Original TRENDnet jack on the MikroTik<span data-show="trendnet"></span></li></ul></li>
-<li><strong>MEDIA SWITCH</strong><ul><li><b>From</b> Front of patch panel jack 04</li><li><b>To</b> Original media-switch jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
+<li><strong>OFFICE PC wall lead</strong><ul><li><b>From</b> West wall · lead currently on MikroTik Ethernet 3</li><li><b>To</b> Back of patch panel jack 01</li></ul></li>
+<li><strong>MAC STUDIO wall lead</strong><ul><li><b>From</b> West wall · lead currently on MikroTik Ethernet 8</li><li><b>To</b> Back of patch panel jack 02</li></ul></li>
+<li><strong>OFFICE APPLE TV wall lead</strong><ul><li><b>From</b> South wall · lead currently on MikroTik Ethernet 5</li><li><b>To</b> Back of patch panel jack 03</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV wall lead</strong><ul><li><b>From</b> South wall · lead currently on MikroTik Ethernet 6</li><li><b>To</b> Back of patch panel jack 04</li></ul></li>
+<li><strong>LIVING-ROOM SWITCH · reserve 05</strong><ul><li>Leave this jack empty until the wall lead is identified</li></ul></li>
+<li><strong>Other identified house leads</strong><ul><li>Use a separate rear patch panel jack for each lead</li><li>Start at jack 06</li><li>Record which original TP-Link switch jack serves each lead</li></ul></li></ul></section>
+<section class="device-group"><h4>Ethernet · front of panel</h4><ul class="steps"><li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
+<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 02</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
+<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of patch panel jack 03</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of patch panel jack 04</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
+<li><strong>LIVING-ROOM SWITCH · reserve 05</strong><ul><li><b>From</b> Front of patch panel jack 05 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
 <li><strong>Each other house cable</strong><ul><li><b>From</b> Front of its assigned panel jack</li><li><b>To</b> Original TP-Link rack-switch jack</li></ul></li>
 <li>Use a longer short cable if a 0.2 m cable pulls on a socket</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.truecable.com/products/patch-panel-24-port-1u-staggered-blank-modular-unshielded">trueCABLE panel and support bar</a></li></ul></section></article></details>
@@ -166,17 +177,20 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>24 V adapter DC lead</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> Round DC jack on the switch front</li><li>Pass through the left side of the U15 brush</li><li>Use the left rear post</li></ul></li>
 <li><strong>24 V adapter AC plug</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> UPS battery socket 3</li><li>Support the adapter near the UPS or on a vented shelf</li></ul></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the front USB-A socket empty</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Comcast modem/router LAN 6</li><li><b>To</b> Original Comcast jack on the MikroTik<span data-show="gateway"></span></li></ul></li>
-<li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik<span data-show="nas-top"></span></li></ul></li>
-<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik<span data-show="nas-bottom"></span></li></ul></li>
-<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> Original office PC jack on the MikroTik<span data-show="pc"></span></li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 02</li><li><b>To</b> Original Mac Studio jack on the MikroTik<span data-show="mac"></span></li></ul></li>
-<li><strong>OFFICE 2.5G SWITCH</strong><ul><li><b>From</b> Front of patch panel jack 03</li><li><b>To</b> Original TRENDnet jack on the MikroTik<span data-show="trendnet"></span></li></ul></li>
-<li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> Original house-switch jack on the MikroTik<span data-show="house-mikrotik"></span></li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Comcast modem/router LAN 6</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li></ul></li>
+<li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li></ul></li>
+<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li></ul></li>
+<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
+<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 02</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
+<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of patch panel jack 03</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of patch panel jack 04</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
+<li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
+<li><strong>ORBI AND CAMERA RECORDER BRANCH</strong><ul><li><b>From</b> Existing Ethernet 1 cable</li><li><b>To</b> MikroTik Ethernet 1</li><li>Keep the far end as it is today</li></ul></li>
 <li>Top Ethernet row · 2, 4, 6, 8</li>
 <li>Bottom Ethernet row · 1, 3, 5, 7</li>
 <li>Leave unused Ethernet sockets empty</li>
-<li>Leave the two right-hand SFP+ slots empty</li>
+<li>Keep the Comcast Ethernet adapter in SFP+ 1</li>
+<li>Leave SFP+ 2 in its current state</li>
 <li><a href="#cable-map">See the Ethernet jack-number list</a></li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://mikrotik.com/product/crs310_8g_2s_in">MikroTik specifications and downloads</a></li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U15</span>Upper cable opening</summary><article class="device" id="mount-top"><h3>Cable Matters upper brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the second 19-inch brush at U15</li></ul></section>
@@ -188,17 +202,13 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Run the cable between the rack switches along the front side</li>
 <li>Leave slack at both switch plugs</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.cablematters.com/pc-1664-159-2-pack-1u-rach-mount-brush-panel.aspx">Cable Matters brush panel</a></li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">Beside rack</span>Battery backup and staged gear</summary><article class="device" id="mount-ups"><h3>CyberPower battery backup</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Stand the UPS upright beside the rack</li>
+<details class="slot"><summary><span class="unit">Beside rack</span>Battery backup</summary><article class="device" id="mount-ups"><h3>CyberPower battery backup</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Stand the UPS upright beside the rack</li>
 <li>Keep the vents clear</li>
 <li>Leave access to the Battery/Surge bank</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>UPS wall cord</strong><ul><li><b>From</b> CyberPower UPS</li><li><b>To</b> Grounded wall socket</li></ul></li>
 <li><a href="#power-map">See the battery outlet assignments</a></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li><strong>Existing UPS data cable, if present</strong><ul><li><b>From</b> Original UPS USB port</li><li><b>To</b> Original NAS USB port</li></ul></li></ul></section></article>
-<article class="device" id="mount-lte"><h3>Comcast cellular backup box</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Stage the box beside the rack</li>
-<li>Keep its original adapter with it</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li>Reserve UPS battery socket 5</li>
-<li>Keep the adapter disconnected for now</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Leave the Ethernet connection for after the rack build</li></ul></section></article></details>
+</details>
 <details class="slot"><summary><span class="unit">Elsewhere</span>Office switches and Wi-Fi</summary><article class="device" id="mount-orbi"><h3>Netgear Orbi Wi-Fi base</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the RBR50 in its existing location</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Orbi base adapter</strong><ul><li><b>From</b> Original adapter</li><li><b>To</b> Orbi base DC socket</li></ul></li></ul></section>
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Existing house-side feed</strong><ul><li><b>From</b> Original house-side connection</li><li><b>To</b> Original rear Ethernet jack on the Orbi base</li></ul></li></ul></section>
@@ -208,17 +218,10 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Existing cable, if wired</strong><ul><li><b>From</b> Original house-side connection</li><li><b>To</b> Original satellite Ethernet jack</li></ul></li>
 <li>Leave the Ethernet jack empty if the satellite connects wirelessly</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://kb.netgear.com/000051205/What-is-Ethernet-backhaul-and-how-do-I-set-it-up-on-my-Orbi-WiFi-System">Netgear satellite Ethernet reference</a></li></ul></section></article>
-<article class="device" id="mount-office"><h3>TRENDnet 5-port office switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the switch in the office</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li>Keep its original adapter connected</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Keep each office device in its existing switch socket</li>
-<li><strong>Office switch wall lead</strong><ul><li><b>From</b> TRENDnet’s existing wall connection</li><li><b>To</b> Back of patch panel jack 03</li></ul></li></ul></section></article>
+<article class="device" id="mount-office"><h3>Office wall connections</h3><ul class="steps"><li>West wall · Windows PC and Mac Studio</li><li>South wall · Apple TV and Samsung TV</li><li>Keep the spare TRENDnet 2.5 GbE switch disconnected</li><li><a href="#cable-map">See the four patch panel connections</a></li></ul></article>
 <article class="device" id="mount-media"><h3>TP-Link 5-port media switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the switch in its existing location</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li>Keep its original adapter connected</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Keep the TV in its existing socket</li>
-<li>Keep the PlayStation in its existing socket</li>
-<li>Keep the wired Wi-Fi device in its existing socket</li>
-<li>Keep the NVR in its existing socket</li>
-<li><strong>Media switch wall lead</strong><ul><li><b>From</b> Existing media-switch wall connection</li><li><b>To</b> Back of patch panel jack 04 once traced</li></ul></li></ul></section></article></details></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Leave the current living-room cables in place</li><li>The PlayStation reaches MikroTik Ethernet 7</li><li>Check the console for LAN Cable before assigning the living-room switch lead</li><li>Reserve patch panel jack 05 until the rack jack is known</li><li>The recorder and both Orbi units reach MikroTik Ethernet 1</li></ul></section></article></details></section>
 </main>
 <script>
 const drawing = document.getElementById('rack-drawing');
@@ -314,7 +317,7 @@ label(brush, center, unitTop(unit) + 27, name, 15, '#f2f7ef', 'middle');
 drawBrush('brush', 1, 'Lower brush · spare USB route');
 drawBrush('top', 15, 'Upper brush · NAS and modem cables');
 
-const power = item('power', 'U2 · Tecmojo switched power strip · rocker 1 for SmartThings');
+const power = item('power', 'U2 · Tecmojo switched power strip · rocker 8 for SmartThings');
 face(power, 2, '#263b36');
 for (let index = 0; index < 9; index++) {
   const x = railLeft + 34 + index * 35;
@@ -343,7 +346,7 @@ rectangle(gateway, gatewayX, unitTop(7) - 56, 330.2, 50.8, '#e4ddd1', { rx: 4, s
 label(gateway, center, unitTop(7) - 25, 'Comcast modem/router', 17, '#302921', 'middle');
 label(gateway, center, unitTop(10) + 34, 'U9–U10 · leave clearance above the modem', 15, '#325a50', 'middle');
 
-const hub = item('hub', 'U11 · Samsung SmartThings hub · 16-inch shelf');
+const hub = item('hub', 'U11 · SmartThings hub and cellular backup · 16-inch shelf');
 shelf(hub, 11, 1, '');
 rectangle(hub, center - 63.5, unitTop(10) - 35.5, 127, 30.5, '#fff', { rx: 4, stroke: '#74867e', 'stroke-dasharray': '5 3' });
 label(hub, center, unitTop(10) - 15, 'SmartThings', 13, '#17302f', 'middle');
