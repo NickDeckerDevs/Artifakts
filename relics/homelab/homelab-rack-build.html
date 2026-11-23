@@ -15,7 +15,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <body>
 <header><div><h1>homelab rack build</h1></div></header>
 <nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
-<main><section class="guide-section" id="panel-proposal"><h2>Numbered cable and routing view</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the four-jack installation view</a></li><li>Staggered sequence · 01 low-left, 02 raised to its right</li><li>Continue alternating horizontally through 24</li><li>House rooms · 01–12</li><li>Your office · 13–16</li><li>Spare panel jacks · 17–24</li><li>Rack devices connect directly</li><li>Direct rack cables use labels C1–C6</li><li>Keep the working network connected during planning</li></ul></section>
+<main><section class="guide-section" id="panel-proposal"><h2>Floor Plan · cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the redesigned cable workbench</a></li><li>Expo / MikroTik mounts at the right above Floor Plan</li><li>Runner / TP-Link is centered below</li><li>Panel positions follow clean cable paths; colors identify connections</li><li>Proposed office positions: 17 PC, 19 Apple TV, 21 Samsung TV, 23 Mac</li><li>Other room positions remain unassigned</li><li>Previous color-block allocations are retired</li></ul></section>
 <section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
 <li>New fiber equipment is installed · switch-over is still ahead</li>
 <li>The Comcast gateway is removed from this build plan</li>
@@ -61,17 +61,17 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep cords out of the ladder path</li></ul></section><section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.cyberpowersystems.com/product/ups/intelligent-lcd/cp1500avrlcd3/">CyberPower outlet-bank reference</a></li>
 <li><a href="https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902.pdf?v=1759800105">Tecmojo installation manual</a></li></ul></section></section>
 <section class="guide-section" id="cable-map"><h2>Ethernet cable destinations</h2><ul class="steps"><li><a href="homelab-patch-panel.html">See each numbered cable route</a></li><li>C1 · NAS upper · black label</li><li>C2 · NAS lower · black label</li><li>C3 · SmartThings · black label</li><li>C4 · Gateway to MikroTik · red label</li><li>C5 · Converter to gateway · red label</li><li>C6 · MikroTik to TP-Link · black label</li></ul><ul class="steps"><li>Use the existing switch sockets for current devices</li><li>Reserve the new gateway connection for the planned switch-over</li>
-<li>Use jacks 13–16 for the four office drops</li>
-<li>Reserve jack 01 for the living-room switch</li>
-<li>Leave panel jacks 17–24 disconnected</li><li>Use the jack-number fields for the remaining unverified switch sockets</li>
+<li>Use the proposed office positions in the cable workbench</li>
+<li>Family-room panel positions remain unassigned</li>
+<li>Panel 17, 19, 21 and 23 are proposed for the office</li><li>Use the jack-number fields for the remaining unverified switch sockets</li>
 <li>Keep unidentified loose leads labeled and parked</li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>FIBER CONVERTER TO GATEWAY</strong><ul><li><b>From</b> Q1000K Ethernet jack · preserve the installer connection</li><li><b>To</b> BGW620-700 red ONT/LAN jack</li><li>The gateway end is visible in the supplied photo</li></ul></li>
 <li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
 <li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-top"></label></li></ul></li>
 <li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-bottom"></label></li></ul></li>
-<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 13</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 14</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
-<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of patch panel jack 15</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
-<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of patch panel jack 16</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
+<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of proposed patch panel jack 17</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
+<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of proposed patch panel jack 23</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
+<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 19</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 21</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
 <li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li><li><label>TP-Link jack number <input type="text" inputmode="numeric" maxlength="2" data-port="house-tplink"></label></li></ul></li>
 <li><strong>LIVING-ROOM SWITCH · reserve 01</strong><ul><li><b>From</b> Front of patch panel jack 01 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li><li><label>TP-Link jack number <input type="text" inputmode="numeric" maxlength="2" data-port="media"></label></li></ul></li>
 <li><strong>ORBI AND RECORDER BRANCH · jack 03</strong><ul><li><b>From</b> Front of patch panel jack 03 after the wall lead is identified</li><li><b>To</b> MikroTik Ethernet 1</li><li>The recorder’s exact room-side socket remains unconfirmed</li></ul></li>
@@ -200,20 +200,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Fit the GeeekPi inserts</li>
 <li>Label the panel jacks</li>
 <li>Support the Ethernet bundle with loose Velcro on the rear bar</li></ul></section>
-<section class="device-group"><h4>Ethernet · back of panel</h4><ul class="steps"><li>Bring the wall leads in around the open rear side</li>
-<li><strong>OFFICE PC wall lead</strong><ul><li><b>From</b> West wall · lead currently on MikroTik Ethernet 3</li><li><b>To</b> Back of patch panel jack 13</li></ul></li>
-<li><strong>MAC STUDIO wall lead</strong><ul><li><b>From</b> West wall · lead currently on MikroTik Ethernet 8</li><li><b>To</b> Back of patch panel jack 14</li></ul></li>
-<li><strong>OFFICE APPLE TV wall lead</strong><ul><li><b>From</b> South wall · lead currently on MikroTik Ethernet 5</li><li><b>To</b> Back of patch panel jack 15</li></ul></li>
-<li><strong>OFFICE SAMSUNG TV wall lead</strong><ul><li><b>From</b> South wall · lead currently on MikroTik Ethernet 6</li><li><b>To</b> Back of patch panel jack 16</li></ul></li>
-<li><strong>LIVING-ROOM SWITCH · reserve 01</strong><ul><li>Leave this jack empty until the wall lead is identified</li></ul></li>
-<li><strong>Other identified house leads</strong><ul><li>Use a separate rear patch panel jack for each lead</li><li>Use the assigned jack in the 01–12 house section</li><li>Record the original switch name and socket number for each lead</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet · front of panel</h4><ul class="steps"><li>Use a jumper matching the jack color</li><li>House jacks · 01–12</li><li>Blue office jacks · 13–16</li><li>Jacks 17–24 · no jumpers</li></ul><ul class="steps"><li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 13</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 14</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
-<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of patch panel jack 15</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
-<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of patch panel jack 16</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
-<li><strong>LIVING-ROOM SWITCH · reserve 01</strong><ul><li><b>From</b> Front of patch panel jack 01 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
-<li><strong>Each other assigned room cable</strong><ul><li><b>From</b> Front of its assigned panel jack</li><li><b>To</b> Its assigned switch socket · see the numbered wiring view</li></ul></li>
-<li>Use a longer short cable if a 0.2 m cable pulls on a socket</li></ul></section>
+<section class="device-group"><h4>Wall runs and front jumpers</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use Floor Plan for the current connection records and proposed socket positions</a></li><li>Wall cable enters the back of its assigned socket</li><li>Front jumper goes to the recorded switch socket</li><li>Keep wall-jack identity separate from panel number</li><li>NVR has its own separate run</li><li>Do not use the retired House / Office / Spare blocks</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.truecable.com/products/patch-panel-24-port-1u-staggered-blank-modular-unshielded">trueCABLE panel and support bar</a></li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U14</span>Office and NAS switch</summary><article class="device" id="mount-fast"><h3>MikroTik 2.5 GbE switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit the white MikroTik ears with the chassis screws</li>
 <li>Mount at U14 with #10-32 rack screws</li>
@@ -225,12 +212,12 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
 <li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li></ul></li>
 <li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li></ul></li>
-<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 13</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of patch panel jack 14</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
-<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of patch panel jack 15</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
-<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of patch panel jack 16</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
+<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of proposed patch panel jack 17</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
+<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of proposed patch panel jack 23</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
+<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 19</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
+<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 21</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
 <li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
-<li><strong>ORBI AND CAMERA RECORDER BRANCH</strong><ul><li><b>From</b> Front of panel jack 03 after its existing wall lead is identified</li><li><b>To</b> MikroTik Ethernet 1</li><li>Keep the far end as it is today</li></ul></li>
+<li><strong>NVR · separate run</strong><ul><li>Physical switch socket remains unidentified</li><li>Historical Orbi observations do not establish the physical connection</li></ul></li>
 <li>Top Ethernet row · 2, 4, 6, 8</li>
 <li>Bottom Ethernet row · 1, 3, 5, 7</li>
 <li>Leave unused Ethernet sockets empty</li>
@@ -267,7 +254,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <article class="device" id="mount-office"><h3>Office wall connections</h3><ul class="steps"><li>West wall · Windows PC and Mac Studio</li><li>South wall · Apple TV and Samsung TV</li><li>Keep the spare TRENDnet 2.5 GbE switch disconnected</li><li><a href="#cable-map">See the four patch panel connections</a></li></ul></article>
 <article class="device" id="mount-media"><h3>TP-Link 5-port media switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the switch in its existing location</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li>Keep its original adapter connected</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Leave the current living-room cables in place</li><li>The PlayStation reaches MikroTik Ethernet 7</li><li>Check the console for LAN Cable before assigning the living-room switch lead</li><li>Reserve patch panel jack 01 until the rack jack is known</li><li>The recorder and both Orbi units reach MikroTik Ethernet 1</li></ul></section></article></details></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Leave the current living-room cables in place</li><li>The PlayStation reaches MikroTik Ethernet 7</li><li>Check the console for LAN Cable before assigning the living-room switch lead</li><li>Assign a panel position after identifying the wall lead</li><li>Earlier observations placed recorder traffic on Ethernet 1; the NVR has its own physical run</li></ul></section></article></details></section>
 </main>
 <script>
 const drawing = document.getElementById('rack-drawing');
@@ -321,17 +308,18 @@ function port(parent, x, y, width = 13, height = 10) {
 function ethernetSwitch(id, unit, width, name, count, optical = false) {
   const group = item(id, name);
   const y = unitTop(unit) + .225;
-  const x = center - width / 2;
+  const deviceCenter = optical ? railLeft + railWidth - width / 2 : center;
+  const x = deviceCenter - width / 2;
   const wing = x - railLeft;
   rectangle(group, railLeft, y + 3, wing, 38, '#657f77', { stroke: '#435b55' });
-  rectangle(group, x + width, y + 3, wing, 38, '#657f77', { stroke: '#435b55' });
+  rectangle(group, x + width, y + 3, railLeft + railWidth - x - width, 38, '#657f77', { stroke: '#435b55' });
   bolt(group, railLeft + 10, y + 22);
   bolt(group, railLeft + railWidth - 10, y + 22);
   rectangle(group, x, y, width, 44, '#233835', { rx: 2, stroke: '#122522' });
-  label(group, center, y + 13, name, 12, '#e7f0eb', 'middle');
+  label(group, deviceCenter, y + 13, name, 12, '#e7f0eb', 'middle');
   const columns = count / 2;
   const rowWidth = columns * 15 + (optical ? 35 : 0);
-  const rowStart = center - rowWidth / 2;
+  const rowStart = deviceCenter - rowWidth / 2;
   for (let index = 0; index < columns; index++) {
     port(group, rowStart + index * 15, y + 19, 12, 8);
     port(group, rowStart + index * 15, y + 31, 12, 8);
