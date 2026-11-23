@@ -15,7 +15,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <body>
 <header><div><h1>homelab rack build</h1></div></header>
 <nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
-<main><section class="guide-section" id="panel-proposal"><h2>Numbered cable and routing view</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the panel and cable route visuals</a></li><li>Top row · 01, 03, 05 through 23</li><li>Bottom row · 02, 04, 06 through 24</li><li>House rooms · 01–12</li><li>Your office · 13–16</li><li>Spare panel jacks · 17–24</li><li>Rack devices connect directly</li><li>Direct rack cables use labels C1–C6</li><li>Keep the working network connected during planning</li></ul></section>
+<main><section class="guide-section" id="panel-proposal"><h2>Numbered cable and routing view</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the four-jack installation view</a></li><li>Staggered sequence · 01 low-left, 02 raised to its right</li><li>Continue alternating horizontally through 24</li><li>House rooms · 01–12</li><li>Your office · 13–16</li><li>Spare panel jacks · 17–24</li><li>Rack devices connect directly</li><li>Direct rack cables use labels C1–C6</li><li>Keep the working network connected during planning</li></ul></section>
 <section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
 <li>New fiber equipment is installed · switch-over is still ahead</li>
 <li>The Comcast gateway is removed from this build plan</li>
@@ -407,14 +407,14 @@ label(hub, center, unitTop(10) - 15, 'SmartThings', 13, '#17302f', 'middle');
 label(hub, center + 89, unitTop(10) - 13, '1U · 16 in', 14);
 
 ethernetSwitch('house', 12, 294, 'TP-Link house switch', 16);
-const panel = item('patch', 'U13 · trueCABLE panel · odd numbers top, even numbers bottom');
+const panel = item('patch', 'U13 · trueCABLE panel · staggered left to right, odd low and even raised');
 face(panel, 13, '#41594e');
 label(panel, center, unitTop(13) + 13, 'trueCABLE · 24-port panel', 13, '#f4f7ef', 'middle');
 for (let index = 0; index < 24; index++) {
-  const x=railLeft+29+Math.floor(index/2)*35.2;
-  const y=unitTop(13)+19+(index%2)*12;
+  const x=railLeft+29+index*17.6;
+  const y=unitTop(13)+19+(index%2===0?12:0);
   const colors=['#f8d54a','#ef9138','#fafafa','#246ac4','#151e24','#bd3535'];
-  rectangle(panel,x,y,24,10,colors[Math.floor(index/4)],{rx:1,stroke:'#99b0a6'});
+  rectangle(panel,x,y,14,10,colors[Math.floor(index/4)],{rx:1,stroke:'#99b0a6'});
 }
 ethernetSwitch('fast', 14, 200, 'MikroTik office and NAS', 8, true);
 
