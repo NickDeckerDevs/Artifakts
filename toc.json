@@ -46,6 +46,11 @@
       "file": "homelab/homelab-rack-pre-build.html"
     },
     {
+      "name": "homelab patch panel colors and cables",
+      "category": "homelab",
+      "file": "homelab/homelab-patch-panel.html"
+    },
+    {
       "name": "homelab rack build",
       "category": "homelab",
       "file": "homelab/homelab-rack-build.html"

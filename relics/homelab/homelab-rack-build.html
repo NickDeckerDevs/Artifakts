@@ -15,7 +15,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <body>
 <header><div><h1>homelab rack build</h1></div></header>
 <nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
-<main>
+<main><section class="guide-section" id="panel-proposal"><h2>New patch-panel layout · review first</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the numbered color and cable view</a></li><li>Proposed order · house rooms left</li><li>Proposed order · office in 13–16</li><li>Proposed order · rack connections right</li><li>This proposal replaces the older panel numbering after review</li><li>The older cable instructions below have not been renumbered yet</li><li>Keep the working network connected</li></ul></section>
 <section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
 <li>New fiber equipment is installed · switch-over is still ahead</li>
 <li>The Comcast gateway is removed from this build plan</li>
@@ -194,7 +194,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep wired Wi-Fi on its existing house-side connection</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.tp-link.com/us/business-networking/soho-switch-easy-smart/tl-sg1016de/">TP-Link switch specifications and downloads</a></li>
 <li><a href="https://www.tp-link.com/us/business-networking/accessory/rackmount-kit-13/">TP-Link Kit-13</a></li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">U13</span>House and office cable panel</summary><article class="device" id="mount-patch"><h3>trueCABLE 24-port patch panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the staggered 19-inch panel at U13</li>
+<details class="slot"><summary><span class="unit">U13</span>House and office cable panel</summary><article class="device" id="mount-patch"><h3>trueCABLE 24-port patch panel</h3><ul class="steps"><li><a href="homelab-patch-panel.html">Open the proposed color layout</a></li><li>Review the new allocation before using the older cable numbers below</li></ul><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the staggered 19-inch panel at U13</li>
 <li>Fit the rear cable support bar</li>
 <li>Fit the GeeekPi inserts</li>
 <li>Label the panel jacks</li>
