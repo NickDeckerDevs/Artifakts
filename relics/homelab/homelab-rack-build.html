@@ -16,6 +16,14 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <header><div><h1>homelab rack build</h1></div></header>
 <nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
 <main>
+<section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
+<li>New fiber equipment is installed · switch-over is still ahead</li>
+<li>The Comcast gateway is removed from this build plan</li>
+<li>The Comcast cellular backup is removed from this build plan</li>
+<li>Proposed location for the AT&amp;T gateway<ul><li>Beside the NAS on the included 18-inch shelf</li><li>AT&amp;T BGW620-700</li><li>Stand upright</li><li>Case · 4.33 inches wide</li><li>Case · 8.66 inches deep</li><li>Case · 9.03 inches tall</li><li>Final spacing is checked during installation</li></ul></li>
+<li>Fiber converter<ul><li>Quantum Fiber Q1000K</li><li>Part of the new installation, confirmed by the user</li><li>Reserve the U9–U10 shelf space for it</li><li>Flat placement is proposed rather than verified</li></ul></li>
+<li>Keep the working network connected while preparing the rack</li>
+</ul></section>
 <section class="guide-section" id="rack"><h2>15U rack drawing</h2><ul class="steps"><li>Use this page as a reference while the network stays up</li>
 <li>Select a rack slot to open its device instructions</li>
 <li>Count U1 as the lowest set of mounting holes</li></ul><figure class="rack-figure">
@@ -24,16 +32,16 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <desc id="rack-desc">Select a device or shelf to open its instructions.</desc>
 </svg>
 <p class="rack-status" id="rack-status" aria-live="polite">Select a slot to see its instructions</p>
-<figcaption class="small">Dashed outlines use estimated case sizes</figcaption>
+<figcaption class="small">Gateway and NAS case outlines use published sizes · check shelf gaps during installation</figcaption>
 </figure></section>
 <section class="guide-section" id="power-map"><h2>Power and outlet labels</h2><section class="device-group"><h4>Wall sockets</h4><ul class="steps"><li><strong>CyberPower UPS</strong><ul><li><b>From</b> UPS wall cord</li><li><b>To</b> Grounded wall socket</li></ul></li>
 <li><strong>Tecmojo strip</strong><ul><li><b>From</b> Strip wall cord</li><li><b>To</b> Separate grounded wall socket</li></ul></li></ul></section><section class="device-group"><h4>CyberPower Battery/Surge bank</h4><ul class="steps"><li>Use the bank marked Battery/Surge</li>
 <li>Apply these labels to available sockets</li>
 <li><strong>1 · NAS</strong><ul><li>Original ASUSTOR brick</li></ul></li>
-<li><strong>2 · COMCAST MODEM/ROUTER</strong><ul><li>Original black AC cord</li></ul></li>
+<li><strong>2 · AT&amp;T GATEWAY</strong><ul><li>Original AT&amp;T power adapter</li></ul></li>
 <li><strong>3 · MIKROTIK SWITCH</strong><ul><li>Original 24 V adapter</li><li>Use the widest spaced battery socket if the plug needs room</li></ul></li>
 <li><strong>4 · TP-LINK HOUSE SWITCH</strong><ul><li>Original AC cord</li></ul></li>
-<li><strong>5 · LTE BACKUP</strong><ul><li>Reserved and empty</li></ul></li>
+<li><strong>5 · FIBER CONVERTER</strong><ul><li>Original Q1000K adapter</li><li>Planned battery power for the converter</li></ul></li>
 <li><strong>6 · SPARE</strong><ul><li>Label it if the UPS has a sixth battery socket</li></ul></li></ul></section><section class="device-group"><h4>Tecmojo rear AC outlets</h4><ul class="steps"><li>1 · Available for the TP-Link house switch if you choose wall-powered front restart control</li>
 <li>2 · SPARE / KEEP CLEAR</li>
 <li>3 · SPARE</li>
@@ -56,7 +64,8 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Use jacks 01–04 for the four office drops</li>
 <li>Reserve jack 05 for the living-room switch</li>
 <li>Use the jack-number fields for the remaining unverified sockets</li>
-<li>Keep unidentified loose leads labeled and parked</li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Comcast modem/router LAN 6</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li></ul></li>
+<li>Keep unidentified loose leads labeled and parked</li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>FIBER CONVERTER TO GATEWAY</strong><ul><li><b>From</b> Q1000K Ethernet jack · preserve the installer connection</li><li><b>To</b> BGW620-700 red ONT/LAN jack</li><li>The gateway end is visible in the supplied photo</li></ul></li>
+<li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
 <li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-top"></label></li></ul></li>
 <li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-bottom"></label></li></ul></li>
 <li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
@@ -85,8 +94,10 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>USB-A 2 · Empty</li>
 <li>USB-C 1 · Empty</li>
 <li>USB-C 2 · Empty</li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">U3–U7</span>18-inch NAS shelf</summary><article class="device" id="mount-nas"><h3>ASUSTOR NAS</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the included 2U × 18-inch vented shelf at U3–U4</li>
+<details class="slot"><summary><span class="unit">U3–U8</span>Shared shelf · NAS and AT&amp;T gateway</summary><article class="device" id="mount-nas"><h3>ASUSTOR NAS</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the included 2U × 18-inch vented shelf at U3–U4</li>
 <li>Stand the NAS on its original feet</li>
+<li>Reserve space beside the NAS for the AT&amp;T gateway</li>
+<li>Leave U8 open above the taller gateway</li>
 <li>Face the drive bays outward</li>
 <li>Start with a 1-inch setback from the tray front</li>
 <li>Case · 6.85 × 6.69 × 9.06 in (W × H × D)</li>
@@ -111,20 +122,57 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>USB</h4><ul class="steps"><li><strong>Radio data and power</strong><ul><li><b>From</b> SONOFF USB-C</li><li><b>To</b> Original NAS USB jack</li></ul></li>
 <li>Leave the SONOFF Ethernet jack empty in USB mode</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://dongle.sonoff.tech/guide/dongle-m/power_supply_and_connection/">SONOFF connection guide</a></li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">U8–U10</span>15-inch modem/router shelf</summary><article class="device" id="mount-gateway"><h3>Comcast Business modem/router</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the included 1U × 15.12-inch vented shelf at U8</li>
-<li>Center the modem/router on the shelf</li>
-<li>Keep U9 and U10 clear above it</li>
-<li>Estimated case · 13 × 2 × 9.5 in (W × H × D)</li>
-<li>Check for 2–3 inches of ventilation clearance around the case</li>
-<li>Dry-fit the included shelf and route the coax during installation</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Modem/router AC cord</strong><ul><li><b>From</b> Rear power inlet</li><li><b>To</b> UPS battery socket 2</li><li>Use the left rear post</li></ul></li></ul></section>
-<section class="device-group"><h4>Coax</h4><ul class="steps"><li><strong>White Comcast cable</strong><ul><li><b>From</b> Existing coax feed</li><li><b>To</b> Threaded modem/router socket</li><li>Leave a gentle bend behind the rack</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Modem/router LAN 6</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li><li>Use the right rear post</li><li>Pass through the U15 brush</li><li>LAN 6 is the existing 2.5 GbE connection</li></ul></li>
-<li>Leave LAN 1–5 empty</li></ul></section>
-<section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://manuals.plus/comcast-business/cga4332com-advanced-wifi-gateway-router-manual.pdf">Technicolor gateway manual</a></li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">U11</span>16-inch shelf · SmartThings and cellular backup</summary><article class="device" id="mount-hub"><h3>Samsung SmartThings hub</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit one IRONDIY 1U × 16-inch vented tray</li>
+<details class="slot"><summary><span class="unit">Beside NAS</span>AT&amp;T BGW620-700 gateway</summary><article class="device" id="mount-gateway"><h3>AT&amp;T BGW620-700 · internet router</h3>
+<section class="device-group"><h4>Placement</h4><ul class="steps">
+<li>Use the included 18-inch shelf shared with the NAS</li>
+<li>Stand the gateway upright beside the NAS</li>
+<li>Face its status light outward</li>
+<li>Case width · 4.33 inches</li>
+<li>Case depth · 8.66 inches</li>
+<li>Case height including feet · 9.03 inches</li>
+<li>Leave U8 open above the gateway</li>
+<li>Install the next shelf at U9</li>
+<li>Keep space between the two cases</li>
+<li>Keep the gateway vents clear</li>
+<li>Keep the NAS rear fan clear</li>
+<li>Check the actual gap beneath the U9 shelf during installation</li>
+</ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps">
+<li><strong>Gateway adapter DC lead</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> Gateway power socket</li></ul></li>
+<li><strong>Gateway AC plug · planned</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> UPS battery socket 2</li><li>Use the left rear post</li></ul></li>
+</ul></section>
+<section class="device-group"><h4>Incoming Ethernet</h4><ul class="steps">
+<li><strong>Converter connection</strong><ul><li><b>From</b> Q1000K Ethernet jack</li><li><b>To</b> Red ONT/LAN jack on the gateway</li><li>Preserve the installer-connected cable</li></ul></li>
+</ul></section>
+<section class="device-group"><h4>Connection to the house · later switch-over</h4><ul class="steps">
+<li><strong>Gateway to MikroTik · planned</strong><ul><li><b>From</b> Blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
+<li>Blue LAN 1 supports a 2.5 Gb/s connection</li>
+<li>Leave the working network connected during rack preparation</li>
+<li>Gateway settings and addresses have not been checked for this switch-over</li>
+</ul></section>
+<section class="device-group"><h4>Other sockets</h4><ul class="steps"><li>Yellow LAN 2 · no new connection assigned</li><li>Yellow LAN 3 · no new connection assigned</li><li>USB · no accessory assigned</li><li>Phone · no new connection assigned</li><li>Fiber and SFP sockets · unused in the described external-converter arrangement</li></ul></section>
+<section class="device-group"><h4>References</h4><ul class="steps"><li><a href="https://fccid.io/G95BGW620/User-Manual/User-Manual-7602953.pdf">Manufacturer guide · size and upright placement</a></li><li><a href="https://www.att.com/support/article/internet/104091/">AT&amp;T port guide</a></li><li><a href="https://www.att.com/scmsassets/support/internet/bgw620-700-att-compliance-leaflet-en_-512790c.pdf">AT&amp;T placement and ventilation guidance</a></li></ul></section></article></details>
+<details class="slot"><summary><span class="unit">U9–U10</span>Fiber converter shelf · flat placement proposed</summary><article class="device" id="mount-converter"><h3>Quantum Fiber Q1000K · fiber converter</h3>
+<section class="device-group"><h4>Placement</h4><ul class="steps">
+<li>Use the included 15.12-inch shelf at U9</li>
+<li>Reserve U10 for the converter and its cable space</li>
+<li>Move into the rack during the planned installation</li>
+<li>Proposed position · flat on the shelf</li>
+<li>Flat operation has not been verified in the available product documents</li>
+<li>Case length · 7.09 inches</li>
+<li>Case width · 5.12 inches</li>
+<li>Case thickness · 1.5 inches</li>
+<li>Keep the back ventilation slots clear</li>
+<li>Keep the fiber cable free of sharp bends</li>
+<li>Do not stack another device on it</li>
+</ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Converter adapter</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> Converter power socket</li></ul></li><li><strong>Converter AC plug · planned</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> UPS battery socket 5</li><li>Use the left rear post</li></ul></li><li>The gateway and converter both need battery power to keep fiber service available during a power outage</li></ul></section>
+<section class="device-group"><h4>Fiber</h4><ul class="steps"><li><strong>Incoming fiber</strong><ul><li><b>From</b> Existing fiber feed from outside</li><li><b>To</b> Existing green fiber connection on the Q1000K</li><li>Preserve the installed connection</li></ul></li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Converter to gateway</strong><ul><li><b>From</b> Existing Q1000K Ethernet jack</li><li><b>To</b> Gateway red ONT/LAN jack</li><li>Preserve the installer-connected jack</li></ul></li><li>Exact occupied Q1000K Ethernet jack is not readable in the photos</li><li>The Q1000K also has routing features</li><li>Its operating mode has not been checked</li></ul></section>
+<section class="device-group"><h4>References</h4><ul class="steps"><li><a href="https://www.quantumfiber.com/content/dam/quantumfiber/equipment/downloads/Q1000_DataSheet_071024_final.pdf">Q1000K dimensions and power</a></li><li><a href="https://www.quantumfiber.com/support/equipment/user-guides/q1000k-smartnid.html">Q1000K equipment guide</a></li></ul></section></article></details>
+<details class="slot"><summary><span class="unit">U11</span>16-inch shelf · SmartThings</summary><article class="device" id="mount-hub"><h3>Samsung SmartThings hub</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit one IRONDIY 1U × 16-inch vented tray</li>
 <li>Dry-fit the rear extension brackets</li>
-<li>Dry-fit both devices side by side under the U12 switch</li>
+<li>Check the hub under the U12 switch</li>
 <li>Leave room for the plugs behind the sliding stop</li>
 <li>Use a stable surface beside the rack if the shelf hardware cannot fit</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Samsung adapter DC lead</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Hub power jack</li></ul></li>
@@ -133,11 +181,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the hub’s USB socket empty</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.samsung.com/nz/smartthings/hub/smartthings-v3-hub-gp-u999sjvlgaa/">Samsung hub family reference</a></li>
 <li><a href="https://www.amazon.com/dp/B0GXHL7MXW">Ordered 16-inch shelves</a></li></ul></section></article>
-<article class="device" id="mount-lte"><h3>Comcast cellular backup box</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Dry-fit the box beside the SmartThings hub on the U11 shelf</li>
-<li>Keep its original adapter with it</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li>Reserve UPS battery socket 5</li>
-<li>Keep the adapter disconnected for now</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Keep Ethernet disconnected until the Comcast failover handoff is confirmed</li></ul></section></article></details>
+</details>
 <details class="slot"><summary><span class="unit">U12</span>House switch</summary><article class="device" id="mount-house"><h3>TP-Link 16-port house switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit the TP-Link Kit-13 ears to the switch</li>
 <li>Use the kit’s chassis screws</li>
 <li>Mount at U12 using #10-32 rack screws</li>
@@ -177,7 +221,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>24 V adapter DC lead</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> Round DC jack on the switch front</li><li>Pass through the left side of the U15 brush</li><li>Use the left rear post</li></ul></li>
 <li><strong>24 V adapter AC plug</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> UPS battery socket 3</li><li>Support the adapter near the UPS or on a vented shelf</li></ul></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the front USB-A socket empty</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>COMCAST</strong><ul><li><b>From</b> Comcast modem/router LAN 6</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li></ul></li>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
 <li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li></ul></li>
 <li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li></ul></li>
 <li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of patch panel jack 01</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
@@ -189,14 +233,14 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Top Ethernet row · 2, 4, 6, 8</li>
 <li>Bottom Ethernet row · 1, 3, 5, 7</li>
 <li>Leave unused Ethernet sockets empty</li>
-<li>Keep the Comcast Ethernet adapter in SFP+ 1</li>
+<li>Use SFP+ 1 for the planned gateway connection through its existing Ethernet adapter</li>
 <li>Leave SFP+ 2 in its current state</li>
 <li><a href="#cable-map">See the Ethernet jack-number list</a></li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://mikrotik.com/product/crs310_8g_2s_in">MikroTik specifications and downloads</a></li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U15</span>Upper cable opening</summary><article class="device" id="mount-top"><h3>Cable Matters upper brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the second 19-inch brush at U15</li></ul></section>
 <section class="device-group"><h4>Cable route</h4><ul class="steps"><li><strong>NAS TOP Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
 <li><strong>NAS BOTTOM Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
-<li><strong>Comcast LAN 6 Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
+<li><strong>AT&amp;T gateway Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
 <li><strong>MikroTik round DC lead</strong><ul><li>Feed through the left side</li></ul></li>
 <li>Keep the short panel-to-switch cables at the front</li>
 <li>Run the cable between the rack switches along the front side</li>
@@ -315,7 +359,7 @@ for (let x = railLeft + 34; x < railLeft + railWidth - 33; x += 4) {
 label(brush, center, unitTop(unit) + 27, name, 15, '#f2f7ef', 'middle');
 }
 drawBrush('brush', 1, 'Lower brush · spare USB route');
-drawBrush('top', 15, 'Upper brush · NAS and modem cables');
+drawBrush('top', 15, 'Upper brush · NAS and gateway cables');
 
 const power = item('power', 'U2 · Tecmojo switched power strip · rocker 8 for SmartThings');
 face(power, 2, '#263b36');
@@ -326,27 +370,35 @@ for (let index = 0; index < 9; index++) {
 }
 for (let index = 0; index < 4; index++) port(power, railLeft + 364 + index * 18, unitTop(2) + 17, 14, index < 2 ? 9 : 6);
 
-const nas = item('nas', 'U3–U7 · ASUSTOR NAS · 18-inch vented shelf');
+const nas = item('nas', 'U3–U8 · NAS and BGW620-700 on the 18-inch shelf');
 shelf(nas, 3, 2, '2U · 18 in');
-const nasX = center - 174 / 2;
+const nasX = railLeft + 48;
 const nasY = unitTop(2) - 5 - 170;
 rectangle(nas, nasX, nasY, 174, 170, '#253733', { rx: 5, stroke: '#132421' });
-label(nas, center, nasY + 20, 'ASUSTOR NAS', 15, '#f5f8f5', 'middle');
+label(nas, nasX + 87, nasY + 20, 'ASUSTOR NAS', 15, '#f5f8f5', 'middle');
 for (let index = 0; index < 4; index++) {
   const x = nasX + 17 + index * 34;
   rectangle(nas, x, nasY + 33, 29, 119, '#3e554e', { rx: 2, stroke: '#82968b' });
   rectangle(nas, x + 6, nasY + 126, 17, 9, '#1b2d28', { rx: 1 });
 }
-label(nas, nasX + 184, nasY + 74, '6.85 × 6.69 in', 13);
+label(nas, nasX + 87, nasY - 12, '6.85 × 6.69 in', 13, '#172726', 'middle');
 
-const gateway = item('gateway', 'U8–U10 · Comcast modem/router · 15.12-inch shelf');
-shelf(gateway, 8, 1, '1U · 15.12 in');
-const gatewayX = center - 330.2 / 2;
-rectangle(gateway, gatewayX, unitTop(7) - 56, 330.2, 50.8, '#e4ddd1', { rx: 4, stroke: '#806b54', 'stroke-dasharray': '5 3' });
-label(gateway, center, unitTop(7) - 25, 'Comcast modem/router', 17, '#302921', 'middle');
-label(gateway, center, unitTop(10) + 34, 'U9–U10 · leave clearance above the modem', 15, '#325a50', 'middle');
+const gateway = item('gateway', 'BGW620-700 upright beside NAS · 4.33 wide × 9.03 high in');
+const gatewayX = center + 38;
+const gatewayY = unitTop(2) - 5 - 229.362;
+rectangle(gateway, gatewayX, gatewayY, 109.982, 229.362, '#e4ddd1', {rx:10,stroke:'#806b54'});
+label(gateway, gatewayX + 55, gatewayY + 70, 'AT&T', 17, '#302921', 'middle');
+label(gateway, gatewayX + 55, gatewayY + 96, 'BGW620', 14, '#302921', 'middle');
+label(gateway, gatewayX + 55, gatewayY + 120, 'Upright', 13, '#325a50', 'middle');
+label(gateway, center, unitTop(8) + 20, 'U8 · gateway height and open space', 13, '#325a50', 'middle');
 
-const hub = item('hub', 'U11 · SmartThings hub and cellular backup · 16-inch shelf');
+const converter = item('converter', 'U9–U10 · Q1000K fiber converter · flat position proposed');
+shelf(converter, 9, 1, '1U · 15.12 in');
+rectangle(converter, center - 65.024, unitTop(8) - 5 - 38.1, 130.048, 38.1, '#f6f4ec', {rx:4,stroke:'#806b54','stroke-dasharray':'5 3'});
+label(converter, center, unitTop(8) - 18, 'Q1000K', 14, '#302921', 'middle');
+label(converter, center, unitTop(10) + 22, 'Flat position proposed', 13, '#325a50', 'middle');
+
+const hub = item('hub', 'U11 · SmartThings hub · 16-inch shelf');
 shelf(hub, 11, 1, '');
 rectangle(hub, center - 63.5, unitTop(10) - 35.5, 127, 30.5, '#fff', { rx: 4, stroke: '#74867e', 'stroke-dasharray': '5 3' });
 label(hub, center, unitTop(10) - 15, 'SmartThings', 13, '#17302f', 'middle');
@@ -361,7 +413,7 @@ ethernetSwitch('fast', 14, 200, 'MikroTik office and NAS', 8, true);
 
 const diagramRows = [
   ['top',15,15],['fast',14,14],['patch',13,13],['house',12,12],['hub',11,11],
-  ['gateway',8,10],['nas',3,7],['power',2,2],['brush',1,1]
+  ['converter',9,10],['gateway',3,8],['nas',3,8],['power',2,2],['brush',1,1]
 ];
 const status = document.getElementById('rack-status');
 const hint = status.textContent;
@@ -369,7 +421,9 @@ for (const [id, lower, upper] of diagramRows) {
   const link = drawing.querySelector('a[href="#mount-' + id + '"]');
   link.setAttribute('tabindex', '0');
   element(link, 'title', {}, link.getAttribute('aria-label'));
-  rectangle(link, railLeft, unitTop(upper), railWidth, (upper - lower + 1) * unitHeight, 'transparent', { class: 'hit', rx: 3 });
+  const shared = id === 'gateway' || id === 'nas';
+  const hitX = id === 'gateway' ? center : railLeft;
+  rectangle(link, hitX, unitTop(upper), shared ? railWidth / 2 : railWidth, (upper - lower + 1) * unitHeight, 'transparent', { class: 'hit', rx: 3 });
   const show = () => { status.textContent = link.getAttribute('aria-label'); };
   const hide = () => { status.textContent = hint; };
   link.addEventListener('pointerenter', show);
