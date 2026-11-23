@@ -84,21 +84,22 @@ function routeSvg(r){
   shapes+=box(12,420,175,63,'Room wall cable',r.id,true);
   shapes+=pathLine('M100 420 V254 H245','#728796',true);
   const y=r.switch==='MikroTik'?201:306;
-  shapes+=pathLine('M325 254 V'+y,paint);
+  shapes+=pathLine('M325 '+(r.switch==='MikroTik'?224:283)+' V'+y,paint);
   shapes+=pin(100,367,'1')+pin(325,r.switch==='MikroTik'?216:294,'2');
  }else if(r.kind==='brush'){
   const sourceY=r.id==='C3'?394:451;
   shapes+=box(12,sourceY,175,63,r.device,r.unit,true);
-  shapes+=pathLine('M187 '+(sourceY+31)+' H203 V97 H325 V'+(r.switch==='MikroTik'?142:306),paint);
-  shapes+=pin(203,sourceY-19,'1')+pin(262,97,'2')+pin(325,124,'3');
+  const front=r.switch==='MikroTik'?'H325 V142':'H404 V335 H400';
+  shapes+=pathLine('M187 '+(sourceY+31)+' H203 V97 '+front,paint);
+  shapes+=pin(203,sourceY-19,'1')+pin(262,97,'2')+(r.switch==='MikroTik'?pin(325,124,'3'):pin(404,335,'3'));
  }else if(r.kind==='rear'){
   shapes+=box(12,369,175,63,'Q1000K','U9',true);
   shapes+=box(12,465,175,63,'BGW620','U3–U8',true);
   shapes+=pathLine('M100 432 V465',paint);
   shapes+=pin(100,449,'1');
  }else{
-  shapes+=pathLine('M325 201 V306',paint);
-  shapes+=pin(325,254,'1');
+  shapes+=pathLine('M400 172 H404 V335 H400',paint);
+  shapes+=pin(404,254,'1');
  }
  return '<figure class="route"><svg viewBox="0 0 420 550" role="img" aria-label="'+esc(r.name+' cable route')+'"><g font-family="system-ui,sans-serif" font-size="19" fill="#173047">'+shapes+'</g></svg><figcaption class="muted">Side view · routing schematic · device positions identified by U number</figcaption></figure>';
 }
