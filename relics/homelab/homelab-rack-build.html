@@ -15,7 +15,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <body>
 <header><div><h1>homelab rack build</h1></div></header>
 <nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
-<main><section class="guide-section" id="panel-proposal"><h2>Floor Plan · cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the redesigned cable workbench</a></li><li>Expo / MikroTik mounts at the right above Floor Plan</li><li>Runner / TP-Link is centered below</li><li>Panel positions follow clean cable paths; colors identify connections</li><li>Proposed office positions: 17 PC, 19 Apple TV, 21 Samsung TV, 23 Mac</li><li>Open the map for every room-run target, wall-plate jack and switch socket</li><li>P means Proposed</li><li>Eight existing jacks stay in the record; six empty openings use four-jack plates</li><li>Previous color-block allocations are retired</li></ul></section>
+<main><section class="guide-section" id="panel-proposal"><h2>Floor Plan · cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the redesigned cable workbench</a></li><li>Expo / MikroTik is mounted at the LEFT above Floor Plan</li><li>Runner / TP-Link is centered below</li><li>Panel positions follow clean cable paths; colors identify connections</li><li>Proposed office positions: 24 PC, 23 meepmax1, 22 Apple TV, 21 Samsung TV</li><li>Open the map for every room-run target, wall-plate jack and switch socket</li><li>P means Proposed</li><li>Eight existing jacks stay in the record; six empty openings use four-jack plates</li><li>Previous color-block allocations are retired</li></ul></section>
 <section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
 <li>New fiber equipment is installed · switch-over is still ahead</li>
 <li>The Comcast gateway is removed from this build plan</li>
@@ -34,33 +34,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <p class="rack-status" id="rack-status" aria-live="polite">Select a slot to see its instructions</p>
 <figcaption class="small">Gateway and NAS case outlines use published sizes · check shelf gaps during installation</figcaption>
 </figure></section>
-<section class="guide-section" id="power-map"><h2>Power and outlet labels</h2><section class="device-group"><h4>Wall sockets</h4><ul class="steps"><li><strong>CyberPower UPS</strong><ul><li><b>From</b> UPS wall cord</li><li><b>To</b> Grounded wall socket</li></ul></li>
-<li><strong>Tecmojo strip</strong><ul><li><b>From</b> Strip wall cord</li><li><b>To</b> Separate grounded wall socket</li></ul></li></ul></section><section class="device-group"><h4>CyberPower Battery/Surge bank</h4><ul class="steps"><li>Use the bank marked Battery/Surge</li>
-<li>Apply these labels to available sockets</li>
-<li><strong>1 · NAS</strong><ul><li>Original ASUSTOR brick</li></ul></li>
-<li><strong>2 · AT&amp;T GATEWAY</strong><ul><li>Original AT&amp;T power adapter</li></ul></li>
-<li><strong>3 · MIKROTIK SWITCH</strong><ul><li>Original 24 V adapter</li><li>Use the widest spaced battery socket if the plug needs room</li></ul></li>
-<li><strong>4 · TP-LINK HOUSE SWITCH</strong><ul><li>Original AC cord</li></ul></li>
-<li><strong>5 · FIBER CONVERTER</strong><ul><li>Original Q1000K adapter</li><li>Planned battery power for the converter</li></ul></li>
-<li><strong>6 · SPARE</strong><ul><li>The CP1500AVRLCD3 has six Battery/Surge sockets; use applied labels B1–B6</li></ul></li></ul></section><section class="device-group"><h4>Tecmojo rear AC outlets</h4><ul class="steps"><li>1 · P: Raspberry Pi with the power supply matched to its model</li>
-<li>2 · SPARE / KEEP CLEAR</li>
-<li>3 · SPARE</li>
-<li>4 · SPARE</li>
-<li>5 · SPARE</li>
-<li>6 · SPARE</li>
-<li>7 · SPARE</li>
-<li><strong>8 · SMARTTHINGS HUB</strong><ul><li>Use the original Samsung adapter</li><li>Label front rocker 8 SMARTTHINGS HUB</li><li>Use a short rated outlet saver if the adapter does not fit</li><li>Support the adapter near the strip if using an outlet saver</li></ul></li>
-<li>9 · SPARE</li></ul></section><section class="device-group"><h4>Tecmojo front USB</h4><ul class="steps"><li>USB-A 1 · Empty</li>
-<li>USB-A 2 · Empty</li>
-<li>USB-C 1 · Empty</li>
-<li>USB-C 2 · Empty</li></ul></section><section class="device-group"><h4>AC cable routing</h4><ul class="steps"><li>Use the left rear post when viewed from the front</li>
-<li>Add a loose Velcro strap just below the shelves</li>
-<li>Add a loose Velcro strap near U2</li>
-<li>Leave slack at the plugs</li>
-<li>Keep cords above the foot pads</li>
-<li>Keep cords out of the ladder path</li></ul></section><section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.cyberpowersystems.com/product/ups/intelligent-lcd/cp1500avrlcd3/">CyberPower outlet-bank reference</a></li>
-<li><a href="https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902.pdf?v=1759800105">Tecmojo installation manual</a></li></ul></section></section>
-<section class="guide-section" id="cable-map"><h2>Ethernet cable destinations</h2><ul class="steps"><li><a href="homelab-patch-panel.html">See each numbered cable route</a></li><li>C1 · NAS upper · black label</li><li>C2 · NAS lower · black label</li><li>C3 · SmartThings · black label</li><li>C4 · Gateway to MikroTik · red label</li><li>C5 · Converter to gateway · red label</li><li>C6 · MikroTik to TP-Link · black label</li></ul><ul class="steps"><li>Use the existing switch sockets for current devices</li><li>Reserve the new gateway connection for the planned switch-over</li>
+<section class="guide-section" id="power-map"><h2>Power and outlet labels</h2><ul class="steps"><li>UPS B1: NAS</li><li>UPS B2: PDU</li><li>Tecmojo rear outlet 2 / front rocker 2<ul><li>Hostess · gateway</li><li>Original AT&T power adapter</li></ul></li><li>Tecmojo rear outlet 3 / front rocker 3<ul><li>Expo · MikroTik</li><li>Original 24 V MikroTik adapter</li></ul></li><li>Tecmojo rear outlet 4 / front rocker 4<ul><li>Runner · TP-Link</li><li>Original TP-Link AC cord</li></ul></li><li>Tecmojo rear outlet 5 / front rocker 5<ul><li>Receiving Dock · converter</li><li>Original Q1000K power adapter</li></ul></li><li>Tecmojo rear outlet 8 / front rocker 8<ul><li>SmartThings</li><li>Original Samsung adapter</li></ul></li><li>Tecmojo rear outlet 7 / front rocker 7<ul><li>Orbi · existing location</li><li>Original Orbi adapter and existing routed power lead</li></ul></li><li>All other UPS outlets available</li><li>PDU 1, 6, 9 available</li><li>Orbi retains its existing location and Ethernet</li><li><a href="homelab-patch-panel.html#power-PDU-8">Complete clickable power map</a></li></ul></section><section class="guide-section" id="cable-map"><h2>Ethernet cable destinations</h2><ul class="steps"><li><a href="homelab-patch-panel.html">See each numbered cable route</a></li><li>C1 · NAS upper · black label</li><li>C2 · NAS lower · black label</li><li>C3 · SmartThings · black label</li><li>C4 · Gateway to MikroTik · red label</li><li>C5 · Converter to gateway · red label</li><li>C6 · MikroTik to TP-Link · black label</li></ul><ul class="steps"><li>Use the existing switch sockets for current devices</li><li>Reserve the new gateway connection for the planned switch-over</li>
 <li>Use the proposed office positions in the cable workbench</li>
 <li>Family-room panel positions remain unassigned</li>
 <li>Panel 17, 19, 21 and 23 are proposed for the office</li><li>Use the jack-number fields for the remaining unverified switch sockets</li>
@@ -88,9 +62,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <details class="slot"><summary><span class="unit">U2</span>Switched power</summary><article class="device" id="mount-power"><h3>Tecmojo switched power strip</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Face the rocker switches outward</li>
 <li>Case · 19 × 1.75 × 4.96 in (W × H × D)</li>
 <li>Check rear plug clearance below the NAS tray</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Strip wall cord</strong><ul><li><b>From</b> Tecmojo captive cord</li><li><b>To</b> Grounded wall socket</li></ul></li>
-<li><strong>SmartThings adapter</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Tecmojo rear outlet 8</li><li>Label rocker 8 SMARTTHINGS HUB</li></ul></li>
-<li><a href="#power-map">See all nine outlets</a></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>USB-A 1 · Empty</li>
 <li>USB-A 2 · Empty</li>
 <li>USB-C 1 · Empty</li>
@@ -107,15 +79,11 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li><strong>Shelf backstops</strong><ul><li>Start around 14 inches from the front if the slots allow</li><li>Keep the fan clear</li><li>Keep the backstops away from plugs</li><li>Keep the backstops away from cables</li></ul></li>
 <li>Set the 20.9-inch-minimum Tecmojo rails aside</li>
 <li>Weigh the NAS with its drives before choosing separate isolation pads</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>NAS power brick</strong><ul><li><b>From</b> Brick’s DC lead</li><li><b>To</b> NAS power jack</li></ul></li>
-<li><strong>NAS AC plug</strong><ul><li><b>From</b> Original NAS brick</li><li><b>To</b> UPS Battery/Surge socket labeled B1</li><li>Strap the brick beside the NAS</li><li>Keep the brick clear of the fan</li><li>Use the left rear post for the AC cord</li></ul></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li><strong>SONOFF radio cable</strong><ul><li><b>From</b> SONOFF USB-C</li><li><b>To</b> Original NAS USB jack</li><li>Carries data and power</li></ul></li>
 <li>Leave unused USB sockets empty</li>
 <li>Leave HDMI empty unless already in use</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>NAS TOP</strong><ul><li><b>From</b> Upper rear NAS Ethernet jack</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
-<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower rear NAS Ethernet jack</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
-<li>Strap the Ethernet leads loosely near the tray</li>
-<li>Strap the Ethernet leads loosely below U15</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.asustor.com/product/spec?p_id=82">ASUSTOR dimensions and downloads</a></li></ul></section></article>
 <article class="device" id="mount-sonoff"><h3>SONOFF Zigbee radio</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Secure near the rack’s open side</li>
 <li>Keep the antenna clear of metal</li>
@@ -138,10 +106,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep the NAS rear fan clear</li>
 <li>Check the actual gap beneath the U9 shelf during installation</li>
 </ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps">
-<li><strong>Gateway adapter DC lead</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> Gateway power socket</li></ul></li>
-<li><strong>Gateway AC plug · planned</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> UPS Battery/Surge socket labeled B2</li><li>Use the left rear post</li></ul></li>
-</ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>Incoming Ethernet</h4><ul class="steps">
 <li><strong>Converter connection</strong><ul><li><b>From</b> Q1000K Ethernet jack</li><li><b>To</b> Red ONT/LAN jack on the gateway</li><li>Preserve the installer-connected cable</li></ul></li>
 </ul></section>
@@ -167,18 +132,17 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep the fiber cable free of sharp bends</li>
 <li>Do not stack another device on it</li>
 </ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Converter adapter</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> Converter power socket</li></ul></li><li><strong>Converter AC plug · planned</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> UPS Battery/Surge socket labeled B5</li><li>Use the left rear post</li></ul></li><li>The gateway and converter both need battery power to keep fiber service available during a power outage</li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>Fiber</h4><ul class="steps"><li><strong>Incoming fiber</strong><ul><li><b>From</b> Existing fiber feed from outside</li><li><b>To</b> Existing green fiber connection on the Q1000K</li><li>Preserve the installed connection</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Converter to gateway</strong><ul><li><b>From</b> Existing Q1000K Ethernet jack</li><li><b>To</b> Gateway red ONT/LAN jack</li><li>Preserve the installer-connected jack</li></ul></li><li>Exact occupied Q1000K Ethernet jack is not readable in the photos</li><li>The Q1000K also has routing features</li><li>Its operating mode has not been checked</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>References</h4><ul class="steps"><li><a href="https://www.quantumfiber.com/content/dam/quantumfiber/equipment/downloads/Q1000_DataSheet_071024_final.pdf">Q1000K dimensions and power</a></li><li><a href="https://www.quantumfiber.com/support/equipment/user-guides/q1000k-smartnid.html">Q1000K equipment guide</a></li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U11</span>16-inch shelf · SmartThings</summary><article class="device" id="mount-hub"><h3>Samsung SmartThings hub</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit one IRONDIY 1U × 16-inch vented tray</li>
 <li>Dry-fit the rear extension brackets</li>
 <li>Check the hub under the U12 switch</li>
 <li>Leave room for the plugs behind the sliding stop</li>
 <li>Use a stable surface beside the rack if the shelf hardware cannot fit</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Samsung adapter DC lead</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Hub power jack</li></ul></li>
-<li><strong>Samsung adapter AC plug</strong><ul><li><b>From</b> Original Samsung adapter</li><li><b>To</b> Tecmojo outlet 8</li><li>Use the left rear post for the power lead</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Existing wired connection</strong><ul><li><b>From</b> Hub Ethernet jack</li><li><b>To</b> Original switch jack</li><li>Leave this connection empty if the hub uses Wi-Fi</li></ul></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the hub’s USB socket empty</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.samsung.com/nz/smartthings/hub/smartthings-v3-hub-gp-u999sjvlgaa/">Samsung hub family reference</a></li>
 <li><a href="https://www.amazon.com/dp/B0GXHL7MXW">Ordered 16-inch shelves</a></li></ul></section></article>
@@ -188,11 +152,8 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Mount at U12 using #10-32 rack screws</li>
 <li>Case reference · 11.57 × 1.73 × 7.09 in (W × H × D)</li>
 <li>Check the hole spacing on your switch</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>TP-Link AC cord</strong><ul><li><b>From</b> Original TP-Link power inlet</li><li><b>To</b> UPS Battery/Surge socket labeled B4</li><li>Use the left rear post</li><li>Use the UPS assignment to keep this switch powered during a wall outage</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
-<li><strong>LIVING-ROOM SWITCH · reserve 01</strong><ul><li><b>From</b> Front of patch panel jack 01 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
-<li><strong>Each other assigned room cable</strong><ul><li><b>From</b> Front of its assigned patch panel jack</li><li><b>To</b> Its assigned switch socket · see the numbered wiring view</li></ul></li>
-<li>Keep wired Wi-Fi on its existing house-side connection</li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.tp-link.com/us/business-networking/soho-switch-easy-smart/tl-sg1016de/">TP-Link switch specifications and downloads</a></li>
 <li><a href="https://www.tp-link.com/us/business-networking/accessory/rackmount-kit-13/">TP-Link Kit-13</a></li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U13</span>House and office cable panel</summary><article class="device" id="mount-patch"><h3>trueCABLE 24-port patch panel</h3><ul class="steps"><li><a href="homelab-patch-panel.html">Open the numbered panel and routing view</a></li><li>Use the panel numbers shown in the wiring view</li></ul><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the staggered 19-inch panel at U13</li>
@@ -206,24 +167,9 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Mount at U14 with #10-32 rack screws</li>
 <li>Case · 7.87 × 1.73 × 8.11 in (W × H × D)</li>
 <li>Leave room for the plugs</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>24 V adapter DC lead</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> Round DC jack on the switch front</li><li>Pass through the left side of the U15 brush</li><li>Use the left rear post</li></ul></li>
-<li><strong>24 V adapter AC plug</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> UPS Battery/Surge socket labeled B3</li><li>Support the adapter near the UPS or on a vented shelf</li></ul></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the front USB-A socket empty</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
-<li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li></ul></li>
-<li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li></ul></li>
-<li><strong>OFFICE PC</strong><ul><li><b>From</b> Front of proposed patch panel jack 17</li><li><b>To</b> MikroTik Ethernet 3</li></ul></li>
-<li><strong>MAC STUDIO</strong><ul><li><b>From</b> Front of proposed patch panel jack 23</li><li><b>To</b> MikroTik Ethernet 8</li></ul></li>
-<li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 19</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
-<li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 21</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
-<li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
-<li><strong>NVR · separate run</strong><ul><li>Current physical switch socket remains unidentified</li><li>P: Floor Plan 5 to Runner Ethernet 4</li><li>Historical Orbi observations do not establish the physical connection</li></ul></li>
-<li>Top Ethernet row · 2, 4, 6, 8</li>
-<li>Bottom Ethernet row · 1, 3, 5, 7</li>
-<li>Leave unused Ethernet sockets empty</li>
-<li>Use SFP+ 1 for the planned gateway connection through its existing Ethernet adapter</li>
-<li>Leave SFP+ 2 in its current state</li>
-<li><a href="#cable-map">See the Ethernet jack-number list</a></li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://mikrotik.com/product/crs310_8g_2s_in">MikroTik specifications and downloads</a></li></ul></section></article></details>
 <details class="slot"><summary><span class="unit">U15</span>Upper cable opening</summary><article class="device" id="mount-top"><h3>Cable Matters upper brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the second 19-inch brush at U15</li></ul></section>
 <section class="device-group"><h4>Cable route</h4><ul class="steps"><li><strong>NAS TOP Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
@@ -238,23 +184,21 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <details class="slot"><summary><span class="unit">Beside rack</span>Battery backup</summary><article class="device" id="mount-ups"><h3>CyberPower battery backup</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Stand the UPS upright beside the rack</li>
 <li>Keep the vents clear</li>
 <li>Leave access to the Battery/Surge bank</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>UPS wall cord</strong><ul><li><b>From</b> CyberPower UPS</li><li><b>To</b> Grounded wall socket</li></ul></li>
-<li><a href="#power-map">See the battery outlet assignments</a></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li><strong>Existing UPS data cable, if present</strong><ul><li><b>From</b> Original UPS USB port</li><li><b>To</b> Original NAS USB port</li></ul></li></ul></section></article>
 </details>
 <details class="slot"><summary><span class="unit">Elsewhere</span>Office switches and Wi-Fi</summary><article class="device" id="mount-orbi"><h3>Netgear Orbi Wi-Fi base</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the RBR50 in its existing location</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Orbi base adapter</strong><ul><li><b>From</b> Original adapter</li><li><b>To</b> Orbi base DC socket</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Existing house-side feed</strong><ul><li><b>From</b> Original house-side connection</li><li><b>To</b> Original rear Ethernet jack on the Orbi base</li></ul></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.downloads.netgear.com/files/GDC/RBR50/RBR50_QSG_EN.pdf">Orbi base rear panel</a></li></ul></section></article>
 <article class="device" id="mount-satellite"><h3>Netgear Orbi Wi-Fi satellite</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the RBS50 in its existing location</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Satellite adapter</strong><ul><li><b>From</b> Original adapter</li><li><b>To</b> Satellite DC socket</li></ul></li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Existing cable, if wired</strong><ul><li><b>From</b> Original house-side connection</li><li><b>To</b> Original satellite Ethernet jack</li></ul></li>
-<li>Leave the Ethernet jack empty if the satellite connects wirelessly</li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://kb.netgear.com/000051205/What-is-Ethernet-backhaul-and-how-do-I-set-it-up-on-my-Orbi-WiFi-System">Netgear satellite Ethernet reference</a></li></ul></section></article>
 <article class="device" id="mount-office"><h3>Office wall connections</h3><ul class="steps"><li>West wall · Windows PC and Mac Studio</li><li>South wall · Apple TV and Samsung TV</li><li>Keep the spare TRENDnet 2.5 GbE switch disconnected</li><li><a href="#cable-map">See the four patch panel connections</a></li></ul></article>
 <article class="device" id="mount-media"><h3>TP-Link 5-port media switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Keep the switch in its existing location</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li>Keep its original adapter connected</li></ul></section>
-<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li>Leave the current living-room cables in place</li><li>The PlayStation reaches MikroTik Ethernet 7</li><li>Check the console for LAN Cable before assigning the living-room switch lead</li><li>Assign a panel position after identifying the wall lead</li><li>Earlier observations placed recorder traffic on Ethernet 1; the NVR has its own physical run</li></ul></section></article></details></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
+<section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section></article></details></section>
 </main>
 <script>
 const drawing = document.getElementById('rack-drawing');
@@ -308,7 +252,7 @@ function port(parent, x, y, width = 13, height = 10) {
 function ethernetSwitch(id, unit, width, name, count, optical = false) {
   const group = item(id, name);
   const y = unitTop(unit) + .225;
-  const deviceCenter = optical ? railLeft + railWidth - width / 2 : center;
+  const deviceCenter = optical ? railLeft + width / 2 : center;
   const x = deviceCenter - width / 2;
   const wing = x - railLeft;
   rectangle(group, railLeft, y + 3, wing, 38, '#657f77', { stroke: '#435b55' });
@@ -319,7 +263,7 @@ function ethernetSwitch(id, unit, width, name, count, optical = false) {
   label(group, deviceCenter, y + 13, name, 12, '#e7f0eb', 'middle');
   const columns = count / 2;
   const rowWidth = columns * 15 + (optical ? 35 : 0);
-  const rowStart = deviceCenter - rowWidth / 2;
+  const rowStart = optical ? deviceCenter - rowWidth / 2 : x + width - rowWidth - 12;
   for (let index = 0; index < columns; index++) {
     port(group, rowStart + index * 15, y + 19, 12, 8);
     port(group, rowStart + index * 15, y + 31, 12, 8);
