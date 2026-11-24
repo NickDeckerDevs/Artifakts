@@ -15,7 +15,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <body>
 <header><div><h1>homelab rack build</h1></div></header>
 <nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
-<main><section class="guide-section" id="panel-proposal"><h2>Floor Plan · cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the redesigned cable workbench</a></li><li>Expo / MikroTik mounts at the right above Floor Plan</li><li>Runner / TP-Link is centered below</li><li>Panel positions follow clean cable paths; colors identify connections</li><li>Proposed office positions: 17 PC, 19 Apple TV, 21 Samsung TV, 23 Mac</li><li>Other room positions remain unassigned</li><li>Previous color-block allocations are retired</li></ul></section>
+<main><section class="guide-section" id="panel-proposal"><h2>Floor Plan · cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open the redesigned cable workbench</a></li><li>Expo / MikroTik mounts at the right above Floor Plan</li><li>Runner / TP-Link is centered below</li><li>Panel positions follow clean cable paths; colors identify connections</li><li>Proposed office positions: 17 PC, 19 Apple TV, 21 Samsung TV, 23 Mac</li><li>Open the map for every room-run target, wall-plate jack and switch socket</li><li>P means Proposed</li><li>Eight existing jacks stay in the record; six empty openings use four-jack plates</li><li>Previous color-block allocations are retired</li></ul></section>
 <section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
 <li>New fiber equipment is installed · switch-over is still ahead</li>
 <li>The Comcast gateway is removed from this build plan</li>
@@ -42,7 +42,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li><strong>3 · MIKROTIK SWITCH</strong><ul><li>Original 24 V adapter</li><li>Use the widest spaced battery socket if the plug needs room</li></ul></li>
 <li><strong>4 · TP-LINK HOUSE SWITCH</strong><ul><li>Original AC cord</li></ul></li>
 <li><strong>5 · FIBER CONVERTER</strong><ul><li>Original Q1000K adapter</li><li>Planned battery power for the converter</li></ul></li>
-<li><strong>6 · SPARE</strong><ul><li>Label it if the UPS has a sixth battery socket</li></ul></li></ul></section><section class="device-group"><h4>Tecmojo rear AC outlets</h4><ul class="steps"><li>1 · Available for the TP-Link house switch if you choose wall-powered front restart control</li>
+<li><strong>6 · SPARE</strong><ul><li>The CP1500AVRLCD3 has six Battery/Surge sockets; use applied labels B1–B6</li></ul></li></ul></section><section class="device-group"><h4>Tecmojo rear AC outlets</h4><ul class="steps"><li>1 · P: Raspberry Pi with the power supply matched to its model</li>
 <li>2 · SPARE / KEEP CLEAR</li>
 <li>3 · SPARE</li>
 <li>4 · SPARE</li>
@@ -64,7 +64,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Use the proposed office positions in the cable workbench</li>
 <li>Family-room panel positions remain unassigned</li>
 <li>Panel 17, 19, 21 and 23 are proposed for the office</li><li>Use the jack-number fields for the remaining unverified switch sockets</li>
-<li>Keep unidentified loose leads labeled and parked</li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>FIBER CONVERTER TO GATEWAY</strong><ul><li><b>From</b> Q1000K Ethernet jack · preserve the installer connection</li><li><b>To</b> BGW620-700 red ONT/LAN jack</li><li>The gateway end is visible in the supplied photo</li></ul></li>
+<li>Keep unidentified loose leads labeled and parked</li><li><a href="START-HERE.html">Pre-disconnect checklist and offline build steps</a></li><li><a href="homelab-offline.zip" download>Download the complete offline kit</a></li></ul><section class="device-group"><h4>Cables at the switches</h4><ul class="steps"><li><strong>FIBER CONVERTER TO GATEWAY</strong><ul><li><b>From</b> Q1000K Ethernet jack · preserve the installer connection</li><li><b>To</b> BGW620-700 red ONT/LAN jack</li><li>The gateway end is visible in the supplied photo</li></ul></li>
 <li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
 <li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-top"></label></li></ul></li>
 <li><strong>NAS BOTTOM</strong><ul><li><b>From</b> Lower Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS BOTTOM jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-bottom"></span></li><li><label>MikroTik jack number <input type="text" inputmode="numeric" maxlength="2" data-port="nas-bottom"></label></li></ul></li>
@@ -108,7 +108,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Set the 20.9-inch-minimum Tecmojo rails aside</li>
 <li>Weigh the NAS with its drives before choosing separate isolation pads</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>NAS power brick</strong><ul><li><b>From</b> Brick’s DC lead</li><li><b>To</b> NAS power jack</li></ul></li>
-<li><strong>NAS AC plug</strong><ul><li><b>From</b> Original NAS brick</li><li><b>To</b> UPS battery socket 1</li><li>Strap the brick beside the NAS</li><li>Keep the brick clear of the fan</li><li>Use the left rear post for the AC cord</li></ul></li></ul></section>
+<li><strong>NAS AC plug</strong><ul><li><b>From</b> Original NAS brick</li><li><b>To</b> UPS Battery/Surge socket labeled B1</li><li>Strap the brick beside the NAS</li><li>Keep the brick clear of the fan</li><li>Use the left rear post for the AC cord</li></ul></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li><strong>SONOFF radio cable</strong><ul><li><b>From</b> SONOFF USB-C</li><li><b>To</b> Original NAS USB jack</li><li>Carries data and power</li></ul></li>
 <li>Leave unused USB sockets empty</li>
 <li>Leave HDMI empty unless already in use</li></ul></section>
@@ -140,7 +140,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 </ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps">
 <li><strong>Gateway adapter DC lead</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> Gateway power socket</li></ul></li>
-<li><strong>Gateway AC plug · planned</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> UPS battery socket 2</li><li>Use the left rear post</li></ul></li>
+<li><strong>Gateway AC plug · planned</strong><ul><li><b>From</b> Original AT&amp;T adapter</li><li><b>To</b> UPS Battery/Surge socket labeled B2</li><li>Use the left rear post</li></ul></li>
 </ul></section>
 <section class="device-group"><h4>Incoming Ethernet</h4><ul class="steps">
 <li><strong>Converter connection</strong><ul><li><b>From</b> Q1000K Ethernet jack</li><li><b>To</b> Red ONT/LAN jack on the gateway</li><li>Preserve the installer-connected cable</li></ul></li>
@@ -167,7 +167,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Keep the fiber cable free of sharp bends</li>
 <li>Do not stack another device on it</li>
 </ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Converter adapter</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> Converter power socket</li></ul></li><li><strong>Converter AC plug · planned</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> UPS battery socket 5</li><li>Use the left rear post</li></ul></li><li>The gateway and converter both need battery power to keep fiber service available during a power outage</li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>Converter adapter</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> Converter power socket</li></ul></li><li><strong>Converter AC plug · planned</strong><ul><li><b>From</b> Original Q1000K adapter</li><li><b>To</b> UPS Battery/Surge socket labeled B5</li><li>Use the left rear post</li></ul></li><li>The gateway and converter both need battery power to keep fiber service available during a power outage</li></ul></section>
 <section class="device-group"><h4>Fiber</h4><ul class="steps"><li><strong>Incoming fiber</strong><ul><li><b>From</b> Existing fiber feed from outside</li><li><b>To</b> Existing green fiber connection on the Q1000K</li><li>Preserve the installed connection</li></ul></li></ul></section>
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>Converter to gateway</strong><ul><li><b>From</b> Existing Q1000K Ethernet jack</li><li><b>To</b> Gateway red ONT/LAN jack</li><li>Preserve the installer-connected jack</li></ul></li><li>Exact occupied Q1000K Ethernet jack is not readable in the photos</li><li>The Q1000K also has routing features</li><li>Its operating mode has not been checked</li></ul></section>
 <section class="device-group"><h4>References</h4><ul class="steps"><li><a href="https://www.quantumfiber.com/content/dam/quantumfiber/equipment/downloads/Q1000_DataSheet_071024_final.pdf">Q1000K dimensions and power</a></li><li><a href="https://www.quantumfiber.com/support/equipment/user-guides/q1000k-smartnid.html">Q1000K equipment guide</a></li></ul></section></article></details>
@@ -188,7 +188,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Mount at U12 using #10-32 rack screws</li>
 <li>Case reference · 11.57 × 1.73 × 7.09 in (W × H × D)</li>
 <li>Check the hole spacing on your switch</li></ul></section>
-<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>TP-Link AC cord</strong><ul><li><b>From</b> Original TP-Link power inlet</li><li><b>To</b> UPS battery socket 4</li><li>Use the left rear post</li><li>Tecmojo outlet 1 is the wall-powered option for front restart control</li><li>Use the UPS assignment to keep this switch powered during a wall outage</li></ul></li></ul></section>
+<section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>TP-Link AC cord</strong><ul><li><b>From</b> Original TP-Link power inlet</li><li><b>To</b> UPS Battery/Surge socket labeled B4</li><li>Use the left rear post</li><li>Use the UPS assignment to keep this switch powered during a wall outage</li></ul></li></ul></section>
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
 <li><strong>LIVING-ROOM SWITCH · reserve 01</strong><ul><li><b>From</b> Front of patch panel jack 01 after the wall lead is identified</li><li><b>To</b> Its original jack on the TP-Link rack switch<span data-show="media"></span></li></ul></li>
 <li><strong>Each other assigned room cable</strong><ul><li><b>From</b> Front of its assigned patch panel jack</li><li><b>To</b> Its assigned switch socket · see the numbered wiring view</li></ul></li>
@@ -207,7 +207,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Case · 7.87 × 1.73 × 8.11 in (W × H × D)</li>
 <li>Leave room for the plugs</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><strong>24 V adapter DC lead</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> Round DC jack on the switch front</li><li>Pass through the left side of the U15 brush</li><li>Use the left rear post</li></ul></li>
-<li><strong>24 V adapter AC plug</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> UPS battery socket 3</li><li>Support the adapter near the UPS or on a vented shelf</li></ul></li></ul></section>
+<li><strong>24 V adapter AC plug</strong><ul><li><b>From</b> Original MikroTik adapter</li><li><b>To</b> UPS Battery/Surge socket labeled B3</li><li>Support the adapter near the UPS or on a vented shelf</li></ul></li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the front USB-A socket empty</li></ul></section>
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><strong>AT&amp;T GATEWAY · planned switch-over connection</strong><ul><li><b>From</b> BGW620-700 blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through the existing Ethernet adapter</li><li>Check the adapter connection and link speed during the later switch-over</li></ul></li>
 <li><strong>NAS TOP</strong><ul><li><b>From</b> Upper Ethernet jack on the back of the NAS</li><li><b>To</b> Original NAS TOP jack on the MikroTik (Ethernet 2 or 4)<span data-show="nas-top"></span></li></ul></li>
@@ -217,7 +217,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li><strong>OFFICE APPLE TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 19</li><li><b>To</b> MikroTik Ethernet 5</li></ul></li>
 <li><strong>OFFICE SAMSUNG TV</strong><ul><li><b>From</b> Front of proposed patch panel jack 21</li><li><b>To</b> MikroTik Ethernet 6</li></ul></li>
 <li><strong>LINK TO HOUSE SWITCH</strong><ul><li><b>From</b> MikroTik Ethernet 7</li><li><b>To</b> Original MikroTik jack on the TP-Link rack switch<span data-show="house-tplink"></span></li></ul></li>
-<li><strong>NVR · separate run</strong><ul><li>Physical switch socket remains unidentified</li><li>Historical Orbi observations do not establish the physical connection</li></ul></li>
+<li><strong>NVR · separate run</strong><ul><li>Current physical switch socket remains unidentified</li><li>P: Floor Plan 5 to Runner Ethernet 4</li><li>Historical Orbi observations do not establish the physical connection</li></ul></li>
 <li>Top Ethernet row · 2, 4, 6, 8</li>
 <li>Bottom Ethernet row · 1, 3, 5, 7</li>
 <li>Leave unused Ethernet sockets empty</li>
