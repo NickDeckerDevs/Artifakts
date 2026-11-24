@@ -1,66 +1,66 @@
-# Naming and layout decisions — November 24, 2026
+# Cable workbench — current installation plan
 
-- OF: Office
-- FR: Family room
-- MB: Master bedroom
-- B1: Bedroom 1
-- B2: Guest bedroom
-- WW: West wall
-- SW: South wall
-- PS: Plant shelf at the south side of the family-room West wall
-- RACK: Wall plate beside rack
-- ROOM: Wall plate in room
-- J1–J4: Jack within plate
-- PP1–PP24: Physical patch-panel socket
-- P: Proposed status; never part of the permanent physical identifier
+- Network revision: November 24, 2026.
+- Expo mounted LEFT. Runner centered, socket block RIGHT.
+- Front panel numbers follow its printed staggered arrangement.
 
-## Example — meepmax1 / Mac Studio
+## Switch-to-panel preparation
 
-- Run: OF-WW-J2
-- Switch: Expo Ethernet 8 — preserve
-- Panel: PP23 — proposed
-- Rack wall plate: OF-WP-RACK-WW-J2 — proposed
-- Room wall plate: OF-WP-ROOM-WW-J2 — proposed jack choice
-- Device: meepmax1 / Mac Studio
-- Historical aliases: m1meepmax, OF-W2
-- Future office switch adds a route station; permanent wall-run labels stay the same.
+- Runner1 to Expo7: direct jumper.
+- Runner2–16: Floor Plan10–24, respectively.
+- Runner16 / FP24; Runner15 / FP23; Runner14 / FP22; continue down to Runner2 / FP10.
+- All fifteen Runner panel sockets get a rear cable now.
+- Label front and rear cables FP[number]-R[number] plus destination ID.
+- Coil unassigned rear cables behind the panel, ready for later wall-plate installation.
+- Expo8 / FP9; Expo6 / FP8; Expo5 / FP7; Expo3 / FP6.
+- Expo1: main Orbi via upper brush.
+- Expo2/4: preserve exact existing NAS connections via upper brush.
+- Expo SFP+1: gateway via Ethernet adapter and upper brush.
+- Expo SFP+2: Ethernet adapter present, no connection assigned.
+- Main Orbi LAN output / FP5 / family-room AP cable / satellite Orbi.
+- FP1–4: unassigned.
 
-## Physical layout
+## Latest Expo assignments
 
-- Expo mounted LEFT — completed by owner.
-- Runner chassis centered; socket block on RIGHT — confirmed from photo.
-- Panel 17–24: existing connections, working from right to left.
-- Panel 11–16: proposed bedroom connections.
-- Panel 1–10: available at accessible left.
-- Earlier alternate office sockets had no verified clearance benefit.
-- Current placement prioritizes access to future terminations over shortest front jumpers.
-- Existing Expo assignments are preserved even though Expo moved left.
-- Colors identify connections; they do not dictate blocks of four.
+- Expo3: Office West, pc-loadletter / Custom PC.
+- Expo6: Office West, meepmax1 / Mac Studio.
+- Expo5: Office South, workout room (169) / Apple TV.
+- Expo8: Office South, Samsung TV.
+- Latest owner wall/socket list supersedes older 6/8 device pairing.
+- Keep the actual current cable in its Expo socket; do not change switch configuration.
 
-## Scope and evidence
+## Wall-plate grouping
 
-- Owner confirmed physical arrangement and desired power topology.
-- Exact final wall-jack choices can be entered during installation.
-- FR-GA is the sole existing garage cable, previously unidentified; condition untested.
-- Orbi retains its present Ethernet path and position; no new physical Ethernet link is invented.
-- NAS retains its exact existing two cables and Expo sockets 2 / 4.
-- Internet configuration and automatic shutdown are outside this task.
-- Pi 400 remains future office equipment and uses office power, like the future office switch.
-- PDU feeds all rack AC loads except NAS, plus existing Orbi; PDU input is UPS B2.
-- This records the owner's chosen PDU/UPS topology; it does not certify manufacturer compatibility.
+- OF: Office; WW West wall, SW South wall.
+- FR: Family room; PS plant shelf.
+- MB: Master bedroom.
+- B1: Jayce’s bedroom.
+- B2: Guest bedroom.
+- RACK / ROOM distinguish ends of a wall run.
+- J1–J4 remain compact identifiers; human names display (1), (2).
+- Family-room rack plate has exactly four destinations: NVR/switch, AP/Orbi, garage, plant shelf.
+- AP is separate from plant shelf and fed by main Orbi, not Runner.
+- NVR-labeled cable serves family-room switch. NVR downstream connection remains probable, not verified.
+- Garage is one existing cable, FR-GA. Prepare its panel link; leave the wall lead disconnected if faulty.
 
-## Data source
+## Devices and display
 
-- homelab-connections.json is the full structured source delivered with this map.
-- The standalone HTML embeds the same data so local opening requires no server.
-- homelab-patch-panel.md is the readable connection record.
-- Local installation notes are separate from the published proposed layout.
+- pc-loadletter / Custom PC.
+- meepmax1 / Mac Studio; m1meepmax is a historical alias.
+- Main Bedroom / master Apple TV.
+- OG LG / family-room Apple TV.
+- workout room (169) / office Apple TV.
+- kids room / guest-bedroom Apple TV.
+- The Safe / Raspberry Pi400: prepared Runner5 / FP13 rear cable.
+- Second Pi: prepared Runner4 / FP12 rear cable.
+- SmartThings: Runner11 / FP19; rear cable to hub LAN.
+- Physical black cables are drawn WHITE for contrast; black keystones stay black.
+- Expo, Floor Plan and Runner have the same background shade.
 
-## USB power references
+## Source and review boundary
 
-- Tecmojo manual states shared USB output 5 Vdc / 3 A, 20 W max; individual-port simultaneous output is not specified.
-- Raspberry Pi 400 needs 5 V / 3 A; official supply is 5.1 V / 3 A.
-- Do not treat a USB connector alone as proof of compatible power.
-- SmartThings uses its DC input; SONOFF requires the existing NAS data connection.
-- [Tecmojo manual](https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902_2025.04.15_D.1.08.098.108098206_TEC-SMS-231005.pdf?v=1759803230)
-- [Raspberry Pi supply](https://www.raspberrypi.com/products/type-c-power-supply/)
+- homelab-connections.json is the full structured source; HTML embeds identical data for local use.
+- Labels, Markdown and diagrams derive from that source.
+- P means Proposed status, separate from permanent connection IDs.
+- Power research follows network publication; prior power topology retained pending that review.
+- Internet configuration and automatic shutdown remain outside scope.
