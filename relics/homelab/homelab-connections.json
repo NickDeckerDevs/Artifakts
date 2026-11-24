@@ -12,23 +12,23 @@
       "switch": "Runner",
       "socket": "Ethernet 16",
       "panel": 24,
-      "note": "Owner confirmed the rack plate label NVR is the family-room switch run. PlayStation is on that switch; OG LG Apple TV will be connected in this equipment area. NVR may be behind this switch; its downstream attachment is not verified.",
+      "note": "Owner confirmed the rack plate label NVR is the family-room switch run. PlayStation is on that switch; OG LG Apple TV will be connected in this equipment area. NVR may be behind this switch; its downstream attachment is not verified. Keep the existing plate and all jack positions exactly as installed.",
       "currentSwitch": "Runner",
       "currentSocket": null,
       "panelStatus": "Proposed",
       "targetStatus": "Proposed",
       "rackPlate": "FR-WP-RACK",
-      "rackJack": "1",
+      "rackJack": "existing NVR / switch jack",
       "roomPlate": "FR-WP-ROOM-WW",
-      "roomJack": "1",
+      "roomJack": "existing jack",
       "runWork": "Existing cable",
       "routeStations": [
         "Runner · Ethernet 16",
         "Yellow patch cable → Floor Plan 24 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 24 REAR → FR-WP-RACK (1)",
-        "FR-WP-RACK (1) → FR-WP-ROOM-WW (1)",
-        "FR-WP-ROOM-WW (1) → Family-room switch · PlayStation / OG LG Apple TV"
+        "Floor Plan 24 REAR → FR-WP-RACK · existing NVR / switch jack",
+        "FR-WP-RACK · existing NVR / switch jack → FR-WP-ROOM-WW · existing jack",
+        "FR-WP-ROOM-WW · existing jack → Family-room switch · PlayStation / OG LG Apple TV"
       ],
       "routeType": "wall",
       "rearLabel": "FP24-R16 · FR-WW-J1",
@@ -50,17 +50,17 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 24 REAR → FR-WP-RACK (1)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 24 REAR → FR-WP-RACK · existing NVR / switch jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "FR-WP-RACK (1) → FR-WP-ROOM-WW (1)",
+          "title": "FR-WP-RACK · existing NVR / switch jack → FR-WP-ROOM-WW · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
           "what": "Room cable",
-          "title": "FR-WP-ROOM-WW (1) → Family-room switch · PlayStation / OG LG Apple TV",
+          "title": "FR-WP-ROOM-WW · existing jack → Family-room switch · PlayStation / OG LG Apple TV",
           "detail": "Separate room patch cable to device Ethernet port."
         },
         {
@@ -68,7 +68,9 @@
           "title": "FP24-R16 · FR-WW-J1",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID FR-WW-J1."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "FR-PS-J1",
@@ -82,22 +84,22 @@
       "switch": "Runner",
       "socket": "Ethernet 15",
       "panel": 23,
-      "note": "Runner 15 to Floor Plan 23. Fit a labeled rear cable now; connect its destination when ready.",
+      "note": "Runner 15 to Floor Plan 23. Fit a labeled rear cable now; connect its destination when ready. Keep the existing plate and all jack positions exactly as installed.",
       "currentSwitch": "Runner",
       "currentSocket": null,
       "panelStatus": "Proposed",
       "targetStatus": "Proposed",
       "rackPlate": "FR-WP-RACK",
-      "rackJack": "4",
+      "rackJack": "existing Plant shelf jack",
       "roomPlate": "FR-WP-ROOM-PS",
-      "roomJack": "1",
+      "roomJack": "existing jack",
       "runWork": "Existing cable",
       "routeStations": [
         "Runner · Ethernet 15",
         "Yellow patch cable → Floor Plan 23 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 23 REAR → FR-WP-RACK (4)",
-        "FR-WP-RACK (4) → FR-WP-ROOM-PS (1)",
+        "Floor Plan 23 REAR → FR-WP-RACK · existing Plant shelf jack",
+        "FR-WP-RACK · existing Plant shelf jack → FR-WP-ROOM-PS · existing jack",
         "Plant shelf connection"
       ],
       "routeType": "wall",
@@ -120,12 +122,12 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 23 REAR → FR-WP-RACK (4)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 23 REAR → FR-WP-RACK · existing Plant shelf jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "FR-WP-RACK (4) → FR-WP-ROOM-PS (1)",
+          "title": "FR-WP-RACK · existing Plant shelf jack → FR-WP-ROOM-PS · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
@@ -138,7 +140,9 @@
           "title": "FP23-R15 · FR-PS-J1",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID FR-PS-J1."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "FR-GA",
@@ -152,22 +156,22 @@
       "switch": "Runner",
       "socket": "Ethernet 14",
       "panel": 22,
-      "note": "One existing garage cable, previously UNKNOWN. Runner 14 / Floor Plan 22 front and rear cables are prepared. Leave the garage wall lead disconnected if faulty; condition is not verified.",
+      "note": "One existing garage cable, previously UNKNOWN. Runner 14 / Floor Plan 22 front and rear cables are prepared. Leave the garage wall lead disconnected if faulty; condition is not verified. Keep the existing plate and all jack positions exactly as installed.",
       "currentSwitch": null,
       "currentSocket": null,
       "panelStatus": "Proposed",
       "targetStatus": "Proposed",
       "rackPlate": "FR-WP-RACK",
-      "rackJack": "3",
+      "rackJack": "existing Garage / UNKNOWN jack",
       "roomPlate": "GA-WP-ROOM",
-      "roomJack": "1",
+      "roomJack": "existing jack",
       "runWork": "Identify cable",
       "routeStations": [
         "Runner · Ethernet 14",
         "Yellow patch cable → Floor Plan 22 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 22 REAR → FR-WP-RACK (3)",
-        "FR-WP-RACK (3) → GA-WP-ROOM (1)",
+        "Floor Plan 22 REAR → FR-WP-RACK · existing Garage / UNKNOWN jack",
+        "FR-WP-RACK · existing Garage / UNKNOWN jack → GA-WP-ROOM · existing jack",
         "Existing garage cable · condition untested"
       ],
       "routeType": "wall",
@@ -190,12 +194,12 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 22 REAR → FR-WP-RACK (3)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 22 REAR → FR-WP-RACK · existing Garage / UNKNOWN jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "FR-WP-RACK (3) → GA-WP-ROOM (1)",
+          "title": "FR-WP-RACK · existing Garage / UNKNOWN jack → GA-WP-ROOM · existing jack",
           "detail": "Existing garage / UNKNOWN cable; condition untested. Leave disconnected if faulty."
         },
         {
@@ -208,7 +212,9 @@
           "title": "FP22-R14 · FR-GA",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID FR-GA."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "READY-R13",
@@ -1001,27 +1007,27 @@
       "state": "Existing",
       "device": "Samsung TV",
       "wall": "Office · South wall",
-      "plate": "OF-WP-RACK-SW",
+      "plate": "OF-WP-RACK",
       "switch": "Expo",
       "socket": "Ethernet 8",
       "panel": 9,
-      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.",
+      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.",
       "currentSwitch": "Expo",
       "currentSocket": "Ethernet 8",
       "panelStatus": "Proposed",
       "targetStatus": "Owner confirmed wall assignment",
-      "rackPlate": "OF-WP-RACK-SW",
-      "rackJack": "2",
+      "rackPlate": "OF-WP-RACK",
+      "rackJack": "existing Samsung TV jack",
       "roomPlate": "OF-WP-ROOM-SW",
-      "roomJack": "2",
+      "roomJack": "existing jack",
       "runWork": "Existing cable",
       "routeStations": [
         "Expo · Ethernet 8",
         "Blue patch cable → Floor Plan 9 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 9 REAR → OF-WP-RACK-SW (2)",
-        "OF-WP-RACK-SW (2) → OF-WP-ROOM-SW (2)",
-        "OF-WP-ROOM-SW (2) → Samsung TV"
+        "Floor Plan 9 REAR → OF-WP-RACK · existing Samsung TV jack",
+        "OF-WP-RACK · existing Samsung TV jack → OF-WP-ROOM-SW · existing jack",
+        "OF-WP-ROOM-SW · existing jack → Samsung TV"
       ],
       "routeType": "wall",
       "rearLabel": "FP9-EX8",
@@ -1043,17 +1049,17 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 9 REAR → OF-WP-RACK-SW (2)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 9 REAR → OF-WP-RACK · existing Samsung TV jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "OF-WP-RACK-SW (2) → OF-WP-ROOM-SW (2)",
+          "title": "OF-WP-RACK · existing Samsung TV jack → OF-WP-ROOM-SW · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
           "what": "Room cable",
-          "title": "OF-WP-ROOM-SW (2) → Samsung TV",
+          "title": "OF-WP-ROOM-SW · existing jack → Samsung TV",
           "detail": "Separate room patch cable to device Ethernet port."
         },
         {
@@ -1061,7 +1067,9 @@
           "title": "FP9-EX8",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID OF-SW-J2."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "OF-WW-J2",
@@ -1071,19 +1079,19 @@
       "state": "Existing",
       "device": "meepmax1 · Mac Studio",
       "wall": "Office · West wall",
-      "plate": "OF-WP-RACK-WW",
+      "plate": "OF-WP-RACK",
       "switch": "Expo",
       "socket": "Ethernet 6",
       "panel": 8,
-      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.",
+      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.",
       "currentSwitch": "Expo",
       "currentSocket": "Ethernet 6",
       "panelStatus": "Proposed",
       "targetStatus": "Owner confirmed wall assignment",
-      "rackPlate": "OF-WP-RACK-WW",
-      "rackJack": "2",
+      "rackPlate": "OF-WP-RACK",
+      "rackJack": "existing Mac Studio jack",
       "roomPlate": "OF-WP-ROOM-WW",
-      "roomJack": "2",
+      "roomJack": "existing jack",
       "runWork": "Existing cable",
       "aliases": [
         "m1meepmax",
@@ -1093,9 +1101,9 @@
         "Expo · Ethernet 6",
         "Blue patch cable → Floor Plan 8 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 8 REAR → OF-WP-RACK-WW (2)",
-        "OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2)",
-        "OF-WP-ROOM-WW (2) → meepmax1 · Mac Studio"
+        "Floor Plan 8 REAR → OF-WP-RACK · existing Mac Studio jack",
+        "OF-WP-RACK · existing Mac Studio jack → OF-WP-ROOM-WW · existing jack",
+        "OF-WP-ROOM-WW · existing jack → meepmax1 · Mac Studio"
       ],
       "routeType": "wall",
       "rearLabel": "FP8-EX6",
@@ -1117,17 +1125,17 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 8 REAR → OF-WP-RACK-WW (2)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 8 REAR → OF-WP-RACK · existing Mac Studio jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2)",
+          "title": "OF-WP-RACK · existing Mac Studio jack → OF-WP-ROOM-WW · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
           "what": "Room cable",
-          "title": "OF-WP-ROOM-WW (2) → meepmax1 · Mac Studio",
+          "title": "OF-WP-ROOM-WW · existing jack → meepmax1 · Mac Studio",
           "detail": "Separate room patch cable to device Ethernet port."
         },
         {
@@ -1135,7 +1143,9 @@
           "title": "FP8-EX6",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID OF-WW-J2."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "OF-SW-J1",
@@ -1145,27 +1155,27 @@
       "state": "Existing",
       "device": "workout room (169) · Apple TV",
       "wall": "Office · South wall",
-      "plate": "OF-WP-RACK-SW",
+      "plate": "OF-WP-RACK",
       "switch": "Expo",
       "socket": "Ethernet 5",
       "panel": 7,
-      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.",
+      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.",
       "currentSwitch": "Expo",
       "currentSocket": "Ethernet 5",
       "panelStatus": "Proposed",
       "targetStatus": "Owner confirmed wall assignment",
-      "rackPlate": "OF-WP-RACK-SW",
-      "rackJack": "1",
+      "rackPlate": "OF-WP-RACK",
+      "rackJack": "existing Apple TV jack",
       "roomPlate": "OF-WP-ROOM-SW",
-      "roomJack": "1",
+      "roomJack": "existing jack",
       "runWork": "Existing cable",
       "routeStations": [
         "Expo · Ethernet 5",
         "Blue patch cable → Floor Plan 7 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 7 REAR → OF-WP-RACK-SW (1)",
-        "OF-WP-RACK-SW (1) → OF-WP-ROOM-SW (1)",
-        "OF-WP-ROOM-SW (1) → workout room (169) · Apple TV"
+        "Floor Plan 7 REAR → OF-WP-RACK · existing Apple TV jack",
+        "OF-WP-RACK · existing Apple TV jack → OF-WP-ROOM-SW · existing jack",
+        "OF-WP-ROOM-SW · existing jack → workout room (169) · Apple TV"
       ],
       "routeType": "wall",
       "rearLabel": "FP7-EX5",
@@ -1187,17 +1197,17 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 7 REAR → OF-WP-RACK-SW (1)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 7 REAR → OF-WP-RACK · existing Apple TV jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "OF-WP-RACK-SW (1) → OF-WP-ROOM-SW (1)",
+          "title": "OF-WP-RACK · existing Apple TV jack → OF-WP-ROOM-SW · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
           "what": "Room cable",
-          "title": "OF-WP-ROOM-SW (1) → workout room (169) · Apple TV",
+          "title": "OF-WP-ROOM-SW · existing jack → workout room (169) · Apple TV",
           "detail": "Separate room patch cable to device Ethernet port."
         },
         {
@@ -1205,7 +1215,9 @@
           "title": "FP7-EX5",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID OF-SW-J1."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "OF-WW-J1",
@@ -1215,27 +1227,27 @@
       "state": "Existing",
       "device": "pc-loadletter · Custom PC",
       "wall": "Office · West wall",
-      "plate": "OF-WP-RACK-WW",
+      "plate": "OF-WP-RACK",
       "switch": "Expo",
       "socket": "Ethernet 3",
       "panel": 6,
-      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.",
+      "note": "Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.",
       "currentSwitch": "Expo",
       "currentSocket": "Ethernet 3",
       "panelStatus": "Proposed",
       "targetStatus": "Owner confirmed wall assignment",
-      "rackPlate": "OF-WP-RACK-WW",
-      "rackJack": "1",
+      "rackPlate": "OF-WP-RACK",
+      "rackJack": "existing PC jack",
       "roomPlate": "OF-WP-ROOM-WW",
-      "roomJack": "1",
+      "roomJack": "existing jack",
       "runWork": "Existing cable",
       "routeStations": [
         "Expo · Ethernet 3",
         "Blue patch cable → Floor Plan 6 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 6 REAR → OF-WP-RACK-WW (1)",
-        "OF-WP-RACK-WW (1) → OF-WP-ROOM-WW (1)",
-        "OF-WP-ROOM-WW (1) → pc-loadletter · Custom PC"
+        "Floor Plan 6 REAR → OF-WP-RACK · existing PC jack",
+        "OF-WP-RACK · existing PC jack → OF-WP-ROOM-WW · existing jack",
+        "OF-WP-ROOM-WW · existing jack → pc-loadletter · Custom PC"
       ],
       "routeType": "wall",
       "rearLabel": "FP6-EX3",
@@ -1257,17 +1269,17 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 6 REAR → OF-WP-RACK-WW (1)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 6 REAR → OF-WP-RACK · existing PC jack",
+          "detail": "Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "OF-WP-RACK-WW (1) → OF-WP-ROOM-WW (1)",
+          "title": "OF-WP-RACK · existing PC jack → OF-WP-ROOM-WW · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
           "what": "Room cable",
-          "title": "OF-WP-ROOM-WW (1) → pc-loadletter · Custom PC",
+          "title": "OF-WP-ROOM-WW · existing jack → pc-loadletter · Custom PC",
           "detail": "Separate room patch cable to device Ethernet port."
         },
         {
@@ -1275,7 +1287,9 @@
           "title": "FP6-EX3",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID OF-WW-J1."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "FR-AP",
@@ -1287,9 +1301,9 @@
       "wall": "Family room · West wall · equipment area",
       "plate": "FR-WP-RACK",
       "rackPlate": "FR-WP-RACK",
-      "rackJack": "2",
+      "rackJack": "existing AP jack",
       "roomPlate": "FR-WP-ROOM-WW",
-      "roomJack": "2",
+      "roomJack": "existing jack",
       "switch": "Main Orbi",
       "socket": "Existing LAN output",
       "panel": 5,
@@ -1299,16 +1313,16 @@
       "currentSocket": "LAN output · number not recorded",
       "runWork": "Reconnect accidentally unplugged AP lead",
       "routeType": "wall",
-      "note": "Main Orbi Internet input is fed separately from Expo Ethernet 1 through the brush. This connection starts at an existing main Orbi LAN output: up behind rack, through U15 brush, down front into Floor Plan 5 front. A separate rear patch cable connects Floor Plan 5 rear to the rack-side family-room AP wall jack. Existing in-wall cable continues to the family-room AP jack, then a room patch cable to the Orbi satellite Ethernet port. AP is separate from plant shelf; no Expo or Runner socket feeds panel 5. Individual wall-jack positions are proposed.",
+      "note": "Main Orbi Internet input is fed separately from Expo Ethernet 1 through the brush. This connection starts at an existing main Orbi LAN output: up behind rack, through U15 brush, down front into Floor Plan 5 front. A separate rear patch cable connects Floor Plan 5 rear to the rack-side family-room AP wall jack. Existing in-wall cable continues to the family-room AP jack, then a room patch cable to the Orbi satellite Ethernet port. AP is separate from plant shelf; no Expo or Runner socket feeds panel 5. Existing wall-jack positions are fixed; do not move them. Keep the existing plate and all jack positions exactly as installed.",
       "rearLabel": "FP5-FR-AP",
       "routeStations": [
         "Main Orbi · Existing LAN output",
         "Up behind the rack → through U15 brush → down the front",
         "Yellow patch cable → Floor Plan 5 FRONT",
         "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 5 REAR → FR-WP-RACK (2)",
-        "FR-WP-RACK (2) → FR-WP-ROOM-WW (2)",
-        "FR-WP-ROOM-WW (2) → Orbi RBS50 satellite · AP wall cable"
+        "Floor Plan 5 REAR → FR-WP-RACK · existing AP jack",
+        "FR-WP-RACK · existing AP jack → FR-WP-ROOM-WW · existing jack",
+        "FR-WP-ROOM-WW · existing jack → Orbi RBS50 satellite · AP wall cable"
       ],
       "installationSteps": [
         {
@@ -1333,17 +1347,17 @@
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 5 REAR → FR-WP-RACK (2)",
-          "detail": "Separate rear patch cable to rack-side wall jack labeled AP. Jack position is proposed."
+          "title": "Floor Plan 5 REAR → FR-WP-RACK · existing AP jack",
+          "detail": "Separate rear patch cable to rack-side wall jack labeled AP. Keep this existing jack exactly where it is."
         },
         {
           "what": "Wall run",
-          "title": "FR-WP-RACK (2) → FR-WP-ROOM-WW (2)",
+          "title": "FR-WP-RACK · existing AP jack → FR-WP-ROOM-WW · existing jack",
           "detail": "Existing in-wall cable."
         },
         {
           "what": "Room cable",
-          "title": "FR-WP-ROOM-WW (2) → Orbi RBS50 satellite · AP wall cable",
+          "title": "FR-WP-ROOM-WW · existing jack → Orbi RBS50 satellite · AP wall cable",
           "detail": "Separate room patch cable to device Ethernet port. Preserve the existing satellite Ethernet socket."
         },
         {
@@ -1351,7 +1365,9 @@
           "title": "FP5-FR-AP",
           "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID FR-AP."
         }
-      ]
+      ],
+      "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
+      "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
       "id": "C1",
@@ -1633,9 +1649,9 @@
       "rearLabel": "OFFICE-SW",
       "routeStations": [
         "Optional future office switch",
-        "Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → OF-WP-RACK-WW (2)",
-        "OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2)",
-        "Office West room jack (2) → TRENDnet Ethernet port"
+        "Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → existing Mac Studio jack on OF-WP-RACK",
+        "Existing rack-side Mac Studio jack → existing Office West room jack",
+        "Existing Office West Mac Studio room jack → TRENDnet Ethernet port"
       ],
       "installationSteps": [
         {
@@ -1645,17 +1661,17 @@
         },
         {
           "what": "Existing path",
-          "title": "Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → OF-WP-RACK-WW (2)",
+          "title": "Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → existing Mac Studio jack on OF-WP-RACK",
           "detail": ""
         },
         {
           "what": "Wall run",
-          "title": "OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2)",
+          "title": "Existing rack-side Mac Studio jack → existing Office West room jack",
           "detail": ""
         },
         {
           "what": "Room cable",
-          "title": "Office West room jack (2) → TRENDnet Ethernet port",
+          "title": "Existing Office West Mac Studio room jack → TRENDnet Ethernet port",
           "detail": "Switch port number is unassigned. When installed, reconnect meepmax1 to another TRENDnet Ethernet port; no new wall run required. Device: TRENDnet TEG-S350."
         }
       ]
@@ -1673,20 +1689,23 @@
   },
   "plates": [
     {
-      "id": "OF-WP-RACK-WW",
-      "name": "Office · West / Computer",
-      "position": "Existing office plate; use for West pair",
-      "status": "P · placement; four jacks per plate",
+      "id": "OF-WP-RACK",
+      "name": "Office · existing four-jack plate",
+      "position": "Keep existing plate and all four jacks exactly where installed",
+      "status": "Existing / fixed · shown by cable identity, not physical jack order",
+      "existingFixed": true,
       "jacks": {
         "1": "OF-WW-J1",
-        "2": "OF-WW-J2"
+        "2": "OF-WW-J2",
+        "3": "OF-SW-J1",
+        "4": "OF-SW-J2"
       }
     },
     {
       "id": "FR-WP-RACK",
       "name": "Family room / existing garage",
-      "position": "Existing family-room plate",
-      "status": "Four confirmed cable labels; physical jack positions proposed",
+      "position": "Keep existing family-room plate and all four jacks exactly where installed",
+      "status": "Existing / fixed · shown by cable identity, not physical jack order",
       "jacks": {
         "1": "FR-WW-J1",
         "2": "FR-AP",
@@ -1698,17 +1717,15 @@
         "2": "AP / Orbi satellite",
         "3": "Garage / UNKNOWN",
         "4": "Plant shelf"
-      }
+      },
+      "existingFixed": true
     },
     {
-      "id": "OF-WP-RACK-SW",
-      "name": "Office · South / TV",
-      "position": "Top left empty opening · move existing South pair here",
-      "status": "P · placement; four jacks per plate",
-      "jacks": {
-        "1": "OF-SW-J1",
-        "2": "OF-SW-J2"
-      }
+      "id": "AVAILABLE-TL",
+      "name": "Available opening",
+      "position": "Top left empty opening · no existing office cables moved here",
+      "status": "Available for new work only",
+      "jacks": {}
     },
     {
       "id": "B2-WP-RACK",
@@ -2100,8 +2117,9 @@
       "Garage / UNKNOWN cable condition unverified; one record only.",
       "NVR downstream attachment behind family-room switch unverified.",
       "Future room endpoint devices and optional TRENDnet port numbers unassigned.",
-      "Wall-plate jack numbers remain proposed until installation.",
+      "Existing physical jack numbers are not recorded; identify by existing cable/device labels and preserve positions. Only new-run jack positions are proposed.",
       "SmartThings PDU USB pairing and large-adapter fit still need the documented physical checks."
     ]
-  }
+  },
+  "existingWallPlatePolicy": "Existing office and family-room rack-side plates, all existing room plates, all installed jacks and wall runs stay exactly as installed. Office rack-side plate keeps all four office runs together. Only new runs use new openings."
 }

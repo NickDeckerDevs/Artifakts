@@ -18,42 +18,42 @@
 - Status: Existing
 - Device: Family-room switch · PlayStation / OG LG Apple TV
 - Wall: Family room · West wall · equipment area
-- Rack plate / jack: FR-WP-RACK / 1
-- Room plate / jack: FR-WP-ROOM-WW / 1
+- Rack plate / jack: FR-WP-RACK / existing NVR / switch jack
+- Room plate / jack: FR-WP-ROOM-WW / existing jack
 - Proposed panel: 24
 - Current switch: Runner / socket unidentified
 - Target switch: Runner
 - Switch socket: Ethernet 16
 - Color: yellow
-- Note: Owner confirmed the rack plate label NVR is the family-room switch run. PlayStation is on that switch; OG LG Apple TV will be connected in this equipment area. NVR may be behind this switch; its downstream attachment is not verified.
+- Note: Owner confirmed the rack plate label NVR is the family-room switch run. PlayStation is on that switch; OG LG Apple TV will be connected in this equipment area. NVR may be behind this switch; its downstream attachment is not verified. Keep the existing plate and all jack positions exactly as installed.
 
 ### FR-PS-J1 · Family room · Plant shelf
 
 - Status: Existing
 - Device: Plant shelf connection
 - Wall: Family room · West wall · south plant shelf
-- Rack plate / jack: FR-WP-RACK / 4
-- Room plate / jack: FR-WP-ROOM-PS / 1
+- Rack plate / jack: FR-WP-RACK / existing Plant shelf jack
+- Room plate / jack: FR-WP-ROOM-PS / existing jack
 - Proposed panel: 23
 - Current switch: Runner / socket unidentified
 - Target switch: Runner
 - Switch socket: Ethernet 15
 - Color: yellow
-- Note: Runner 15 to Floor Plan 23. Fit a labeled rear cable now; connect its destination when ready.
+- Note: Runner 15 to Floor Plan 23. Fit a labeled rear cable now; connect its destination when ready. Keep the existing plate and all jack positions exactly as installed.
 
 ### FR-GA · Garage · existing cable
 
 - Status: Existing
 - Device: Existing garage cable · condition untested
 - Wall: Garage · existing cable on family-room rack plate
-- Rack plate / jack: FR-WP-RACK / 3
-- Room plate / jack: GA-WP-ROOM / 1
+- Rack plate / jack: FR-WP-RACK / existing Garage / UNKNOWN jack
+- Room plate / jack: GA-WP-ROOM / existing jack
 - Proposed panel: 22
 - Current switch: Unidentified / socket unidentified
 - Target switch: Runner
 - Switch socket: Ethernet 14
 - Color: yellow
-- Note: One existing garage cable, previously UNKNOWN. Runner 14 / Floor Plan 22 front and rear cables are prepared. Leave the garage wall lead disconnected if faulty; condition is not verified.
+- Note: One existing garage cable, previously UNKNOWN. Runner 14 / Floor Plan 22 front and rear cables are prepared. Leave the garage wall lead disconnected if faulty; condition is not verified. Keep the existing plate and all jack positions exactly as installed.
 
 ### READY-R13 · Prepared connection · Runner 13
 
@@ -228,70 +228,70 @@
 - Status: Existing
 - Device: Samsung TV
 - Wall: Office · South wall
-- Rack plate / jack: OF-WP-RACK-SW / 2
-- Room plate / jack: OF-WP-ROOM-SW / 2
+- Rack plate / jack: OF-WP-RACK / existing Samsung TV jack
+- Room plate / jack: OF-WP-ROOM-SW / existing jack
 - Proposed panel: 9
 - Current switch: Expo / Ethernet 8
 - Target switch: Expo
 - Switch socket: Ethernet 8
 - Color: blue
-- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.
+- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.
 
 ### OF-WW-J2 · meepmax1 · Mac Studio
 
 - Status: Existing
 - Device: meepmax1 · Mac Studio
 - Wall: Office · West wall
-- Rack plate / jack: OF-WP-RACK-WW / 2
-- Room plate / jack: OF-WP-ROOM-WW / 2
+- Rack plate / jack: OF-WP-RACK / existing Mac Studio jack
+- Room plate / jack: OF-WP-ROOM-WW / existing jack
 - Proposed panel: 8
 - Current switch: Expo / Ethernet 6
 - Target switch: Expo
 - Switch socket: Ethernet 6
 - Color: blue
-- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.
+- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.
 
 ### OF-SW-J1 · workout room (169) · Apple TV
 
 - Status: Existing
 - Device: workout room (169) · Apple TV
 - Wall: Office · South wall
-- Rack plate / jack: OF-WP-RACK-SW / 1
-- Room plate / jack: OF-WP-ROOM-SW / 1
+- Rack plate / jack: OF-WP-RACK / existing Apple TV jack
+- Room plate / jack: OF-WP-ROOM-SW / existing jack
 - Proposed panel: 7
 - Current switch: Expo / Ethernet 5
 - Target switch: Expo
 - Switch socket: Ethernet 5
 - Color: blue
-- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.
+- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.
 
 ### OF-WW-J1 · pc-loadletter · Custom PC
 
 - Status: Existing
 - Device: pc-loadletter · Custom PC
 - Wall: Office · West wall
-- Rack plate / jack: OF-WP-RACK-WW / 1
-- Room plate / jack: OF-WP-ROOM-WW / 1
+- Rack plate / jack: OF-WP-RACK / existing PC jack
+- Room plate / jack: OF-WP-ROOM-WW / existing jack
 - Proposed panel: 6
 - Current switch: Expo / Ethernet 3
 - Target switch: Expo
 - Switch socket: Ethernet 3
 - Color: blue
-- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes.
+- Note: Latest owner socket list: Expo 3/6 West, 5/8 South; supersedes older survey pairing. Keep the connected wall cable in its current Expo socket; no switch configuration changes. Keep existing wall plates and jack positions exactly as installed. Office West and South cables remain together in the existing four-jack rack-side office plate.
 
 ### FR-AP · Family room · AP / Orbi satellite
 
 - Status: Existing
 - Device: Orbi RBS50 satellite · AP wall cable
 - Wall: Family room · West wall · equipment area
-- Rack plate / jack: FR-WP-RACK / 2
-- Room plate / jack: FR-WP-ROOM-WW / 2
+- Rack plate / jack: FR-WP-RACK / existing AP jack
+- Room plate / jack: FR-WP-ROOM-WW / existing jack
 - Proposed panel: 5
 - Current switch: Main Orbi / LAN output · number not recorded
 - Target switch: Main Orbi
 - Switch socket: Existing LAN output
 - Color: yellow
-- Note: Main Orbi Internet input is fed separately from Expo Ethernet 1 through the brush. This connection starts at an existing main Orbi LAN output: up behind rack, through U15 brush, down front into Floor Plan 5 front. A separate rear patch cable connects Floor Plan 5 rear to the rack-side family-room AP wall jack. Existing in-wall cable continues to the family-room AP jack, then a room patch cable to the Orbi satellite Ethernet port. AP is separate from plant shelf; no Expo or Runner socket feeds panel 5. Individual wall-jack positions are proposed.
+- Note: Main Orbi Internet input is fed separately from Expo Ethernet 1 through the brush. This connection starts at an existing main Orbi LAN output: up behind rack, through U15 brush, down front into Floor Plan 5 front. A separate rear patch cable connects Floor Plan 5 rear to the rack-side family-room AP wall jack. Existing in-wall cable continues to the family-room AP jack, then a room patch cable to the Orbi satellite Ethernet port. AP is separate from plant shelf; no Expo or Runner socket feeds panel 5. Existing wall-jack positions are fixed; do not move them. Keep the existing plate and all jack positions exactly as installed.
 
 ### C1 · NAS · existing Expo 2 cable
 
@@ -398,9 +398,9 @@
 1. Source: Runner · Ethernet 16
 2. Front cable: Yellow patch cable → Floor Plan 24 FRONT - FP24-R16 · FR-WW-J1
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 24 FRONT → Floor Plan 24 REAR
-4. Rear cable: Floor Plan 24 REAR → FR-WP-RACK (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: FR-WP-RACK (1) → FR-WP-ROOM-WW (1) - Existing in-wall cable.
-6. Room cable: FR-WP-ROOM-WW (1) → Family-room switch · PlayStation / OG LG Apple TV - Separate room patch cable to device Ethernet port.
+4. Rear cable: Floor Plan 24 REAR → FR-WP-RACK · existing NVR / switch jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: FR-WP-RACK · existing NVR / switch jack → FR-WP-ROOM-WW · existing jack - Existing in-wall cable.
+6. Room cable: FR-WP-ROOM-WW · existing jack → Family-room switch · PlayStation / OG LG Apple TV - Separate room patch cable to device Ethernet port.
 7. Label: FP24-R16 · FR-WW-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-WW-J1.
 
 ### FR-PS-J1 - Family room · Plant shelf
@@ -408,8 +408,8 @@
 1. Source: Runner · Ethernet 15
 2. Front cable: Yellow patch cable → Floor Plan 23 FRONT - FP23-R15 · FR-PS-J1
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 23 FRONT → Floor Plan 23 REAR
-4. Rear cable: Floor Plan 23 REAR → FR-WP-RACK (4) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: FR-WP-RACK (4) → FR-WP-ROOM-PS (1) - Existing in-wall cable.
+4. Rear cable: Floor Plan 23 REAR → FR-WP-RACK · existing Plant shelf jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: FR-WP-RACK · existing Plant shelf jack → FR-WP-ROOM-PS · existing jack - Existing in-wall cable.
 6. Room end: Plant shelf connection - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
 7. Label: FP23-R15 · FR-PS-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-PS-J1.
 
@@ -418,8 +418,8 @@
 1. Source: Runner · Ethernet 14
 2. Front cable: Yellow patch cable → Floor Plan 22 FRONT - FP22-R14 · FR-GA
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 22 FRONT → Floor Plan 22 REAR
-4. Rear cable: Floor Plan 22 REAR → FR-WP-RACK (3) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: FR-WP-RACK (3) → GA-WP-ROOM (1) - Existing garage / UNKNOWN cable; condition untested. Leave disconnected if faulty.
+4. Rear cable: Floor Plan 22 REAR → FR-WP-RACK · existing Garage / UNKNOWN jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: FR-WP-RACK · existing Garage / UNKNOWN jack → GA-WP-ROOM · existing jack - Existing garage / UNKNOWN cable; condition untested. Leave disconnected if faulty.
 6. Room end: Existing garage cable · condition untested - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
 7. Label: FP22-R14 · FR-GA - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-GA.
 
@@ -542,9 +542,9 @@
 1. Source: Expo · Ethernet 8
 2. Front cable: Blue patch cable → Floor Plan 9 FRONT - FP9-EX8
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 9 FRONT → Floor Plan 9 REAR
-4. Rear cable: Floor Plan 9 REAR → OF-WP-RACK-SW (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: OF-WP-RACK-SW (2) → OF-WP-ROOM-SW (2) - Existing in-wall cable.
-6. Room cable: OF-WP-ROOM-SW (2) → Samsung TV - Separate room patch cable to device Ethernet port.
+4. Rear cable: Floor Plan 9 REAR → OF-WP-RACK · existing Samsung TV jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: OF-WP-RACK · existing Samsung TV jack → OF-WP-ROOM-SW · existing jack - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-SW · existing jack → Samsung TV - Separate room patch cable to device Ethernet port.
 7. Label: FP9-EX8 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-SW-J2.
 
 ### OF-WW-J2 - meepmax1 · Mac Studio
@@ -552,9 +552,9 @@
 1. Source: Expo · Ethernet 6
 2. Front cable: Blue patch cable → Floor Plan 8 FRONT - FP8-EX6
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 8 FRONT → Floor Plan 8 REAR
-4. Rear cable: Floor Plan 8 REAR → OF-WP-RACK-WW (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2) - Existing in-wall cable.
-6. Room cable: OF-WP-ROOM-WW (2) → meepmax1 · Mac Studio - Separate room patch cable to device Ethernet port.
+4. Rear cable: Floor Plan 8 REAR → OF-WP-RACK · existing Mac Studio jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: OF-WP-RACK · existing Mac Studio jack → OF-WP-ROOM-WW · existing jack - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-WW · existing jack → meepmax1 · Mac Studio - Separate room patch cable to device Ethernet port.
 7. Label: FP8-EX6 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-WW-J2.
 
 ### OF-SW-J1 - workout room (169) · Apple TV
@@ -562,9 +562,9 @@
 1. Source: Expo · Ethernet 5
 2. Front cable: Blue patch cable → Floor Plan 7 FRONT - FP7-EX5
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 7 FRONT → Floor Plan 7 REAR
-4. Rear cable: Floor Plan 7 REAR → OF-WP-RACK-SW (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: OF-WP-RACK-SW (1) → OF-WP-ROOM-SW (1) - Existing in-wall cable.
-6. Room cable: OF-WP-ROOM-SW (1) → workout room (169) · Apple TV - Separate room patch cable to device Ethernet port.
+4. Rear cable: Floor Plan 7 REAR → OF-WP-RACK · existing Apple TV jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: OF-WP-RACK · existing Apple TV jack → OF-WP-ROOM-SW · existing jack - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-SW · existing jack → workout room (169) · Apple TV - Separate room patch cable to device Ethernet port.
 7. Label: FP7-EX5 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-SW-J1.
 
 ### OF-WW-J1 - pc-loadletter · Custom PC
@@ -572,9 +572,9 @@
 1. Source: Expo · Ethernet 3
 2. Front cable: Blue patch cable → Floor Plan 6 FRONT - FP6-EX3
 3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 6 FRONT → Floor Plan 6 REAR
-4. Rear cable: Floor Plan 6 REAR → OF-WP-RACK-WW (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
-5. Wall run: OF-WP-RACK-WW (1) → OF-WP-ROOM-WW (1) - Existing in-wall cable.
-6. Room cable: OF-WP-ROOM-WW (1) → pc-loadletter · Custom PC - Separate room patch cable to device Ethernet port.
+4. Rear cable: Floor Plan 6 REAR → OF-WP-RACK · existing PC jack - Separate rear patch cable to rack-side wall jack. Keep this existing jack exactly where it is.
+5. Wall run: OF-WP-RACK · existing PC jack → OF-WP-ROOM-WW · existing jack - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-WW · existing jack → pc-loadletter · Custom PC - Separate room patch cable to device Ethernet port.
 7. Label: FP6-EX3 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-WW-J1.
 
 ### FR-AP - Family room · AP / Orbi satellite
@@ -583,9 +583,9 @@
 2. Brush: Up behind the rack → through U15 brush → down the front - Move the existing main Orbi LAN-to-AP wall-jack connection through Floor Plan 5.
 3. Front cable: Yellow patch cable → Floor Plan 5 FRONT - FP5-FR-AP
 4. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 5 FRONT → Floor Plan 5 REAR
-5. Rear cable: Floor Plan 5 REAR → FR-WP-RACK (2) - Separate rear patch cable to rack-side wall jack labeled AP. Jack position is proposed.
-6. Wall run: FR-WP-RACK (2) → FR-WP-ROOM-WW (2) - Existing in-wall cable.
-7. Room cable: FR-WP-ROOM-WW (2) → Orbi RBS50 satellite · AP wall cable - Separate room patch cable to device Ethernet port. Preserve the existing satellite Ethernet socket.
+5. Rear cable: Floor Plan 5 REAR → FR-WP-RACK · existing AP jack - Separate rear patch cable to rack-side wall jack labeled AP. Keep this existing jack exactly where it is.
+6. Wall run: FR-WP-RACK · existing AP jack → FR-WP-ROOM-WW · existing jack - Existing in-wall cable.
+7. Room cable: FR-WP-ROOM-WW · existing jack → Orbi RBS50 satellite · AP wall cable - Separate room patch cable to device Ethernet port. Preserve the existing satellite Ethernet socket.
 8. Label: FP5-FR-AP - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-AP.
 
 ### C1 - NAS · existing Expo 2 cable
@@ -627,9 +627,9 @@
 ### OFFICE-SW - Future office switch
 
 1. Status: Optional future office switch - Alternative endpoint on OF-WW-J2; not another cable or extra Expo 6 allocation.
-2. Existing path: Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → OF-WP-RACK-WW (2)
-3. Wall run: OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2)
-4. Room cable: Office West room jack (2) → TRENDnet Ethernet port - Switch port number is unassigned. When installed, reconnect meepmax1 to another TRENDnet Ethernet port; no new wall run required. Device: TRENDnet TEG-S350.
+2. Existing path: Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → existing Mac Studio jack on OF-WP-RACK
+3. Wall run: Existing rack-side Mac Studio jack → existing Office West room jack
+4. Room cable: Existing Office West Mac Studio room jack → TRENDnet Ethernet port - Switch port number is unassigned. When installed, reconnect meepmax1 to another TRENDnet Ethernet port; no new wall run required. Device: TRENDnet TEG-S350.
 
 ## Connection review
 
@@ -640,7 +640,7 @@ All 27 Ethernet records and current power / USB records reviewed against owner i
 - Garage / UNKNOWN cable condition unverified; one record only.
 - NVR downstream attachment behind family-room switch unverified.
 - Future room endpoint devices and optional TRENDnet port numbers unassigned.
-- Wall-plate jack numbers remain proposed until installation.
+- Existing physical jack numbers are not recorded; identify by existing cable/device labels and preserve positions. Only new-run jack positions are proposed.
 - SmartThings PDU USB pairing and large-adapter fit still need the documented physical checks.
 
 ## Keystone inventory - four of each
@@ -687,30 +687,30 @@ All 27 Ethernet records and current power / USB records reviewed against owner i
 
 - Runner 2–16 each have one jumper to Floor Plan 10–24 and a labeled rear cable. Expo 3/5/6/8 connect through Floor Plan 6/7/8/9. Main Orbi feeds FR-AP through Floor Plan5. Family plate contains NVR/switch, AP, garage, plant shelf. Floor Plan1–4 available.
 
-### OF-WP-RACK-WW · Office · West / Computer
+### OF-WP-RACK · Office · existing four-jack plate
 
-- Position: Existing office plate; use for West pair
-- Status: P · placement; four jacks per plate
+- Position: Keep existing plate and all four jacks exactly where installed
+- Status: Existing / fixed · shown by cable identity, not physical jack order
 - Jack 1: OF-WW-J1
 - Jack 2: OF-WW-J2
-- Jack 3: Available
-- Jack 4: Available
+- Jack 3: OF-SW-J1
+- Jack 4: OF-SW-J2
 
 ### FR-WP-RACK · Family room / existing garage
 
-- Position: Existing family-room plate
-- Status: Four confirmed cable labels; physical jack positions proposed
+- Position: Keep existing family-room plate and all four jacks exactly where installed
+- Status: Existing / fixed · shown by cable identity, not physical jack order
 - Jack 1: FR-WW-J1
 - Jack 2: FR-AP
 - Jack 3: FR-GA
 - Jack 4: FR-PS-J1
 
-### OF-WP-RACK-SW · Office · South / TV
+### AVAILABLE-TL · Available opening
 
-- Position: Top left empty opening · move existing South pair here
-- Status: P · placement; four jacks per plate
-- Jack 1: OF-SW-J1
-- Jack 2: OF-SW-J2
+- Position: Top left empty opening · no existing office cables moved here
+- Status: Available for new work only
+- Jack 1: Available
+- Jack 2: Available
 - Jack 3: Available
 - Jack 4: Available
 
@@ -897,9 +897,9 @@ All 27 Ethernet records and current power / USB records reviewed against owner i
 
 ## Full routes
 
-- FR-WW-J1: Runner · Ethernet 16 / Yellow patch cable → Floor Plan 24 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 24 REAR → FR-WP-RACK (1) / FR-WP-RACK (1) → FR-WP-ROOM-WW (1) / FR-WP-ROOM-WW (1) → Family-room switch · PlayStation / OG LG Apple TV
-- FR-PS-J1: Runner · Ethernet 15 / Yellow patch cable → Floor Plan 23 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 23 REAR → FR-WP-RACK (4) / FR-WP-RACK (4) → FR-WP-ROOM-PS (1) / Plant shelf connection
-- FR-GA: Runner · Ethernet 14 / Yellow patch cable → Floor Plan 22 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 22 REAR → FR-WP-RACK (3) / FR-WP-RACK (3) → GA-WP-ROOM (1) / Existing garage cable · condition untested
+- FR-WW-J1: Runner · Ethernet 16 / Yellow patch cable → Floor Plan 24 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 24 REAR → FR-WP-RACK · existing NVR / switch jack / FR-WP-RACK · existing NVR / switch jack → FR-WP-ROOM-WW · existing jack / FR-WP-ROOM-WW · existing jack → Family-room switch · PlayStation / OG LG Apple TV
+- FR-PS-J1: Runner · Ethernet 15 / Yellow patch cable → Floor Plan 23 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 23 REAR → FR-WP-RACK · existing Plant shelf jack / FR-WP-RACK · existing Plant shelf jack → FR-WP-ROOM-PS · existing jack / Plant shelf connection
+- FR-GA: Runner · Ethernet 14 / Yellow patch cable → Floor Plan 22 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 22 REAR → FR-WP-RACK · existing Garage / UNKNOWN jack / FR-WP-RACK · existing Garage / UNKNOWN jack → GA-WP-ROOM · existing jack / Existing garage cable · condition untested
 - READY-R13: Runner · Ethernet 13 / White patch cable → Floor Plan 21 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 21 REAR / Coil behind panel · free cable end
 - B2-J1: Runner · Ethernet 12 / Orange patch cable → Floor Plan 20 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 20 REAR → B2-WP-RACK (1) / B2-WP-RACK (1) → B2-WP-ROOM (1) / B2-WP-ROOM (1) → kids room · Apple TV
 - C3: Runner · Ethernet 11 / Black patch cable → Floor Plan 19 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 19 REAR / Samsung SmartThings GP-U999SJVLGDA LAN
@@ -912,18 +912,18 @@ All 27 Ethernet records and current power / USB records reviewed against owner i
 - PI-2: Runner · Ethernet 4 / Black patch cable → Floor Plan 12 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 12 REAR / Coil behind panel · free cable end
 - READY-R3: Runner · Ethernet 3 / Black patch cable → Floor Plan 11 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 11 REAR / Coil behind panel · free cable end
 - READY-R2: Runner · Ethernet 2 / Black patch cable → Floor Plan 10 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 10 REAR / Coil behind panel · free cable end
-- OF-SW-J2: Expo · Ethernet 8 / Blue patch cable → Floor Plan 9 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 9 REAR → OF-WP-RACK-SW (2) / OF-WP-RACK-SW (2) → OF-WP-ROOM-SW (2) / OF-WP-ROOM-SW (2) → Samsung TV
-- OF-WW-J2: Expo · Ethernet 6 / Blue patch cable → Floor Plan 8 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 8 REAR → OF-WP-RACK-WW (2) / OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2) / OF-WP-ROOM-WW (2) → meepmax1 · Mac Studio
-- OF-SW-J1: Expo · Ethernet 5 / Blue patch cable → Floor Plan 7 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 7 REAR → OF-WP-RACK-SW (1) / OF-WP-RACK-SW (1) → OF-WP-ROOM-SW (1) / OF-WP-ROOM-SW (1) → workout room (169) · Apple TV
-- OF-WW-J1: Expo · Ethernet 3 / Blue patch cable → Floor Plan 6 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 6 REAR → OF-WP-RACK-WW (1) / OF-WP-RACK-WW (1) → OF-WP-ROOM-WW (1) / OF-WP-ROOM-WW (1) → pc-loadletter · Custom PC
-- FR-AP: Main Orbi · Existing LAN output / Up behind the rack → through U15 brush → down the front / Yellow patch cable → Floor Plan 5 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 5 REAR → FR-WP-RACK (2) / FR-WP-RACK (2) → FR-WP-ROOM-WW (2) / FR-WP-ROOM-WW (2) → Orbi RBS50 satellite · AP wall cable
+- OF-SW-J2: Expo · Ethernet 8 / Blue patch cable → Floor Plan 9 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 9 REAR → OF-WP-RACK · existing Samsung TV jack / OF-WP-RACK · existing Samsung TV jack → OF-WP-ROOM-SW · existing jack / OF-WP-ROOM-SW · existing jack → Samsung TV
+- OF-WW-J2: Expo · Ethernet 6 / Blue patch cable → Floor Plan 8 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 8 REAR → OF-WP-RACK · existing Mac Studio jack / OF-WP-RACK · existing Mac Studio jack → OF-WP-ROOM-WW · existing jack / OF-WP-ROOM-WW · existing jack → meepmax1 · Mac Studio
+- OF-SW-J1: Expo · Ethernet 5 / Blue patch cable → Floor Plan 7 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 7 REAR → OF-WP-RACK · existing Apple TV jack / OF-WP-RACK · existing Apple TV jack → OF-WP-ROOM-SW · existing jack / OF-WP-ROOM-SW · existing jack → workout room (169) · Apple TV
+- OF-WW-J1: Expo · Ethernet 3 / Blue patch cable → Floor Plan 6 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 6 REAR → OF-WP-RACK · existing PC jack / OF-WP-RACK · existing PC jack → OF-WP-ROOM-WW · existing jack / OF-WP-ROOM-WW · existing jack → pc-loadletter · Custom PC
+- FR-AP: Main Orbi · Existing LAN output / Up behind the rack → through U15 brush → down the front / Yellow patch cable → Floor Plan 5 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 5 REAR → FR-WP-RACK · existing AP jack / FR-WP-RACK · existing AP jack → FR-WP-ROOM-WW · existing jack / FR-WP-ROOM-WW · existing jack → Orbi RBS50 satellite · AP wall cable
 - C1: NAS · preserve the currently connected NAS jack / Up behind rack → through U15 brush → down front / Expo · Ethernet 2
 - C2: NAS · preserve the currently connected NAS jack / Up behind rack → through U15 brush → down front / Expo · Ethernet 4
 - C4: Hostess / BGW620 · blue LAN 1 / Up behind rack → through U15 brush → down front / Expo · SFP+ 1 Ethernet adapter
 - C5: Receiving Dock / Q1000K · existing installer Ethernet jack / Keep existing cable behind equipment / Hostess · red ONT/LAN
 - C6: Expo · Ethernet 7 / Direct front patch cable / Runner · Ethernet 1
 - WIFI-1: Expo · Ethernet 1 / Up the front → through U15 brush → down behind rack / Main Orbi RBR50 · Internet / WAN port
-- OFFICE-SW: Optional future office switch / Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → OF-WP-RACK-WW (2) / OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2) / Office West room jack (2) → TRENDnet Ethernet port
+- OFFICE-SW: Optional future office switch / Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → existing Mac Studio jack on OF-WP-RACK / Existing rack-side Mac Studio jack → existing Office West room jack / Existing Office West Mac Studio room jack → TRENDnet Ethernet port
 
 ## USB power review
 
@@ -941,7 +941,7 @@ All 27 Ethernet records and current power / USB records reviewed against owner i
 ## Scope
 
 - Physical equipment placement, cables and power only. Internet settings and automatic shutdown are outside this build.
-- Individual final jack choices can be recorded during installation. They do not block the placement plan.
+- Existing wall plates and jack positions are fixed. Only new runs receive proposed jack positions.
 - Sockets 1-4 remain available. Runner2-16 connect to panel10-24; office panel6-9; Orbi AP panel5.
 - Garage has one record: FR-GA. No new garage cable proposed.
 
