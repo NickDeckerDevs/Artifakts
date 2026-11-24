@@ -1168,5 +1168,10 @@
         "Do not connect both power sources at once."
       ]
     }
-  ]
+  ],
+  "panelGeometry": {
+    "odd": "Opening at top, number below",
+    "even": "Number at top, opening below",
+    "source": "Owner correction: printed label position and socket opening are opposite; do not use label position as port position."
+  }
 }
