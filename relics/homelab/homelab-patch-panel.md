@@ -547,14 +547,14 @@
 - Both-end label: PDU5 RECEIVING DOCK · CONVERTER
 - Note: Original device supply. PDU is fed by UPS Battery/Surge B2.
 
-### ROOM-PI-PWR · Raspberry Pi 400 · future office power
+### PDU-1 · The Safe · Raspberry Pi 400
 
-- Source: Office wall outlet · beside future TRENDnet
-- Cable: Raspberry Pi 15 W USB-C supply · 5.1 V / 3 A
+- Source: Tecmojo rear outlet 1 / front rocker 1
+- Cable: Matching Pi USB-C supply · official supply 5.1 V / 3 A
 - Device end: Raspberry Pi 400 USB-C power input
-- Route: Office Computer / West · original adapter beside Pi
-- Both-end label: PI400 OFFICE POWER
-- Note: Pi remains a future office device, not a rack AC load. PDU USB charging is shared across sockets; full 3 A on one socket is not verified. Use its matching supply. No office power extension is implied.
+- Route: Behind rack equipment · support the adapter; short outlet extension if needed
+- Both-end label: PDU1 THE SAFE PI400
+- Note: Network now reserves rack-side Runner5 / Floor Plan13. Original matching supply in PDU1 is the usable option. PDU USB could work only with verified dedicated output and suitable cable; its shared manual specification is ambiguous.
 
 ### PDU-8 · SmartThings
 
@@ -563,7 +563,7 @@
 - Device end: SmartThings DC power socket
 - Route: Left rear rack post · support the adapter beside the strip
 - Both-end label: PDU8 SMARTTHINGS
-- Note: Original Samsung DC supply in PDU 8. SmartThings USB-A is not its power-input socket. Extra-clearance outlet. PDU fed by UPS B2.
+- Note: Original Samsung adapter in PDU8 is usable now. User reports5V2A. A USB-to-DC-barrel cable could work after barrel size, polarity and per-port output are verified. Do not power through the hub USB-A host socket.
 
 ### FEED-UPS · UPS supply
 
@@ -610,8 +610,17 @@
 - Both-end label: PDU7 ORBI
 - Note: Owner-confirmed PDU power. Existing Ethernet remains unchanged.
 
+### PDU-6 · Second Raspberry Pi · reserved
+
+- Source: Tecmojo rear outlet 6 / front rocker 6
+- Cable: Matching power supply for the actual Pi model
+- Device end: Second Raspberry Pi · model not yet identified
+- Route: Rear of rack · prepared location; support adapter
+- Both-end label: PDU6 SECOND PI
+- Note: Reserved outlet; no claim that device or adapter is present. Network prepared at Runner4 / Floor Plan12. Choose supply when model is known.
+
 - UPS B3-B6 and surge-only S1-S6: available.
-- PDU outlets 1, 6 and 9: available.
+- PDU outlet9 available. Outlet1 Pi400; outlet6 secondPi reserved.
 - PDU USB-A1/A2/C1/C2: unassigned charging sockets, not USB data paths.
 
 ## Naming convention
@@ -662,9 +671,9 @@
 
 ## USB power review
 
-- pdu: Manual: shared USB output 5 Vdc / 3 A, 20 W max; per-port simultaneous guarantee not given.
+- pdu: Manual prints shared5Vdc/3A20W MAX. 5V times3A is15W; printed rating inconsistent. Individual-port allocation unverified.
 - pi: Pi 400: 5 V / 3 A; official supply 5.1 V / 3 A. Keep matching supply until a dedicated PDU output is verified.
-- smartthings: DC barrel input powers hub; USB-A is not a USB power input.
+- smartthings: Reported5V2A. USB-to-barrel may work with verified barrel size/polarity and dedicated2A output. Hub USB-A is not the input.
 - sonoff: NAS USB data and power remain together; never move to charging-only PDU.
 - ups source: https://www.cyberpowersystems.com/product/ups/intelligent-lcd/cp1500avrlcd3/
 - pdu source: https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902_2025.04.15_D.1.08.098.108098206_TEC-SMS-231005.pdf?v=1759803230

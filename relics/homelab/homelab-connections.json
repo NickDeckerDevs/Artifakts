@@ -955,16 +955,16 @@
       "note": "Original device supply. PDU is fed by UPS Battery/Surge B2."
     },
     {
-      "id": "ROOM-PI-PWR",
-      "name": "Raspberry Pi 400 · future office power",
-      "source": "Office wall outlet · beside future TRENDnet",
+      "id": "PDU-1",
+      "name": "The Safe · Raspberry Pi 400",
+      "source": "Tecmojo rear outlet 1 / front rocker 1",
       "device": "Raspberry Pi 400 USB-C power input",
-      "cable": "Raspberry Pi 15 W USB-C supply · 5.1 V / 3 A",
-      "route": "Office Computer / West · original adapter beside Pi",
-      "label": "PI400 OFFICE POWER",
-      "battery": false,
+      "cable": "Matching Pi USB-C supply · official supply 5.1 V / 3 A",
+      "route": "Behind rack equipment · support the adapter; short outlet extension if needed",
+      "label": "PDU1 THE SAFE PI400",
+      "battery": true,
       "status": "Proposed",
-      "note": "Pi remains a future office device, not a rack AC load. PDU USB charging is shared across sockets; full 3 A on one socket is not verified. Use its matching supply. No office power extension is implied."
+      "note": "Network now reserves rack-side Runner5 / Floor Plan13. Original matching supply in PDU1 is the usable option. PDU USB could work only with verified dedicated output and suitable cable; its shared manual specification is ambiguous."
     },
     {
       "id": "PDU-8",
@@ -976,7 +976,7 @@
       "label": "PDU8 SMARTTHINGS",
       "battery": true,
       "status": "Proposed",
-      "note": "Original Samsung DC supply in PDU 8. SmartThings USB-A is not its power-input socket. Extra-clearance outlet. PDU fed by UPS B2."
+      "note": "Original Samsung adapter in PDU8 is usable now. User reports5V2A. A USB-to-DC-barrel cable could work after barrel size, polarity and per-port output are verified. Do not power through the hub USB-A host socket."
     },
     {
       "id": "FEED-UPS",
@@ -1037,6 +1037,18 @@
       "battery": true,
       "status": "Proposed",
       "note": "Owner-confirmed PDU power. Existing Ethernet remains unchanged."
+    },
+    {
+      "id": "PDU-6",
+      "name": "Second Raspberry Pi · reserved",
+      "source": "Tecmojo rear outlet 6 / front rocker 6",
+      "device": "Second Raspberry Pi · model not yet identified",
+      "cable": "Matching power supply for the actual Pi model",
+      "route": "Rear of rack · prepared location; support adapter",
+      "label": "PDU6 SECOND PI",
+      "battery": true,
+      "status": "Proposed",
+      "note": "Reserved outlet; no claim that device or adapter is present. Network prepared at Runner4 / Floor Plan12. Choose supply when model is known."
     }
   ],
   "powerSources": {
@@ -1082,12 +1094,12 @@
     "P": "Proposed status, separate from identifiers"
   },
   "usbPowerReview": {
-    "pdu": "Manual: shared USB output 5 Vdc / 3 A, 20 W max; per-port simultaneous guarantee not given.",
+    "pdu": "Manual prints shared5Vdc/3A20W MAX. 5V times3A is15W; printed rating inconsistent. Individual-port allocation unverified.",
     "pi": "Pi 400: 5 V / 3 A; official supply 5.1 V / 3 A. Keep matching supply until a dedicated PDU output is verified.",
-    "smartthings": "DC barrel input powers hub; USB-A is not a USB power input.",
+    "smartthings": "Reported5V2A. USB-to-barrel may work with verified barrel size/polarity and dedicated2A output. Hub USB-A is not the input.",
     "sonoff": "NAS USB data and power remain together; never move to charging-only PDU."
   },
-  "scope": "Physical network connections first. Power research separate; prior power map retained pending review.",
+  "scope": "Physical network map and original-supply power arrangement. USB alternatives and brick fit researched separately; remaining checks affect power alternatives only.",
   "deviceNames": {
     "pc": "pc-loadletter · Custom PC",
     "mac": "meepmax1 · Mac Studio",
