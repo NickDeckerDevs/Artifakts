@@ -291,7 +291,7 @@
 - Target switch: Main Orbi
 - Switch socket: Existing LAN output
 - Color: yellow
-- Note: Owner traced main Orbi LAN output to family-room AP jack and Orbi satellite. AP is separate from plant shelf. Do not connect this AP run to Runner. Front jumper through upper brush from main Orbi to Floor Plan 5; rear cable to FR rack plate AP. Individual final wall-jack numbers proposed.
+- Note: Main Orbi Internet input is fed separately from Expo Ethernet 1 through the brush. This connection starts at an existing main Orbi LAN output: up behind rack, through U15 brush, down front into Floor Plan 5 front. A separate rear patch cable connects Floor Plan 5 rear to the rack-side family-room AP wall jack. Existing in-wall cable continues to the family-room AP jack, then a room patch cable to the Orbi satellite Ethernet port. AP is separate from plant shelf; no Expo or Runner socket feeds panel 5. Individual wall-jack positions are proposed.
 
 ### C1 · NAS · existing Expo 2 cable
 
@@ -375,7 +375,7 @@
 - Target switch: Expo
 - Switch socket: Ethernet 1
 - Color: black
-- Note: Expo 1 through upper brush to main Orbi. Main Orbi LAN output feeds separate FR-AP connection to Floor Plan 5 and the family-room Orbi satellite. Existing location retained.
+- Note: Hostess blue LAN 1 feeds Expo SFP+1 through its Ethernet adapter. Expo Ethernet 1 feeds the main Orbi Internet/WAN port through the U15 brush. A different cable from main Orbi LAN output goes through the brush to Floor Plan 5 front; panel 5 rear goes to rack-side AP wall jack. These are two separate cables.
 
 ### OFFICE-SW · Future office switch
 
@@ -390,6 +390,258 @@
 - Switch socket: Ethernet 6 via OF-WW-J2
 - Color: black
 - Note: Optional future office TRENDnet using Mac West run OF-WW-J2 / Expo6. Pi connections are now prepared separately on Runner; no forced Pi assignment to this office switch.
+
+## Installation steps
+
+### FR-WW-J1 - Family room · NVR / switch
+
+1. Source: Runner · Ethernet 16
+2. Front cable: Yellow patch cable → Floor Plan 24 FRONT - FP24-R16 · FR-WW-J1
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 24 FRONT → Floor Plan 24 REAR
+4. Rear cable: Floor Plan 24 REAR → FR-WP-RACK (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: FR-WP-RACK (1) → FR-WP-ROOM-WW (1) - Existing in-wall cable.
+6. Room cable: FR-WP-ROOM-WW (1) → Family-room switch · PlayStation / OG LG Apple TV - Separate room patch cable to device Ethernet port.
+7. Label: FP24-R16 · FR-WW-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-WW-J1.
+
+### FR-PS-J1 - Family room · Plant shelf
+
+1. Source: Runner · Ethernet 15
+2. Front cable: Yellow patch cable → Floor Plan 23 FRONT - FP23-R15 · FR-PS-J1
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 23 FRONT → Floor Plan 23 REAR
+4. Rear cable: Floor Plan 23 REAR → FR-WP-RACK (4) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: FR-WP-RACK (4) → FR-WP-ROOM-PS (1) - Existing in-wall cable.
+6. Room end: Plant shelf connection - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
+7. Label: FP23-R15 · FR-PS-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-PS-J1.
+
+### FR-GA - Garage · existing cable
+
+1. Source: Runner · Ethernet 14
+2. Front cable: Yellow patch cable → Floor Plan 22 FRONT - FP22-R14 · FR-GA
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 22 FRONT → Floor Plan 22 REAR
+4. Rear cable: Floor Plan 22 REAR → FR-WP-RACK (3) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: FR-WP-RACK (3) → GA-WP-ROOM (1) - Existing garage / UNKNOWN cable; condition untested. Leave disconnected if faulty.
+6. Room end: Existing garage cable · condition untested - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
+7. Label: FP22-R14 · FR-GA - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-GA.
+
+### READY-R13 - Prepared connection · Runner 13
+
+1. Source: Runner · Ethernet 13
+2. Front cable: White patch cable → Floor Plan 21 FRONT - FP21-R13 · READY-R13
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 21 FRONT → Floor Plan 21 REAR
+4. Rear cable: Plug labeled cable into Floor Plan 21 REAR - FP21-R13 · READY-R13
+5. Destination: Coil behind panel · free cable end - No destination assigned yet.
+6. Label: FP21-R13 · READY-R13 - Label both ends of each new patch cable. Keep the permanent wall-run ID READY-R13.
+
+### B2-J1 - Guest bedroom (1)
+
+1. Source: Runner · Ethernet 12
+2. Front cable: Orange patch cable → Floor Plan 20 FRONT - FP20-R12 · B2-J1
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 20 FRONT → Floor Plan 20 REAR
+4. Rear cable: Floor Plan 20 REAR → B2-WP-RACK (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: B2-WP-RACK (1) → B2-WP-ROOM (1) - Run and terminate this in-wall cable.
+6. Room cable: B2-WP-ROOM (1) → kids room · Apple TV - Separate room patch cable to device Ethernet port.
+7. Label: FP20-R12 · B2-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID B2-J1.
+
+### C3 - SmartThings · Samsung hub
+
+1. Source: Runner · Ethernet 11
+2. Front cable: Black patch cable → Floor Plan 19 FRONT - FP19-R11 · C3
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 19 FRONT → Floor Plan 19 REAR
+4. Rear cable: Plug labeled cable into Floor Plan 19 REAR - FP19-R11 · C3
+5. Destination: Samsung SmartThings GP-U999SJVLGDA LAN - Connect directly to device LAN behind equipment; no brush or front detour.
+6. Label: FP19-R11 · C3 - Label both ends of each new patch cable. Keep the permanent wall-run ID C3.
+
+### B2-J2 - Guest bedroom (2)
+
+1. Source: Runner · Ethernet 10
+2. Front cable: Orange patch cable → Floor Plan 18 FRONT - FP18-R10 · B2-J2
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 18 FRONT → Floor Plan 18 REAR
+4. Rear cable: Floor Plan 18 REAR → B2-WP-RACK (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: B2-WP-RACK (2) → B2-WP-ROOM (2) - Run and terminate this in-wall cable.
+6. Room end: Future room device - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
+7. Label: FP18-R10 · B2-J2 - Label both ends of each new patch cable. Keep the permanent wall-run ID B2-J2.
+
+### B1-J1 - Jayce’s bedroom (1)
+
+1. Source: Runner · Ethernet 9
+2. Front cable: Orange patch cable → Floor Plan 17 FRONT - FP17-R9 · B1-J1
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 17 FRONT → Floor Plan 17 REAR
+4. Rear cable: Floor Plan 17 REAR → B1-WP-RACK (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: B1-WP-RACK (1) → B1-WP-ROOM (1) - Run and terminate this in-wall cable.
+6. Room end: Room device - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
+7. Label: FP17-R9 · B1-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID B1-J1.
+
+### B1-J2 - Jayce’s bedroom (2)
+
+1. Source: Runner · Ethernet 8
+2. Front cable: Orange patch cable → Floor Plan 16 FRONT - FP16-R8 · B1-J2
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 16 FRONT → Floor Plan 16 REAR
+4. Rear cable: Floor Plan 16 REAR → B1-WP-RACK (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: B1-WP-RACK (2) → B1-WP-ROOM (2) - Run and terminate this in-wall cable.
+6. Room end: Future room device - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
+7. Label: FP16-R8 · B1-J2 - Label both ends of each new patch cable. Keep the permanent wall-run ID B1-J2.
+
+### MB-J1 - Master bedroom (1)
+
+1. Source: Runner · Ethernet 7
+2. Front cable: White patch cable → Floor Plan 15 FRONT - FP15-R7 · MB-J1
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 15 FRONT → Floor Plan 15 REAR
+4. Rear cable: Floor Plan 15 REAR → MB-WP-RACK (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: MB-WP-RACK (1) → MB-WP-ROOM (1) - Run and terminate this in-wall cable.
+6. Room cable: MB-WP-ROOM (1) → Main Bedroom · Apple TV - Separate room patch cable to device Ethernet port.
+7. Label: FP15-R7 · MB-J1 - Label both ends of each new patch cable. Keep the permanent wall-run ID MB-J1.
+
+### MB-J2 - Master bedroom (2)
+
+1. Source: Runner · Ethernet 6
+2. Front cable: White patch cable → Floor Plan 14 FRONT - FP14-R6 · MB-J2
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 14 FRONT → Floor Plan 14 REAR
+4. Rear cable: Floor Plan 14 REAR → MB-WP-RACK (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: MB-WP-RACK (2) → MB-WP-ROOM (2) - Run and terminate this in-wall cable.
+6. Room end: Future room device - Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection.
+7. Label: FP14-R6 · MB-J2 - Label both ends of each new patch cable. Keep the permanent wall-run ID MB-J2.
+
+### PI-1 - The Safe · Raspberry Pi 400
+
+1. Source: Runner · Ethernet 5
+2. Front cable: White patch cable → Floor Plan 13 FRONT - FP13-R5 · PI-1
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 13 FRONT → Floor Plan 13 REAR
+4. Rear cable: Plug labeled cable into Floor Plan 13 REAR - FP13-R5 · PI-1
+5. Destination: Coil behind panel · free cable end - For Raspberry Pi 400 · passwords / Home Assistant. Future device is not present. Prepared Ethernet cable only; no power assignment.
+6. Label: FP13-R5 · PI-1 - Label both ends of each new patch cable. Keep the permanent wall-run ID PI-1.
+
+### PI-2 - Second Raspberry Pi
+
+1. Source: Runner · Ethernet 4
+2. Front cable: Black patch cable → Floor Plan 12 FRONT - FP12-R4 · PI-2
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 12 FRONT → Floor Plan 12 REAR
+4. Rear cable: Plug labeled cable into Floor Plan 12 REAR - FP12-R4 · PI-2
+5. Destination: Coil behind panel · free cable end - For Second Raspberry Pi · model not yet identified. Future device is not present. Prepared Ethernet cable only; no power assignment.
+6. Label: FP12-R4 · PI-2 - Label both ends of each new patch cable. Keep the permanent wall-run ID PI-2.
+
+### READY-R3 - Prepared connection · Runner 3
+
+1. Source: Runner · Ethernet 3
+2. Front cable: Black patch cable → Floor Plan 11 FRONT - FP11-R3 · READY-R3
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 11 FRONT → Floor Plan 11 REAR
+4. Rear cable: Plug labeled cable into Floor Plan 11 REAR - FP11-R3 · READY-R3
+5. Destination: Coil behind panel · free cable end - No destination assigned yet.
+6. Label: FP11-R3 · READY-R3 - Label both ends of each new patch cable. Keep the permanent wall-run ID READY-R3.
+
+### READY-R2 - Prepared connection · Runner 2
+
+1. Source: Runner · Ethernet 2
+2. Front cable: Black patch cable → Floor Plan 10 FRONT - FP10-R2 · READY-R2
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 10 FRONT → Floor Plan 10 REAR
+4. Rear cable: Plug labeled cable into Floor Plan 10 REAR - FP10-R2 · READY-R2
+5. Destination: Coil behind panel · free cable end - No destination assigned yet.
+6. Label: FP10-R2 · READY-R2 - Label both ends of each new patch cable. Keep the permanent wall-run ID READY-R2.
+
+### OF-SW-J2 - Office · Samsung TV
+
+1. Source: Expo · Ethernet 8
+2. Front cable: Blue patch cable → Floor Plan 9 FRONT - FP9-EX8
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 9 FRONT → Floor Plan 9 REAR
+4. Rear cable: Floor Plan 9 REAR → OF-WP-RACK-SW (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: OF-WP-RACK-SW (2) → OF-WP-ROOM-SW (2) - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-SW (2) → Samsung TV - Separate room patch cable to device Ethernet port.
+7. Label: FP9-EX8 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-SW-J2.
+
+### OF-WW-J2 - meepmax1 · Mac Studio
+
+1. Source: Expo · Ethernet 6
+2. Front cable: Blue patch cable → Floor Plan 8 FRONT - FP8-EX6
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 8 FRONT → Floor Plan 8 REAR
+4. Rear cable: Floor Plan 8 REAR → OF-WP-RACK-WW (2) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2) - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-WW (2) → meepmax1 · Mac Studio - Separate room patch cable to device Ethernet port.
+7. Label: FP8-EX6 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-WW-J2.
+
+### OF-SW-J1 - workout room (169) · Apple TV
+
+1. Source: Expo · Ethernet 5
+2. Front cable: Blue patch cable → Floor Plan 7 FRONT - FP7-EX5
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 7 FRONT → Floor Plan 7 REAR
+4. Rear cable: Floor Plan 7 REAR → OF-WP-RACK-SW (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: OF-WP-RACK-SW (1) → OF-WP-ROOM-SW (1) - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-SW (1) → workout room (169) · Apple TV - Separate room patch cable to device Ethernet port.
+7. Label: FP7-EX5 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-SW-J1.
+
+### OF-WW-J1 - pc-loadletter · Custom PC
+
+1. Source: Expo · Ethernet 3
+2. Front cable: Blue patch cable → Floor Plan 6 FRONT - FP6-EX3
+3. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 6 FRONT → Floor Plan 6 REAR
+4. Rear cable: Floor Plan 6 REAR → OF-WP-RACK-WW (1) - Separate rear patch cable to rack-side wall jack. Jack position is proposed.
+5. Wall run: OF-WP-RACK-WW (1) → OF-WP-ROOM-WW (1) - Existing in-wall cable.
+6. Room cable: OF-WP-ROOM-WW (1) → pc-loadletter · Custom PC - Separate room patch cable to device Ethernet port.
+7. Label: FP6-EX3 - Label both ends of each new patch cable. Keep the permanent wall-run ID OF-WW-J1.
+
+### FR-AP - Family room · AP / Orbi satellite
+
+1. Source: Main Orbi · Existing LAN output
+2. Brush: Up behind the rack → through U15 brush → down the front - Move the existing main Orbi LAN-to-AP wall-jack connection through Floor Plan 5.
+3. Front cable: Yellow patch cable → Floor Plan 5 FRONT - FP5-FR-AP
+4. Panel: Front and rear are the two sides of the same panel jack - Floor Plan 5 FRONT → Floor Plan 5 REAR
+5. Rear cable: Floor Plan 5 REAR → FR-WP-RACK (2) - Separate rear patch cable to rack-side wall jack labeled AP. Jack position is proposed.
+6. Wall run: FR-WP-RACK (2) → FR-WP-ROOM-WW (2) - Existing in-wall cable.
+7. Room cable: FR-WP-ROOM-WW (2) → Orbi RBS50 satellite · AP wall cable - Separate room patch cable to device Ethernet port. Preserve the existing satellite Ethernet socket.
+8. Label: FP5-FR-AP - Label both ends of each new patch cable. Keep the permanent wall-run ID FR-AP.
+
+### C1 - NAS · existing Expo 2 cable
+
+1. Device: NAS · preserve the currently connected NAS jack - Keep the exact existing NAS Ethernet socket and cable; upper/lower identity has not been recorded.
+2. Brush: Up behind rack → through U15 brush → down front
+3. Connection: Expo · Ethernet 2 - Direct cable; no Floor Plan jack or wall plate.
+
+### C2 - NAS · existing Expo 4 cable
+
+1. Device: NAS · preserve the currently connected NAS jack - Keep the exact existing NAS Ethernet socket and cable; upper/lower identity has not been recorded.
+2. Brush: Up behind rack → through U15 brush → down front
+3. Connection: Expo · Ethernet 4 - Direct cable; no Floor Plan jack or wall plate.
+
+### C4 - Gateway to Expo
+
+1. Source: Hostess / BGW620 · blue LAN 1
+2. Brush: Up behind rack → through U15 brush → down front
+3. Connection: Expo · SFP+ 1 Ethernet adapter - Ethernet cable plugs into the installed adapter; no Floor Plan jack.
+
+### C5 - Converter to gateway
+
+1. Source: Receiving Dock / Q1000K · existing installer Ethernet jack
+2. Cable path: Keep existing cable behind equipment - No brush or Floor Plan jack.
+3. Connection: Hostess · red ONT/LAN - Keep the installer connection and sockets. Device: Q1000K · installer jack.
+
+### C6 - Expo 7 / Runner 1
+
+1. Source: Expo · Ethernet 7
+2. Front cable: Direct front patch cable - No brush, Floor Plan jack or wall plate.
+3. Connection: Runner · Ethernet 1
+
+### WIFI-1 - Main Orbi · RBR50
+
+1. Source: Expo · Ethernet 1
+2. Brush: Up the front → through U15 brush → down behind rack
+3. Connection: Main Orbi RBR50 · Internet / WAN port - Separate from its LAN output feeding Floor Plan 5 / family-room AP.
+
+### OFFICE-SW - Future office switch
+
+1. Status: Optional future office switch - Alternative endpoint on OF-WW-J2; not another cable or extra Expo 6 allocation.
+2. Existing path: Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → OF-WP-RACK-WW (2)
+3. Wall run: OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2)
+4. Room cable: Office West room jack (2) → TRENDnet Ethernet port - Switch port number is unassigned. When installed, reconnect meepmax1 to another TRENDnet Ethernet port; no new wall run required. Device: TRENDnet TEG-S350.
+
+## Connection review
+
+All 27 Ethernet records and current power / USB records reviewed against owner instructions. Documentation review; not a live cable or connectivity test.
+
+- NAS exact device-side Ethernet socket identities: preserve each existing cable/socket pairing.
+- Main Orbi LAN output number and satellite Ethernet port number: preserve existing sockets.
+- Garage / UNKNOWN cable condition unverified; one record only.
+- NVR downstream attachment behind family-room switch unverified.
+- Future room endpoint devices and optional TRENDnet port numbers unassigned.
+- Wall-plate jack numbers remain proposed until installation.
+- SmartThings PDU USB pairing and large-adapter fit still need the documented physical checks.
 
 ## Keystone inventory - four of each
 
@@ -645,33 +897,33 @@
 
 ## Full routes
 
-- FR-WW-J1: Runner Ethernet 16 / FP24 / FR-WP-RACK-J1 / FR-WP-ROOM-WW-J1 / Family-room switch · PlayStation / OG LG Apple TV
-- FR-PS-J1: Runner Ethernet 15 / FP23 / FR-WP-RACK-J4 / FR-WP-ROOM-PS-J1 / Plant shelf connection
-- FR-GA: Runner Ethernet 14 / FP22 / FR-WP-RACK-J3 / GA-WP-ROOM-J1 / Existing garage cable · condition untested
-- READY-R13: Runner Ethernet 13 / FP21 / Future destination
-- B2-J1: Runner Ethernet 12 / FP20 / B2-WP-RACK-J1 / B2-WP-ROOM-J1 / kids room · Apple TV
-- C3: Runner Ethernet 11 / FP19 / Samsung SmartThings GP-U999SJVLGDA LAN
-- B2-J2: Runner Ethernet 10 / FP18 / B2-WP-RACK-J2 / B2-WP-ROOM-J2 / Future room device
-- B1-J1: Runner Ethernet 9 / FP17 / B1-WP-RACK-J1 / B1-WP-ROOM-J1 / Room device
-- B1-J2: Runner Ethernet 8 / FP16 / B1-WP-RACK-J2 / B1-WP-ROOM-J2 / Future room device
-- MB-J1: Runner Ethernet 7 / FP15 / MB-WP-RACK-J1 / MB-WP-ROOM-J1 / Main Bedroom · Apple TV
-- MB-J2: Runner Ethernet 6 / FP14 / MB-WP-RACK-J2 / MB-WP-ROOM-J2 / Future room device
-- PI-1: Runner Ethernet 5 / FP13 / Raspberry Pi 400 · passwords / Home Assistant
-- PI-2: Runner Ethernet 4 / FP12 / Second Raspberry Pi · model not yet identified
-- READY-R3: Runner Ethernet 3 / FP11 / Future destination
-- READY-R2: Runner Ethernet 2 / FP10 / Future destination
-- OF-SW-J2: Expo Ethernet 8 / FP9 / OF-WP-RACK-SW-J2 / OF-WP-ROOM-SW-J2 / Samsung TV
-- OF-WW-J2: Expo Ethernet 6 / FP8 / OF-WP-RACK-WW-J2 / OF-WP-ROOM-WW-J2 / meepmax1 · Mac Studio
-- OF-SW-J1: Expo Ethernet 5 / FP7 / OF-WP-RACK-SW-J1 / OF-WP-ROOM-SW-J1 / workout room (169) · Apple TV
-- OF-WW-J1: Expo Ethernet 3 / FP6 / OF-WP-RACK-WW-J1 / OF-WP-ROOM-WW-J1 / pc-loadletter · Custom PC
-- FR-AP: Main Orbi Existing LAN output / FP5 / FR-WP-RACK-J2 / FR-WP-ROOM-WW-J2 / Orbi RBS50 satellite · AP wall cable
-- C1: Expo Ethernet 2 / NAS · preserve the currently connected NAS jack
-- C2: Expo Ethernet 4 / NAS · preserve the currently connected NAS jack
-- C4: Expo SFP+ 1 / BGW620 · blue LAN 1
-- C5: Hostess Red ONT/LAN / Q1000K · installer jack
-- C6: Runner Ethernet 1 / Expo · Ethernet 7
-- WIFI-1: Expo Ethernet 1 / Main Orbi RBR50
-- OFFICE-SW: Expo Ethernet 6 via OF-WW-J2 / TRENDnet TEG-S350
+- FR-WW-J1: Runner · Ethernet 16 / Yellow patch cable → Floor Plan 24 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 24 REAR → FR-WP-RACK (1) / FR-WP-RACK (1) → FR-WP-ROOM-WW (1) / FR-WP-ROOM-WW (1) → Family-room switch · PlayStation / OG LG Apple TV
+- FR-PS-J1: Runner · Ethernet 15 / Yellow patch cable → Floor Plan 23 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 23 REAR → FR-WP-RACK (4) / FR-WP-RACK (4) → FR-WP-ROOM-PS (1) / Plant shelf connection
+- FR-GA: Runner · Ethernet 14 / Yellow patch cable → Floor Plan 22 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 22 REAR → FR-WP-RACK (3) / FR-WP-RACK (3) → GA-WP-ROOM (1) / Existing garage cable · condition untested
+- READY-R13: Runner · Ethernet 13 / White patch cable → Floor Plan 21 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 21 REAR / Coil behind panel · free cable end
+- B2-J1: Runner · Ethernet 12 / Orange patch cable → Floor Plan 20 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 20 REAR → B2-WP-RACK (1) / B2-WP-RACK (1) → B2-WP-ROOM (1) / B2-WP-ROOM (1) → kids room · Apple TV
+- C3: Runner · Ethernet 11 / Black patch cable → Floor Plan 19 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 19 REAR / Samsung SmartThings GP-U999SJVLGDA LAN
+- B2-J2: Runner · Ethernet 10 / Orange patch cable → Floor Plan 18 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 18 REAR → B2-WP-RACK (2) / B2-WP-RACK (2) → B2-WP-ROOM (2) / Future room device
+- B1-J1: Runner · Ethernet 9 / Orange patch cable → Floor Plan 17 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 17 REAR → B1-WP-RACK (1) / B1-WP-RACK (1) → B1-WP-ROOM (1) / Room device
+- B1-J2: Runner · Ethernet 8 / Orange patch cable → Floor Plan 16 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 16 REAR → B1-WP-RACK (2) / B1-WP-RACK (2) → B1-WP-ROOM (2) / Future room device
+- MB-J1: Runner · Ethernet 7 / White patch cable → Floor Plan 15 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 15 REAR → MB-WP-RACK (1) / MB-WP-RACK (1) → MB-WP-ROOM (1) / MB-WP-ROOM (1) → Main Bedroom · Apple TV
+- MB-J2: Runner · Ethernet 6 / White patch cable → Floor Plan 14 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 14 REAR → MB-WP-RACK (2) / MB-WP-RACK (2) → MB-WP-ROOM (2) / Future room device
+- PI-1: Runner · Ethernet 5 / White patch cable → Floor Plan 13 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 13 REAR / Coil behind panel · free cable end
+- PI-2: Runner · Ethernet 4 / Black patch cable → Floor Plan 12 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 12 REAR / Coil behind panel · free cable end
+- READY-R3: Runner · Ethernet 3 / Black patch cable → Floor Plan 11 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 11 REAR / Coil behind panel · free cable end
+- READY-R2: Runner · Ethernet 2 / Black patch cable → Floor Plan 10 FRONT / Front and rear are the two sides of the same panel jack / Plug labeled cable into Floor Plan 10 REAR / Coil behind panel · free cable end
+- OF-SW-J2: Expo · Ethernet 8 / Blue patch cable → Floor Plan 9 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 9 REAR → OF-WP-RACK-SW (2) / OF-WP-RACK-SW (2) → OF-WP-ROOM-SW (2) / OF-WP-ROOM-SW (2) → Samsung TV
+- OF-WW-J2: Expo · Ethernet 6 / Blue patch cable → Floor Plan 8 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 8 REAR → OF-WP-RACK-WW (2) / OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2) / OF-WP-ROOM-WW (2) → meepmax1 · Mac Studio
+- OF-SW-J1: Expo · Ethernet 5 / Blue patch cable → Floor Plan 7 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 7 REAR → OF-WP-RACK-SW (1) / OF-WP-RACK-SW (1) → OF-WP-ROOM-SW (1) / OF-WP-ROOM-SW (1) → workout room (169) · Apple TV
+- OF-WW-J1: Expo · Ethernet 3 / Blue patch cable → Floor Plan 6 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 6 REAR → OF-WP-RACK-WW (1) / OF-WP-RACK-WW (1) → OF-WP-ROOM-WW (1) / OF-WP-ROOM-WW (1) → pc-loadletter · Custom PC
+- FR-AP: Main Orbi · Existing LAN output / Up behind the rack → through U15 brush → down the front / Yellow patch cable → Floor Plan 5 FRONT / Front and rear are the two sides of the same panel jack / Floor Plan 5 REAR → FR-WP-RACK (2) / FR-WP-RACK (2) → FR-WP-ROOM-WW (2) / FR-WP-ROOM-WW (2) → Orbi RBS50 satellite · AP wall cable
+- C1: NAS · preserve the currently connected NAS jack / Up behind rack → through U15 brush → down front / Expo · Ethernet 2
+- C2: NAS · preserve the currently connected NAS jack / Up behind rack → through U15 brush → down front / Expo · Ethernet 4
+- C4: Hostess / BGW620 · blue LAN 1 / Up behind rack → through U15 brush → down front / Expo · SFP+ 1 Ethernet adapter
+- C5: Receiving Dock / Q1000K · existing installer Ethernet jack / Keep existing cable behind equipment / Hostess · red ONT/LAN
+- C6: Expo · Ethernet 7 / Direct front patch cable / Runner · Ethernet 1
+- WIFI-1: Expo · Ethernet 1 / Up the front → through U15 brush → down behind rack / Main Orbi RBR50 · Internet / WAN port
+- OFFICE-SW: Optional future office switch / Expo 6 → Floor Plan 8 FRONT → Floor Plan 8 REAR → OF-WP-RACK-WW (2) / OF-WP-RACK-WW (2) → OF-WP-ROOM-WW (2) / Office West room jack (2) → TRENDnet Ethernet port
 
 ## USB power review
 
