@@ -64,3 +64,14 @@
 - P means Proposed status, separate from permanent connection IDs.
 - Network published first. Power-fit research is in homelab-power-fit.md. Future Pis have NO power sockets. Existing large adapters get clearance; SmartThings has an exact-cable USB proposal and original-adapter fallback.
 - Internet configuration and automatic shutdown remain outside scope.
+
+## Keystone inventory — exactly four of each
+
+- Already installed: yellow5; blue6–9; black10–12. These positions are locked.
+- red: 1, 2, 3, 4
+- yellow: 5, 22, 23, 24
+- blue: 6, 7, 8, 9
+- black: 10, 11, 12, 19
+- white: 13, 14, 15, 21
+- orange: 16, 17, 18, 20
+- Uninstalled positions remain proposed. Prepared direct rack cables retain their original leads; these counts are panel inserts and matching panel jumpers.

@@ -319,7 +319,7 @@ label(hub, center + 89, unitTop(10) - 13, '1U · 16 in', 14);
 ethernetSwitch('house', 12, 294, 'TP-Link house switch', 16);
 const panel = item('patch', 'U13 · trueCABLE panel · socket openings and printed labels');
 face(panel,13,'#30382e');
-const panelColors={"24": "#f1d55a", "23": "#f1d55a", "22": "#f3f1e7", "21": "#171c17", "20": "#ef9c4e", "19": "#171c17", "18": "#ef9c4e", "17": "#ef9c4e", "16": "#ef9c4e", "15": "#f3f1e7", "14": "#f3f1e7", "13": "#3f8be8", "12": "#171c17", "11": "#171c17", "10": "#171c17", "9": "#3f8be8", "8": "#3f8be8", "7": "#3f8be8", "6": "#3f8be8", "5": "#f1d55a"};
+const panelColors={"1": "#ed6b5a", "2": "#ed6b5a", "3": "#ed6b5a", "4": "#ed6b5a", "5": "#f1d55a", "22": "#f1d55a", "23": "#f1d55a", "24": "#f1d55a", "6": "#3f8be8", "7": "#3f8be8", "8": "#3f8be8", "9": "#3f8be8", "10": "#171c17", "11": "#171c17", "12": "#171c17", "19": "#171c17", "13": "#f3f1e7", "14": "#f3f1e7", "15": "#f3f1e7", "21": "#f3f1e7", "16": "#ef9c4e", "17": "#ef9c4e", "18": "#ef9c4e", "20": "#ef9c4e"};
 for(let index=0;index<24;index++){const n=index+1,x=railLeft+29+index*17.6;const py=unitTop(13)+(n%2?7:25),ny=unitTop(13)+(n%2?39:13);rectangle(panel,x,py,14,9,panelColors[n]||'#69755f',{stroke:'#99b0a6'});rectangle(panel,x+3,py+2,8,5,'#0e180f');label(panel,x+7,ny,String(n),9,'#f4f7ef','middle');}
 ethernetSwitch('fast', 14, 200, 'MikroTik office and NAS', 8, true);
 

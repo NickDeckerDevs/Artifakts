@@ -68,7 +68,7 @@
       "id": "FR-GA",
       "name": "Garage · existing cable",
       "area": "Unidentified",
-      "color": "white",
+      "color": "yellow",
       "state": "Existing",
       "device": "Existing garage cable · condition untested",
       "wall": "Garage · existing cable on family-room rack plate",
@@ -99,7 +99,7 @@
     {
       "id": "READY-R13",
       "area": "Prepared connections",
-      "color": "black",
+      "color": "white",
       "state": "Proposed",
       "wall": "Inside rack",
       "plate": "No room plate",
@@ -345,7 +345,7 @@
       "id": "PI-1",
       "name": "The Safe · Raspberry Pi 400",
       "area": "Inside rack · future equipment",
-      "color": "blue",
+      "color": "white",
       "state": "Proposed",
       "device": "Raspberry Pi 400 · passwords / Home Assistant",
       "wall": "Inside rack · proposed device location",
@@ -790,12 +790,12 @@
   "version": "network-ready-2026-11-24",
   "placement": "Proposed",
   "colors": {
-    "blue": "Office / Computer / TV",
-    "yellow": "Family room · equipment / plant shelf",
-    "orange": "Guest / Jayce’s bedrooms",
-    "white": "Master bedroom / existing garage",
-    "black": "Rack devices / prepared cables · drawn white",
-    "red": "Internet connection"
+    "blue": "Office · 4 inserts",
+    "yellow": "Family room / AP / garage · 4 inserts",
+    "orange": "Guest / Jayce’s bedrooms · 4 inserts",
+    "white": "Master / Safe / prepared · 4 inserts",
+    "black": "Rack / prepared · 4 inserts, paths white",
+    "red": "Available panel 1–4 · 4 inserts"
   },
   "plates": [
     {
@@ -1173,5 +1173,49 @@
     "odd": "Opening at top, number below",
     "even": "Number at top, opening below",
     "source": "Owner correction: printed label position and socket opening are opposite; do not use label position as port position."
+  },
+  "keystoneInventory": {
+    "red": 4,
+    "yellow": 4,
+    "blue": 4,
+    "black": 4,
+    "white": 4,
+    "orange": 4
+  },
+  "panelInsertColors": {
+    "1": "red",
+    "2": "red",
+    "3": "red",
+    "4": "red",
+    "5": "yellow",
+    "22": "yellow",
+    "23": "yellow",
+    "24": "yellow",
+    "6": "blue",
+    "7": "blue",
+    "8": "blue",
+    "9": "blue",
+    "10": "black",
+    "11": "black",
+    "12": "black",
+    "19": "black",
+    "13": "white",
+    "14": "white",
+    "15": "white",
+    "21": "white",
+    "16": "orange",
+    "17": "orange",
+    "18": "orange",
+    "20": "orange"
+  },
+  "installedInsertLocks": {
+    "5": "yellow",
+    "6": "blue",
+    "7": "blue",
+    "8": "blue",
+    "9": "blue",
+    "10": "black",
+    "11": "black",
+    "12": "black"
   }
 }

@@ -52,7 +52,7 @@
 - Current switch: Unidentified / socket unidentified
 - Target switch: Runner
 - Switch socket: Ethernet 14
-- Color: white
+- Color: yellow
 - Note: One existing garage cable, previously UNKNOWN. Runner 14 / Floor Plan 22 front and rear cables are prepared. Leave the garage wall lead disconnected if faulty; condition is not verified.
 
 ### READY-R13 · Prepared connection · Runner 13
@@ -66,7 +66,7 @@
 - Current switch: Unidentified / socket unidentified
 - Target switch: Runner
 - Switch socket: Ethernet 13
-- Color: black
+- Color: white
 - Note: Install Runner 13 to Floor Plan 21. Plug in and label rear cable FP21-R13; coil it behind the panel. No room/device destination assigned yet.
 
 ### B2-J1 · Guest bedroom (1)
@@ -178,7 +178,7 @@
 - Current switch: Unidentified / socket unidentified
 - Target switch: Runner
 - Switch socket: Ethernet 5
-- Color: blue
+- Color: white
 - Note: Runner 5 to Floor Plan 13. Rear cable labeled for Raspberry Pi 400 · passwords / Home Assistant. Proposed rack-side destination; software and exact placement are later work.
 
 ### PI-2 · Second Raspberry Pi
@@ -390,6 +390,16 @@
 - Switch socket: Ethernet 6 via OF-WW-J2
 - Color: black
 - Note: Optional future office TRENDnet using Mac West run OF-WW-J2 / Expo6. Pi connections are now prepared separately on Runner; no forced Pi assignment to this office switch.
+
+## Keystone inventory - four of each
+
+- red: 4 / panel 1, 2, 3, 4
+- yellow: 4 / panel 5, 22, 23, 24
+- blue: 4 / panel 6, 7, 8, 9
+- black: 4 / panel 10, 11, 12, 19
+- white: 4 / panel 13, 14, 15, 21
+- orange: 4 / panel 16, 17, 18, 20
+- Installed locks: yellow5, blue6-9, black10-12. Other insert placements proposed.
 
 ## Runner preparation
 
