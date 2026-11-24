@@ -511,13 +511,13 @@
 - Both-end label: B1 WAITRESS NAS
 - Note: B1 is your applied label, not a claimed factory outlet number. Use a socket in the bank marked Battery/Surge. Preserve the original device power supply.
 
-### PDU-2 · Hostess · gateway
+### PDU-5 · Hostess · gateway
 
-- Source: Tecmojo rear outlet 2 / front rocker 2
+- Source: Tecmojo rear outlet 5 / front rocker 5
 - Cable: Original AT&T power adapter
 - Device end: BGW620-700 power socket
 - Route: Left rear rack post · leave slack at the plugs
-- Both-end label: PDU2 HOSTESS · GATEWAY
+- Both-end label: PDU5 HOSTESS · GATEWAY
 - Note: Original device supply. PDU is fed by UPS Battery/Surge B2.
 
 ### PDU-3 · Expo · MikroTik
@@ -538,32 +538,23 @@
 - Both-end label: PDU4 RUNNER · TP-LINK
 - Note: Original device supply. PDU is fed by UPS Battery/Surge B2.
 
-### PDU-5 · Receiving Dock · converter
+### PDU-1 · Receiving Dock · converter
 
-- Source: Tecmojo rear outlet 5 / front rocker 5
+- Source: Tecmojo rear outlet 1 / front rocker 1
 - Cable: Original Q1000K power adapter
 - Device end: Q1000K power socket
 - Route: Left rear rack post · leave slack at the plugs
-- Both-end label: PDU5 RECEIVING DOCK · CONVERTER
-- Note: Original device supply. PDU is fed by UPS Battery/Surge B2.
+- Both-end label: PDU1 RECEIVING DOCK · CONVERTER
+- Note: Large plug reported by owner. Place Receiving Dock at end outlet1; leave outlet2 clear. If plug shape still obstructs insertion, use a short grounded single-outlet extension, or temporary UPS Battery/Surge B3 as owner allowed. No physical fit test is claimed.
 
-### PDU-1 · The Safe · Raspberry Pi 400
+### PDU-6 · SmartThings
 
-- Source: Tecmojo rear outlet 1 / front rocker 1
-- Cable: Matching Pi USB-C supply · official supply 5.1 V / 3 A
-- Device end: Raspberry Pi 400 USB-C power input
-- Route: Behind rack equipment · support the adapter; short outlet extension if needed
-- Both-end label: PDU1 THE SAFE PI400
-- Note: Network now reserves rack-side Runner5 / Floor Plan13. Original matching supply in PDU1 is the usable option. PDU USB could work only with verified dedicated output and suitable cable; its shared manual specification is ambiguous.
-
-### PDU-8 · SmartThings
-
-- Source: Tecmojo rear outlet 8 / front rocker 8
+- Source: Tecmojo rear outlet 6 / front rocker 6
 - Cable: Original Samsung adapter
 - Device end: SmartThings DC power socket
 - Route: Left rear rack post · support the adapter beside the strip
-- Both-end label: PDU8 SMARTTHINGS
-- Note: Original Samsung adapter in PDU8 is usable now. User reports5V2A. A USB-to-DC-barrel cable could work after barrel size, polarity and per-port output are verified. Do not power through the hub USB-A host socket.
+- Both-end label: PDU6 SMARTTHINGS
+- Note: Original adapter at PDU6 is fallback until USB cable is obtained and tested. Exact cable found: Konnected USB TypeA to5V 5.5x2.1mm barrel, explicitly SmartThingsv3 compatible. Select the USB-A1 proposal for instructions. Do not connect both power sources at once.
 
 ### FEED-UPS · UPS supply
 
@@ -601,27 +592,30 @@
 - Both-end label: OFFICE SWITCH POWER
 - Note: Proposed room-side power. No rack PDU outlet is used for this room device.
 
-### PDU-7 · Orbi · existing location
+### PDU-8 · Orbi · existing location
 
-- Source: Tecmojo rear outlet 7 / front rocker 7
+- Source: Tecmojo rear outlet 8 / front rocker 8
 - Cable: Original Orbi adapter and existing routed power lead
 - Device end: Orbi existing DC power input
 - Route: Retain present Orbi position away from rack; route its power to PDU without moving its Ethernet
-- Both-end label: PDU7 ORBI
-- Note: Owner-confirmed PDU power. Existing Ethernet remains unchanged.
-
-### PDU-6 · Second Raspberry Pi · reserved
-
-- Source: Tecmojo rear outlet 6 / front rocker 6
-- Cable: Matching power supply for the actual Pi model
-- Device end: Second Raspberry Pi · model not yet identified
-- Route: Rear of rack · prepared location; support adapter
-- Both-end label: PDU6 SECOND PI
-- Note: Reserved outlet; no claim that device or adapter is present. Network prepared at Runner4 / Floor Plan12. Choose supply when model is known.
+- Both-end label: PDU8 ORBI · EXISTING LOCATION
+- Note: Large plug reported by owner. Use outlet8, where manufacturer image shows52mm spacing on both sides; keep7 and9 clear. Support adapter. If shape still prevents fit, use short grounded single-outlet extension or temporary UPS Battery/Surge B4.
 
 - UPS B3-B6 and surge-only S1-S6: available.
-- PDU outlet9 available. Outlet1 Pi400; outlet6 secondPi reserved.
+- PDU2/7/9 kept clear for large adapters. Future Pis have no power assignments.
 - PDU USB-A1/A2/C1/C2: unassigned charging sockets, not USB data paths.
+
+## SmartThings USB proposal
+
+- PDU front USB-A1 · proposed test
+- Konnected USB-A to5V DC barrel · 5.5mm outer / 2.1mm inner · center positive · 1m
+- Cable manufacturer explicitly supports SmartThings Hubv2/v3. FCC applicant photo of original MLF-B250502000CU adapter confirms5V2A and center-positive polarity. Connector research is resolved; no user measurement needed. PDU manual lists3A shared at5V; hub reports2A. This fits the total current budget with other USB sockets empty, but individual-port continuous rating is unpublished. Proposed power-up test only: obtain cable, disconnect original hub adapter, connect USB-A1, check stable boot and operation. If it fails to start or restarts, restore original adapter at PDU6. No successful PDU/hub test is claimed.
+- Cable source: https://konnected.io/products/usb-to-5v-dc-barrel-jack-power-cable
+
+## Future devices - no outlets assigned
+
+- The Safe: Future device · not present
+- Second Raspberry Pi: Future device · not present
 
 ## Naming convention
 
@@ -671,13 +665,16 @@
 
 ## USB power review
 
-- pdu: Manual prints shared5Vdc/3A20W MAX. 5V times3A is15W; printed rating inconsistent. Individual-port allocation unverified.
+- pdu: Front product photo marked CHARGER(PD20W); manual gives shared5V/3A20W MAX, no individual-port rating. 2A hub fits3A shared budget alone, but per-port stability must be tested. No demonstrated test claimed.
 - pi: Pi 400: 5 V / 3 A; official supply 5.1 V / 3 A. Keep matching supply until a dedicated PDU output is verified.
-- smartthings: Reported5V2A. USB-to-barrel may work with verified barrel size/polarity and dedicated2A output. Hub USB-A is not the input.
+- smartthings: Resolved:5V, at least2A source,5.5x2.1mm center-positive barrel. Konnected exact USB-A cable explicitly supports SmartThingsv3. PDU USB-A1 is a proposed test; other charging ports empty; original adapterPDU6 fallback.
 - sonoff: NAS USB data and power remain together; never move to charging-only PDU.
 - ups source: https://www.cyberpowersystems.com/product/ups/intelligent-lcd/cp1500avrlcd3/
 - pdu source: https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902_2025.04.15_D.1.08.098.108098206_TEC-SMS-231005.pdf?v=1759803230
 - pi source: https://www.raspberrypi.com/products/type-c-power-supply/
+- smartthingsCable source: https://konnected.io/products/usb-to-5v-dc-barrel-jack-power-cable
+- outletSpacing source: https://tecmojo.com/cdn/shop/files/13110902__5.jpg?v=1777339751&width=2000
+- smartthingsOriginalAdapter source: https://fccid.io/2AF4S-STH-ETH-300/External-Photos/External-Photos-3832130.pdf
 
 ## Scope
 

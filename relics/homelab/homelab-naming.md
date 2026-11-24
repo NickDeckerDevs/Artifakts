@@ -62,5 +62,5 @@
 - homelab-connections.json is the full structured source; HTML embeds identical data for local use.
 - Labels, Markdown and diagrams derive from that source.
 - P means Proposed status, separate from permanent connection IDs.
-- Network published first. Power-fit research is in homelab-power-fit.md; original-supply plan adds PDU1 for Pi400 and reserves PDU6 for second Pi.
+- Network published first. Power-fit research is in homelab-power-fit.md. Future Pis have NO power sockets. Existing large adapters get clearance; SmartThings has an exact-cable USB proposal and original-adapter fallback.
 - Internet configuration and automatic shutdown remain outside scope.

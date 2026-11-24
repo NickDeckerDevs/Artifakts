@@ -907,16 +907,17 @@
       "note": "B1 is your applied label, not a claimed factory outlet number. Use a socket in the bank marked Battery/Surge. Preserve the original device power supply."
     },
     {
-      "id": "PDU-2",
+      "id": "PDU-5",
       "name": "Hostess · gateway",
-      "source": "Tecmojo rear outlet 2 / front rocker 2",
+      "source": "Tecmojo rear outlet 5 / front rocker 5",
       "device": "BGW620-700 power socket",
       "cable": "Original AT&T power adapter",
       "route": "Left rear rack post · leave slack at the plugs",
-      "label": "PDU2 HOSTESS · GATEWAY",
+      "label": "PDU5 HOSTESS · GATEWAY",
       "battery": true,
-      "status": "Proposed",
-      "note": "Original device supply. PDU is fed by UPS Battery/Surge B2."
+      "status": "Proposed outlet for existing equipment",
+      "note": "Original device supply. PDU is fed by UPS Battery/Surge B2.",
+      "hardwareState": "Present"
     },
     {
       "id": "PDU-3",
@@ -943,40 +944,30 @@
       "note": "Original device supply. PDU is fed by UPS Battery/Surge B2."
     },
     {
-      "id": "PDU-5",
+      "id": "PDU-1",
       "name": "Receiving Dock · converter",
-      "source": "Tecmojo rear outlet 5 / front rocker 5",
+      "source": "Tecmojo rear outlet 1 / front rocker 1",
       "device": "Q1000K power socket",
       "cable": "Original Q1000K power adapter",
       "route": "Left rear rack post · leave slack at the plugs",
-      "label": "PDU5 RECEIVING DOCK · CONVERTER",
+      "label": "PDU1 RECEIVING DOCK · CONVERTER",
       "battery": true,
-      "status": "Proposed",
-      "note": "Original device supply. PDU is fed by UPS Battery/Surge B2."
+      "status": "Proposed outlet for existing equipment",
+      "note": "Large plug reported by owner. Place Receiving Dock at end outlet1; leave outlet2 clear. If plug shape still obstructs insertion, use a short grounded single-outlet extension, or temporary UPS Battery/Surge B3 as owner allowed. No physical fit test is claimed.",
+      "hardwareState": "Present"
     },
     {
-      "id": "PDU-1",
-      "name": "The Safe · Raspberry Pi 400",
-      "source": "Tecmojo rear outlet 1 / front rocker 1",
-      "device": "Raspberry Pi 400 USB-C power input",
-      "cable": "Matching Pi USB-C supply · official supply 5.1 V / 3 A",
-      "route": "Behind rack equipment · support the adapter; short outlet extension if needed",
-      "label": "PDU1 THE SAFE PI400",
-      "battery": true,
-      "status": "Proposed",
-      "note": "Network now reserves rack-side Runner5 / Floor Plan13. Original matching supply in PDU1 is the usable option. PDU USB could work only with verified dedicated output and suitable cable; its shared manual specification is ambiguous."
-    },
-    {
-      "id": "PDU-8",
+      "id": "PDU-6",
       "name": "SmartThings",
-      "source": "Tecmojo rear outlet 8 / front rocker 8",
+      "source": "Tecmojo rear outlet 6 / front rocker 6",
       "device": "SmartThings DC power socket",
       "cable": "Original Samsung adapter",
       "route": "Left rear rack post · support the adapter beside the strip",
-      "label": "PDU8 SMARTTHINGS",
+      "label": "PDU6 SMARTTHINGS",
       "battery": true,
-      "status": "Proposed",
-      "note": "Original Samsung adapter in PDU8 is usable now. User reports5V2A. A USB-to-DC-barrel cable could work after barrel size, polarity and per-port output are verified. Do not power through the hub USB-A host socket."
+      "status": "Proposed outlet for existing equipment",
+      "note": "Original adapter at PDU6 is fallback until USB cable is obtained and tested. Exact cable found: Konnected USB TypeA to5V 5.5x2.1mm barrel, explicitly SmartThingsv3 compatible. Select the USB-A1 proposal for instructions. Do not connect both power sources at once.",
+      "hardwareState": "Present"
     },
     {
       "id": "FEED-UPS",
@@ -1027,34 +1018,26 @@
       "note": "Proposed room-side power. No rack PDU outlet is used for this room device."
     },
     {
-      "id": "PDU-7",
+      "id": "PDU-8",
       "name": "Orbi · existing location",
-      "source": "Tecmojo rear outlet 7 / front rocker 7",
+      "source": "Tecmojo rear outlet 8 / front rocker 8",
       "device": "Orbi existing DC power input",
       "cable": "Original Orbi adapter and existing routed power lead",
       "route": "Retain present Orbi position away from rack; route its power to PDU without moving its Ethernet",
-      "label": "PDU7 ORBI",
+      "label": "PDU8 ORBI · EXISTING LOCATION",
       "battery": true,
-      "status": "Proposed",
-      "note": "Owner-confirmed PDU power. Existing Ethernet remains unchanged."
-    },
-    {
-      "id": "PDU-6",
-      "name": "Second Raspberry Pi · reserved",
-      "source": "Tecmojo rear outlet 6 / front rocker 6",
-      "device": "Second Raspberry Pi · model not yet identified",
-      "cable": "Matching power supply for the actual Pi model",
-      "route": "Rear of rack · prepared location; support adapter",
-      "label": "PDU6 SECOND PI",
-      "battery": true,
-      "status": "Proposed",
-      "note": "Reserved outlet; no claim that device or adapter is present. Network prepared at Runner4 / Floor Plan12. Choose supply when model is known."
+      "status": "Proposed outlet for existing equipment",
+      "note": "Large plug reported by owner. Use outlet8, where manufacturer image shows52mm spacing on both sides; keep7 and9 clear. Support adapter. If shape still prevents fit, use short grounded single-outlet extension or temporary UPS Battery/Surge B4.",
+      "hardwareState": "Present"
     }
   ],
   "powerSources": {
     "ups": "https://www.cyberpowersystems.com/product/ups/intelligent-lcd/cp1500avrlcd3/",
     "pdu": "https://cdn.shopify.com/s/files/1/0923/0001/7947/files/13110902_2025.04.15_D.1.08.098.108098206_TEC-SMS-231005.pdf?v=1759803230",
-    "pi": "https://www.raspberrypi.com/products/type-c-power-supply/"
+    "pi": "https://www.raspberrypi.com/products/type-c-power-supply/",
+    "smartthingsCable": "https://konnected.io/products/usb-to-5v-dc-barrel-jack-power-cable",
+    "outletSpacing": "https://tecmojo.com/cdn/shop/files/13110902__5.jpg?v=1777339751&width=2000",
+    "smartthingsOriginalAdapter": "https://fccid.io/2AF4S-STH-ETH-300/External-Photos/External-Photos-3832130.pdf"
   },
   "legacyIds": {
     "OF-W1": "OF-WW-J1",
@@ -1094,9 +1077,9 @@
     "P": "Proposed status, separate from identifiers"
   },
   "usbPowerReview": {
-    "pdu": "Manual prints shared5Vdc/3A20W MAX. 5V times3A is15W; printed rating inconsistent. Individual-port allocation unverified.",
+    "pdu": "Front product photo marked CHARGER(PD20W); manual gives shared5V/3A20W MAX, no individual-port rating. 2A hub fits3A shared budget alone, but per-port stability must be tested. No demonstrated test claimed.",
     "pi": "Pi 400: 5 V / 3 A; official supply 5.1 V / 3 A. Keep matching supply until a dedicated PDU output is verified.",
-    "smartthings": "Reported5V2A. USB-to-barrel may work with verified barrel size/polarity and dedicated2A output. Hub USB-A is not the input.",
+    "smartthings": "Resolved:5V, at least2A source,5.5x2.1mm center-positive barrel. Konnected exact USB-A cable explicitly supports SmartThingsv3. PDU USB-A1 is a proposed test; other charging ports empty; original adapterPDU6 fallback.",
     "sonoff": "NAS USB data and power remain together; never move to charging-only PDU."
   },
   "scope": "Physical network map and original-supply power arrangement. USB alternatives and brick fit researched separately; remaining checks affect power alternatives only.",
@@ -1139,6 +1122,51 @@
       "name": "Family Orbi RBS50",
       "via": "FR-AP / main Orbi LAN",
       "status": "Owner traced"
+    }
+  ],
+  "powerFuture": [
+    {
+      "name": "The Safe",
+      "presence": "Future device · not present",
+      "powerOutlet": null
+    },
+    {
+      "name": "Second Raspberry Pi",
+      "presence": "Future device · not present",
+      "powerOutlet": null
+    }
+  ],
+  "powerClearance": {
+    "2": "Keep clear for Receiving Dock adapter in outlet1",
+    "7": "Keep clear for Orbi adapter in outlet8",
+    "9": "Keep clear for Orbi adapter in outlet8"
+  },
+  "powerAlternatives": [
+    {
+      "id": "USB-SMARTTHINGS",
+      "name": "SmartThings · USB-A1 proposal",
+      "source": "PDU front USB-A1 · proposed test",
+      "device": "SmartThings DC barrel input",
+      "cable": "Konnected USB-A to5V DC barrel · 5.5mm outer / 2.1mm inner · center positive · 1m",
+      "route": "PDU front USB-A1 through brush to SmartThings DC input",
+      "label": "USB-A1 SMARTTHINGS",
+      "battery": true,
+      "status": "Proposed USB test · cable needed",
+      "alternative": true,
+      "cableUrl": "https://konnected.io/products/usb-to-5v-dc-barrel-jack-power-cable",
+      "note": "Cable manufacturer explicitly supports SmartThings Hubv2/v3. FCC applicant photo of original MLF-B250502000CU adapter confirms5V2A and center-positive polarity. Connector research is resolved; no user measurement needed. PDU manual lists3A shared at5V; hub reports2A. This fits the total current budget with other USB sockets empty, but individual-port continuous rating is unpublished. Proposed power-up test only: obtain cable, disconnect original hub adapter, connect USB-A1, check stable boot and operation. If it fails to start or restarts, restore original adapter at PDU6. No successful PDU/hub test is claimed.",
+      "actions": [
+        "Use the Konnected cable linked above: USB-A to5V, 5.5 ×2.1mm, center positive.",
+        "Connector and polarity confirmed from manufacturer compatibility and original adapter evidence.",
+        "The PDU individual USB-port current rating is unpublished; this pairing needs a physical power-up test.",
+        "Obtain the cable; it is not assumed to be owned.",
+        "Disconnect the original SmartThings power adapter.",
+        "Connect PDU USB-A1 to the hub DC barrel input with that cable.",
+        "Leave the other PDU charging sockets empty during the initial test.",
+        "Check that the hub boots and stays operating without restarts.",
+        "If it fails to boot or restarts, restore its original adapter at PDU6.",
+        "Do not connect both power sources at once."
+      ]
     }
   ]
 }
