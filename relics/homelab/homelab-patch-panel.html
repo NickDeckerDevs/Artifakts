@@ -35,11 +35,9 @@ function rack(){let s='<svg viewBox="0 0 760 236" role="img" aria-label="Clickab
  for(let i=0;i<2;i++){const r=rows.find(a=>a.switch==='Expo'&&a.socket==='SFP+ '+(i+1));s+=actionGroup('data-switch="Expo" data-socket="SFP+ '+(i+1)+'"','Expo SFP+ '+(i+1)+(r?' · '+r.name:' · Ethernet adapter present / available'),'<rect x="253" y="'+(9+i*25)+'" width="77" height="19" fill="'+(r?colors[r.color]:'#424b40')+'" stroke="#788473"/><text x="291" y="'+(23+i*25)+'" fill="white" text-anchor="middle" font-size="11">SFP+ '+(i+1)+'</text>');}
  s+='<rect x="6" y="77" width="748" height="49" fill="#30382e" stroke="#586351"/>';
  for(let n=1;n<=24;n++){const x=21+(n-1)*30.1,portY=n%2?82:103,labelY=n%2?117:92;const r=rows.find(a=>a.panel===n),selected=!emptySelection&&current.panel===n;
- let body='<rect data-panel-frame="'+n+'" x="'+(x-2)+'" y="79" width="27" height="43" fill="transparent" stroke="'+(selected?'#d3f887':'#59634f')+'" stroke-width="'+(selected?2:0.6)+'"/>';
- body+='<rect data-panel-opening="'+n+'" x="'+x+'" y="'+portY+'" width="23" height="15" fill="'+colors[data.panelInsertColors[String(n)]]+'" stroke="#93a286"/>';
- body+='<path d="M'+(x+4)+' '+(portY+3)+' h15 v7 h-5 v2 h-5 v-2 h-5 Z" fill="#0e180f"/>';
- body+='<rect x="'+(x+2)+'" y="'+(labelY-12)+'" width="19" height="15" fill="'+(selected?'#d3f887':'#e7ebdf')+'"/>';
- body+='<text data-panel-number="'+n+'" x="'+(x+11.5)+'" y="'+labelY+'" fill="#172316" text-anchor="middle" font-size="11" font-weight="700">'+n+'</text>';
+ let body='<rect data-panel-frame="'+n+'" x="'+(x-2)+'" y="79" width="27" height="43" fill="transparent" stroke="'+(selected?'#ffffff':'#59634f')+'" stroke-width="'+(selected?2:0.6)+'"/>';
+ body+='<rect data-panel-opening="'+n+'" x="'+x+'" y="'+portY+'" width="23" height="15" fill="'+colors[data.panelInsertColors[String(n)]]+'"/>';
+ body+='<text data-panel-number="'+n+'" x="'+(x+11.5)+'" y="'+labelY+'" fill="#ffffff" text-anchor="middle" font-size="11" font-weight="700">'+n+'</text>';
  s+=actionGroup('data-panel="'+n+'"','Floor Plan '+n+' · '+(r?r.name+' · '+shortTarget(r):data.panelInsertColors[String(n)]+' insert · available / proposed'),body);}
  s+='<path d="M6 171 H164 M600 171 H754" stroke="#586351"/><rect x="164" y="147" width="436" height="49" fill="#30382e" stroke="#586351"/><text x="180" y="175" fill="#b6beb1" font-size="13">RUNNER</text>';
  for(let i=0;i<8;i++){s+=switchSocket(333+i*32,153,1+i*2,'Runner',25)+switchSocket(333+i*32,174,2+i*2,'Runner',25);}
