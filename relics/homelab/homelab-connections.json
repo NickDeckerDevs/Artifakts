@@ -1569,7 +1569,7 @@
       "switch": "Bouncer",
       "socket": "Ethernet 8",
       "panel": null,
-      "note": "Bouncer ether8 feeds the RBR50 Internet port through U15 Brushgate. Orbi runs in AP mode; its LAN output to the satellite through Floor Plan 5 is unchanged.",
+      "note": "Bouncer ether8 feeds the RBR50 Internet port through U15 Brushgate. Orbi runs in AP mode. Its separate LAN output goes directly to the family-room AP wall jack and satellite, bypassing Floor Plan.",
       "currentSwitch": "Bouncer",
       "currentSocket": "Ethernet 8",
       "panelStatus": "None",
@@ -1596,7 +1596,7 @@
         {
           "what": "Connection",
           "title": "Main Orbi RBR50 · Internet / WAN port",
-          "detail": "Leave its separate LAN cable to Floor Plan 5 in place."
+          "detail": "Connect the separate Main Orbi LAN output directly to the family-room AP wall jack. Do not use Floor Plan 5."
         }
       ]
     },

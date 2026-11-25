@@ -1,5 +1,7 @@
 # Floor Plan wiring register
 
+Deacon + dot · Dot-Ref: DOT-20261125-RACKDOCS
+
 Deacon + dot · Dot-Ref: DOT-20261125-FLOORPLAN
 
 - Fill right to left, starting at Floor Plan 24. This is the approved wiring design, not a cable-installation record.
@@ -273,7 +275,7 @@ Deacon + dot · Dot-Ref: DOT-20261125-FLOORPLAN
 
 1. **Source:** Bouncer · Ethernet 8 (1 GbE LAN)
 2. **Brush:** Up the front → through U15 Brushgate → down behind rack
-3. **Connection:** Main Orbi RBR50 · Internet / WAN port. Leave its separate LAN cable to Floor Plan 5 in place.
+3. **Connection:** Main Orbi RBR50 · Internet / WAN port. Connect the separate Main Orbi LAN output directly to the family-room AP wall jack. Do not use Floor Plan 5.
 
 ### OFFICE-SW · Future office switch
 

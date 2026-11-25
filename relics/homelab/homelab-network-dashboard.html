@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home network dashboard</title>
+<title>Home network dashboard</title><meta name="robots" content="noindex"><!-- Deacon + dot · Dot-Ref: DOT-20261125-RACKDOCS -->
 <style>
 :root{color-scheme:dark;--bg:#101619;--panel:#161f23;--raised:#1d292e;--ink:#edf4f2;--muted:#a5b6bc;--edge:#33464c;--teal:#93e4d0;--amber:#f1c583;--blue:#b2caff;--radius:16px}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans","Segoe UI",system-ui,sans-serif}
@@ -26,7 +26,7 @@ main{max-width:1232px;margin:auto;padding:40px 32px 56px}h1,h2,h3,p{margin:0}h1{
 <header class="header">
   <div><p class="snapshot">Survey snapshot · November 11, 2026</p><h1>Home network</h1><p>See which devices share a rack port and where the cable path is still open.</p></div>
   <nav class="links" aria-label="Related documents"><a href="homelab-rack-build.html">Rack build</a></nav>
-</header>
+</header><aside role="note" style="margin:16px auto;padding:16px;border:2px solid #c98524;background:#fff4dc;color:#35200d;max-width:1000px"><strong>INACTIVE FOR INSTALLATION.</strong> Historical Comcast/WinBox survey. The included switch-port observations and old fiber handoff do not describe the Bouncer install. <a href="START-HERE.html">Current install guide</a> · <a href="homelab-patch-panel.html">Approved Floor Plan</a></aside>
 <section class="map" style="margin-top:20px" aria-label="AT&amp;T update"><h2>Fiber equipment update · switch-over ahead</h2><ul><li>Confirmed by the user · November 23, 2026</li><li>Comcast gateway and cellular backup removed from the rack plan</li><li>BGW620-700 upright beside the NAS</li><li>Quantum Fiber Q1000K reserved for the U9–U10 shelf</li><li>Q1000K Ethernet feeds the gateway red ONT/LAN jack</li><li>Planned house connection: blue LAN 1 to MikroTik SFP+ 1 through the existing adapter</li><li>Routing settings and the new house connection have not been checked</li><li>The map below is the November 11 survey before AT&amp;T</li><li>Recorded addresses and paths need a fresh check</li></ul></section>
 <section class="summary" aria-label="Survey counts">
   <div class="metric"><strong id="count-clients"></strong><span>Comcast device entries</span></div>
