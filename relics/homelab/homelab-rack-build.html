@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>homelab rack build</title><!-- Deacon + dot · Dot-Ref: DOT-20261125-FLOORPLAN -->
+<title>homelab rack build</title><!-- Deacon + dot · Dot-Ref: DOT-20261125-RACKAUDIT --><!-- Deacon + dot · Dot-Ref: DOT-20261125-FLOORPLAN -->
 <style>
 :root{color-scheme:light;--ink:#17302f;--muted:#4d6561;--paper:#fcfaf3;--edge:#cedbd3;--accent:#126358;font-family:system-ui,sans-serif;line-height:1.55}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}main,header>div,nav>div{max-width:1000px;margin:auto;padding-inline:clamp(16px,4vw,38px)}header{background:#143b37;color:#f8f7eb;padding:28px 0}h1{font-size:clamp(2rem,6vw,3.5rem);line-height:1.1;letter-spacing:-.04em;margin:0}h2{font-size:clamp(1.5rem,4vw,2rem);line-height:1.2;margin:0 0 16px;letter-spacing:-.025em}h3{margin:0 0 16px;font-size:1.22rem}h4{font-size:1rem;margin:0 0 6px}
@@ -11,12 +11,15 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 .rack-figure{background:#e5eee6;border:1px solid #c4d5ca;border-radius:12px;margin:16px 0 0;padding:12px;text-align:center}.rack-figure svg{display:block;width:100%;max-height:670px;margin:auto}.rack-figure svg a{cursor:pointer}.rack-figure svg a:hover,.rack-figure svg a:focus-visible,.rack-figure svg a[aria-current="location"]{filter:drop-shadow(0 0 3px #078875);outline:none}.rack-figure svg a:hover>.hit,.rack-figure svg a:focus-visible>.hit,.rack-figure svg a[aria-current="location"]>.hit{stroke:#05796a;stroke-width:3;fill:#0b9c7620}.hit{fill:transparent;stroke:transparent}.rack-status{min-height:2.6em;font-weight:700;padding:5px;margin:5px 0 0}.small{color:var(--muted);font-size:.9rem}
 .slot{margin:9px 0;border:1px solid var(--edge);border-radius:10px;background:white}.slot summary{cursor:pointer;padding:11px 14px;font-weight:750}.unit{display:inline-block;font-size:.86rem;color:#f7fdf8;background:#23564e;padding:2px 8px;border-radius:5px;margin-right:8px;font-variant-numeric:tabular-nums}.device{padding:16px;border-top:1px solid var(--edge)}.device:target{outline:2px solid #127869;outline-offset:2px}.device-group{margin:12px 0;padding:10px 14px;background:#f3f7f1;border-radius:7px}.device-group:last-child{margin-bottom:0}.steps,.steps ul{padding-inline-start:1.25rem}.steps{margin:0}.steps>li{margin:.32rem 0}.steps>li:has(ul){margin:.7rem 0}.steps ul{margin:.12rem 0 .25rem;border-left:1px solid #b8cbc0}.steps ul>li{margin:.12rem 0}.steps ul b{color:#365650;font-size:.9em;margin-right:.25em}input[type=text]{font:inherit;width:3.5em;padding:2px 5px;border:1px solid #67847a;border-radius:5px;background:white;color:var(--ink)}@media(max-width:550px){nav>div{gap:4px 12px}.device{padding:12px}.device-group{padding:9px 10px}}@media print{nav,.rack-status{display:none}.rack-figure svg{max-height:520px}header{background:white;color:black}}
 </style>
+<link rel="stylesheet" href="homelab-theme.css">
 </head>
-<body>
+<body class="hl-page">
+<div class="hl-header" role="banner"><div class="hl-inner"><a href="index.html" class="hl-brand">Homelab</a><div class="hl-nav" role="navigation" aria-label="Homelab pages"><a href="START-HERE.html">Start here</a><a href="homelab-patch-panel.html">Floor Plan</a><a href="homelab-rack-build.html" aria-current="page">Rack build</a><a href="homelab-labels.html">Print labels</a><details class="hl-archive"><summary>Archive</summary><div class="hl-menu"><a href="homelab-network-dashboard.html">Comcast survey</a><a href="homelab-rack-pre-build.html">Pre-build snapshot</a><a href="homelab-rack-up-diagnose-troubleshoot-and-optimize.html">Troubleshooting draft</a></div></details></div></div></div>
+
 <header><div><h1>homelab rack build</h1></div></header>
-<nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Network dashboard</a></div></nav>
-<main><section class="guide-section" id="panel-proposal"><h2>Cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open current network connections</a></li><li>Runner 1 / Expo 7</li><li>Runner 2–16 / Floor Plan 10–24</li><li>Expo 8, 6, 5, 3 / Floor Plan 9, 8, 7, 6</li><li>Main Orbi LAN directly to family-room AP wall jack and satellite; no panel</li><li>Floor Plan 1–5 empty; fill right to left</li></ul></section><section class="guide-section" id="att-update"><h2>AT&amp;T fiber update · November 23</h2><ul class="steps">
-<li>New fiber equipment is installed · switch-over is still ahead</li>
+<nav aria-label="Build guide"><div><a href="#rack">Rack drawing</a><a href="#power-map">Power</a><a href="#cable-map">Ethernet</a><a href="#devices">Device steps</a><a href="homelab-network-dashboard.html">Historical Comcast survey</a></div></nav>
+<main><section class="guide-section" id="panel-proposal"><h2>Cable workbench</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Open current network connections</a></li><li>Runner 1 / Expo 7</li><li>Runner 2–16 / Floor Plan 10–24</li><li>Expo 8, 6, 5, 3 / Floor Plan 9, 8, 7, 6</li><li>Main Orbi LAN directly to family-room AP wall jack and satellite; no panel</li><li>Floor Plan 1–5 empty; fill right to left</li></ul></section><section class="guide-section" id="att-update"><h2>AT&amp;T cutover · approved equipment path</h2><ul class="steps">
+<li>Hostess hands off to Bouncer. This is the install design, not a record that the cutover is complete.</li>
 <li>The Comcast gateway is removed from this build plan</li>
 <li>The Comcast cellular backup is removed from this build plan</li>
 <li>Proposed location for the AT&amp;T gateway<ul><li>Beside the NAS on the included 18-inch shelf</li><li>AT&amp;T BGW620-700</li><li>Stand upright</li><li>Case · 4.33 inches wide</li><li>Case · 8.66 inches deep</li><li>Case · 9.03 inches tall</li><li>Final spacing is checked during installation</li></ul></li>
@@ -33,7 +36,7 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <p class="rack-status" id="rack-status" aria-live="polite">Select a slot to see its instructions</p>
 <figcaption class="small">Gateway and NAS case outlines use published sizes · check shelf gaps during installation</figcaption>
 </figure></section>
-<section class="guide-section" id="power-map"><h2>Power · existing devices</h2><ul class="steps"><li>UPS B1 NAS</li><li>UPS B2 PDU</li><li>PDU1 Receiving Dock; keep2 clear</li><li>PDU3 Expo</li><li>PDU4 Runner</li><li>PDU5 gateway</li><li>PDU6 SmartThings adapter fallback</li><li>PDU8 Orbi; keep7/9 clear</li><li>SmartThings USB-A1 proposal: exact compatible cable, power-up test required</li><li>Future Pis: no power sockets assigned</li><li><a href="homelab-patch-panel.html#power-USB-SMARTTHINGS">Current power map and exact USB cable</a></li></ul></section><section class="guide-section" id="cable-map"><h2>Ethernet</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Use the complete current cable workbench</a></li><li><a href="homelab-labels.html">Front and rear labels</a></li><li><a href="homelab-patch-panel.md">Full connection record</a></li><li>Family-room plate: NVR/switch, AP/Orbi, garage, plant shelf</li><li>NAS stays on Expo 2/4; Expo 1 is empty. Hostess LAN 1 → Brushgate → Bouncer 1 (purple); Bouncer SFP+ → Expo SFP+ 1 (green); Bouncer 8 → Brushgate → Main Orbi (yellow)</li></ul></section><section class="guide-section" id="devices"><h2>Device instructions</h2><details class="slot"><summary><span class="unit">U1</span>Lower cable opening</summary><article class="device" id="mount-brush"><h3>Cable Matters lower brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount at U1 on the front posts</li>
+<section class="guide-section" id="power-map"><h2>Power · existing devices</h2><ul class="steps"><li>UPS B1 NAS</li><li>UPS B2 PDU</li><li>PDU1 Receiving Dock; keep2 clear</li><li>PDU3 Expo</li><li>PDU4 Runner</li><li>PDU5 gateway</li><li>PDU6 SmartThings adapter fallback</li><li>PDU8 Orbi; keep7/9 clear</li><li>SmartThings USB-A1 proposal: exact compatible cable, power-up test required</li><li>No outlet assignment is recorded for Bouncer, The Safe, Raspberry Pi 400 or Future Rack.</li><li><a href="homelab-patch-panel.html#power-USB-SMARTTHINGS">Current power map and exact USB cable</a></li></ul></section><section class="guide-section" id="cable-map"><h2>Ethernet</h2><ul class="steps"><li><a href="homelab-patch-panel.html">Use the complete current cable workbench</a></li><li><a href="homelab-labels.html">Front and rear labels</a></li><li><a href="homelab-patch-panel.md">Full connection record</a></li><li>Family-room plate: NVR/switch, AP/Orbi, garage, plant shelf</li><li>NAS stays on Expo 2/4; Expo 1 is empty. Hostess LAN 1 → Brushgate → Bouncer 1 (purple); Bouncer SFP+ → Expo SFP+ 1 (green); Bouncer 8 → Brushgate → Main Orbi (yellow)</li></ul></section><section class="guide-section" id="devices"><h2>Device instructions</h2><details class="slot"><summary><span class="unit">U1</span>Lower cable opening</summary><article class="device" id="mount-brush"><h3>Cable Matters lower brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount at U1 on the front posts</li>
 <li>Use #10-32 rack screws</li></ul></section>
 <section class="device-group"><h4>Cable route</h4><ul class="steps"><li><strong>Lower brush opening</strong><ul><li>Keep empty for this build</li><li>Reserve for future front USB leads</li></ul></li>
 <li>Keep AC cords behind the rack</li></ul></section></article></details>
@@ -88,11 +91,11 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <section class="device-group"><h4>Incoming Ethernet</h4><ul class="steps">
 <li><strong>Converter connection</strong><ul><li><b>From</b> Q1000K Ethernet jack</li><li><b>To</b> Red ONT/LAN jack on the gateway</li><li>Preserve the installer-connected cable</li></ul></li>
 </ul></section>
-<section class="device-group"><h4>Connection to the house · later switch-over</h4><ul class="steps">
-<li><strong>Gateway to MikroTik · planned</strong><ul><li><b>From</b> Blue LAN 1 jack</li><li><b>To</b> MikroTik SFP+ 1 through its existing Ethernet adapter</li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
+<section class="device-group"><h4>Connection to the house</h4><ul class="steps">
+<li><strong>Hostess to Bouncer · purple</strong><ul><li><b>From</b> Blue LAN 1 jack</li><li><b>To</b> Bouncer Ethernet 1</li><li>Use the right rear post</li><li>Pass through the U15 brush</li></ul></li>
 <li>Blue LAN 1 supports a 2.5 Gb/s connection</li>
 <li>Leave the working network connected during rack preparation</li>
-<li>Gateway settings and addresses have not been checked for this switch-over</li>
+<li>Use IP Passthrough to Bouncer. This guide does not confirm the setting has been applied.</li>
 </ul></section>
 <section class="device-group"><h4>Other sockets</h4><ul class="steps"><li>Yellow LAN 2 · no new connection assigned</li><li>Yellow LAN 3 · no new connection assigned</li><li>USB · no accessory assigned</li><li>Phone · no new connection assigned</li><li>Fiber and SFP sockets · unused in the described external-converter arrangement</li></ul></section>
 <section class="device-group"><h4>References</h4><ul class="steps"><li><a href="https://fccid.io/G95BGW620/User-Manual/User-Manual-7602953.pdf">Manufacturer guide · size and upright placement</a></li><li><a href="https://www.att.com/support/article/internet/104091/">AT&amp;T port guide</a></li><li><a href="https://www.att.com/scmsassets/support/internet/bgw620-700-att-compliance-leaflet-en_-512790c.pdf">AT&amp;T placement and ventilation guidance</a></li></ul></section></article></details>
@@ -139,21 +142,21 @@ a{color:var(--accent);text-underline-offset:.18em}a:focus-visible,summary:focus-
 <li>Fit the GeeekPi inserts</li>
 <li>Label the panel jacks</li>
 <li>Support the Ethernet bundle with loose Velcro on the rear bar</li></ul></section>
-<section class="device-group"><h4>Wall runs and front jumpers</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use Floor Plan for the current connection records and proposed socket positions</a></li><li>Wall cable enters the back of its assigned socket</li><li>Front jumper goes to the recorded switch socket</li><li>Keep wall-jack identity separate from panel number</li><li>NVR has its own separate run</li><li>Do not use the retired House / Office / Spare blocks</li></ul></section>
+<section class="device-group"><h4>Wall runs and front jumpers</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use Floor Plan for the approved port map and provisional faceplate positions</a></li><li>Wall cable enters the back of its assigned socket</li><li>Front jumper goes to the recorded switch socket</li><li>Keep wall-jack identity separate from panel number</li><li>Living-room NVR/switch feed: FR-WW-J1, Floor Plan 24 / Runner 16. Trace downstream NVR faceplates and camera runs after installation.</li><li>Do not use the retired House / Office / Spare blocks</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://www.truecable.com/products/patch-panel-24-port-1u-staggered-blank-modular-unshielded">trueCABLE panel and support bar</a></li></ul></section></article></details>
-<details class="slot"><summary><span class="unit">U14</span>Office and NAS switch</summary><article class="device" id="mount-fast"><h3>MikroTik 2.5 GbE switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Fit the white MikroTik ears with the chassis screws</li>
-<li>Mount at U14 with #10-32 rack screws</li>
+<details class="slot"><summary><span class="unit">U14</span>Expo · left side of router/switch shelf</summary><article class="device" id="mount-fast"><h3>MikroTik 2.5 GbE switch</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Expo sits to the left of Bouncer on the shared U14 tray below Brushgate. Check actual clearances and retention at install.</li>
 <li>Case · 7.87 × 1.73 × 8.11 in (W × H × D)</li>
 <li>Leave room for the plugs</li></ul></section>
 <section class="device-group"><h4>Power</h4><ul class="steps"><li><a href="homelab-patch-panel.html#power-PDU-8">Use the current numbered power map</a></li><li>NAS directly to UPS B1</li><li>PDU input to UPS B2</li><li>Other rack AC supplies to assigned PDU sockets</li></ul></section>
 <section class="device-group"><h4>USB</h4><ul class="steps"><li>Leave the front USB-A socket empty</li></ul></section>
 <section class="device-group"><h4>Ethernet</h4><ul class="steps"><li><a href="homelab-patch-panel.html">Use the current connection map for exact sockets</a></li><li>Keep existing Expo socket assignments</li></ul></section>
 <section class="device-group"><h4>Reference</h4><ul class="steps"><li><a href="https://mikrotik.com/product/crs310_8g_2s_in">MikroTik specifications and downloads</a></li></ul></section></article></details>
+<details class="slot"><summary><span class="unit">U14</span>Bouncer · right side of router/switch shelf</summary><article class="device" id="mount-bouncer"><h3>Bouncer · MikroTik RB5009UG+S+IN</h3><ul class="steps"><li>Right of Expo on the U14 tray. Confirm shelf clearance and cable bend after fitting.</li><li>Purple: Hostess LAN 1 through Brushgate to Ethernet 1. Green: Bouncer SFP+ to Expo SFP+ 1. Yellow: Ethernet 8 through Brushgate to Main Orbi.</li><li>Ethernet 2–7 are empty. Main Orbi LAN goes directly to the family-room AP wall jack.</li><li>Expo supplies no PoE. For side-terminal power see <a href="homelab-power-fit.md">power notes</a>. No Bouncer outlet assignment is recorded.</li></ul></article></details>
 <details class="slot"><summary><span class="unit">U15</span>Upper cable opening</summary><article class="device" id="mount-top"><h3>Cable Matters upper brush panel</h3><section class="device-group"><h4>Placement</h4><ul class="steps"><li>Mount the second 19-inch brush at U15</li></ul></section>
 <section class="device-group"><h4>Cable route</h4><ul class="steps"><li><strong>NAS TOP Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
 <li><strong>NAS BOTTOM Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
-<li><strong>AT&amp;T gateway Ethernet cable</strong><ul><li>Feed through the right side</li><li>Bring down to the MikroTik front</li></ul></li>
-<li><strong>SmartThings Ethernet · C3</strong><ul><li>Feed up the right rear side</li><li>Pass forward through the right side of the U15 brush</li><li>Bring down the front to its existing TP-Link socket</li></ul></li>
+<li><strong>Hostess Ethernet:</strong> purple through Brushgate to Bouncer 1.</li><li><strong>Main Orbi Ethernet:</strong> yellow through Brushgate from Bouncer 8. Its separate LAN cable goes directly to the family-room AP wall jack.</li>
+<li><strong>SmartThings · C3:</strong> Runner 3 → Floor Plan 11 → hub LAN; the rear cable has no Brushgate detour.</li>
 <li><strong>MikroTik round DC lead</strong><ul><li>Feed through the left side</li></ul></li>
 <li>Keep the short panel-to-switch cables at the front</li>
 <li>Run the cable between the rack switches along the front side</li>
@@ -233,10 +236,12 @@ function ethernetSwitch(id, unit, width, name, count, optical = false) {
   const deviceCenter = optical ? railLeft + width / 2 : center;
   const x = deviceCenter - width / 2;
   const wing = x - railLeft;
-  rectangle(group, railLeft, y + 3, wing, 38, '#657f77', { stroke: '#435b55' });
-  rectangle(group, x + width, y + 3, railLeft + railWidth - x - width, 38, '#657f77', { stroke: '#435b55' });
-  bolt(group, railLeft + 10, y + 22);
-  bolt(group, railLeft + railWidth - 10, y + 22);
+  if (!optical) {
+    rectangle(group, railLeft, y + 3, wing, 38, '#657f77', { stroke: '#435b55' });
+    rectangle(group, x + width, y + 3, railLeft + railWidth - x - width, 38, '#657f77', { stroke: '#435b55' });
+    bolt(group, railLeft + 10, y + 22);
+    bolt(group, railLeft + railWidth - 10, y + 22);
+  }
   rectangle(group, x, y, width, 44, '#233835', { rx: 2, stroke: '#122522' });
   label(group, deviceCenter, y + 13, name, 12, '#e7f0eb', 'middle');
   const columns = count / 2;
@@ -271,9 +276,9 @@ for (let x = railLeft + 34; x < railLeft + railWidth - 33; x += 4) {
 label(brush, center, unitTop(unit) + 27, name, 15, '#f2f7ef', 'middle');
 }
 drawBrush('brush', 1, 'Lower brush · spare USB route');
-drawBrush('top', 15, 'Upper brush · NAS and gateway cables');
+drawBrush('top', 15, 'Brushgate · Hostess / Orbi / NAS');
 
-const power = item('power', 'U2 · Tecmojo switched power strip · rocker 8 for SmartThings');
+const power = item('power', 'U2 · Tecmojo switched power strip · SmartThings PDU 6; Orbi PDU 8');
 face(power, 2, '#263b36');
 for (let index = 0; index < 9; index++) {
   const x = railLeft + 34 + index * 35;
@@ -319,12 +324,20 @@ label(hub, center + 89, unitTop(10) - 13, '1U · 16 in', 14);
 ethernetSwitch('house', 12, 294, 'TP-Link house switch', 16);
 const panel = item('patch', 'U13 · trueCABLE panel · socket openings and printed labels');
 face(panel,13,'#30382e');
-const panelColors={"1": "#ed6b5a", "2": "#ed6b5a", "3": "#ed6b5a", "4": "#ed6b5a", "5": "#f1d55a", "22": "#f1d55a", "23": "#f1d55a", "24": "#f1d55a", "6": "#3f8be8", "7": "#3f8be8", "8": "#3f8be8", "9": "#3f8be8", "10": "#171c17", "11": "#171c17", "12": "#171c17", "19": "#171c17", "13": "#f3f1e7", "14": "#f3f1e7", "15": "#f3f1e7", "21": "#f3f1e7", "16": "#ef9c4e", "17": "#ef9c4e", "18": "#ef9c4e", "20": "#ef9c4e"};
-for(let index=0;index<24;index++){const n=index+1,x=railLeft+29+index*17.6;const py=unitTop(13)+(n%2?7:25),ny=unitTop(13)+(n%2?39:13);rectangle(panel,x,py,14,9,panelColors[n]||'#69755f',{stroke:'#99b0a6'});rectangle(panel,x+3,py+2,8,5,'#0e180f');label(panel,x+7,ny,String(n),9,'#f4f7ef','middle');}
-ethernetSwitch('fast', 14, 200, 'MikroTik office and NAS', 8, true);
+const panelColors={"6":"#3f8be8","7":"#3f8be8","8":"#3f8be8","9":"#3f8be8","10":"#bd93f9","11":"#bd93f9","12":"#bd93f9","13":"#bd93f9","14":"#f3f1e7","15":"#f3f1e7","16":"#f3f1e7","17":"#f3f1e7","18":"#ef9c4e","19":"#ef9c4e","20":"#ef9c4e","21":"#ef9c4e","22":"#f1d55a","23":"#f1d55a","24":"#f1d55a"};
+for(let index=0;index<24;index++){const n=index+1,x=railLeft+29+index*17.6;const py=unitTop(13)+(n%2?7:25),ny=unitTop(13)+(n%2?39:13);rectangle(panel,x,py,14,9,panelColors[n]||'#30382e',panelColors[n]?{stroke:'#99b0a6'}:{stroke:'#99b0a6','stroke-dasharray':'3 2'});rectangle(panel,x+3,py+2,8,5,'#0e180f');label(panel,x+7,ny,String(n),9,'#f4f7ef','middle');}
+const u14=unitTop(14);
+ethernetSwitch('fast', 14, 200, 'Expo', 8, true);
+const bouncer=item('bouncer','U14 · Bouncer RB5009 · right of Expo');
+const bx=railLeft+railWidth-225;
+rectangle(bouncer,bx,u14+18,220,22,'#263b36',{rx:2,stroke:'#122522'});
+label(bouncer,bx+110,u14+14,'Bouncer · RB5009',13,'#29403a','middle');
+port(bouncer,bx+12,u14+23,16,12);
+for(let i=0;i<8;i++)port(bouncer,bx+45+i*19,u14+24,14,9);
+rectangle(drawing,railLeft,u14+42,railWidth,3,'#657f77');
 
 const diagramRows = [
-  ['top',15,15],['fast',14,14],['patch',13,13],['house',12,12],['hub',11,11],
+  ['top',15,15],['fast',14,14],['bouncer',14,14],['patch',13,13],['house',12,12],['hub',11,11],
   ['converter',9,10],['gateway',3,8],['nas',3,8],['power',2,2],['brush',1,1]
 ];
 const status = document.getElementById('rack-status');
@@ -333,8 +346,8 @@ for (const [id, lower, upper] of diagramRows) {
   const link = drawing.querySelector('a[href="#mount-' + id + '"]');
   link.setAttribute('tabindex', '0');
   element(link, 'title', {}, link.getAttribute('aria-label'));
-  const shared = id === 'gateway' || id === 'nas';
-  const hitX = id === 'gateway' ? center : railLeft;
+  const shared = ['gateway','nas','bouncer','fast'].includes(id);
+  const hitX = id === 'gateway' || id === 'bouncer' ? center : railLeft;
   rectangle(link, hitX, unitTop(upper), shared ? railWidth / 2 : railWidth, (upper - lower + 1) * unitHeight, 'transparent', { class: 'hit', rx: 3 });
   const show = () => { status.textContent = link.getAttribute('aria-label'); };
   const hide = () => { status.textContent = hint; };

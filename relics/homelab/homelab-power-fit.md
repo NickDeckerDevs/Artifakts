@@ -4,6 +4,8 @@
 
 Bouncer receives no PoE from Expo. Side-terminal power is a separate 24–57 V DC feed; the supplied 24 V brick can use an appropriately sized, correctly polarized female-to-two-wire pigtail. No Bouncer PDU outlet assignment is recorded here.
 
+> Deacon + dot · Dot-Ref: DOT-20261125-RACKAUDIT
+
 ## Equipment to connect now
 
 - UPS B1: NAS original supply.
@@ -63,5 +65,5 @@ Bouncer receives no PoE from Expo. Side-terminal power is a separate 24–57 V D
 ## Future devices
 
 - The Safe: future only, no AC or USB assignment.
-- Second Pi: future only, no AC or USB assignment.
+- Raspberry Pi 400 and Future Rack: no AC or USB assignment recorded.
 - Pi400 supply requirements remain reference information only, not a present installed load.
