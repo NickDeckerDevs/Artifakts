@@ -1,5 +1,9 @@
 # Power plan — present equipment and resolved research
 
+> Deacon + dot · Dot-Ref: DOT-20261125-FLOORPLAN
+
+Bouncer receives no PoE from Expo. Side-terminal power is a separate 24–57 V DC feed; the supplied 24 V brick can use an appropriately sized, correctly polarized female-to-two-wire pigtail. No Bouncer PDU outlet assignment is recorded here.
+
 ## Equipment to connect now
 
 - UPS B1: NAS original supply.
@@ -13,7 +17,7 @@
 - PDU7: keep clear for Orbi.
 - PDU8: main Orbi original large adapter.
 - PDU9: keep clear for Orbi.
-- The Safe and second Pi: future devices, no power outlet assignments.
+- The Safe and Raspberry Pi 400: future devices, no power outlet assignments.
 - Prepared Ethernet cables for future devices do not imply present power loads.
 
 ## SmartThings — exact USB cable found

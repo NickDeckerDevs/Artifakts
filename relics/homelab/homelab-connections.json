@@ -217,32 +217,37 @@
       "wallPlateStatus": "Existing / fixed; physical jack numbers not recorded"
     },
     {
-      "id": "READY-R13",
-      "area": "Prepared connections",
-      "color": "white",
+      "id": "B1-J2",
+      "name": "Jayce’s bedroom (2)",
+      "area": "Bedrooms",
+      "color": "orange",
       "state": "Proposed",
-      "wall": "Inside rack",
-      "plate": "No room plate",
-      "currentSwitch": null,
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "runWork": "Prepare labeled rear cable",
-      "name": "Prepared connection · Runner 13",
-      "device": "Future destination",
+      "device": "Future room device",
+      "wall": "Bedrooms · single room plate",
+      "plate": "B1-WP-RACK",
       "switch": "Runner",
       "socket": "Ethernet 13",
       "panel": 21,
-      "targetStatus": "Proposed",
-      "routeType": "prepared",
-      "rearLabel": "FP21-R13 · READY-R13",
-      "note": "Install Runner 13 to Floor Plan 21. Plug in and label rear cable FP21-R13; coil it behind the panel. No room/device destination assigned yet.",
+      "note": "Runner · Ethernet 13 → Floor Plan 21 → B1-WP-RACK · J4 (provisional). Rack faceplate position is provisional. Retain the existing logical wall-run ID.",
+      "currentSwitch": "Runner",
+      "currentSocket": null,
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
+      "rackPlate": "B1-WP-RACK",
+      "rackJack": "J4 (provisional)",
+      "roomPlate": "B1-WP-ROOM",
+      "roomJack": "2",
+      "runWork": "Wire to approved register",
       "routeStations": [
         "Runner · Ethernet 13",
-        "White patch cable → Floor Plan 21 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Plug labeled cable into Floor Plan 21 REAR",
-        "Coil behind panel · free cable end"
+        "Orange patch cable → Floor Plan 21 FRONT",
+        "Floor Plan 21 FRONT → Floor Plan 21 REAR",
+        "Floor Plan 21 REAR → B1-WP-RACK · J4 (provisional)",
+        "B1-WP-ROOM · 2",
+        "FP21-R13 · B1-J2"
       ],
+      "routeType": "wall",
+      "rearLabel": "FP21-R13 · B1-J2",
       "installationSteps": [
         {
           "what": "Source",
@@ -251,28 +256,93 @@
         },
         {
           "what": "Front cable",
-          "title": "White patch cable → Floor Plan 21 FRONT",
-          "detail": "FP21-R13 · READY-R13"
+          "title": "Orange patch cable → Floor Plan 21 FRONT",
+          "detail": "FP21-R13 · B1-J2"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 21 FRONT → Floor Plan 21 REAR"
+          "title": "Floor Plan 21 FRONT → Floor Plan 21 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Plug labeled cable into Floor Plan 21 REAR",
-          "detail": "FP21-R13 · READY-R13"
+          "title": "Floor Plan 21 REAR → B1-WP-RACK · J4 (provisional)",
+          "detail": ""
         },
         {
-          "what": "Destination",
-          "title": "Coil behind panel · free cable end",
-          "detail": "No destination assigned yet."
+          "what": "Wall run",
+          "title": "B1-WP-ROOM · 2",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP21-R13 · READY-R13",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID READY-R13."
+          "title": "FP21-R13 · B1-J2",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "B1-J1",
+      "name": "Jayce’s bedroom (1)",
+      "area": "Bedrooms",
+      "color": "orange",
+      "state": "Proposed",
+      "device": "Room device",
+      "wall": "Bedrooms · single room plate",
+      "plate": "B1-WP-RACK",
+      "switch": "Runner",
+      "socket": "Ethernet 12",
+      "panel": 20,
+      "note": "Runner · Ethernet 12 → Floor Plan 20 → B1-WP-RACK · J3 (provisional). Rack faceplate position is provisional. Retain the existing logical wall-run ID.",
+      "currentSwitch": "Runner",
+      "currentSocket": null,
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
+      "rackPlate": "B1-WP-RACK",
+      "rackJack": "J3 (provisional)",
+      "roomPlate": "B1-WP-ROOM",
+      "roomJack": "1",
+      "runWork": "Wire to approved register",
+      "routeStations": [
+        "Runner · Ethernet 12",
+        "Orange patch cable → Floor Plan 20 FRONT",
+        "Floor Plan 20 FRONT → Floor Plan 20 REAR",
+        "Floor Plan 20 REAR → B1-WP-RACK · J3 (provisional)",
+        "B1-WP-ROOM · 1",
+        "FP20-R12 · B1-J1"
+      ],
+      "routeType": "wall",
+      "rearLabel": "FP20-R12 · B1-J1",
+      "installationSteps": [
+        {
+          "what": "Source",
+          "title": "Runner · Ethernet 12",
+          "detail": ""
+        },
+        {
+          "what": "Front cable",
+          "title": "Orange patch cable → Floor Plan 20 FRONT",
+          "detail": "FP20-R12 · B1-J1"
+        },
+        {
+          "what": "Panel",
+          "title": "Floor Plan 20 FRONT → Floor Plan 20 REAR",
+          "detail": ""
+        },
+        {
+          "what": "Rear cable",
+          "title": "Floor Plan 20 REAR → B1-WP-RACK · J3 (provisional)",
+          "detail": ""
+        },
+        {
+          "what": "Wall run",
+          "title": "B1-WP-ROOM · 1",
+          "detail": ""
+        },
+        {
+          "what": "Label",
+          "title": "FP20-R12 · B1-J1",
+          "detail": ""
         }
       ]
     },
@@ -286,94 +356,28 @@
       "wall": "Bedrooms · single room plate",
       "plate": "B2-WP-RACK",
       "switch": "Runner",
-      "socket": "Ethernet 12",
-      "panel": 20,
-      "note": "Runner 12 to Floor Plan 20. Fit a labeled rear cable now; connect its destination when ready.",
-      "currentSwitch": "Runner",
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "targetStatus": "Proposed",
-      "rackPlate": "B2-WP-RACK",
-      "rackJack": "1",
-      "roomPlate": "B2-WP-ROOM",
-      "roomJack": "1",
-      "runWork": "Pull / terminate cable",
-      "routeStations": [
-        "Runner · Ethernet 12",
-        "Orange patch cable → Floor Plan 20 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 20 REAR → B2-WP-RACK (1)",
-        "B2-WP-RACK (1) → B2-WP-ROOM (1)",
-        "B2-WP-ROOM (1) → kids room · Apple TV"
-      ],
-      "routeType": "wall",
-      "rearLabel": "FP20-R12 · B2-J1",
-      "installationSteps": [
-        {
-          "what": "Source",
-          "title": "Runner · Ethernet 12",
-          "detail": ""
-        },
-        {
-          "what": "Front cable",
-          "title": "Orange patch cable → Floor Plan 20 FRONT",
-          "detail": "FP20-R12 · B2-J1"
-        },
-        {
-          "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 20 FRONT → Floor Plan 20 REAR"
-        },
-        {
-          "what": "Rear cable",
-          "title": "Floor Plan 20 REAR → B2-WP-RACK (1)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
-        },
-        {
-          "what": "Wall run",
-          "title": "B2-WP-RACK (1) → B2-WP-ROOM (1)",
-          "detail": "Run and terminate this in-wall cable."
-        },
-        {
-          "what": "Room cable",
-          "title": "B2-WP-ROOM (1) → kids room · Apple TV",
-          "detail": "Separate room patch cable to device Ethernet port."
-        },
-        {
-          "what": "Label",
-          "title": "FP20-R12 · B2-J1",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID B2-J1."
-        }
-      ]
-    },
-    {
-      "id": "C3",
-      "name": "SmartThings · Samsung hub",
-      "area": "Inside rack",
-      "color": "black",
-      "state": "Existing",
-      "device": "Samsung SmartThings GP-U999SJVLGDA LAN",
-      "wall": "Inside rack",
-      "plate": "No wall plate",
-      "switch": "Runner",
       "socket": "Ethernet 11",
       "panel": 19,
-      "note": "Runner 11 to Floor Plan 19. Rear cable goes directly to SmartThings LAN behind the equipment; no brush/front detour for the hub.",
+      "note": "Runner · Ethernet 11 → Floor Plan 19 → B2-WP-RACK · J4 (provisional). Rack faceplate position is provisional. Retain the existing logical wall-run ID.",
       "currentSwitch": "Runner",
       "currentSocket": null,
-      "panelStatus": "None",
-      "targetStatus": "Proposed",
-      "runWork": "Existing cable",
-      "routeType": "rack-panel",
-      "rearLabel": "FP19-R11 · C3",
-      "rearDestination": "SmartThings LAN",
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
+      "rackPlate": "B2-WP-RACK",
+      "rackJack": "J4 (provisional)",
+      "roomPlate": "B2-WP-ROOM",
+      "roomJack": "1",
+      "runWork": "Wire to approved register",
       "routeStations": [
         "Runner · Ethernet 11",
-        "Black patch cable → Floor Plan 19 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Plug labeled cable into Floor Plan 19 REAR",
-        "Samsung SmartThings GP-U999SJVLGDA LAN"
+        "Orange patch cable → Floor Plan 19 FRONT",
+        "Floor Plan 19 FRONT → Floor Plan 19 REAR",
+        "Floor Plan 19 REAR → B2-WP-RACK · J4 (provisional)",
+        "B2-WP-ROOM · 1",
+        "FP19-R11 · B2-J1"
       ],
+      "routeType": "wall",
+      "rearLabel": "FP19-R11 · B2-J1",
       "installationSteps": [
         {
           "what": "Source",
@@ -382,28 +386,28 @@
         },
         {
           "what": "Front cable",
-          "title": "Black patch cable → Floor Plan 19 FRONT",
-          "detail": "FP19-R11 · C3"
+          "title": "Orange patch cable → Floor Plan 19 FRONT",
+          "detail": "FP19-R11 · B2-J1"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 19 FRONT → Floor Plan 19 REAR"
+          "title": "Floor Plan 19 FRONT → Floor Plan 19 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Plug labeled cable into Floor Plan 19 REAR",
-          "detail": "FP19-R11 · C3"
+          "title": "Floor Plan 19 REAR → B2-WP-RACK · J4 (provisional)",
+          "detail": ""
         },
         {
-          "what": "Destination",
-          "title": "Samsung SmartThings GP-U999SJVLGDA LAN",
-          "detail": "Connect directly to device LAN behind equipment; no brush or front detour."
+          "what": "Wall run",
+          "title": "B2-WP-ROOM · 1",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP19-R11 · C3",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID C3."
+          "title": "FP19-R11 · B2-J1",
+          "detail": ""
         }
       ]
     },
@@ -419,23 +423,23 @@
       "switch": "Runner",
       "socket": "Ethernet 10",
       "panel": 18,
-      "note": "Runner 10 to Floor Plan 18. Fit a labeled rear cable now; connect its destination when ready.",
+      "note": "Runner · Ethernet 10 → Floor Plan 18 → B2-WP-RACK · J3 (provisional). Rack faceplate position is provisional. Retain the existing logical wall-run ID.",
       "currentSwitch": "Runner",
       "currentSocket": null,
-      "panelStatus": "Proposed",
-      "targetStatus": "Proposed",
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
       "rackPlate": "B2-WP-RACK",
-      "rackJack": "2",
+      "rackJack": "J3 (provisional)",
       "roomPlate": "B2-WP-ROOM",
       "roomJack": "2",
-      "runWork": "Pull / terminate cable",
+      "runWork": "Wire to approved register",
       "routeStations": [
         "Runner · Ethernet 10",
         "Orange patch cable → Floor Plan 18 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 18 REAR → B2-WP-RACK (2)",
-        "B2-WP-RACK (2) → B2-WP-ROOM (2)",
-        "Future room device"
+        "Floor Plan 18 FRONT → Floor Plan 18 REAR",
+        "Floor Plan 18 REAR → B2-WP-RACK · J3 (provisional)",
+        "B2-WP-ROOM · 2",
+        "FP18-R10 · B2-J2"
       ],
       "routeType": "wall",
       "rearLabel": "FP18-R10 · B2-J2",
@@ -452,63 +456,46 @@
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 18 FRONT → Floor Plan 18 REAR"
+          "title": "Floor Plan 18 FRONT → Floor Plan 18 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 18 REAR → B2-WP-RACK (2)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 18 REAR → B2-WP-RACK · J3 (provisional)",
+          "detail": ""
         },
         {
           "what": "Wall run",
-          "title": "B2-WP-RACK (2) → B2-WP-ROOM (2)",
-          "detail": "Run and terminate this in-wall cable."
-        },
-        {
-          "what": "Room end",
-          "title": "Future room device",
-          "detail": "Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection."
+          "title": "B2-WP-ROOM · 2",
+          "detail": ""
         },
         {
           "what": "Label",
           "title": "FP18-R10 · B2-J2",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID B2-J2."
+          "detail": ""
         }
       ]
     },
     {
-      "id": "B1-J1",
-      "name": "Jayce’s bedroom (1)",
-      "area": "Bedrooms",
-      "color": "orange",
-      "state": "Proposed",
-      "device": "Room device",
-      "wall": "Bedrooms · single room plate",
-      "plate": "B1-WP-RACK",
+      "id": "P2",
+      "panel": 17,
       "switch": "Runner",
       "socket": "Ethernet 9",
-      "panel": 17,
-      "note": "Runner 9 to Floor Plan 17. Fit a labeled rear cable now; connect its destination when ready.",
-      "currentSwitch": "Runner",
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "targetStatus": "Proposed",
-      "rackPlate": "B1-WP-RACK",
-      "rackJack": "1",
-      "roomPlate": "B1-WP-ROOM",
-      "roomJack": "1",
-      "runWork": "Pull / terminate cable",
-      "routeStations": [
-        "Runner · Ethernet 9",
-        "Orange patch cable → Floor Plan 17 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 17 REAR → B1-WP-RACK (1)",
-        "B1-WP-RACK (1) → B1-WP-ROOM (1)",
-        "Room device"
-      ],
+      "color": "white",
+      "name": "Prepared · P2",
+      "device": "Remote wall location to be recorded after install",
+      "area": "Prepared wall runs",
+      "wall": "Master rack-side faceplate",
+      "plate": "MB-WP-RACK",
+      "rackPlate": "MB-WP-RACK",
+      "rackJack": "J4 (provisional)",
+      "state": "Proposed",
       "routeType": "wall",
-      "rearLabel": "FP17-R9 · B1-J1",
+      "rearLabel": "FP17-R9 · P2",
+      "targetStatus": "Approved wiring",
+      "panelStatus": "Approved wiring",
+      "runWork": "Wire to approved register",
+      "note": "Runner · Ethernet 9 → Floor Plan 17 → MB-WP-RACK · J4 (provisional). Rack faceplate position is provisional. Remote wall plate and jack will be traced after installation.",
       "installationSteps": [
         {
           "what": "Source",
@@ -517,68 +504,59 @@
         },
         {
           "what": "Front cable",
-          "title": "Orange patch cable → Floor Plan 17 FRONT",
-          "detail": "FP17-R9 · B1-J1"
+          "title": "White patch cable → Floor Plan 17 FRONT",
+          "detail": "FP17-R9 · P2"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 17 FRONT → Floor Plan 17 REAR"
+          "title": "Floor Plan 17 FRONT → Floor Plan 17 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 17 REAR → B1-WP-RACK (1)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 17 REAR → MB-WP-RACK · J4 (provisional)",
+          "detail": ""
         },
         {
           "what": "Wall run",
-          "title": "B1-WP-RACK (1) → B1-WP-ROOM (1)",
-          "detail": "Run and terminate this in-wall cable."
-        },
-        {
-          "what": "Room end",
-          "title": "Room device",
-          "detail": "Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection."
+          "title": "Remote destination to be recorded after install",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP17-R9 · B1-J1",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID B1-J1."
+          "title": "FP17-R9 · P2",
+          "detail": ""
         }
+      ],
+      "routeStations": [
+        "Runner · Ethernet 9",
+        "White patch cable → Floor Plan 17 FRONT",
+        "Floor Plan 17 FRONT → Floor Plan 17 REAR",
+        "Floor Plan 17 REAR → MB-WP-RACK · J4 (provisional)",
+        "Remote destination to be recorded after install",
+        "FP17-R9 · P2"
       ]
     },
     {
-      "id": "B1-J2",
-      "name": "Jayce’s bedroom (2)",
-      "area": "Bedrooms",
-      "color": "orange",
-      "state": "Proposed",
-      "device": "Future room device",
-      "wall": "Bedrooms · single room plate",
-      "plate": "B1-WP-RACK",
+      "id": "P1",
+      "panel": 16,
       "switch": "Runner",
       "socket": "Ethernet 8",
-      "panel": 16,
-      "note": "Runner 8 to Floor Plan 16. Fit a labeled rear cable now; connect its destination when ready.",
-      "currentSwitch": "Runner",
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "targetStatus": "Proposed",
-      "rackPlate": "B1-WP-RACK",
-      "rackJack": "2",
-      "roomPlate": "B1-WP-ROOM",
-      "roomJack": "2",
-      "runWork": "Pull / terminate cable",
-      "routeStations": [
-        "Runner · Ethernet 8",
-        "Orange patch cable → Floor Plan 16 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 16 REAR → B1-WP-RACK (2)",
-        "B1-WP-RACK (2) → B1-WP-ROOM (2)",
-        "Future room device"
-      ],
+      "color": "white",
+      "name": "Prepared · P1",
+      "device": "Remote wall location to be recorded after install",
+      "area": "Prepared wall runs",
+      "wall": "Master rack-side faceplate",
+      "plate": "MB-WP-RACK",
+      "rackPlate": "MB-WP-RACK",
+      "rackJack": "J3 (provisional)",
+      "state": "Proposed",
       "routeType": "wall",
-      "rearLabel": "FP16-R8 · B1-J2",
+      "rearLabel": "FP16-R8 · P1",
+      "targetStatus": "Approved wiring",
+      "panelStatus": "Approved wiring",
+      "runWork": "Wire to approved register",
+      "note": "Runner · Ethernet 8 → Floor Plan 16 → MB-WP-RACK · J3 (provisional). Rack faceplate position is provisional. Remote wall plate and jack will be traced after installation.",
       "installationSteps": [
         {
           "what": "Source",
@@ -587,34 +565,37 @@
         },
         {
           "what": "Front cable",
-          "title": "Orange patch cable → Floor Plan 16 FRONT",
-          "detail": "FP16-R8 · B1-J2"
+          "title": "White patch cable → Floor Plan 16 FRONT",
+          "detail": "FP16-R8 · P1"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 16 FRONT → Floor Plan 16 REAR"
+          "title": "Floor Plan 16 FRONT → Floor Plan 16 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 16 REAR → B1-WP-RACK (2)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 16 REAR → MB-WP-RACK · J3 (provisional)",
+          "detail": ""
         },
         {
           "what": "Wall run",
-          "title": "B1-WP-RACK (2) → B1-WP-ROOM (2)",
-          "detail": "Run and terminate this in-wall cable."
-        },
-        {
-          "what": "Room end",
-          "title": "Future room device",
-          "detail": "Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection."
+          "title": "Remote destination to be recorded after install",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP16-R8 · B1-J2",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID B1-J2."
+          "title": "FP16-R8 · P1",
+          "detail": ""
         }
+      ],
+      "routeStations": [
+        "Runner · Ethernet 8",
+        "White patch cable → Floor Plan 16 FRONT",
+        "Floor Plan 16 FRONT → Floor Plan 16 REAR",
+        "Floor Plan 16 REAR → MB-WP-RACK · J3 (provisional)",
+        "Remote destination to be recorded after install",
+        "FP16-R8 · P1"
       ]
     },
     {
@@ -629,23 +610,23 @@
       "switch": "Runner",
       "socket": "Ethernet 7",
       "panel": 15,
-      "note": "Runner 7 to Floor Plan 15. Fit a labeled rear cable now; connect its destination when ready.",
+      "note": "Runner · Ethernet 7 → Floor Plan 15 → MB-WP-RACK · 1. Retain the existing logical wall-run ID.",
       "currentSwitch": "Runner",
       "currentSocket": null,
-      "panelStatus": "Proposed",
-      "targetStatus": "Proposed",
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
       "rackPlate": "MB-WP-RACK",
       "rackJack": "1",
       "roomPlate": "MB-WP-ROOM",
       "roomJack": "1",
-      "runWork": "Pull / terminate cable",
+      "runWork": "Wire to approved register",
       "routeStations": [
         "Runner · Ethernet 7",
         "White patch cable → Floor Plan 15 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 15 REAR → MB-WP-RACK (1)",
-        "MB-WP-RACK (1) → MB-WP-ROOM (1)",
-        "MB-WP-ROOM (1) → Main Bedroom · Apple TV"
+        "Floor Plan 15 FRONT → Floor Plan 15 REAR",
+        "Floor Plan 15 REAR → MB-WP-RACK · 1",
+        "MB-WP-ROOM · 1",
+        "FP15-R7 · MB-J1"
       ],
       "routeType": "wall",
       "rearLabel": "FP15-R7 · MB-J1",
@@ -662,28 +643,23 @@
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 15 FRONT → Floor Plan 15 REAR"
+          "title": "Floor Plan 15 FRONT → Floor Plan 15 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 15 REAR → MB-WP-RACK (1)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 15 REAR → MB-WP-RACK · 1",
+          "detail": ""
         },
         {
           "what": "Wall run",
-          "title": "MB-WP-RACK (1) → MB-WP-ROOM (1)",
-          "detail": "Run and terminate this in-wall cable."
-        },
-        {
-          "what": "Room cable",
-          "title": "MB-WP-ROOM (1) → Main Bedroom · Apple TV",
-          "detail": "Separate room patch cable to device Ethernet port."
+          "title": "MB-WP-ROOM · 1",
+          "detail": ""
         },
         {
           "what": "Label",
           "title": "FP15-R7 · MB-J1",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID MB-J1."
+          "detail": ""
         }
       ]
     },
@@ -699,23 +675,23 @@
       "switch": "Runner",
       "socket": "Ethernet 6",
       "panel": 14,
-      "note": "Runner 6 to Floor Plan 14. Fit a labeled rear cable now; connect its destination when ready.",
+      "note": "Runner · Ethernet 6 → Floor Plan 14 → MB-WP-RACK · 2. Retain the existing logical wall-run ID.",
       "currentSwitch": "Runner",
       "currentSocket": null,
-      "panelStatus": "Proposed",
-      "targetStatus": "Proposed",
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
       "rackPlate": "MB-WP-RACK",
       "rackJack": "2",
       "roomPlate": "MB-WP-ROOM",
       "roomJack": "2",
-      "runWork": "Pull / terminate cable",
+      "runWork": "Wire to approved register",
       "routeStations": [
         "Runner · Ethernet 6",
         "White patch cable → Floor Plan 14 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 14 REAR → MB-WP-RACK (2)",
-        "MB-WP-RACK (2) → MB-WP-ROOM (2)",
-        "Future room device"
+        "Floor Plan 14 FRONT → Floor Plan 14 REAR",
+        "Floor Plan 14 REAR → MB-WP-RACK · 2",
+        "MB-WP-ROOM · 2",
+        "FP14-R6 · MB-J2"
       ],
       "routeType": "wall",
       "rearLabel": "FP14-R6 · MB-J2",
@@ -732,59 +708,44 @@
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 14 FRONT → Floor Plan 14 REAR"
+          "title": "Floor Plan 14 FRONT → Floor Plan 14 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Floor Plan 14 REAR → MB-WP-RACK (2)",
-          "detail": "Separate rear patch cable to rack-side wall jack. Jack position is proposed."
+          "title": "Floor Plan 14 REAR → MB-WP-RACK · 2",
+          "detail": ""
         },
         {
           "what": "Wall run",
-          "title": "MB-WP-RACK (2) → MB-WP-ROOM (2)",
-          "detail": "Run and terminate this in-wall cable."
-        },
-        {
-          "what": "Room end",
-          "title": "Future room device",
-          "detail": "Endpoint device / Ethernet socket not assigned. Leave room jack available; do not invent a device connection."
+          "title": "MB-WP-ROOM · 2",
+          "detail": ""
         },
         {
           "what": "Label",
           "title": "FP14-R6 · MB-J2",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID MB-J2."
+          "detail": ""
         }
       ]
     },
     {
-      "id": "PI-1",
-      "name": "The Safe · Raspberry Pi 400",
-      "area": "Inside rack · future equipment",
-      "color": "white",
-      "state": "Proposed",
-      "device": "Raspberry Pi 400 · passwords / Home Assistant",
-      "wall": "Inside rack · proposed device location",
-      "plate": "Uses OF-W2 through the office switch",
+      "id": "SAFE-1",
+      "panel": 13,
       "switch": "Runner",
       "socket": "Ethernet 5",
-      "panel": 13,
-      "note": "Runner 5 to Floor Plan 13. Rear cable labeled for Raspberry Pi 400 · passwords / Home Assistant. Proposed rack-side destination; software and exact placement are later work.",
-      "currentSwitch": null,
-      "currentSocket": null,
-      "panelStatus": "None",
-      "targetStatus": "Proposed",
-      "runWork": "Connect proposed equipment",
+      "color": "purple",
+      "name": "The Safe",
+      "device": "The Safe Ethernet",
+      "area": "Inside rack",
+      "wall": "Inside rack",
+      "plate": "No wall plate",
+      "state": "Proposed",
       "routeType": "rack-panel",
-      "rearLabel": "FP13-R5 · PI-1",
-      "rearDestination": "Raspberry Pi 400 · passwords / Home Assistant",
-      "routeStations": [
-        "Runner · Ethernet 5",
-        "White patch cable → Floor Plan 13 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Plug labeled cable into Floor Plan 13 REAR",
-        "Coil behind panel · free cable end"
-      ],
+      "rearLabel": "FP13-R5 · SAFE-1",
+      "targetStatus": "Approved wiring",
+      "panelStatus": "Approved wiring",
+      "runWork": "Wire to approved register",
+      "note": "Runner · Ethernet 5 → Floor Plan 13 → The Safe Ethernet. Rack-area endpoint; no wall plate.",
       "installationSteps": [
         {
           "what": "Source",
@@ -793,58 +754,60 @@
         },
         {
           "what": "Front cable",
-          "title": "White patch cable → Floor Plan 13 FRONT",
-          "detail": "FP13-R5 · PI-1"
+          "title": "Purple patch cable → Floor Plan 13 FRONT",
+          "detail": "FP13-R5 · SAFE-1"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 13 FRONT → Floor Plan 13 REAR"
+          "title": "Floor Plan 13 FRONT → Floor Plan 13 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Plug labeled cable into Floor Plan 13 REAR",
-          "detail": "FP13-R5 · PI-1"
-        },
-        {
-          "what": "Destination",
-          "title": "Coil behind panel · free cable end",
-          "detail": "For Raspberry Pi 400 · passwords / Home Assistant. Future device is not present. Prepared Ethernet cable only; no power assignment."
+          "title": "Floor Plan 13 REAR → The Safe Ethernet",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP13-R5 · PI-1",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID PI-1."
+          "title": "FP13-R5 · SAFE-1",
+          "detail": ""
         }
+      ],
+      "routeStations": [
+        "Runner · Ethernet 5",
+        "Purple patch cable → Floor Plan 13 FRONT",
+        "Floor Plan 13 FRONT → Floor Plan 13 REAR",
+        "Floor Plan 13 REAR → The Safe Ethernet",
+        "FP13-R5 · SAFE-1"
       ]
     },
     {
-      "id": "PI-2",
+      "id": "PI-1",
+      "name": "Raspberry Pi 400",
       "area": "Inside rack · future equipment",
-      "color": "black",
+      "color": "purple",
       "state": "Proposed",
+      "device": "Raspberry Pi 400 Ethernet",
       "wall": "Inside rack · proposed device location",
-      "plate": "No room plate",
-      "currentSwitch": null,
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "runWork": "Prepare labeled rear cable",
-      "name": "Second Raspberry Pi",
-      "device": "Second Raspberry Pi · model not yet identified",
+      "plate": "No wall plate",
       "switch": "Runner",
       "socket": "Ethernet 4",
       "panel": 12,
-      "targetStatus": "Proposed",
+      "note": "Runner · Ethernet 4 → Floor Plan 12 → Raspberry Pi 400 Ethernet. Rack-area endpoint; no wall plate.",
+      "currentSwitch": null,
+      "currentSocket": null,
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
+      "runWork": "Wire to approved register",
       "routeType": "rack-panel",
-      "rearLabel": "FP12-R4 · PI-2",
-      "note": "Runner 4 to Floor Plan 12. Rear cable labeled for Second Raspberry Pi · model not yet identified. Proposed rack-side destination; software and exact placement are later work.",
-      "rearDestination": "Second Raspberry Pi · model not yet identified",
+      "rearLabel": "FP12-R4 · PI-1",
+      "rearDestination": "Raspberry Pi 400 Ethernet",
       "routeStations": [
         "Runner · Ethernet 4",
-        "Black patch cable → Floor Plan 12 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Plug labeled cable into Floor Plan 12 REAR",
-        "Coil behind panel · free cable end"
+        "Purple patch cable → Floor Plan 12 FRONT",
+        "Floor Plan 12 FRONT → Floor Plan 12 REAR",
+        "Floor Plan 12 REAR → Raspberry Pi 400 Ethernet",
+        "FP12-R4 · PI-1"
       ],
       "installationSteps": [
         {
@@ -854,57 +817,53 @@
         },
         {
           "what": "Front cable",
-          "title": "Black patch cable → Floor Plan 12 FRONT",
-          "detail": "FP12-R4 · PI-2"
+          "title": "Purple patch cable → Floor Plan 12 FRONT",
+          "detail": "FP12-R4 · PI-1"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 12 FRONT → Floor Plan 12 REAR"
+          "title": "Floor Plan 12 FRONT → Floor Plan 12 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Plug labeled cable into Floor Plan 12 REAR",
-          "detail": "FP12-R4 · PI-2"
-        },
-        {
-          "what": "Destination",
-          "title": "Coil behind panel · free cable end",
-          "detail": "For Second Raspberry Pi · model not yet identified. Future device is not present. Prepared Ethernet cable only; no power assignment."
+          "title": "Floor Plan 12 REAR → Raspberry Pi 400 Ethernet",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP12-R4 · PI-2",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID PI-2."
+          "title": "FP12-R4 · PI-1",
+          "detail": ""
         }
       ]
     },
     {
-      "id": "READY-R3",
-      "area": "Prepared connections",
-      "color": "black",
-      "state": "Proposed",
+      "id": "C3",
+      "name": "SmartThings · Samsung hub",
+      "area": "Inside rack",
+      "color": "purple",
+      "state": "Existing",
+      "device": "Samsung SmartThings GP-U999SJVLGDA LAN",
       "wall": "Inside rack",
-      "plate": "No room plate",
-      "currentSwitch": null,
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "runWork": "Prepare labeled rear cable",
-      "name": "Prepared connection · Runner 3",
-      "device": "Future destination",
+      "plate": "No wall plate",
       "switch": "Runner",
       "socket": "Ethernet 3",
       "panel": 11,
-      "targetStatus": "Proposed",
-      "routeType": "prepared",
-      "rearLabel": "FP11-R3 · READY-R3",
-      "note": "Install Runner 3 to Floor Plan 11. Plug in and label rear cable FP11-R3; coil it behind the panel. No room/device destination assigned yet.",
+      "note": "Runner · Ethernet 3 → Floor Plan 11 → Samsung SmartThings GP-U999SJVLGDA LAN. Rack-area endpoint; no wall plate.",
+      "currentSwitch": "Runner",
+      "currentSocket": null,
+      "panelStatus": "Approved wiring",
+      "targetStatus": "Approved wiring",
+      "runWork": "Wire to approved register",
+      "routeType": "rack-panel",
+      "rearLabel": "FP11-R3 · C3",
+      "rearDestination": "SmartThings LAN",
       "routeStations": [
         "Runner · Ethernet 3",
-        "Black patch cable → Floor Plan 11 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Plug labeled cable into Floor Plan 11 REAR",
-        "Coil behind panel · free cable end"
+        "Purple patch cable → Floor Plan 11 FRONT",
+        "Floor Plan 11 FRONT → Floor Plan 11 REAR",
+        "Floor Plan 11 REAR → Samsung SmartThings GP-U999SJVLGDA LAN",
+        "FP11-R3 · C3"
       ],
       "installationSteps": [
         {
@@ -914,58 +873,44 @@
         },
         {
           "what": "Front cable",
-          "title": "Black patch cable → Floor Plan 11 FRONT",
-          "detail": "FP11-R3 · READY-R3"
+          "title": "Purple patch cable → Floor Plan 11 FRONT",
+          "detail": "FP11-R3 · C3"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 11 FRONT → Floor Plan 11 REAR"
+          "title": "Floor Plan 11 FRONT → Floor Plan 11 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Plug labeled cable into Floor Plan 11 REAR",
-          "detail": "FP11-R3 · READY-R3"
-        },
-        {
-          "what": "Destination",
-          "title": "Coil behind panel · free cable end",
-          "detail": "No destination assigned yet."
+          "title": "Floor Plan 11 REAR → Samsung SmartThings GP-U999SJVLGDA LAN",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP11-R3 · READY-R3",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID READY-R3."
+          "title": "FP11-R3 · C3",
+          "detail": ""
         }
       ]
     },
     {
-      "id": "READY-R2",
-      "area": "Prepared connections",
-      "color": "black",
-      "state": "Proposed",
-      "wall": "Inside rack",
-      "plate": "No room plate",
-      "currentSwitch": null,
-      "currentSocket": null,
-      "panelStatus": "Proposed",
-      "runWork": "Prepare labeled rear cable",
-      "name": "Prepared connection · Runner 2",
-      "device": "Future destination",
+      "id": "FUTURE-RACK",
+      "panel": 10,
       "switch": "Runner",
       "socket": "Ethernet 2",
-      "panel": 10,
-      "targetStatus": "Proposed",
-      "routeType": "prepared",
-      "rearLabel": "FP10-R2 · READY-R2",
-      "note": "Install Runner 2 to Floor Plan 10. Plug in and label rear cable FP10-R2; coil it behind the panel. No room/device destination assigned yet.",
-      "routeStations": [
-        "Runner · Ethernet 2",
-        "Black patch cable → Floor Plan 10 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Plug labeled cable into Floor Plan 10 REAR",
-        "Coil behind panel · free cable end"
-      ],
+      "color": "purple",
+      "name": "Future rack device · reserved",
+      "device": "Future rack device (reserved)",
+      "area": "Inside rack",
+      "wall": "Inside rack",
+      "plate": "No wall plate",
+      "state": "Proposed",
+      "routeType": "rack-panel",
+      "rearLabel": "FP10-R2 · FUTURE-RACK",
+      "targetStatus": "Approved wiring",
+      "panelStatus": "Approved wiring",
+      "runWork": "Wire to approved register",
+      "note": "Runner · Ethernet 2 → Floor Plan 10 → Future rack device (reserved). Port reserved; no device assigned.",
       "installationSteps": [
         {
           "what": "Source",
@@ -974,29 +919,31 @@
         },
         {
           "what": "Front cable",
-          "title": "Black patch cable → Floor Plan 10 FRONT",
-          "detail": "FP10-R2 · READY-R2"
+          "title": "Purple patch cable → Floor Plan 10 FRONT",
+          "detail": "FP10-R2 · FUTURE-RACK"
         },
         {
           "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 10 FRONT → Floor Plan 10 REAR"
+          "title": "Floor Plan 10 FRONT → Floor Plan 10 REAR",
+          "detail": ""
         },
         {
           "what": "Rear cable",
-          "title": "Plug labeled cable into Floor Plan 10 REAR",
-          "detail": "FP10-R2 · READY-R2"
-        },
-        {
-          "what": "Destination",
-          "title": "Coil behind panel · free cable end",
-          "detail": "No destination assigned yet."
+          "title": "Floor Plan 10 REAR → Future rack device (reserved)",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP10-R2 · READY-R2",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID READY-R2."
+          "title": "FP10-R2 · FUTURE-RACK",
+          "detail": ""
         }
+      ],
+      "routeStations": [
+        "Runner · Ethernet 2",
+        "Purple patch cable → Floor Plan 10 FRONT",
+        "Floor Plan 10 FRONT → Floor Plan 10 REAR",
+        "Floor Plan 10 REAR → Future rack device (reserved)",
+        "FP10-R2 · FUTURE-RACK"
       ]
     },
     {
@@ -1306,64 +1253,47 @@
       "roomJack": "existing jack",
       "switch": "Main Orbi",
       "socket": "Existing LAN output",
-      "panel": 5,
-      "panelStatus": "Proposed",
-      "targetStatus": "Preserve source",
+      "panel": null,
+      "panelStatus": "Bypass",
+      "targetStatus": "Approved wiring",
       "currentSwitch": "Main Orbi",
       "currentSocket": "LAN output · number not recorded",
       "runWork": "Reconnect accidentally unplugged AP lead",
       "routeType": "wall",
-      "note": "Main Orbi Internet input is fed separately from Expo Ethernet 1 through the brush. This connection starts at an existing main Orbi LAN output: up behind rack, through U15 brush, down front into Floor Plan 5 front. A separate rear patch cable connects Floor Plan 5 rear to the rack-side family-room AP wall jack. Existing in-wall cable continues to the family-room AP jack, then a room patch cable to the Orbi satellite Ethernet port. AP is separate from plant shelf; no Expo or Runner socket feeds panel 5. Existing wall-jack positions are fixed; do not move them. Keep the existing plate and all jack positions exactly as installed.",
-      "rearLabel": "FP5-FR-AP",
+      "note": "Main Orbi LAN goes directly to the family-room AP rack-side wall jack and then via the existing wall run to the satellite. Separate from the Bouncer-to-Orbi uplink. No patch-panel port is used.",
+      "rearLabel": "FR-AP",
       "routeStations": [
-        "Main Orbi · Existing LAN output",
-        "Up behind the rack → through U15 brush → down the front",
-        "Yellow patch cable → Floor Plan 5 FRONT",
-        "Front and rear are the two sides of the same panel jack",
-        "Floor Plan 5 REAR → FR-WP-RACK · existing AP jack",
-        "FR-WP-RACK · existing AP jack → FR-WP-ROOM-WW · existing jack",
-        "FR-WP-ROOM-WW · existing jack → Orbi RBS50 satellite · AP wall cable"
+        "Main Orbi · existing LAN output",
+        "FR-WP-RACK · existing AP jack",
+        "FR-WP-RACK · AP jack → FR-WP-ROOM-WW · existing AP jack",
+        "Orbi RBS50 satellite · Ethernet",
+        "FR-AP"
       ],
       "installationSteps": [
         {
           "what": "Source",
-          "title": "Main Orbi · Existing LAN output",
+          "title": "Main Orbi · existing LAN output",
           "detail": ""
         },
         {
-          "what": "Brush",
-          "title": "Up behind the rack → through U15 brush → down the front",
-          "detail": "Move the existing main Orbi LAN-to-AP wall-jack connection through Floor Plan 5."
-        },
-        {
-          "what": "Front cable",
-          "title": "Yellow patch cable → Floor Plan 5 FRONT",
-          "detail": "FP5-FR-AP"
-        },
-        {
-          "what": "Panel",
-          "title": "Front and rear are the two sides of the same panel jack",
-          "detail": "Floor Plan 5 FRONT → Floor Plan 5 REAR"
-        },
-        {
-          "what": "Rear cable",
-          "title": "Floor Plan 5 REAR → FR-WP-RACK · existing AP jack",
-          "detail": "Separate rear patch cable to rack-side wall jack labeled AP. Keep this existing jack exactly where it is."
+          "what": "Rack wall plate",
+          "title": "FR-WP-RACK · existing AP jack",
+          "detail": "Direct patch cable; keep the existing wall jack."
         },
         {
           "what": "Wall run",
-          "title": "FR-WP-RACK · existing AP jack → FR-WP-ROOM-WW · existing jack",
-          "detail": "Existing in-wall cable."
+          "title": "FR-WP-RACK · AP jack → FR-WP-ROOM-WW · existing AP jack",
+          "detail": ""
         },
         {
-          "what": "Room cable",
-          "title": "FR-WP-ROOM-WW · existing jack → Orbi RBS50 satellite · AP wall cable",
-          "detail": "Separate room patch cable to device Ethernet port. Preserve the existing satellite Ethernet socket."
+          "what": "Destination",
+          "title": "Orbi RBS50 satellite · Ethernet",
+          "detail": ""
         },
         {
           "what": "Label",
-          "title": "FP5-FR-AP",
-          "detail": "Label both ends of each new patch cable. Keep the permanent wall-run ID FR-AP."
+          "title": "FR-AP",
+          "detail": ""
         }
       ],
       "wallPlatePolicy": "Existing plates, jacks and in-wall cables stay in their current positions. No relocation, splitting, reordering or retermination.",
@@ -1373,7 +1303,7 @@
       "id": "C1",
       "name": "NAS · existing Expo 2 cable",
       "area": "Inside rack",
-      "color": "black",
+      "color": "purple",
       "state": "Existing",
       "device": "NAS · preserve the currently connected NAS jack",
       "wall": "Inside rack",
@@ -1416,7 +1346,7 @@
       "id": "C2",
       "name": "NAS · existing Expo 4 cable",
       "area": "Inside rack",
-      "color": "black",
+      "color": "purple",
       "state": "Existing",
       "device": "NAS · preserve the currently connected NAS jack",
       "wall": "Inside rack",
@@ -1457,28 +1387,28 @@
     },
     {
       "id": "C4",
-      "name": "Gateway to Expo",
+      "name": "Hostess to Bouncer · WAN",
       "area": "Inside rack",
-      "color": "red",
-      "state": "Proposed",
+      "color": "purple",
+      "state": "Existing",
       "device": "BGW620 · blue LAN 1",
       "wall": "Inside rack",
       "plate": "No wall plate",
-      "switch": "Expo",
-      "socket": "SFP+ 1",
+      "switch": "Bouncer",
+      "socket": "Ethernet 1",
       "panel": null,
-      "note": "Hostess gateway Ethernet through upper brush to Expo SFP+1 Ethernet adapter. Both SFP+ sockets have Ethernet adapters; SFP+2 remains unassigned.",
-      "currentSwitch": "Expo",
-      "currentSocket": "SFP+ 1",
+      "note": "Hostess hands off AT&T via IP Passthrough through U15 Brushgate to Bouncer ether1. This cable does not power the router.",
+      "currentSwitch": "Bouncer",
+      "currentSocket": "Ethernet 1",
       "panelStatus": "None",
-      "targetStatus": "Proposed",
-      "runWork": "Connect proposed equipment",
+      "targetStatus": "Cutover build",
+      "runWork": "Cutover build",
       "routeType": "direct",
       "rearLabel": "C4",
       "routeStations": [
         "Hostess / BGW620 · blue LAN 1",
-        "Up behind rack → through U15 brush → down front",
-        "Expo · SFP+ 1 Ethernet adapter"
+        "Up behind rack → through U15 Brushgate → down front",
+        "Bouncer · Ethernet 1 (2.5 GbE WAN)"
       ],
       "installationSteps": [
         {
@@ -1488,13 +1418,56 @@
         },
         {
           "what": "Brush",
-          "title": "Up behind rack → through U15 brush → down front",
+          "title": "Up behind rack → through U15 Brushgate → down front",
           "detail": ""
         },
         {
           "what": "Connection",
-          "title": "Expo · SFP+ 1 Ethernet adapter",
-          "detail": "Ethernet cable plugs into the installed adapter; no Floor Plan jack."
+          "title": "Bouncer · Ethernet 1 (2.5 GbE WAN)",
+          "detail": "Direct Ethernet; no Floor Plan jack."
+        }
+      ]
+    },
+    {
+      "id": "C7",
+      "name": "Bouncer to Expo · LAN uplink",
+      "area": "Inside rack",
+      "color": "green",
+      "state": "Existing",
+      "device": "MikroTik RB5009 · SFP+",
+      "wall": "Inside rack",
+      "plate": "No wall plate",
+      "switch": "Expo",
+      "socket": "SFP+ 1",
+      "panel": null,
+      "note": "Green 10 GbE DAC directly between Bouncer SFP+ and Expo SFP+ 1. Expo SFP+ 2 is unassigned.",
+      "currentSwitch": "Expo",
+      "currentSocket": "SFP+ 1",
+      "panelStatus": "None",
+      "targetStatus": "Cutover build",
+      "runWork": "Cutover build",
+      "routeType": "direct",
+      "rearLabel": "C7",
+      "routeStations": [
+        "Bouncer · SFP+",
+        "Green 10 GbE DAC · front of rack",
+        "Expo · SFP+ 1"
+      ],
+      "installationSteps": [
+        {
+          "what": "Source",
+          "title": "Bouncer · SFP+",
+          "detail": ""
+        },
+        {
+          "what": "Cable",
+          "title": "Green 10 GbE DAC · front of rack",
+          "detail": ""
+        },
+        {
+          "what": "Connection",
+          "title": "Expo · SFP+ 1",
+          "detail": "The DAC plugs directly into both cages; no Ethernet module, PoE, brush, or Floor Plan jack."
         }
       ]
     },
@@ -1502,7 +1475,7 @@
       "id": "C5",
       "name": "Converter to gateway",
       "area": "Inside rack",
-      "color": "red",
+      "color": "purple",
       "state": "Existing",
       "device": "Q1000K · installer jack",
       "wall": "Inside rack",
@@ -1545,7 +1518,7 @@
       "id": "C6",
       "name": "Expo 7 / Runner 1",
       "area": "Inside rack",
-      "color": "black",
+      "color": "purple",
       "state": "Existing",
       "device": "Expo · Ethernet 7",
       "wall": "Inside rack",
@@ -1586,44 +1559,44 @@
     },
     {
       "id": "WIFI-1",
-      "name": "Main Orbi · RBR50",
+      "name": "Bouncer to main Orbi · RBR50",
       "area": "Wireless",
-      "color": "black",
+      "color": "yellow",
       "state": "Existing",
       "device": "Main Orbi RBR50",
       "wall": "Existing Wi-Fi equipment location",
       "plate": "Physical uplink to match",
-      "switch": "Expo",
-      "socket": "Ethernet 1",
+      "switch": "Bouncer",
+      "socket": "Ethernet 8",
       "panel": null,
-      "note": "Hostess blue LAN 1 feeds Expo SFP+1 through its Ethernet adapter. Expo Ethernet 1 feeds the main Orbi Internet/WAN port through the U15 brush. A different cable from main Orbi LAN output goes through the brush to Floor Plan 5 front; panel 5 rear goes to rack-side AP wall jack. These are two separate cables.",
-      "currentSwitch": "Expo",
-      "currentSocket": "Ethernet 1",
+      "note": "Bouncer ether8 feeds the RBR50 Internet port through U15 Brushgate. Orbi runs in AP mode; its LAN output to the satellite through Floor Plan 5 is unchanged.",
+      "currentSwitch": "Bouncer",
+      "currentSocket": "Ethernet 8",
       "panelStatus": "None",
-      "targetStatus": "Preserve",
-      "runWork": "Retain existing Ethernet connection",
+      "targetStatus": "Cutover build",
+      "runWork": "Cutover build",
       "routeType": "direct",
       "rearLabel": "WIFI-1",
       "routeStations": [
-        "Expo · Ethernet 1",
-        "Up the front → through U15 brush → down behind rack",
-        "Main Orbi RBR50 · Internet / WAN port"
+        "Bouncer · Ethernet 8 (1 GbE LAN)",
+        "Up the front → through U15 Brushgate → down behind rack",
+        "Main Orbi RBR50 · Internet / WAN port (AP mode)"
       ],
       "installationSteps": [
         {
           "what": "Source",
-          "title": "Expo · Ethernet 1",
+          "title": "Bouncer · Ethernet 8 (1 GbE LAN)",
           "detail": ""
         },
         {
           "what": "Brush",
-          "title": "Up the front → through U15 brush → down behind rack",
+          "title": "Up the front → through U15 Brushgate → down behind rack",
           "detail": ""
         },
         {
           "what": "Connection",
           "title": "Main Orbi RBR50 · Internet / WAN port",
-          "detail": "Separate from its LAN output feeding Floor Plan 5 / family-room AP."
+          "detail": "Leave its separate LAN cable to Floor Plan 5 in place."
         }
       ]
     },
@@ -1677,15 +1650,15 @@
       ]
     }
   ],
-  "version": "network-ready-2026-11-24",
+  "version": "wiring-register-2026-11-25",
   "placement": "Proposed",
   "colors": {
-    "blue": "Office · 4 inserts",
-    "yellow": "Family room / AP / garage · 4 inserts",
-    "orange": "Guest / Jayce’s bedrooms · 4 inserts",
-    "white": "Master / Safe / prepared · 4 inserts",
-    "black": "Rack / prepared · 4 inserts, paths white",
-    "red": "Available panel 1–4 · 4 inserts"
+    "yellow": "Family room / garage and Orbi",
+    "orange": "Guest and Jayce bedrooms",
+    "white": "Master and prepared wall runs",
+    "purple": "Rack-area and Brushgate connections",
+    "blue": "Office wall runs",
+    "green": "SFP+ DAC"
   },
   "plates": [
     {
@@ -1731,30 +1704,32 @@
       "id": "B2-WP-RACK",
       "name": "Guest bedroom",
       "position": "Top middle empty opening",
-      "status": "P · placement; four jacks per plate",
+      "status": "Rightmost two slots shown provisionally; confirm after install",
       "jacks": {
-        "1": "B2-J1",
-        "2": "B2-J2"
+        "3": "B2-J2",
+        "4": "B2-J1"
       }
     },
     {
       "id": "B1-WP-RACK",
       "name": "Jayce’s bedroom",
       "position": "Top right empty opening",
-      "status": "P · placement; four jacks per plate",
+      "status": "Rightmost two slots shown provisionally; confirm after install",
       "jacks": {
-        "1": "B1-J1",
-        "2": "B1-J2"
+        "3": "B1-J1",
+        "4": "B1-J2"
       }
     },
     {
       "id": "MB-WP-RACK",
       "name": "Master bedroom",
-      "position": "Bottom left empty opening",
-      "status": "P · placement; four jacks per plate",
+      "position": "Master rack-side faceplate · P1/P2 in the two spare positions",
+      "status": "P1/P2 positions provisional; trace remote wall jacks after install",
       "jacks": {
         "1": "MB-J1",
-        "2": "MB-J2"
+        "2": "MB-J2",
+        "3": "P1",
+        "4": "P2"
       }
     },
     {
@@ -1779,11 +1754,11 @@
     "emptyOpenings": 6,
     "plannedBedroomRuns": 6,
     "plannedGarageRuns": 0,
-    "assignedPanelSockets": 20,
+    "assignedPanelSockets": 19,
     "runnerPanelLinks": 15,
-    "availablePanelSockets": 4
+    "availablePanelSockets": 5
   },
-  "planNote": "Runner 2–16 each have one jumper to Floor Plan 10–24 and a labeled rear cable. Expo 3/5/6/8 connect through Floor Plan 6/7/8/9. Main Orbi feeds FR-AP through Floor Plan5. Family plate contains NVR/switch, AP, garage, plant shelf. Floor Plan1–4 available.",
+  "planNote": "Fill right to left, port 24 first. Runner 2–16 → Floor Plan 10–24; office Expo links → Floor Plan 6–9. Floor Plan 1–5 are unassigned. Main Orbi LAN bypasses Floor Plan and runs directly to the family-room AP wall jack.",
   "power": [
     {
       "id": "UPS-B1",
@@ -1950,7 +1925,8 @@
   "mounting": {
     "Expo": "Left mounted · completed by owner",
     "Runner": "Centered chassis · socket block on right",
-    "panel": "Runner 2–16 to Floor Plan 10–24. Expo office sockets via Floor Plan 6–9. Main Orbi LAN to AP via Floor Plan 5. Floor Plan 1–4 available."
+    "panel": "Fill right to left, port 24 first. Runner 2–16 → Floor Plan 10–24; office Expo links → Floor Plan 6–9. Floor Plan 1–5 are unassigned. Main Orbi LAN bypasses Floor Plan and runs directly to the family-room AP wall jack.",
+    "Bouncer": "Right of Expo below U15 Brushgate."
   },
   "naming": {
     "OF": "Office",
@@ -1982,15 +1958,19 @@
     "familyAppleTV": "OG LG",
     "guestAppleTV": "kids room",
     "mainOrbi": "Orbi RBR50",
-    "familyOrbi": "Orbi RBS50"
+    "familyOrbi": "Orbi RBS50",
+    "bouncer": "Bouncer · MikroTik RB5009UG+S+IN"
   },
   "topologyNotes": [
     "NVR attachment downstream of family switch is probable, not verified. No extra dedicated NVR wall run is invented.",
     "Owner latest Expo wall mapping supersedes older 6/8 device pairing. Preserve actual existing cable sockets.",
-    "Both Expo SFP+ cages contain Ethernet adapters; SFP+2 unassigned."
+    "Hostess → U15 Brushgate → Bouncer WAN; Bouncer SFP+ → Expo SFP+ 1; Bouncer Ethernet 8 → RBR50. Expo SFP+ 2 remains unassigned.",
+    "Bouncer SFP+ ↔ Expo SFP+ 1: green DAC; Expo SFP+ 2 unassigned.",
+    "Bouncer Ethernet 8 → Brushgate → Main Orbi; Main Orbi LAN → family-room AP wall jack → satellite.",
+    "Runner 2 / Floor Plan 10 reserved for a future rack device."
   ],
   "sfpAdapters": {
-    "1": "Ethernet adapter present · gateway",
+    "1": "10 GbE DAC to Bouncer",
     "2": "Ethernet adapter present · unassigned"
   },
   "familyDevices": [
@@ -2079,9 +2059,6 @@
     "3": "red",
     "4": "red",
     "5": "yellow",
-    "22": "yellow",
-    "23": "yellow",
-    "24": "yellow",
     "6": "blue",
     "7": "blue",
     "8": "blue",
@@ -2089,15 +2066,18 @@
     "10": "black",
     "11": "black",
     "12": "black",
-    "19": "black",
     "13": "white",
     "14": "white",
     "15": "white",
-    "21": "white",
     "16": "orange",
     "17": "orange",
     "18": "orange",
-    "20": "orange"
+    "19": "black",
+    "20": "orange",
+    "21": "white",
+    "22": "yellow",
+    "23": "yellow",
+    "24": "yellow"
   },
   "installedInsertLocks": {
     "5": "yellow",
@@ -2110,7 +2090,7 @@
     "12": "black"
   },
   "connectionReview": {
-    "scope": "All 27 Ethernet records and current power / USB records reviewed against owner instructions. Documentation review; not a live cable or connectivity test.",
+    "scope": "Approved wiring design. Port allocations were checked against the wiring register; this is not a record of installed cables.",
     "unresolved": [
       "NAS exact device-side Ethernet socket identities: preserve each existing cable/socket pairing.",
       "Main Orbi LAN output number and satellite Ethernet port number: preserve existing sockets.",
@@ -2118,7 +2098,8 @@
       "NVR downstream attachment behind family-room switch unverified.",
       "Future room endpoint devices and optional TRENDnet port numbers unassigned.",
       "Existing physical jack numbers are not recorded; identify by existing cable/device labels and preserve positions. Only new-run jack positions are proposed.",
-      "SmartThings PDU USB pairing and large-adapter fit still need the documented physical checks."
+      "SmartThings PDU USB pairing and large-adapter fit still need the documented physical checks.",
+      "Prepared P1/P2 and bedroom rack-faceplate slots provisional. Record remote P1/P2 destinations, living-room NVR faceplates and camera locations after install."
     ]
   },
   "existingWallPlatePolicy": "Existing office and family-room rack-side plates, all existing room plates, all installed jacks and wall runs stay exactly as installed. Office rack-side plate keeps all four office runs together. Only new runs use new openings."
